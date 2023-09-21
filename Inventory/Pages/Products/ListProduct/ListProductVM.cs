@@ -13,15 +13,17 @@ namespace Inventory.Pages.Products.ListProduct
         [ObservableProperty]
         ObservableCollection<ListProductM> productMs;
 
+        [ObservableProperty]
+        bool isGenerateDefoultEnable;
+
         readonly DataBase.Data.AccessDataBase _db;
         public ListProductVM(DataBase.Data.AccessDataBase db)
         {
             ProductMs = new ObservableCollection<ListProductM>();
             this._db = db;
-            //SelectAllProduct();
             Task.Run(async () =>
             {
-                await SelectAllProductAsync();
+                await SelectAllProductsAsync();
             });
             Inventory.Service.ProductsUpdateService.Update += SelectAllProductsAsync;
         }
@@ -47,6 +49,7 @@ namespace Inventory.Pages.Products.ListProduct
                     ProductMs[i].Prices = await SelectPricesAsync(names[i].Id);
                     ProductMs[i].SetActualPrice();
                 }
+                IsGenerateDefoultEnable = ProductMs.Count() <= 0;
             }
             catch (Exception ex)
             {
@@ -61,29 +64,6 @@ namespace Inventory.Pages.Products.ListProduct
             price.Add(priceM.PareseAsProductPriceM());
 
             return price;
-        }
-
-        async Task SelectAllProductAsync()
-        {
-            try
-            {
-                ProductMs.Clear();
-                var names = await _db.DataBaseAsync.Table<ProductName>().ToArrayAsync();
-
-                for (int i = 0; i < names.Length; i++)
-                {
-                    ProductMs.Add(new ListProductM()
-                    {
-                        Name = names[i].PareseAsProductNameM(),
-                    });
-                    ProductMs[i].Prices = await SelectPricesAsync(names[i].Id);
-                    ProductMs[i].SetActualPrice();
-                }
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLog(ex);
-            }
         }
 
         #endregion
@@ -118,28 +98,6 @@ namespace Inventory.Pages.Products.ListProduct
             var priceM = _db.DataBase.Table<ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(z => z.Id).FirstOrDefault();
             price.Add(priceM.PareseAsProductPriceM());
             return price;
-        }
-        void SelectAllProduct()
-        {
-            try
-            {
-                ProductMs.Clear();
-                var names = _db.DataBase.Table<ProductName>().ToArray();
-
-                for (int i = 0; i < names.Length; i++)
-                {
-                    ProductMs.Add(new ListProductM()
-                    {
-                        Name = names[i].PareseAsProductNameM(),
-                    });
-                    ProductMs[i].Prices = SelectPrices(names[i].Id);
-                    ProductMs[i].SetActualPrice();
-                }
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLog(ex);
-            }
         }
 
         #endregion
@@ -295,7 +253,7 @@ namespace Inventory.Pages.Products.ListProduct
                 products[i].Price.ProductNameId = products[i].Name.Id;
                 await _db.DataBaseAsync.InsertAsync(products[i].Price);
             }
-            await SelectAllProductAsync();
+            await SelectAllProductsAsync();
 
             //for (int i = 0; i < products.Length; i++)
             //{

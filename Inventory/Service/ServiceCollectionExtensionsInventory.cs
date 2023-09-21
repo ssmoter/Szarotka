@@ -25,8 +25,8 @@ namespace Inventory.Service
 
 #else
 
-            services.AddSingleton<Pages.SingleDay.SingleDayVM>();
-            services.AddSingleton<Pages.Products.ListProduct.ListProductVM>();
+            services.AddSingleton<Pages.SingleDay.SingleDayV>();
+            services.AddSingleton<Pages.Products.ListProduct.ListProductV>();
 #endif
 
 

@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 
 using Inventory.Helper;
+using Inventory.Model;
 using Inventory.Model.MVVM;
 
 namespace Inventory.Pages.SingleDay
@@ -47,11 +48,11 @@ namespace Inventory.Pages.SingleDay
         async Task<bool> CheckDriver()
         {
             var guid = DayM.DriverGuid;
-            if (DayM.DriverGuid == Guid.Empty)
+            if (DayM.DriverGuid==Guid.Empty)
             {
                 guid = Helper.SelectedDriver.Guid;
             }
-            if (guid == Guid.Empty)
+            if (DayM.DriverGuid == Guid.Empty)
             {
                 await Shell.Current.DisplayAlert("Kierowca", $"Kierowca nie został wybrany{Environment.NewLine}Wybierz kierowcę w celu zapisania", "Ok");
                 return true;
@@ -82,12 +83,24 @@ namespace Inventory.Pages.SingleDay
         {
             if (DayM is not null)
             {
+                Service.ProductUpdatePriceService.EnableUpdate = false;
+
                 if (await CheckDriver())
                 {
                     return;
                 }
+
                 DayM.DriverGuid = Helper.SelectedDriver.Guid;
                 var day = DayM.ParseAsDay();
+                if (day.Id <= 0)
+                {
+                    var id = _db.DataBase.Table<Day>().FirstOrDefault(x => x.CreatedDate == day.CreatedDate);
+                    if (id is not null)
+                    {
+                        day.Id = id.Id;
+
+                    }
+                }
                 if (day.Id > 0)
                 {
                     await _db.DataBaseAsync.UpdateAsync(day);
@@ -123,7 +136,10 @@ namespace Inventory.Pages.SingleDay
                     }
 
                 }
+                DayM = day.ParseAsDayM();
                 await SnackbarAsToats.OnShow("Zapisano");
+                Service.ProductUpdatePriceService.EnableUpdate = true;
+
             }
         }
 

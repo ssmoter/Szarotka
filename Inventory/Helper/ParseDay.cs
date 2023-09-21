@@ -21,6 +21,7 @@ namespace Inventory.Helper
                 d.TotalPriceMoneyDecimal = m.TotalPriceMoney;
                 d.TotalPriceDifferenceDecimal = m.TotalPriceDifference;
                 d.TotalPriceAfterCorrectDecimal = m.TotalPriceAfterCorrect;
+
                 for (int i = 0; i < m.Products.Count; i++)
                 {
                     d.Products.Add(m.Products[i].ParseAsProduct());
@@ -39,6 +40,8 @@ namespace Inventory.Helper
             var m = new DayM();
             if (d is not null)
             {
+                var lastValue = Service.ProductUpdatePriceService.EnableUpdate;
+                Service.ProductUpdatePriceService.EnableUpdate = false;
                 m.Id = d.Id;
                 m.Description = d.Description;
                 m.DriverGuid = d.DriverGuid;
@@ -47,9 +50,9 @@ namespace Inventory.Helper
                 m.TotalPriceCake = d.TotalPriceCakeDecimal;
                 m.TotalPrice = d.TotalPriceDecimal;
                 m.TotalPriceCorrect = d.TotalPriceCorrectDecimal;
-                m.TotalPriceAfterCorrect = d.TotalPriceAfterCorrectDecimal;
-                m.TotalPriceDifference = d.TotalPriceDifferenceDecimal;
                 m.TotalPriceMoney = d.TotalPriceMoneyDecimal;
+                m.TotalPriceDifference = d.TotalPriceDifferenceDecimal;
+                m.TotalPriceAfterCorrect = d.TotalPriceAfterCorrectDecimal;
 
                 for (int i = 0; i < d.Products.Count; i++)
                 {
@@ -59,8 +62,9 @@ namespace Inventory.Helper
                 {
                     m.Cakes.Add(d.Cakes[i].PareseAsCakeM());
                 }
+                Service.ProductUpdatePriceService.EnableUpdate = lastValue;
+                d.ParseAsDayMOnly(m);
             }
-
             return m;
         }
 
@@ -211,4 +215,33 @@ namespace Inventory.Helper
         }
     }
 
+
+    public static class ParseDriver
+    {
+        public static Driver PareseAsDriver(this DriverM m)
+        {
+            var p = new Driver();
+            if (m is not null)
+            {
+                p.Id = m.Id;
+                p.Name = m.Name;
+                p.Description = m.Description;
+                p.Guid = m.Guid;
+            }
+            return p;
+        }
+
+        public static DriverM PareseAsDriverM(this Driver p)
+        {
+            var m = new DriverM();
+            if (p is not null)
+            {
+                m.Id = p.Id;
+                m.Name = p.Name;
+                m.Description = p.Description;
+                m.Guid = p.Guid;
+            }
+            return m;
+        }
+    }
 }

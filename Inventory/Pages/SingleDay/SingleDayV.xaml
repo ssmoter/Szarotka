@@ -266,8 +266,9 @@
                                     <Grid
                                         Padding="10"
                                         x:DataType="Product:CakeM"
-                                        ColumnDefinitions="*,.5*,*,auto"
-                                        ColumnSpacing="5">
+                                        ColumnDefinitions="*,.5*,*"
+                                        ColumnSpacing="5"
+                                        RowDefinitions="auto">
 
                                         <HorizontalStackLayout Grid.Column="0" VerticalOptions="Center">
                                             <Label Text="Cena = " />

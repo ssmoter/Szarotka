@@ -9,17 +9,100 @@
 
 
 
-    <VerticalStackLayout>
-        <Picker x:Name="picker" Title="Wybierz zakres dat">
-            <Picker.ItemsSource>
-                <x:Array Type="{x:Type x:String}">
-                    <x:String>Dzień</x:String>
-                    <x:String>Tydzień</x:String>
-                    <x:String>Miesiąc</x:String>
-                    <x:String>Rok</x:String>
-                    <x:String>Wybierz daty</x:String>
-                </x:Array>
-            </Picker.ItemsSource>
-        </Picker>
-    </VerticalStackLayout>
+    <Grid RowDefinitions="auto,auto,auto,*,0.001*">
+        <Picker
+            Title="Wybierz zakres dat"
+            HorizontalOptions="Center"
+            ItemsSource="{Binding Ragne}"
+            SelectedItem="{Binding IsSelectedDate}" />
+
+        <Border Grid.Row="1">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10" />
+            </Border.StrokeShape>
+            <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    HorizontalOptions="Center"
+                    Text="Suma utargów z danego zakresu" />
+
+                <HorizontalStackLayout
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    HorizontalOptions="Center">
+                    <Label Text="Pieniądze = " />
+                    <Label Text="{Binding TotalPriceOfRange.TotalPriceMoney}" />
+                    <Label Text="zł" />
+
+                </HorizontalStackLayout>
+                <HorizontalStackLayout
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    HorizontalOptions="Center">
+                    <Label Text="Utarg = " />
+                    <Label Text="{Binding TotalPriceOfRange.TotalPriceAfterCorrect}" />
+                    <Label Text="zł" />
+                </HorizontalStackLayout>
+            </Grid>
+
+        </Border>
+        <Grid Grid.Row="2">
+            <Border Margin="5">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="*,*,*,*,*">
+                    <Label
+                        Grid.Column="0"
+                        HorizontalOptions="Center"
+                        Text="Id" />
+                    <Label Grid.Column="1" Text="Data" />
+                    <Label Grid.Column="2" Text="Kierowca" />
+                    <Label Grid.Column="3" Text="Pieniądze" />
+                    <Label Grid.Column="4" Text="Utarg" />
+                </Grid>
+            </Border>
+        </Grid>
+        <CollectionView
+            Grid.Row="3"
+            Margin="5"
+            ItemsSource="{Binding RangeDays}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border>
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+                        <Grid x:DataType="VM:RangeDayM" ColumnDefinitions="*,*,*,*,*">
+                            <Label
+                                Grid.Column="0"
+                                HorizontalOptions="Center"
+                                Text="{Binding DayM.Id}"
+                                VerticalOptions="Center" />
+                            <Label
+                                Grid.Column="1"
+                                Text="{Binding DayM.Created}"
+                                VerticalOptions="Center" />
+                            <Label
+                                Grid.Column="2"
+                                Text="{Binding Driver.Name}"
+                                VerticalOptions="Center" />
+                            <HorizontalStackLayout Grid.Column="3" VerticalOptions="Center">
+                                <Label Text="{Binding DayM.TotalPriceMoney}" />
+                                <Label Text="zł" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Grid.Column="4" VerticalOptions="Center">
+                                <Label Text="{Binding DayM.TotalPriceAfterCorrect}" />
+                                <Label Text="zł" />
+                            </HorizontalStackLayout>
+
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+    </Grid>
 </ContentPage>

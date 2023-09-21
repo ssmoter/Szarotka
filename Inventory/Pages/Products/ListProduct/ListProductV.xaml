@@ -14,6 +14,12 @@
 
 
     <Grid RowDefinitions="auto,*,auto">
+        <Button
+            Command="{Binding GenerateDefaultProductsCommand}"
+            HorizontalOptions="Center"
+            IsVisible="{Binding IsGenerateDefoultEnable}"
+            Text="Dodaj podstawowe"
+            VerticalOptions="Center" />
         <CollectionView
             Grid.Row="1"
             ItemsSource="{Binding ProductMs}"
@@ -95,17 +101,6 @@
                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
-
-            <CollectionView.EmptyView>
-                <ContentView>
-                    <Button
-                        Command="{Binding GenerateDefaultProductsCommand}"
-                        HorizontalOptions="Center"
-                        Text="Dodaj podstawowe"
-                        VerticalOptions="Center" />
-                </ContentView>
-            </CollectionView.EmptyView>
-
         </CollectionView>
 
 

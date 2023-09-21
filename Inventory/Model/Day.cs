@@ -11,24 +11,25 @@ namespace Inventory.Model
         public Guid DriverGuid { get; set; }
 
         public string CreatedDate { get; set; }
-        public string CreatedTime { get; set; }
+        public long CreatedTicks { get; set; }
 
         [Ignore]
         public DateTime CreatedDateTime
         {
             get
             {
-                var time = parseTime(CreatedTime);
-                var day = parseDate(CreatedDate);
+                return new DateTime(CreatedTicks).ToLocalTime();
+                //var time = parseTime(CreatedTime);
+                // var day = parseDate(CreatedDate);
 
-                DateTime total = new DateTime(day.Item3, day.Item2, day.Item1, time.Item1, time.Item2, time.Item3);
+                //DateTime total = new DateTime(day.Item3, day.Item2, day.Item1, time.Item1, time.Item2, time.Item3);
 
-                return total;
+                //return total;
             }
             set
             {
                 CreatedDate = value.ToString("dd.MM.yyyy");
-                CreatedTime = value.ToString("HH:mm:ss");
+                CreatedTicks = value.ToUniversalTime().Ticks;
             }
         }
         public int TotalPriceProducts { get; set; }
