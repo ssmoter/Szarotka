@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="Inventory.Pages.Options.CreateTable.CreateTableV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:VM="clr-namespace:Inventory.Pages.Options.CreateTable"
+    x:DataType="VM:CreateTableVM">
+
+    <Border>
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="10" />
+        </Border.StrokeShape>
+
+        <VerticalStackLayout Padding="5">
+            <Label
+                HorizontalOptions="Center"
+                Text="Stworzone tabele:"
+                VerticalOptions="Center" />
+            <CollectionView ItemsSource="{Binding TableMs}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border>
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10" />
+                            </Border.StrokeShape>
+                            <Grid x:DataType="VM:CreateTableM" ColumnDefinitions="auto,*,auto">
+                                <Label
+                                    Grid.Column="0"
+                                    HorizontalTextAlignment="Start"
+                                    Text="{Binding TableName}"
+                                    VerticalOptions="Center" />
+                                <CheckBox
+                                    Grid.Column="2"
+                                    IsChecked="{Binding IsExist}"
+                                    IsEnabled="False"
+                                    VerticalOptions="Center"
+                                    Color="{Binding Color}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <HorizontalStackLayout HorizontalOptions="Center">
+
+                <Button
+                    Command="{Binding CreateTablesCommand}"
+                    HorizontalOptions="Center"
+                    Text="Wygeneruj Tabele" />
+                <Button
+                    Command="{Binding CreateNewTablesCommand}"
+                    HorizontalOptions="Center"
+                    Text="Wygeneruj brakujące Tabele" />
+            </HorizontalStackLayout>
+            <HorizontalStackLayout HorizontalOptions="Center">
+
+                <Button
+                    Command="{Binding CreateDriveCommand}"
+                    HorizontalOptions="Center"
+                    Text="Dodaj kierowce" />
+                <Button
+                    Command="{Binding SelectDriveCommand}"
+                    HorizontalOptions="Center"
+                    Text="Wybierz kierowce" />
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+    </Border>
+</ContentView>

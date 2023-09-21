@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="Inventory.Pages.PopupCalculator.PopupCalculatorV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+
+
+    <Grid
+        Padding="16"
+        ColumnDefinitions="*,*,*,*"
+        ColumnSpacing="2"
+        RowDefinitions="2*,*,*,*,*,*"
+        RowSpacing="2">
+
+        <Label
+            Grid.Row="0"
+            Grid.ColumnSpan="4"
+            FontSize="22"
+            HorizontalTextAlignment="End"
+            LineBreakMode="NoWrap"
+            Text=""
+            VerticalTextAlignment="Start" />
+
+        <Label
+            Grid.ColumnSpan="4"
+            FontAttributes="Bold"
+            FontSize="64"
+            HorizontalTextAlignment="End"
+            LineBreakMode="NoWrap"
+            Text="0"
+            VerticalTextAlignment="End" />
+
+        <BoxView
+            Grid.Row="0"
+            Grid.ColumnSpan="4"
+            BackgroundColor="{StaticResource LightGray}"
+            HeightRequest="1"
+            VerticalOptions="End" />
+
+        <Button
+            Grid.Row="1"
+            Grid.Column="0"
+            Text="C" />
+        <Button
+            Grid.Row="1"
+            Grid.Column="1"
+            Text="+/-" />
+        <Button
+            Grid.Row="1"
+            Grid.Column="2"
+            Text="%" />
+
+        <Button
+            Grid.Row="2"
+            Grid.Column="0"
+            Text="7" />
+        <Button
+            Grid.Row="2"
+            Grid.Column="1"
+            Text="8" />
+        <Button
+            Grid.Row="2"
+            Grid.Column="2"
+            Text="9" />
+
+        <Button
+            Grid.Row="3"
+            Grid.Column="0"
+            Text="4" />
+        <Button
+            Grid.Row="3"
+            Grid.Column="1"
+            Text="5" />
+        <Button
+            Grid.Row="3"
+            Grid.Column="2"
+            Text="6" />
+
+        <Button
+            Grid.Row="4"
+            Grid.Column="0"
+            Text="1" />
+        <Button
+            Grid.Row="4"
+            Grid.Column="1"
+            Text="2" />
+        <Button
+            Grid.Row="4"
+            Grid.Column="2"
+            Text="3" />
+
+        <Button
+            Grid.Row="5"
+            Grid.Column="0"
+            Text="00" />
+        <Button
+            Grid.Row="5"
+            Grid.Column="1"
+            Text="0" />
+        <Button
+            Grid.Row="5"
+            Grid.Column="2"
+            Text="." />
+
+        <Button
+            Grid.Row="1"
+            Grid.Column="3"
+            Text="÷" />
+        <Button
+            Grid.Row="2"
+            Grid.Column="3"
+            Text="×" />
+        <Button
+            Grid.Row="3"
+            Grid.Column="3"
+            Text="-" />
+        <Button
+            Grid.Row="4"
+            Grid.Column="3"
+            Text="+" />
+
+
+
+        <Button
+            Grid.Row="5"
+            Grid.Column="3"
+            Text="=" />
+
+    </Grid>
+
+
+    <!--<Grid ColumnDefinitions="*,*,*,*" RowDefinitions="*,*,*,*,*" MinimumHeightRequest="500" MinimumWidthRequest="300">
+        <Label Grid.Row="0" Grid.ColumnSpan="4"/>
+
+        <Button Grid.Row="1" Grid.Column="3" Text="Kasuj" HorizontalOptions="Center" VerticalOptions="Center"/>
+        <Button Grid.Row="2" Grid.Column="3" Text="*" HorizontalOptions="Center" VerticalOptions="Center"/>
+        <Button Grid.Row="3" Grid.Column="3" Text="+" HorizontalOptions="Center" VerticalOptions="Center"/>
+        <Button Grid.Row="4" Grid.Column="3" Text="-" HorizontalOptions="Center" VerticalOptions="Center"/>
+
+
+        <Button Grid.Row="1" Grid.Column="2" Text="9" HorizontalOptions="Center" VerticalOptions="Center"/>
+        <Button Grid.Row="1" Grid.Column="1" Text="8" HorizontalOptions="Center" VerticalOptions="Center"/>
+        <Button Grid.Row="1" Grid.Column="0" Text="7" HorizontalOptions="Center" VerticalOptions="Center"/>
+
+        <Button Grid.Row="2" Grid.Column="2" Text="6" HorizontalOptions="Center" VerticalOptions="Center"/>
+        <Button Grid.Row="2" Grid.Column="1" Text="5" HorizontalOptions="Center" VerticalOptions="Center"/>
+        <Button Grid.Row="2" Grid.Column="0" Text="4" HorizontalOptions="Center" VerticalOptions="Center"/>
+
+        <Button Grid.Row="3" Grid.Column="2" Text="3" HorizontalOptions="Center" VerticalOptions="Center"/>
+        <Button Grid.Row="3" Grid.Column="1" Text="2" HorizontalOptions="Center" VerticalOptions="Center"/>
+        <Button Grid.Row="3" Grid.Column="0" Text="1" HorizontalOptions="Center" VerticalOptions="Center"/>
+
+        <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Text="0" HorizontalOptions="Center" VerticalOptions="Center"/>
+        <Button Grid.Row="4" Grid.Column="2" Text="," HorizontalOptions="Center" VerticalOptions="Center"/>
+
+    </Grid>-->
+
+</toolkit:Popup>

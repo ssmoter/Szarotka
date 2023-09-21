@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Inventory.Pages.Products.ListProduct.AddEdit.AddEditProductV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:MVVM="clr-namespace:Inventory.Model.MVVM"
+    xmlns:vm="clr-namespace:Inventory.Pages.Products.ListProduct.AddEdit"
+    Title="{Binding Product.Name.Name}"
+    x:DataType="vm:AddEditProductVM">
+
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior Command="{Binding BackCommand}" />
+    </Shell.BackButtonBehavior>
+
+    <Grid RowDefinitions="*,auto,*,auto">
+
+        <Image Grid.Row="0" Source="{Binding Product.Name.Img}" />
+
+        <Grid Grid.Row="1" RowDefinitions="auto,*">
+            <Entry
+                Grid.Row="0"
+                Placeholder="Nazwa produktu"
+                Text="{Binding Product.Name.Name}" />
+            <Editor
+                Grid.Row="1"
+                Placeholder="Opis"
+                Text="{Binding Product.Name.Description}" />
+        </Grid>
+
+        <Grid Grid.Row="2" RowDefinitions="auto,auto,*,0.01*">
+            <Button
+                Grid.Row="0"
+                Command="{Binding UpdatePriceCommand}"
+                Text="Aktualizuj cene" />
+            <Label
+                Grid.Row="1"
+                HorizontalOptions="Center"
+                Text="Histora cen" />
+
+
+
+            <CollectionView Grid.Row="2" ItemsSource="{Binding Product.Prices}">
+                <CollectionView.Header>
+                    <Grid ColumnDefinitions="*,*">
+                        <Label Grid.Column="0" Text="Data" />
+                        <Label Grid.Column="1" Text="Cena" />
+                    </Grid>
+                </CollectionView.Header>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="2" Padding="2">
+                            <Grid x:DataType="MVVM:ProductPriceM" ColumnDefinitions="*,*">
+                                <Label Grid.Column="0" Text="{Binding Created}" />
+                                <HorizontalStackLayout Grid.Column="1">
+                                    <Label Text="{Binding Price}" />
+                                    <Label Text=" zł" />
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
+        <Grid Grid.Row="3" ColumnDefinitions="*,*">
+            <Button
+                Grid.Column="0"
+                Command="{Binding InsertProductCommand}"
+                IsVisible="{Binding AddEdit.AddP}"
+                Text="Dodaj" />
+            <Button
+                Grid.Column="0"
+                Command="{Binding UpdateProductCommand}"
+                IsVisible="{Binding AddEdit.UpdateP}"
+                Text="Zapisz" />
+            <Button
+                Grid.Column="1"
+                Command="{Binding BackCommand}"
+                Text="Anuluj" />
+        </Grid>
+    </Grid>
+
+
+</ContentPage>

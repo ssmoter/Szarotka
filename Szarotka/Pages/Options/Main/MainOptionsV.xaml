@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Szarotka.Pages.Options.Main.MainOptionsV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:InventoryCreateTableView="clr-namespace:Inventory.Pages.Options.CreateTable;assembly=Inventory"
+    xmlns:VM="clr-namespace:Szarotka.Pages.Options.Main"
+    Title="Opcje"
+    x:DataType="VM:MainOptionsVM">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding GoToLogsCommand}" Text="Logi" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <Grid RowDefinitions="auto,*">
+
+            <Border Grid.Row="0">
+                <VerticalStackLayout>
+                    <Label
+                        FontSize="Large"
+                        HorizontalOptions="Center"
+                        Text="Inventory"
+                        VerticalOptions="Center" />
+
+                    <InventoryCreateTableView:CreateTableV />
+                </VerticalStackLayout>
+            </Border>
+            <VerticalStackLayout Grid.Row="1" />
+        </Grid>
+    </ScrollView>
+
+</ContentPage>

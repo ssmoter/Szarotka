@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Inventory.Pages.Products.ListProduct.ListProductVWindows"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:MVVM="clr-namespace:Inventory.Model.MVVM"
+    xmlns:VM="clr-namespace:Inventory.Pages.Products.ListProduct"
+    Title="Lista produktów"
+    x:DataType="VM:ListProductVM">
+
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding AddProductCommand}" Text="Dodaj" />
+    </ContentPage.ToolbarItems>
+
+
+    <Grid RowDefinitions="*,0.01*">
+        <CollectionView
+            Grid.Row="0"
+            ItemsSource="{Binding ProductMs}"
+            SelectionMode="Single">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="2" Padding="5">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+
+                        <Grid
+                            x:DataType="VM:ListProductM"
+                            ColumnDefinitions="*,*,*,*"
+                            RowDefinitions="*,*,*">
+
+                            <Image
+                                Grid.Row="0"
+                                Grid.RowSpan="4"
+                                Grid.Column="0"
+                                Source="{Binding Name.Img}" />
+
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                FontSize="Medium"
+                                Text="{Binding Name.Name}" />
+
+                            <Label
+                                Grid.Row="1"
+                                Grid.RowSpan="3"
+                                Grid.Column="1"
+                                Text="{Binding Name.Description}" />
+
+
+                            <VerticalStackLayout
+                                Grid.Row="0"
+                                Grid.RowSpan="3"
+                                Grid.Column="2"
+                                VerticalOptions="Center">
+                                <Label Text="Aktualna cena: " />
+                                <HorizontalStackLayout>
+                                    <Label Text="{Binding ActualPrice}" />
+                                    <Label Text="zł" />
+                                </HorizontalStackLayout>
+
+                                <Label Text="Dodana: " />
+                                <Label Text="{Binding ActualCreated}" />
+                            </VerticalStackLayout>
+
+                            <HorizontalStackLayout
+                                Grid.RowSpan="3"
+                                Grid.Column="3"
+                                HorizontalOptions="End"
+                                VerticalOptions="Center">
+                                <Button
+                                    BackgroundColor="Green"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=EditProductCommand}"
+                                    CommandParameter="{Binding .}"
+                                    Text="Edytuj" />
+                                <Button
+                                    BackgroundColor="Red"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DeleteProductCommand}"
+                                    CommandParameter="{Binding .}"
+                                    Text="Usuń" />
+                            </HorizontalStackLayout>
+
+                        </Grid>
+
+
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.EmptyView>
+                <ContentView>
+                    <Button
+                        Command="{Binding GenerateDefaultProductsCommand}"
+                        HorizontalOptions="Center"
+                        Text="Dodaj podstawowe"
+                        VerticalOptions="Center" />
+                </ContentView>
+            </CollectionView.EmptyView>
+
+        </CollectionView>
+
+
+    </Grid>
+
+
+</ContentPage>

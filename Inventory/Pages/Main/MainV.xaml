@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Inventory.Pages.Main.MainV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Inventory.Pages.Main"
+    Title="{Binding Name}"
+    x:DataType="vm:MainVM">
+
+    <VerticalStackLayout
+        Padding="30,0"
+        Spacing="25"
+        VerticalOptions="Start">
+        <Label Text="" />
+        <Button
+            Command="{Binding NavigationToSingleDayCommand}"
+            HorizontalOptions="Center"
+            Text="Aktualny dzień" />
+        <Button
+            Command="{Binding NavigationToRangeCommand}"
+            HorizontalOptions="Center"
+            Text="Wczytaj zakres dni" />
+        <Button
+            Command="{Binding NavigationToEditCommand}"
+            HorizontalOptions="Center"
+            Text="Dodaj/Edytuj product" />
+    </VerticalStackLayout>
+</ContentPage>
