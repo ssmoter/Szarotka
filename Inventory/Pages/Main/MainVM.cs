@@ -1,8 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Inventory.Helper;
-using Inventory.Model.MVVM;
+using Inventory.Service;
 
 namespace Inventory.Pages.Main
 {
@@ -15,10 +14,12 @@ namespace Inventory.Pages.Main
         Model.MVVM.DayM dayM;
 
         readonly DataBase.Data.AccessDataBase _db;
+        readonly Service.ISelectDayService _selectDayService;
 
-        public MainVM(DataBase.Data.AccessDataBase db)
+        public MainVM(DataBase.Data.AccessDataBase db,ISelectDayService selectDay)
         {
             _db = db;
+            _selectDayService = selectDay;
             Name = "wybierz kierowcę";
             Service.DriverNameUpdateService.Update += SetName;
             Task.Run(async () =>
@@ -48,89 +49,36 @@ namespace Inventory.Pages.Main
             Name = Helper.SelectedDriver.Name;
         }
 
-        async Task<DayM> GetDay()
-        {
-            try
-            {
-                await SnackbarAsToats.OnShow("Pobieranie danego dnia ");
-                var DayM = new DayM();
-                Service.ProductUpdatePriceService.EnableUpdate = false;
-                var time = DateTime.Now.ToString("dd.MM.yyyy");
-                var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == time).FirstOrDefaultAsync();
-                DayM = today.ParseAsDayM();
-                await GetProductTable(DayM);
-                await GetCakeTable(DayM);
-                if (today is null)
-                {
-                    DayM.Created = DateTime.Now;
-                }
-                today.ParseAsDayMOnly(DayM);
-                DayM.DriverGuid = Helper.SelectedDriver.Guid;
-                return DayM;
-            }
-            catch (Exception ex)
-            {
-                await _db.SaveLogAsync(ex);
-                throw;
-            }
-            finally
-            {
-                Service.ProductUpdatePriceService.EnableUpdate = true;
-            }
-        }
-        async Task GetProductTable(DayM dayM)
-        {
-            var product = await _db.DataBaseAsync.Table<Model.Product>().Where(x => x.DayId == dayM.Id).ToArrayAsync();
 
-            for (int i = 0; i < product.Length; i++)
-            {
-                int productNameId = product[i].ProductNameId;
-                product[i].Name = await _db.DataBaseAsync.Table<Model.ProductName>().FirstOrDefaultAsync(x => x.Id == productNameId);
-                product[i].Price = await _db.DataBaseAsync.Table<Model.ProductPrice>().OrderByDescending(x => x.Id).FirstOrDefaultAsync(x => x.ProductNameId == productNameId);
 
-                dayM.Products.Add(product[i].ParseAsProductM());
-            }
-
-            if (dayM.Products.Count == 0)
-            {
-                var productName = await _db.DataBaseAsync.Table<Model.ProductName>().ToArrayAsync();
-                for (int i = 0; i < productName.Length; i++)
-                {
-                    int nameId = productName[i].Id;
-                    var price = await _db.DataBaseAsync.Table<Model.ProductPrice>().OrderByDescending(x => x.Id).FirstOrDefaultAsync(x => x.ProductNameId == nameId);
-                    dayM.Products.Add(new ProductM() { Name = productName[i].PareseAsProductNameM(), ProductNameId = productName[i].Id, Price = price.PareseAsProductPriceM() });
-                }
-            }
-        }
-        async Task GetCakeTable(DayM dayM)
-        {
-            var cake = await _db.DataBaseAsync.Table<Model.Cake>().Where(x => x.DayId == dayM.Id).ToArrayAsync();
-            for (int i = 0; i < cake.Length; i++)
-            {
-                dayM.Cakes.Add(cake[i].PareseAsCakeM());
-            }
-
-        }
         #endregion
         #region Command
 
         [RelayCommand]
         async Task NavigationToSingleDay()
         {
-            if (dayM is null)
+            try
             {
-                dayM = await GetDay();
-            }
-            else if (dayM.Created.ToShortDateString() != DateTime.Now.ToShortDateString())
-            {
-                dayM = await GetDay();
-            }
 
-            await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
-                new Dictionary<string, object>()
+                if (dayM is null)
                 {
-                    [nameof(Model.MVVM.DayM)] = dayM
-                });
+                    dayM = await _selectDayService.GetDay();
+                }
+                else if (dayM.Created.ToShortDateString() != DateTime.Now.ToShortDateString())
+                {
+                    dayM = await _selectDayService.GetDay();
+                }
+
+                await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
+                    new Dictionary<string, object>()
+                    {
+                        [nameof(Model.MVVM.DayM)] = dayM
+                    });
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
         }
 
         [RelayCommand]

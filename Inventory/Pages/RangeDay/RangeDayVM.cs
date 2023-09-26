@@ -1,10 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
-using Inventory.Helper;
+using Inventory.Data.File;
+using Inventory.Helper.Parse;
 using Inventory.Model;
 using Inventory.Model.MVVM;
+using Inventory.Service;
 
 using System.Collections.ObjectModel;
+
+using Szarotka.Service;
 
 namespace Inventory.Pages.RangeDay
 {
@@ -22,6 +27,9 @@ namespace Inventory.Pages.RangeDay
         [ObservableProperty]
         string selectedDriverName;
 
+        [ObservableProperty]
+        bool enableSave;
+
         string isSelectedDate;
         public string IsSelectedDate
         {
@@ -33,26 +41,38 @@ namespace Inventory.Pages.RangeDay
                     OnPropertyChanged(nameof(IsSelectedDate));
                     Task.Run(async () =>
                     {
-                        await SelectedDate(IsSelectedDate);
-                        int a;
+                        try
+                        {
+                            await SelectedDate(IsSelectedDate);
+                        }
+                        catch (Exception ex)
+                        {
+                            _db.SaveLog(ex);
+                        }
                     });
                 }
             }
         }
 
-        DataBase.Data.AccessDataBase _db;
-
-        public RangeDayVM(DataBase.Data.AccessDataBase db)
+        readonly DataBase.Data.AccessDataBase _db;
+        readonly ISelectDayService _selectDayService;
+        readonly ISaveDayService _dayService;
+        public RangeDayVM(DataBase.Data.AccessDataBase db, ISelectDayService selectDay, ISaveDayService dayService)
         {
             RangeDays = new ObservableCollection<RangeDayM>();
             TotalPriceOfRange = new DayM();
             _db = db;
-            ragne = new ObservableCollection<string>();
-            ragne.Add("Dzień");
-            ragne.Add("Tydzień");
-            ragne.Add("Miesiąc");
-            ragne.Add("Rok");
-            ragne.Add("Wybierz dzień");
+            _selectDayService = selectDay;
+            ragne = new ObservableCollection<string>
+            {
+                "Dzisiaj",
+                "Tydzień",
+                "Miesiąc",
+                "Rok",
+                //"Wybierz daty"
+            };
+            EnableSave = false;
+            _dayService = dayService;
         }
 
         #region Method
@@ -61,10 +81,9 @@ namespace Inventory.Pages.RangeDay
         {
             try
             {
-
                 switch (range)
                 {
-                    case "Dzień":
+                    case "Dzisiaj":
                         {
                             RangeDays = await SelectToday(SelectedDriverName);
                         }
@@ -92,7 +111,8 @@ namespace Inventory.Pages.RangeDay
                     default:
                         break;
                 }
-                TotalPriceOfRange = SumTotalPriceOfRange(RangeDays);
+                TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
+                EnableSave = false;
             }
             catch (Exception ex)
             {
@@ -114,7 +134,13 @@ namespace Inventory.Pages.RangeDay
             DateTime now = DateTime.Today;
             DayOfWeek startDayOfWeek = DayOfWeek.Monday;
             DateTime startOfWeek = now.AddDays(-(now.DayOfWeek - startDayOfWeek)).Date;
-            DateTime endOfWeek = startOfWeek.AddDays(6).AddHours(23);
+            DateTime endOfWeek = startOfWeek.AddDays(+7).AddHours(-1);
+
+            if (now.DayOfWeek == DayOfWeek.Sunday)
+            {
+                startOfWeek = now.AddDays(-(now.DayOfWeek - startDayOfWeek)).AddDays(-7).Date;
+                endOfWeek = startOfWeek.AddDays(+7).AddHours(-1);
+            }
 
             var from = startOfWeek.ToUniversalTime().Ticks;
             var to = endOfWeek.ToUniversalTime().Ticks;
@@ -124,22 +150,26 @@ namespace Inventory.Pages.RangeDay
         }
         async Task<ObservableCollection<RangeDayM>> SelectMonth(string selectedDriverName = "")
         {
-            var from = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).ToUniversalTime().Ticks;
-            var to = new DateTime(DateTime.Today.AddDays(1).Ticks).ToUniversalTime().Ticks;
+            var from = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1, 2, 0, 0).ToUniversalTime();
+            var to = new DateTime(DateTime.Today.Year, DateTime.Today.AddMonths(1).Month, 1, 2, 0, 0).ToUniversalTime();
 
-            var result = await SelectDays(from, to, selectedDriverName);
+            var result = await SelectDays(from.Ticks, to.Ticks, selectedDriverName);
             return result;
         }
         async Task<ObservableCollection<RangeDayM>> SelectYear(string selectedDriverName = "")
         {
-            var from = new DateTime(DateTime.Today.Year, 1, 1).ToUniversalTime().Ticks;
-            var to = new DateTime(DateTime.Today.AddDays(1).Ticks).ToUniversalTime().Ticks;
+            var from = new DateTime(DateTime.Today.Year, 1, 1, 1, 0, 0).ToUniversalTime();
+            var to = new DateTime(DateTime.Today.AddYears(1).Year, 1, 1, 1, 0, 0).ToUniversalTime();
 
-            var result = await SelectDays(from, to, selectedDriverName);
+            var result = await SelectDays(from.Ticks, to.Ticks, selectedDriverName);
             return result;
         }
         async Task<ObservableCollection<RangeDayM>> SelectMore(string selectedDriverName = "")
         {
+
+            //var popup = new PopupSelectRangeDate.PopupSelectRangeDateV();
+            // Shell.Current?.ShowPopup(popup);
+
             var from = new DateTime().ToUniversalTime().Ticks;
             var to = new DateTime().ToUniversalTime().Ticks;
 
@@ -150,15 +180,19 @@ namespace Inventory.Pages.RangeDay
 
         async Task<ObservableCollection<RangeDayM>> SelectDays(long from, long to, string selectedDriverName = "")
         {
-            Day[] days = new Day[0];
+            Day[] days = Array.Empty<Day>();
             if (string.IsNullOrWhiteSpace(selectedDriverName))
             {
-                days = await _db.DataBaseAsync.Table<Inventory.Model.Day>().Where(x => x.CreatedTicks >= from && x.CreatedTicks <= to).ToArrayAsync();
+                days = await _db.DataBaseAsync.Table<Inventory.Model.Day>().
+                    Where(x => x.CreatedTicks >= from && x.CreatedTicks <= to).
+                    OrderByDescending(x => x.CreatedTicks).ToArrayAsync();
             }
             else
             {
                 var selectedDriver = await _db.DataBaseAsync.Table<Driver>().FirstOrDefaultAsync(x => x.Name == selectedDriverName);
-                days = await _db.DataBaseAsync.Table<Inventory.Model.Day>().Where(x => x.CreatedTicks >= from && x.CreatedTicks <= to && x.DriverGuid == selectedDriver.Guid).ToArrayAsync();
+                days = await _db.DataBaseAsync.Table<Inventory.Model.Day>().
+                    Where(x => x.CreatedTicks >= from && x.CreatedTicks <= to && x.DriverGuid == selectedDriver.Guid).
+                    OrderByDescending(x => x.CreatedTicks).ToArrayAsync();
             }
 
             var dayM = new ObservableCollection<RangeDayM>();
@@ -177,7 +211,7 @@ namespace Inventory.Pages.RangeDay
             return dayM;
         }
 
-        DayM SumTotalPriceOfRange(ObservableCollection<RangeDayM> range)
+        static DayM SumTotalPriceOfRange(ObservableCollection<RangeDayM> range)
         {
             var day = new DayM();
             var lastValue = Service.ProductUpdatePriceService.EnableUpdate;
@@ -195,6 +229,180 @@ namespace Inventory.Pages.RangeDay
             return day;
         }
 
+        async static Task<string> SelectImportExport()
+        {
+            var result = await Shell.Current.CurrentPage.DisplayActionSheet("Wybierz co chcesz wykonać", "Anuluj", null, "Import", "Eksport");
+            return result;
+        }
+
+        static PickOptions FileTypCSV()
+        {
+            var pOptions = new PickOptions();
+            var dictionaryTyp = new Dictionary<DevicePlatform, IEnumerable<string>>
+            {
+                { DevicePlatform.WinUI, new[] { "csv" } },
+                { DevicePlatform.Android, new[] { "csv" } }
+            };
+
+            pOptions.FileTypes = new FilePickerFileType(dictionaryTyp);
+
+            return pOptions;
+        }
+        static PickOptions FileTypJson()
+        {
+            var pOptions = new PickOptions();
+            var dictionaryTyp = new Dictionary<DevicePlatform, IEnumerable<string>>
+            {
+                { DevicePlatform.WinUI, new[] { "json", "txt" } },
+                { DevicePlatform.Android, new[] { "json", "txt" } }
+            };
+
+            pOptions.FileTypes = new FilePickerFileType(dictionaryTyp);
+
+            return pOptions;
+        }
+
+        static string CreateFileName()
+        {
+            return string.Join('_', "Szarotka", DateTime.Now.ToLocalTime().ToString("dd.MM.yyyy"));
+        }
+
         #endregion
+
+        #region Command
+
+        [RelayCommand]
+        async Task OpenDetailpage(RangeDayM rangeDay)
+        {
+            try
+            {
+                rangeDay.DayM = await _selectDayService.GetDay(rangeDay.DayM.Id);
+
+                await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
+                    new Dictionary<string, object>()
+                    {
+                        [nameof(Model.MVVM.DayM)] = rangeDay.DayM
+                    });
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
+
+        [RelayCommand]
+        async Task GenerateJsonFile()
+        {
+            try
+            {
+#if ANDROID
+                if (!await AndroidPermissionService.CheckAllPermissions())
+                {
+                  //  return;
+                }
+#endif
+                var result = await SelectImportExport();
+
+                if (string.IsNullOrWhiteSpace(result))
+                {
+                    return;
+                }
+
+                if (result == "Anuluj")
+                {
+                    return;
+                }
+                if (result == "Import")
+                {
+                    var response = await FilePicker.PickAsync(FileTypJson());
+                    var file = await FileManagerCSVJson.GetFileJson<ObservableCollection<RangeDayM>>(response.FullPath);
+                    RangeDays = file;
+                    TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
+                    EnableSave = true;
+                }
+                if (result == "Eksport")  
+                {
+                    for (int i = 0; i < RangeDays.Count; i++)
+                    {
+                        RangeDays[i].DayM = await _selectDayService.GetDay(RangeDays[i].DayM.Id);
+                    }
+                    var response = await FileManagerCSVJson.SaveFileJson(RangeDays, CreateFileName());
+                    if (response)
+                    {
+                        await Shell.Current.CurrentPage.DisplayAlert("Plik", "Plik został zapisany", "Ok");
+                    }
+                    else
+                    {
+                        await Shell.Current.CurrentPage.DisplayAlert("Plik", "Nie udało się zapisać", "Ok");
+                    }
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
+
+        [RelayCommand]
+        async Task GenerateCSVFile()
+        {
+            try
+            {
+#if ANDROID
+                if (!await AndroidPermissionService.CheckAllPermissions())
+                {
+                    return;
+                }
+#endif
+                var result = await SelectImportExport();
+
+                if (string.IsNullOrWhiteSpace(result))
+                {
+                    return;
+                }
+                if (result == "Anuluj")
+                {
+                    return;
+                }
+                if (result == "Import")
+                {
+                    var response = await FilePicker.PickAsync(FileTypCSV());
+
+                }
+                if (result == "Eksport")
+                {
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
+
+        [RelayCommand]
+        async Task SaveAnotherDriverData()
+        {
+            try
+            {
+                throw new NotImplementedException();
+                for (int i = 0; i < RangeDays.Count; i++)
+                {
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
+
+        #endregion
+
+
     }
 }

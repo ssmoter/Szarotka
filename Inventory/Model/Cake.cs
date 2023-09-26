@@ -5,9 +5,8 @@ namespace Inventory.Model
     public class Cake
     {
         [PrimaryKey]
-        [AutoIncrement]
-        public int Id { get; set; }
-        public int DayId { get; set; }
+        public Guid Id { get; set; }
+        public Guid DayId { get; set; }
         public bool IsSell { get; set; }
         public int Price { get; set; }
         [Ignore]

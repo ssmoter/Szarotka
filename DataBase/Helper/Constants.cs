@@ -7,9 +7,9 @@
             get
             {
 #if WINDOWS
-                return @"Szarotka\InventorySQLite.db3";
+                return @"Szarotka\DataBaseSzarotkaSQLite.db3";
 #else
-                return "InventorySQLite.db3";
+                return "DataBaseSzarotkaSQLite.db3";
 #endif
             }
         }
@@ -28,10 +28,12 @@
             {
 #if WINDOWS
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"Szarotka");
+#elif ANDROID
+                var doc = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDocuments);
+                return Path.Combine(doc.Path);
 #else
-                return "";
+return "";
 #endif
-
             }
         }
         public static string DatabasePath
@@ -40,8 +42,11 @@
             {
 #if WINDOWS
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), DatabaseName);
+#elif ANDROID
+                var doc = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDocuments);
+                return Path.Combine(doc.Path,DatabaseName);
 #else
-                return Path.Combine(FileSystem.Current.AppDataDirectory, DatabaseName);
+return "";
 #endif
 
             }

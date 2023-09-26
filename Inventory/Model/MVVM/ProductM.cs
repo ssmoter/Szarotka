@@ -4,10 +4,10 @@ namespace Inventory.Model.MVVM
 {
     public partial class ProductM : ObservableObject
     {
-        public int Id { get; set; }
-        public int DayId { get; set; }
+        public Guid Id { get; set; }
+        public Guid DayId { get; set; }
 
-        public int ProductNameId { get; set; }
+        public Guid ProductNameId { get; set; }
         [ObservableProperty]
         ProductNameM name;
 
@@ -29,7 +29,7 @@ namespace Inventory.Model.MVVM
                 if (SetProperty(ref priceTotalCorrect, value))
                 {
                     OnPropertyChanged(nameof(PriceTotalCorrect));
-                    calculatePrice();
+                    CalculatePrice();
                 }
             }
         }
@@ -46,7 +46,7 @@ namespace Inventory.Model.MVVM
                 if (SetProperty(ref number, value))
                 {
                     OnPropertyChanged(nameof(Number));
-                    calculatePrice();
+                    CalculatePrice();
                 }
             }
         }
@@ -60,7 +60,7 @@ namespace Inventory.Model.MVVM
                 if (SetProperty(ref numberEdit, value))
                 {
                     OnPropertyChanged(nameof(NumberEdit));
-                    calculatePrice();
+                    CalculatePrice();
                 }
             }
         }
@@ -74,7 +74,7 @@ namespace Inventory.Model.MVVM
                 if (SetProperty(ref numberReturn, value))
                 {
                     OnPropertyChanged(nameof(NumberReturn));
-                    calculatePrice();
+                    CalculatePrice();
                 }
             }
         }
@@ -87,7 +87,7 @@ namespace Inventory.Model.MVVM
             Price = new ProductPriceM();
         }
 
-        void calculatePrice()
+        void CalculatePrice()
         {
             if (Service.ProductUpdatePriceService.EnableUpdate)
             {

@@ -5,9 +5,8 @@ namespace Inventory.Model
     public class ProductPrice
     {
         [PrimaryKey]
-        [AutoIncrement]
-        public int Id { get; set; }
-        public int ProductNameId { get; set; }
+        public Guid Id { get; set; }
+        public Guid ProductNameId { get; set; }
         public int Price { get; set; }
         [Ignore]
         public decimal PriceDecimal

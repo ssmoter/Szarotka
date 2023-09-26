@@ -5,7 +5,7 @@ namespace Inventory.Model.MVVM
     public partial class DriverM : ObservableObject
     {
         [ObservableProperty]
-        int id;
+        Guid id;
         [ObservableProperty]
         string name;
         [ObservableProperty]

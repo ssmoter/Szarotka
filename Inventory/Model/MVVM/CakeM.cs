@@ -4,8 +4,8 @@ namespace Inventory.Model.MVVM
 {
     public partial class CakeM : ObservableObject
     {
-        public int Id { get; set; }
-        public int DayId { get; set; }
+        public Guid Id { get; set; }
+        public Guid DayId { get; set; }
 
         [ObservableProperty]
         decimal price;

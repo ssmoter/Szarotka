@@ -17,7 +17,7 @@ public partial class AddEditProductV : ContentPage
             {
                 await vm.GetPrices(vm.Product.Name.Id);
             });
-            if (vm.Product.Name.Id > 0)
+            if (vm.Product.Name.Id != Guid.Empty)
             {
                 vm.AddEdit.AddP = false;
                 vm.AddEdit.UpdateP = true;

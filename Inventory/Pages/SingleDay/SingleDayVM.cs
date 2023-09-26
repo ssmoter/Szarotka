@@ -2,8 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 
 using Inventory.Helper;
-using Inventory.Model;
+using Inventory.Helper.Parse;
 using Inventory.Model.MVVM;
+using Inventory.Service;
 
 namespace Inventory.Pages.SingleDay
 {
@@ -19,12 +20,13 @@ namespace Inventory.Pages.SingleDay
 
 
         readonly DataBase.Data.AccessDataBase _db;
+        readonly Service.ISaveDayService _saveDay;
 
-
-        public SingleDayVM(DataBase.Data.AccessDataBase db)
+        public SingleDayVM(DataBase.Data.AccessDataBase db, ISaveDayService saveDay)
         {
             Initialize();
             _db = db;
+            _saveDay = saveDay;
         }
 
 
@@ -48,7 +50,7 @@ namespace Inventory.Pages.SingleDay
         async Task<bool> CheckDriver()
         {
             var guid = DayM.DriverGuid;
-            if (DayM.DriverGuid==Guid.Empty)
+            if (DayM.DriverGuid == Guid.Empty)
             {
                 guid = Helper.SelectedDriver.Guid;
             }
@@ -58,6 +60,14 @@ namespace Inventory.Pages.SingleDay
                 return true;
             }
             return false;
+        }
+
+        void FastChangeProduct(ProductM product, int value)
+        {
+            if (product is not null)
+            {
+                product.NumberEdit += value;
+            }
         }
 
         #endregion
@@ -79,120 +89,119 @@ namespace Inventory.Pages.SingleDay
         }
 
         [RelayCommand]
+        void FastAddProduct(ProductM productM)
+        {
+            FastChangeProduct(productM, 1);
+        }
+        [RelayCommand]
+        void FastMinusProduct(ProductM productM)
+        {
+            FastChangeProduct(productM, -1);
+        }
+
+        [RelayCommand]
         async Task SaveDay()
         {
-            if (DayM is not null)
-            {
-                Service.ProductUpdatePriceService.EnableUpdate = false;
-
-                if (await CheckDriver())
-                {
-                    return;
-                }
-
-                DayM.DriverGuid = Helper.SelectedDriver.Guid;
-                var day = DayM.ParseAsDay();
-                if (day.Id <= 0)
-                {
-                    var id = _db.DataBase.Table<Day>().FirstOrDefault(x => x.CreatedDate == day.CreatedDate);
-                    if (id is not null)
-                    {
-                        day.Id = id.Id;
-
-                    }
-                }
-                if (day.Id > 0)
-                {
-                    await _db.DataBaseAsync.UpdateAsync(day);
-                }
-                else
-                {
-                    await _db.DataBaseAsync.InsertAsync(day);
-                }
-
-                for (int i = 0; i < day.Products.Count; i++)
-                {
-                    day.Products[i].DayId = day.Id;
-                    if (day.Products[i].Id > 0)
-                    {
-                        await _db.DataBaseAsync.UpdateAsync(day.Products[i]);
-                    }
-                    else
-                    {
-                        await _db.DataBaseAsync.InsertAsync(day.Products[i]);
-                    }
-                }
-
-                for (int i = 0; i < day.Cakes.Count; i++)
-                {
-                    day.Cakes[i].DayId = day.Id;
-                    if (day.Cakes[i].Id > 0)
-                    {
-                        await _db.DataBaseAsync.UpdateAsync(day.Cakes[i]);
-                    }
-                    else
-                    {
-                        await _db.DataBaseAsync.InsertAsync(day.Cakes[i]);
-                    }
-
-                }
-                DayM = day.ParseAsDayM();
-                await SnackbarAsToats.OnShow("Zapisano");
-                Service.ProductUpdatePriceService.EnableUpdate = true;
-
-            }
+            await _saveDay.SaveDayMAsync(DayM);
         }
 
         [RelayCommand]
         async Task AddCake()
         {
-            if (DayM is null)
+            try
             {
-                return;
+                if (DayM is null)
+                {
+                    return;
+                }
+                if (DayM.Cakes is null)
+                {
+                    return;
+                }
+
+#if __ANDROID_24__
+                var response = await Shell.Current.DisplayPromptAsync("Ciasto", "Podaj cene ciasta", "Tak", "Anuluj", keyboard: Keyboard.Telephone);
+#else
+                var response = await Shell.Current.DisplayPromptAsync("Ciasto", "Podaj cene ciasta", "Tak", "Anuluj", keyboard: Keyboard.Numeric);
+#endif
+
+                if (string.IsNullOrWhiteSpace(response))
+                {
+                    return;
+                }
+                response = response.Replace('.', ',');
+                if (decimal.TryParse(response, out decimal value))
+                {
+                    var cake = new CakeM()
+                    {
+                        IsSell = false,
+                        Price = value,
+                        DayId = DayM.Id,
+                    };
+
+                    DayM.Cakes.Add(cake);
+
+                    await Helper.SnackbarAsToats.OnShow("Dodano ciasto");
+                }
             }
-            if (DayM.Cakes is null)
+            catch (Exception ex)
             {
-                return;
+                _db.SaveLog(ex);
             }
-
-            var response = await Shell.Current.DisplayPromptAsync("Ciasto", "Podaj cene ciasta", "Tak", "Anuluj", keyboard: Keyboard.Numeric);
-            var cake = new CakeM()
-            {
-                IsSell = false,
-                Price = decimal.Parse(response),
-                DayId = DayM.Id,
-            };
-
-            DayM.Cakes.Add(cake);
-
-            await Helper.SnackbarAsToats.OnShow("Dodano ciasto");
         }
 
         [RelayCommand]
-        void DeleteCake(CakeM cake)
+        async Task DeleteCake(CakeM cake)
         {
-            if (DayM is null)
+            try
             {
-                return;
+                if (DayM is null)
+                {
+                    return;
+                }
+                if (DayM.Cakes is null)
+                {
+                    return;
+                }
+
+                await _db.DataBaseAsync.DeleteAsync(cake.PareseAsCake());
+                DayM.Cakes.Remove(cake);
+                Inventory.Service.ProductUpdatePriceService.OnUpdate();
             }
-            if (DayM.Cakes is null)
+            catch (Exception ex)
             {
-                return;
+                _db.SaveLog(ex);
             }
-            DayM.Cakes.Remove(cake);
-            Inventory.Service.ProductUpdatePriceService.OnUpdate();
         }
         [RelayCommand]
         async Task Back()
         {
-            await SaveDay();
-            await Shell.Current.GoToAsync("..?",
-                new Dictionary<string, object>()
-                {
-                    [nameof(Model.MVVM.DayM)] = DayM
-                });
+            try
+            {
+                await SaveDay();
+                await Shell.Current.GoToAsync("..?",
+                    new Dictionary<string, object>()
+                    {
+                        [nameof(Model.MVVM.DayM)] = DayM
+                    });
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
         }
-
+        [RelayCommand]
+        async Task BackWithoutSave()
+        {
+            try
+            {
+                await Shell.Current.GoToAsync("..");
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
         #endregion
     }
 }

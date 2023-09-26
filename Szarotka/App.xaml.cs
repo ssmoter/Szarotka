@@ -1,15 +1,14 @@
-﻿using Szarotka.Service;
-
-namespace Szarotka
+﻿namespace Szarotka
 {
     public partial class App : Application
     {
         public App()
         {
+            var theme = Preferences.Get("Theme", 0);
+            App.Current.UserAppTheme = (AppTheme)theme;
+
             InitializeComponent();
-
             MainPage = new AppShell();
-
         }
     }
 }

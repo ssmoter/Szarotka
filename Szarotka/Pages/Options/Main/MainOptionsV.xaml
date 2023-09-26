@@ -13,20 +13,47 @@
     </ContentPage.ToolbarItems>
 
     <ScrollView>
-        <Grid RowDefinitions="auto,*">
+        <Grid RowDefinitions="auto,*,*">
 
             <Border Grid.Row="0">
                 <VerticalStackLayout>
                     <Label
                         FontSize="Large"
                         HorizontalOptions="Center"
-                        Text="Inventory"
+                        Text="Ogólne"
                         VerticalOptions="Center" />
-
-                    <InventoryCreateTableView:CreateTableV />
+                    <VerticalStackLayout HorizontalOptions="Center">
+                        <Border Padding="5">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10" />
+                            </Border.StrokeShape>
+                            <Picker
+                                Title="Wybierz motyw"
+                                ItemsSource="{Binding Themes}"
+                                SelectedItem="{Binding IsSelectedTheme}" />
+                        </Border>
+                    </VerticalStackLayout>
                 </VerticalStackLayout>
             </Border>
-            <VerticalStackLayout Grid.Row="1" />
+
+            <Border Grid.Row="1">
+                <ScrollView>
+
+                    <VerticalStackLayout>
+                        <Label
+                            FontSize="Large"
+                            HorizontalOptions="Center"
+                            Text="Inventory"
+                            VerticalOptions="Center" />
+
+                        <InventoryCreateTableView:CreateTableV />
+                    </VerticalStackLayout>
+                </ScrollView>
+            </Border>
+
+
+
+
         </Grid>
     </ScrollView>
 

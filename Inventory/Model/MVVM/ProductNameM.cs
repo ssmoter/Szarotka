@@ -4,7 +4,7 @@ namespace Inventory.Model.MVVM
 {
     public partial class ProductNameM : ObservableObject
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         [ObservableProperty]
         string name;
         [ObservableProperty]

@@ -129,31 +129,4 @@
 
     </Grid>
 
-
-    <!--<Grid ColumnDefinitions="*,*,*,*" RowDefinitions="*,*,*,*,*" MinimumHeightRequest="500" MinimumWidthRequest="300">
-        <Label Grid.Row="0" Grid.ColumnSpan="4"/>
-
-        <Button Grid.Row="1" Grid.Column="3" Text="Kasuj" HorizontalOptions="Center" VerticalOptions="Center"/>
-        <Button Grid.Row="2" Grid.Column="3" Text="*" HorizontalOptions="Center" VerticalOptions="Center"/>
-        <Button Grid.Row="3" Grid.Column="3" Text="+" HorizontalOptions="Center" VerticalOptions="Center"/>
-        <Button Grid.Row="4" Grid.Column="3" Text="-" HorizontalOptions="Center" VerticalOptions="Center"/>
-
-
-        <Button Grid.Row="1" Grid.Column="2" Text="9" HorizontalOptions="Center" VerticalOptions="Center"/>
-        <Button Grid.Row="1" Grid.Column="1" Text="8" HorizontalOptions="Center" VerticalOptions="Center"/>
-        <Button Grid.Row="1" Grid.Column="0" Text="7" HorizontalOptions="Center" VerticalOptions="Center"/>
-
-        <Button Grid.Row="2" Grid.Column="2" Text="6" HorizontalOptions="Center" VerticalOptions="Center"/>
-        <Button Grid.Row="2" Grid.Column="1" Text="5" HorizontalOptions="Center" VerticalOptions="Center"/>
-        <Button Grid.Row="2" Grid.Column="0" Text="4" HorizontalOptions="Center" VerticalOptions="Center"/>
-
-        <Button Grid.Row="3" Grid.Column="2" Text="3" HorizontalOptions="Center" VerticalOptions="Center"/>
-        <Button Grid.Row="3" Grid.Column="1" Text="2" HorizontalOptions="Center" VerticalOptions="Center"/>
-        <Button Grid.Row="3" Grid.Column="0" Text="1" HorizontalOptions="Center" VerticalOptions="Center"/>
-
-        <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Text="0" HorizontalOptions="Center" VerticalOptions="Center"/>
-        <Button Grid.Row="4" Grid.Column="2" Text="," HorizontalOptions="Center" VerticalOptions="Center"/>
-
-    </Grid>-->
-
 </toolkit:Popup>

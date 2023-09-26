@@ -7,7 +7,7 @@ namespace Inventory.Model.MVVM
 
     public partial class DayM : ObservableObject
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public Guid DriverGuid { get; set; }
 

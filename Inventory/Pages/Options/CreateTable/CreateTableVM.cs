@@ -31,7 +31,17 @@ namespace Inventory.Pages.Options.CreateTable
             };
 
             this._db = dataBase;
-            Task.Run(async () => { await CheckTables(); });
+            Task.Run(async () =>
+            {
+                try
+                {
+                    await CheckTables();
+                }
+                catch (Exception ex)
+                {
+                    _db.SaveLog(ex);
+                }
+            });
         }
 
         #region Command
@@ -40,57 +50,75 @@ namespace Inventory.Pages.Options.CreateTable
         [RelayCommand]
         async Task CreateTables()
         {
-            if (_db is null)
+            try
             {
-                return;
-            }
 
-            var response = await Shell.Current.DisplayAlert("Generowanie tabeli", "Przy generowaniu tabeli poprzednie tabele zostają usunięte", "Tak", "Nie");
-            if (!response)
+                if (_db is null)
+                {
+                    return;
+                }
+
+                var response = await Shell.Current.DisplayAlert("Generowanie tabeli", "Przy generowaniu tabeli poprzednie tabele zostają usunięte", "Tak", "Nie");
+                if (!response)
+                {
+                    return;
+                }
+
+                await _db.DataBaseAsync.DropTableAsync<Inventory.Model.Driver>();
+                await _db.DataBaseAsync.DropTableAsync<Inventory.Model.SelectedDriver>();
+                await _db.DataBaseAsync.DropTableAsync<Inventory.Model.ProductName>();
+                await _db.DataBaseAsync.DropTableAsync<Inventory.Model.ProductPrice>();
+                await _db.DataBaseAsync.DropTableAsync<Inventory.Model.Product>();
+                await _db.DataBaseAsync.DropTableAsync<Inventory.Model.Cake>();
+                await _db.DataBaseAsync.DropTableAsync<Inventory.Model.Day>();
+
+                await CheckTables();
+
+                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Driver>();
+                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.SelectedDriver>();
+                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.ProductName>();
+                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.ProductPrice>();
+                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Product>();
+                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Cake>();
+                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Day>();
+
+
+                await CheckTables();
+
+            }
+            catch (Exception ex)
             {
-                return;
+                _db.SaveLog(ex);
             }
-
-            await _db.DataBaseAsync.DropTableAsync<Inventory.Model.Driver>();
-            await _db.DataBaseAsync.DropTableAsync<Inventory.Model.SelectedDriver>();
-            await _db.DataBaseAsync.DropTableAsync<Inventory.Model.ProductName>();
-            await _db.DataBaseAsync.DropTableAsync<Inventory.Model.ProductPrice>();
-            await _db.DataBaseAsync.DropTableAsync<Inventory.Model.Product>();
-            await _db.DataBaseAsync.DropTableAsync<Inventory.Model.Cake>();
-            await _db.DataBaseAsync.DropTableAsync<Inventory.Model.Day>();
-
-            await CheckTables();
-
-            await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Driver>();
-            await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.SelectedDriver>();
-            await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.ProductName>();
-            await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.ProductPrice>();
-            await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Product>();
-            await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Cake>();
-            await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Day>();
-
-
-            await CheckTables();
 
         }
         [RelayCommand]
         async Task CreateNewTables()
         {
-            if (_db is null)
+            try
             {
-                return;
+
+                if (_db is null)
+                {
+                    return;
+                }
+                await CheckTables();
+
+                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Driver>();
+                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.SelectedDriver>();
+                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.ProductName>();
+                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.ProductPrice>();
+                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Product>();
+                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Cake>();
+                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Day>();
+
+                await CheckTables();
+
             }
-            await CheckTables();
-
-            await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Driver>();
-            await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.SelectedDriver>();
-            await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.ProductName>();
-            await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.ProductPrice>();
-            await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Product>();
-            await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Cake>();
-            await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Day>();
-
-            await CheckTables();
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
 
         }
 
@@ -109,6 +137,7 @@ namespace Inventory.Pages.Options.CreateTable
                 {
                     var driver = new Driver()
                     {
+                        Id = Guid.NewGuid(),
                         Guid = Guid.NewGuid(),
                         Name = response,
                     };
@@ -120,44 +149,53 @@ namespace Inventory.Pages.Options.CreateTable
             }
             catch (Exception ex)
             {
-                await _db.SaveLogAsync(ex);
+                _db.SaveLog(ex);
             }
         }
         [RelayCommand]
         async Task SelectDrive()
         {
-            if (_db is null)
+            try
             {
-                return;
-            }
-            if (TableMs.FirstOrDefault(x => x.RealTableName == nameof(Driver)).IsExist)
-            {
-                var driver = await _db.DataBaseAsync.Table<Driver>().ToArrayAsync();
 
-                if (driver.Length == 0)
-                {
-                    await Shell.Current.DisplayAlert("Kierowcy", "Nie dodano żadnego kierowcy", "Ok");
-                    return;
-                }
-
-                var selected = await Shell.Current.DisplayActionSheet("Dostępni kierowcy", "Anuluj", null, driver.Select(x => x.Name).ToArray());
-                if (selected == "Anuluj")
+                if (_db is null)
                 {
                     return;
                 }
-
-                if (!string.IsNullOrWhiteSpace(selected))
+                if (TableMs.FirstOrDefault(x => x.RealTableName == nameof(Driver)).IsExist)
                 {
-                    var selectedDriver = driver.FirstOrDefault(x => x.Name == selected);
-                    Helper.SelectedDriver.Id = selectedDriver.Id;
-                    Helper.SelectedDriver.Name = selectedDriver.Name;
-                    Helper.SelectedDriver.Description = selectedDriver.Description;
-                    Helper.SelectedDriver.Guid = selectedDriver.Guid;
-                    await _db.DataBaseAsync.InsertOrReplaceAsync(new Model.SelectedDriver() { Id = 1, SelectedGuid = selectedDriver.Guid });
-                    Service.DriverNameUpdateService.OnUpdate();
-                }
+                    var driver = await _db.DataBaseAsync.Table<Driver>().ToArrayAsync();
 
+                    if (driver.Length == 0)
+                    {
+                        await Shell.Current.DisplayAlert("Kierowcy", "Nie dodano żadnego kierowcy", "Ok");
+                        return;
+                    }
+
+                    var selected = await Shell.Current.DisplayActionSheet("Dostępni kierowcy", "Anuluj", null, driver.Select(x => x.Name).ToArray());
+                    if (selected == "Anuluj")
+                    {
+                        return;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(selected))
+                    {
+                        var selectedDriver = driver.FirstOrDefault(x => x.Name == selected);
+                        Helper.SelectedDriver.Id = selectedDriver.Id;
+                        Helper.SelectedDriver.Name = selectedDriver.Name;
+                        Helper.SelectedDriver.Description = selectedDriver.Description;
+                        Helper.SelectedDriver.Guid = selectedDriver.Guid;
+                        await _db.DataBaseAsync.InsertOrReplaceAsync(new Model.SelectedDriver() { Id = 1, SelectedGuid = selectedDriver.Guid });
+                        Service.DriverNameUpdateService.OnUpdate();
+                    }
+
+                }
             }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+
         }
         #endregion
 

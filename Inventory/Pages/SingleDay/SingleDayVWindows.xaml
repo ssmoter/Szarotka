@@ -12,8 +12,10 @@
     <Shell.BackButtonBehavior>
         <BackButtonBehavior Command="{Binding BackCommand}" />
     </Shell.BackButtonBehavior>
+
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding SaveDayCommand}" Text="Zapisz" />
+        <ToolbarItem Command="{Binding BackWithoutSaveCommand}" Text="Anuluj" />
     </ContentPage.ToolbarItems>
 
     <Grid RowDefinitions="auto,auto,*">

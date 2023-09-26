@@ -20,15 +20,11 @@ namespace DataBase.Data
             Task.Run(async () =>
             {
 
-
-#if WINDOWS
                 if (!System.IO.Directory.Exists(Constants.GetPathFolder))
                 {
-                    System.IO.Directory.CreateDirectory(Constants.GetPathFolder);                    
+                    System.IO.Directory.CreateDirectory(Constants.GetPathFolder);
                 }
-#else
 
-#endif
                 var tableInfo = await DataBaseAsync.GetTableInfoAsync(nameof(Model.LogsModel));
                 bool exist = tableInfo.Count > 0;
                 if (!exist)
@@ -46,7 +42,11 @@ namespace DataBase.Data
                 Message = ex.Message,
                 StackTrace = ex.StackTrace
             };
+
             DataBase.Insert(log);
+
+            Shell.Current.CurrentPage.DisplayAlert("Error", ex.Message, "Ok");
+
         }
 
         public async Task SaveLogAsync(Exception ex)
@@ -58,6 +58,7 @@ namespace DataBase.Data
                 StackTrace = ex.StackTrace,
             };
             await DataBaseAsync.InsertAsync(log);
+            await Shell.Current.CurrentPage.DisplayAlert("Error", ex.Message, "Ok");
         }
 
     }

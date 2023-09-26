@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Inventory.Helper;
+using Inventory.Helper.Parse;
 using Inventory.Model;
 
 using System.Collections.ObjectModel;
@@ -35,9 +35,9 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             _db = db;
         }
 
-        public async Task GetPrices(int id)
+        public async Task GetPrices(Guid id)
         {
-            var priceM = await _db.DataBaseAsync.Table<Model.ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(x=>x.Id).ToArrayAsync();
+            var priceM = await _db.DataBaseAsync.Table<Model.ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(x => x.Id).ToArrayAsync();
             Product.Prices.Clear();
             for (int i = 0; i < priceM.Length; i++)
             {
@@ -47,79 +47,116 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
 
         #region Command
         [RelayCommand]
-        async static Task Back()
+        async Task Back()
         {
-            await Inventory.Service.ProductsUpdateService.OnUpdate();
-            await Shell.Current.GoToAsync("..");
+            try
+            {
+
+                await Inventory.Service.ProductsUpdateService.OnUpdate();
+                await Shell.Current.GoToAsync("..");
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
         }
 
         [RelayCommand]
         async Task UpdateProduct()
         {
-            var productName = new Model.ProductName()
+            try
             {
-                Id = Product.Name.Id,
-                Name = Product.Name.Name,
-                Description = Product.Name.Description,
-                Img = Product.Name.Img,
-            };
-            productName.Img = "chleb.png";
-            await _db.DataBaseAsync.UpdateAsync(productName);
+                var productName = new Model.ProductName()
+                {
+                    Id = Product.Name.Id,
+                    Name = Product.Name.Name,
+                    Description = Product.Name.Description,
+                    Img = Product.Name.Img,
+                };
+                productName.Img = "chleb.png";
+                await _db.DataBaseAsync.UpdateAsync(productName);
 
-            await Shell.Current.DisplayAlert("Aktualizacja", $"Produkt {Product.Name.Name} został zaktualizowany", "Ok");
+                await Shell.Current.DisplayAlert("Aktualizacja", $"Produkt {Product.Name.Name} został zaktualizowany", "Ok");
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
         }
 
 
         [RelayCommand]
         async Task InsertProduct()
         {
-            var productName = new Model.ProductName()
+            try
             {
-                Name = Product.Name.Name,
-                Description = Product.Name.Description,
-                Img = Product.Name.Img,
-            };
-            productName.Img = "chleb.png";
-            await _db.DataBaseAsync.InsertAsync(productName);
-            var id = await _db.DataBaseAsync.Table<ProductName>().Where(x => x.Name == productName.Name).FirstOrDefaultAsync();
-            Product.Name = id.PareseAsProductNameM();
-            await Shell.Current.DisplayAlert("Dodany", $"Produkt {Product.Name.Name} został dodany", "Ok");
-            AddEdit.AddP = false;
-            AddEdit.UpdateP = true;
+
+                var productName = new Model.ProductName()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = Product.Name.Name,
+                    Description = Product.Name.Description,
+                    Img = Product.Name.Img,
+                };
+                productName.Img = "chleb.png";
+                await _db.DataBaseAsync.InsertAsync(productName);
+                var id = await _db.DataBaseAsync.Table<ProductName>().Where(x => x.Name == productName.Name).FirstOrDefaultAsync();
+                Product.Name = id.PareseAsProductNameM();
+                await Shell.Current.DisplayAlert("Dodany", $"Produkt {Product.Name.Name} został dodany", "Ok");
+                AddEdit.AddP = false;
+                AddEdit.UpdateP = true;
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
         }
 
 
         [RelayCommand]
         async Task UpdatePrice()
         {
-            if (Product.Name.Id < 1)
+            try
             {
-                await Shell.Current.DisplayAlert("Uwaga", "Aby dodać cenę wcześniej musisz utworzyć produkt", "Ok");
-                return;
-            }
-            var result = await Shell.Current.DisplayPromptAsync
-                ("Nowa cena", $"Dodaj nową cenę do {Product.Name.Name}", "Tak", "Nie", keyboard: Keyboard.Numeric);
 
-            if (string.IsNullOrWhiteSpace(result))
-            {
-                return;
-            }
-
-            if (decimal.TryParse(result, out decimal price))
-            {
-                Model.ProductPrice newPrice = new()
+                if (Product.Name.Id == Guid.Empty)
                 {
-                    CreatedDateTime = DateTime.Now,
-                    PriceDecimal = price,
-                    ProductNameId = Product.Name.Id
-                };
-                await _db.DataBaseAsync.InsertAsync(newPrice);
-                await GetPrices(Product.Name.Id);
+                    await Shell.Current.DisplayAlert("Uwaga", "Aby dodać cenę wcześniej musisz utworzyć produkt", "Ok");
+                    return;
+                }
+
+#if __ANDROID_24__
+                var result = await Shell.Current.DisplayPromptAsync
+                    ("Nowa cena", $"Dodaj nową cenę do {Product.Name.Name}", "Tak", "Nie", keyboard: Keyboard.Telephone);
+#else
+                var result = await Shell.Current.DisplayPromptAsync
+                    ("Nowa cena", $"Dodaj nową cenę do {Product.Name.Name}", "Tak", "Nie", keyboard: Keyboard.Numeric);
+#endif
+                if (string.IsNullOrWhiteSpace(result))
+                {
+                    return;
+                }
+
+                if (decimal.TryParse(result, out decimal price))
+                {
+                    Model.ProductPrice newPrice = new()
+                    {
+                        CreatedDateTime = DateTime.Now,
+                        PriceDecimal = price,
+                        ProductNameId = Product.Name.Id
+                    };
+                    await _db.DataBaseAsync.InsertAsync(newPrice);
+                    await GetPrices(Product.Name.Id);
+                }
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
             }
         }
     }
 
-    #endregion
+#endregion
 
 
 }
