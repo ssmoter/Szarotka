@@ -41,6 +41,9 @@
 	  <MauiXaml Update="Pages\Products\ListProduct\ListProductVWindows.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\RangeDay\ExistingFiles\ExistingFilesV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\RangeDay\PopupSelectRangeDate\PopupSelectRangeDateV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

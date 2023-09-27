@@ -18,12 +18,6 @@ namespace Inventory.Model
             get
             {
                 return new DateTime(CreatedTicks).ToLocalTime();
-                //var time = parseTime(CreatedTime);
-                // var day = parseDate(CreatedDate);
-
-                //DateTime total = new DateTime(day.Item3, day.Item2, day.Item1, time.Item1, time.Item2, time.Item3);
-
-                //return total;
             }
             set
             {

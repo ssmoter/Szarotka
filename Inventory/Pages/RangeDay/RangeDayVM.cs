@@ -13,6 +13,7 @@ using Szarotka.Service;
 
 namespace Inventory.Pages.RangeDay
 {
+    [QueryProperty(nameof(FilesPath), nameof(FilesPath))]
     public partial class RangeDayVM : ObservableObject
     {
         [ObservableProperty]
@@ -29,6 +30,34 @@ namespace Inventory.Pages.RangeDay
 
         [ObservableProperty]
         bool enableSave;
+
+        string filesPath;
+        public string FilesPath
+        {
+            set
+            {
+                if (value is not null)
+                {
+                    filesPath = value;
+                    var extension = Path.GetExtension(filesPath);
+                    if (extension == FileManagerCSVJson.jsonTyp)
+                    {
+                        Task.Run(async () =>
+                        {
+                            RangeDays = await FileManagerCSVJson.GetFileJson<ObservableCollection<RangeDayM>>(filesPath);
+                            TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
+                        });
+                    }
+                    if (extension == FileManagerCSVJson.csvTyp)
+                    {
+                        RangeDays = FileManagerCSVJson.GetFileCSV(filesPath);
+                        TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
+                    }
+
+                    EnableSave = true;
+                }
+            }
+        }
 
         string isSelectedDate;
         public string IsSelectedDate
@@ -229,9 +258,15 @@ namespace Inventory.Pages.RangeDay
             return day;
         }
 
-        async static Task<string> SelectImportExport()
+        async static Task<string> SelectImportExport(string type)
         {
-            var result = await Shell.Current.CurrentPage.DisplayActionSheet("Wybierz co chcesz wykonać", "Anuluj", null, "Import", "Eksport");
+#if WINDOWS
+            var result = await Shell.Current.CurrentPage.DisplayActionSheet($"Wybierz co chcesz{Environment.NewLine}wykonać z plikami {type}",
+            "Anuluj", null, "Import", "Eksport");
+#else
+            var result = await Shell.Current.CurrentPage.DisplayActionSheet($"Wybierz co chcesz{Environment.NewLine}wykonać z plikami {type}",
+                "Anuluj", null, "Import", "Eksport", "Pliki");
+#endif
             return result;
         }
 
@@ -262,9 +297,30 @@ namespace Inventory.Pages.RangeDay
             return pOptions;
         }
 
-        static string CreateFileName()
+        string CreateFileName()
         {
-            return string.Join('_', "Szarotka", DateTime.Now.ToLocalTime().ToString("dd.MM.yyyy"));
+            if (RangeDays.Count == 1)
+            {
+                return string.Join('_', "Szarotka", RangeDays[0].DayM.Created.ToString("dd.MM.yyyy"));
+            }
+            var from = RangeDays.FirstOrDefault().DayM.Created.ToString("dd.MM.yyyy");
+            var to = RangeDays.LastOrDefault().DayM.Created.ToString("dd.MM.yyyy");
+            return string.Join('_', "Szarotka", from, to);
+        }
+
+        ObservableCollection<ExistingFiles.ExistingFilesM> GetExistingFiles(IList<string> values)
+        {
+            var response = new ObservableCollection<ExistingFiles.ExistingFilesM>();
+            for (int i = 0; i < values.Count; i++)
+            {
+                response.Add(new ExistingFiles.ExistingFilesM()
+                {
+                    Path = values[i],
+                    Name = Path.GetFileName(values[i])
+                });
+
+            }
+            return response;
         }
 
         #endregion
@@ -298,10 +354,10 @@ namespace Inventory.Pages.RangeDay
 #if ANDROID
                 if (!await AndroidPermissionService.CheckAllPermissions())
                 {
-                  //  return;
+                    return;
                 }
 #endif
-                var result = await SelectImportExport();
+                var result = await SelectImportExport("Json");
 
                 if (string.IsNullOrWhiteSpace(result))
                 {
@@ -315,28 +371,36 @@ namespace Inventory.Pages.RangeDay
                 if (result == "Import")
                 {
                     var response = await FilePicker.PickAsync(FileTypJson());
+                    if (response == null)
+                        return;
                     var file = await FileManagerCSVJson.GetFileJson<ObservableCollection<RangeDayM>>(response.FullPath);
                     RangeDays = file;
                     TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
                     EnableSave = true;
                 }
-                if (result == "Eksport")  
+                if (result == "Eksport")
                 {
                     for (int i = 0; i < RangeDays.Count; i++)
                     {
                         RangeDays[i].DayM = await _selectDayService.GetDay(RangeDays[i].DayM.Id);
                     }
-                    var response = await FileManagerCSVJson.SaveFileJson(RangeDays, CreateFileName());
-                    if (response)
+                    var name = CreateFileName();
+                    var response = await FileManagerCSVJson.SaveFileJson(RangeDays, name);
+                    await Share.Default.RequestAsync(new ShareFileRequest
                     {
-                        await Shell.Current.CurrentPage.DisplayAlert("Plik", "Plik został zapisany", "Ok");
-                    }
-                    else
-                    {
-                        await Shell.Current.CurrentPage.DisplayAlert("Plik", "Nie udało się zapisać", "Ok");
-                    }
+                        Title = name,
+                        File = new ShareFile(response)
+                    });
                 }
-
+                if (result == "Pliki")
+                {
+                    var files = FileManagerCSVJson.GetFilesPaths(FileManagerCSVJson.JsonFolder);
+                    await Shell.Current.GoToAsync($"{nameof(ExistingFiles.ExistingFilesV)}?GetTyp={FileManagerCSVJson.JsonFolder}",
+                        new Dictionary<string, object>
+                        {
+                            [nameof(ExistingFiles.ExistingFilesM)] = GetExistingFiles(files)
+                        }); ;
+                }
 
             }
             catch (Exception ex)
@@ -356,7 +420,7 @@ namespace Inventory.Pages.RangeDay
                     return;
                 }
 #endif
-                var result = await SelectImportExport();
+                var result = await SelectImportExport("CSV");
 
                 if (string.IsNullOrWhiteSpace(result))
                 {
@@ -369,13 +433,36 @@ namespace Inventory.Pages.RangeDay
                 if (result == "Import")
                 {
                     var response = await FilePicker.PickAsync(FileTypCSV());
-
+                    if (response == null)
+                        return;
+                    var file = FileManagerCSVJson.GetFileCSV(response.FullPath);
+                    RangeDays = file;
+                    TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
+                    EnableSave = true;
                 }
                 if (result == "Eksport")
                 {
-
+                    for (int i = 0; i < RangeDays.Count; i++)
+                    {
+                        RangeDays[i].DayM = await _selectDayService.GetDay(RangeDays[i].DayM.Id);
+                    }
+                    var name = CreateFileName();
+                    var response = FileManagerCSVJson.SaveFileCSV(RangeDays, name);
+                    await Share.Default.RequestAsync(new ShareFileRequest
+                    {
+                        Title = name,
+                        File = new ShareFile(response)
+                    });
                 }
-
+                if (result == "Pliki")
+                {
+                    var files = FileManagerCSVJson.GetFilesPaths(FileManagerCSVJson.CsvFolder);
+                    await Shell.Current.GoToAsync($"{nameof(ExistingFiles.ExistingFilesV)}?GetTyp={FileManagerCSVJson.CsvFolder}",
+                        new Dictionary<string, object>
+                        {
+                            [nameof(ExistingFiles.ExistingFilesM)] = GetExistingFiles(files)
+                        }); ;
+                }
 
             }
             catch (Exception ex)
@@ -389,11 +476,11 @@ namespace Inventory.Pages.RangeDay
         {
             try
             {
-                throw new NotImplementedException();
                 for (int i = 0; i < RangeDays.Count; i++)
                 {
-                    
+                    await Task.Delay(1);
                 }
+                throw new NotImplementedException();
             }
             catch (Exception ex)
             {

@@ -11,15 +11,20 @@ namespace Inventory.Pages.Main
         [ObservableProperty]
         string name;
 
+        [ObservableProperty]
+        MainM mainM;
+
+
         Model.MVVM.DayM dayM;
 
         readonly DataBase.Data.AccessDataBase _db;
         readonly Service.ISelectDayService _selectDayService;
 
-        public MainVM(DataBase.Data.AccessDataBase db,ISelectDayService selectDay)
+        public MainVM(DataBase.Data.AccessDataBase db, ISelectDayService selectDay)
         {
             _db = db;
             _selectDayService = selectDay;
+            MainM=new MainM();
             Name = "wybierz kierowcę";
             Service.DriverNameUpdateService.Update += SetName;
             Task.Run(async () =>
@@ -59,7 +64,6 @@ namespace Inventory.Pages.Main
         {
             try
             {
-
                 if (dayM is null)
                 {
                     dayM = await _selectDayService.GetDay();
@@ -92,6 +96,31 @@ namespace Inventory.Pages.Main
         {
             await Shell.Current.GoToAsync(nameof(Inventory.Pages.Products.ListProduct.ListProductV));
         }
+
+        [RelayCommand]
+        async Task NavigationToSingleDayWitchSelectedDay()
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(MainM.DisplyDate))
+                {
+                    return;
+                }
+
+                dayM = await _selectDayService.GetDay(MainM.Date);
+
+                await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
+                    new Dictionary<string, object>()
+                    {
+                        [nameof(Model.MVVM.DayM)] = dayM
+                    });
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
+
 
         #endregion
     }

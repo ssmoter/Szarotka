@@ -1,4 +1,6 @@
-﻿namespace DataBase.Helper
+﻿using System.Globalization;
+
+namespace DataBase.Helper
 {
     public class Constants
     {
@@ -51,5 +53,8 @@ return "";
 
             }
         }
+
+        public static CultureInfo CultureInfo = new CultureInfo("pl");
+
     }
 }

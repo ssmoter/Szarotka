@@ -30,6 +30,9 @@ namespace Inventory.Service
             services.AddSingleton<Pages.RangeDay.RangeDayVWindows>();
 
 #else
+            services.AddSingleton<Pages.RangeDay.ExistingFiles.ExistingFilesV>();
+            services.AddSingleton<Pages.RangeDay.ExistingFiles.ExistingFilesVM>();
+
             services.AddSingleton<Pages.RangeDay.RangeDayV>();
             services.AddSingleton<Pages.SingleDay.SingleDayV>();
             services.AddSingleton<Pages.Products.ListProduct.ListProductV>();

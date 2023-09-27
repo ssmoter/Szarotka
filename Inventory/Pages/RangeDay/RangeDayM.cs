@@ -2,8 +2,6 @@
 
 using Inventory.Model.MVVM;
 
-using System.Collections.ObjectModel;
-
 namespace Inventory.Pages.RangeDay
 {
     public partial class RangeDayM : ObservableObject
@@ -11,12 +9,12 @@ namespace Inventory.Pages.RangeDay
         [ObservableProperty]
         DayM dayM;
         [ObservableProperty]
-        DriverM driver;        
+        DriverM driver;
 
         public RangeDayM()
         {
-            DayM=new DayM();
-            Driver=new DriverM();
+            DayM = new DayM();
+            Driver = new DriverM();
         }
     }
 

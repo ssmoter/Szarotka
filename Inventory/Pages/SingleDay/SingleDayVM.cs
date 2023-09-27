@@ -130,7 +130,7 @@ namespace Inventory.Pages.SingleDay
                     return;
                 }
                 response = response.Replace('.', ',');
-                if (decimal.TryParse(response, out decimal value))
+                if (decimal.TryParse(response, DataBase.Helper.Constants.CultureInfo, out decimal value))
                 {
                     var cake = new CakeM()
                     {

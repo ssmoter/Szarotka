@@ -15,6 +15,36 @@ namespace Inventory.Service
             _db = db;
         }
 
+        public async Task<DayM> GetDay(DateTime createdDate)
+        {
+            try
+            {
+                await SnackbarAsToats.OnShow("Pobieranie danego dnia ");
+                var DayM = new DayM();
+                Service.ProductUpdatePriceService.EnableUpdate = false;
+                var createdString = createdDate.ToString("dd.MM.yyyy");
+                var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == createdString).FirstOrDefaultAsync();
+                DayM = today.ParseAsDayM();
+                await GetProductTable(DayM);
+                await GetCakeTable(DayM);
+                if (today is null)
+                {
+                    DayM.Created = createdDate;
+                }
+                DayM.DriverGuid = Helper.SelectedDriver.Guid;
+                return DayM;
+            }
+            catch (Exception ex)
+            {
+                await _db.SaveLogAsync(ex);
+                throw;
+            }
+            finally
+            {
+                Service.ProductUpdatePriceService.EnableUpdate = true;
+            }
+        }
+
         public async Task<DayM> GetDay(string createdDate)
         {
             try
@@ -28,7 +58,7 @@ namespace Inventory.Service
                 await GetCakeTable(DayM);
                 if (today is null)
                 {
-                    DayM.Created = DateTime.Now;
+                    DayM.Created = DateTime.Parse(createdDate, DataBase.Helper.Constants.CultureInfo);
                 }
                 DayM.DriverGuid = Helper.SelectedDriver.Guid;
                 return DayM;
@@ -94,7 +124,7 @@ namespace Inventory.Service
             }
             catch (Exception ex)
             {
-                await _db.SaveLogAsync(ex);
+                _db.SaveLog(ex);
                 throw;
             }
             finally

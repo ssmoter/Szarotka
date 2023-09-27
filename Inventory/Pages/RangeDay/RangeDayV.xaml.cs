@@ -7,4 +7,8 @@ public partial class RangeDayV : ContentPage
         InitializeComponent();
         BindingContext = vm;
     }
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+    }
 }

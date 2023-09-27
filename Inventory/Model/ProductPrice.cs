@@ -26,11 +26,11 @@ namespace Inventory.Model
         {
             get
             {
-                return DateTime.Parse(Created);
+                return DateTime.Parse(Created, DataBase.Helper.Constants.CultureInfo);
             }
             set
             {
-                Created = value.ToString();
+                Created = value.ToString(DataBase.Helper.Constants.CultureInfo);
             }
         }
 

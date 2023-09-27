@@ -24,5 +24,17 @@
             Command="{Binding NavigationToEditCommand}"
             HorizontalOptions="Center"
             Text="Dodaj/Edytuj product" />
+
+        <Border HorizontalOptions="Center">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10" />
+            </Border.StrokeShape>
+            <VerticalStackLayout>
+                <DatePicker Date="{Binding MainM.Date}" HorizontalOptions="Center" />
+                <Label Text="Wczytaj wybraną date" />
+                <Button Command="{Binding NavigationToSingleDayWitchSelectedDayCommand}" Text="{Binding MainM.DisplyDate}" />
+            </VerticalStackLayout>
+        </Border>
+
     </VerticalStackLayout>
 </ContentPage>

@@ -1,23 +1,30 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
+using CsvHelper.Configuration.Attributes;
+
 using System.Collections.ObjectModel;
 
 namespace Inventory.Model.MVVM
 {
 
-    public partial class DayM : ObservableObject
+    public partial class DayM : ObservableObject, IDisposable
     {
+        [Name("DzieńId")]
         public Guid Id { get; set; }
 
+        [Name("DzieńKierowcaId")]
         public Guid DriverGuid { get; set; }
 
         [ObservableProperty]
+        [Name("DzieńOpis")]
         string description;
 
         [ObservableProperty]
+        [Name("DzieńStowrzono")]
         DateTime created;
 
         decimal totalPriceProduct;
+        [Name("DzieńUtargProdukty")]
         public decimal TotalPriceProduct
         {
             get => totalPriceProduct;
@@ -32,6 +39,7 @@ namespace Inventory.Model.MVVM
         }
 
         decimal totalPriceCake;
+        [Name("DzieńUtargCiasto")]
         public decimal TotalPriceCake
         {
             get => totalPriceCake;
@@ -45,9 +53,11 @@ namespace Inventory.Model.MVVM
             }
         }
         [ObservableProperty]
+        [Name("DzieńUtargSuma")]
         decimal totalPrice;
 
         decimal totalPriceCorrect;
+        [Name("DzieńUtargKorekta")]
         public decimal TotalPriceCorrect
         {
             get => totalPriceCorrect;
@@ -62,6 +72,7 @@ namespace Inventory.Model.MVVM
         }
 
         decimal totalPriceMoney;
+        [Name("DzieńUtargPieniądze")]
         public decimal TotalPriceMoney
         {
             get => totalPriceMoney;
@@ -75,12 +86,13 @@ namespace Inventory.Model.MVVM
             }
         }
 
-
         [ObservableProperty]
+        [Name("DzieńUtagRóżnica")]
         decimal totalPriceDifference;
 
 
         [ObservableProperty]
+        [Name("DzieńUtargUtargPoKorekcie")]
         decimal totalPriceAfterCorrect;
 
         ObservableCollection<ProductM> products;
@@ -123,6 +135,12 @@ namespace Inventory.Model.MVVM
 
             TotalPriceDifference = TotalPriceMoney - TotalPriceAfterCorrect;
 
+        }
+
+        public void Dispose()
+        {
+            Products.Clear();
+            Cakes.Clear();
         }
 
         public DayM()
