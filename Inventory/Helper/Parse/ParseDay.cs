@@ -43,29 +43,20 @@ namespace Inventory.Helper.Parse
         {
             if (from is not null)
             {
-                if (to is null)
-                {
-                    to = new Day();
-                }
+                to ??= new Day();
                 to.Id = from.Id;
                 to.Description = from.Description;
                 to.DriverGuid = from.DriverGuid;
                 to.CreatedDateTime = from.Created;
 
 
-                if (from.Products is null)
-                {
-                    from.Products = new System.Collections.ObjectModel.ObservableCollection<ProductM>();
-                }
+                from.Products ??= new System.Collections.ObjectModel.ObservableCollection<ProductM>();
 
                 for (int i = 0; i < from.Products.Count; i++)
                 {
                     from.Products[i].ParseAsProduct(to.Products[i]);
                 }
-                if (from.Cakes is null)
-                {
-                    from.Cakes = new System.Collections.ObjectModel.ObservableCollection<CakeM>();
-                }
+                from.Cakes ??= new System.Collections.ObjectModel.ObservableCollection<CakeM>();
 
                 from.Cakes.Clear();
                 for (int i = 0; i < from.Cakes.Count; i++)
@@ -123,10 +114,7 @@ namespace Inventory.Helper.Parse
         {
             if (from is not null)
             {
-                if (to is null)
-                {
-                    to = new DayM();
-                }
+                to ??= new DayM();
 
                 to.Id = from.Id;
                 to.Description = from.Description;
@@ -134,10 +122,7 @@ namespace Inventory.Helper.Parse
                 to.Created = from.CreatedDateTime;
 
 
-                if (to.Products is null)
-                {
-                    to.Products = new System.Collections.ObjectModel.ObservableCollection<ProductM>();
-                }
+                to.Products ??= new System.Collections.ObjectModel.ObservableCollection<ProductM>();
                 for (int i = 0; i < from.Products.Count; i++)
                 {
                     if (to.Products[i] is null)
@@ -150,10 +135,7 @@ namespace Inventory.Helper.Parse
                     }
                 }
 
-                if (to.Cakes is null)
-                {
-                    to.Cakes = new System.Collections.ObjectModel.ObservableCollection<CakeM>();
-                }
+                to.Cakes ??= new System.Collections.ObjectModel.ObservableCollection<CakeM>();
                 from.Cakes.Clear();
                 for (int i = 0; i < from.Cakes.Count; i++)
                 {

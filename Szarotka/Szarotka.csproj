@@ -115,6 +115,13 @@
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
+		<MauiImage Include="Resources\Images\ciasta*" />
+		<MauiImage Include="Resources\Images\ciastka\*" />
+		<MauiImage Include="Resources\Images\drozdzowki\*" />
+		<MauiImage Include="Resources\Images\inne\*" />
+		<MauiImage Include="Resources\Images\pieczywo\*" />
+		<MauiImage Include="Resources\Images\torty\*" />
+
 		<MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
 
 		<!-- Custom Fonts -->
@@ -125,7 +132,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Resources\Images\chleb.png" />
+	  <None Remove="Resources\Images\favicon.png" />
 	  <None Remove="Resources\Images\logo2.png" />
 	</ItemGroup>
 
@@ -141,6 +148,10 @@
 	  <MauiXaml Update="Pages\Options\Main\MainOptionsV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Helper\" />
 	</ItemGroup>
 
 </Project>

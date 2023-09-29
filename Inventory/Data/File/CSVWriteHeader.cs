@@ -15,7 +15,6 @@ namespace Inventory.Data.File
             csv.WriteField("Kierowca_Id");
             csv.WriteField("Kierowca_Nazwa");
             csv.WriteField("Kierowca_Opis");
-            csv.WriteField("Kierowca_Guid");
         }
         public static void Day(CsvWriter csv)
         {
@@ -37,6 +36,7 @@ namespace Inventory.Data.File
             csv.WriteField("Produkt_Id");
             csv.WriteField("Produkt_Dzień_Id");
             csv.WriteField("Produkt_Nazwa_Id");
+            csv.WriteField("Produkt_Wybrana_Cena_Id");
             csv.WriteField("Produkt_Opis");
 
             csv.WriteField("Produkt_Nazwa_Id");

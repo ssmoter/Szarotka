@@ -9,31 +9,31 @@ namespace InventoryUnitTest.ModelTest
         public static IEnumerable<object[]> TestDateTime =>
             new List<object[]>
             {
-              new object []{DateTime.Now,DateTime.Now.ToString()},
-              new object []{DateTime.Now.AddDays(5),DateTime.Now.AddDays(5).ToString()},
-              new object []{DateTime.Now.AddDays(-3),DateTime.Now.AddDays(-3).ToString()},
+              new object []{DateTime.Now,DateTime.Now.Ticks},
+              new object []{DateTime.Now.AddDays(5),DateTime.Now.AddDays(5).Ticks},
+              new object []{DateTime.Now.AddDays(-3),DateTime.Now.AddDays(-3).Ticks},
 
             };
 
         [Theory]
         [MemberData(nameof(TestDateTime))]
-        public void TestParsingDateTime(DateTime request, string result)
+        public void TestParsingDateTime(DateTime request, long result)
         {
-            var sut = new ProductPrice();
-
-            sut.CreatedDateTime = request;
+            var sut = new ProductPrice
+            {
+                CreatedDateTime = request
+            };
 
             sut.Created.Should().Be(result);
         }
 
-        static string Format = "yyyy-MM-dd HH:mm:ss.fffffff";
-        static DateTime date = DateTime.Now;
+        static readonly DateTime date = DateTime.Now;
         public static IEnumerable<object[]> TestDateTimeReverse =>
     new List<object[]>
     {
-              new object []{ date.AddDays(10).ToString(Format), date.AddDays(10)},
-              new object []{ date.AddDays(-9).ToString(Format), date.AddDays(-9)},
-              new object []{ date.ToString(Format),date},
+              new object []{ date.AddDays(10).Ticks, date.AddDays(10)},
+              new object []{ date.AddDays(-9).Ticks, date.AddDays(-9)},
+              new object []{ date.Ticks,date},
 
     };
 
@@ -41,11 +41,12 @@ namespace InventoryUnitTest.ModelTest
 
         [Theory]
         [MemberData(nameof(TestDateTimeReverse))]
-        public void TestParsingDateTimeReverse(string request, DateTime result)
+        public void TestParsingDateTimeReverse(long request, DateTime result)
         {
-            var sut = new ProductPrice();
-
-            sut.Created = request;
+            var sut = new ProductPrice
+            {
+                Created = request
+            };
 
             sut.CreatedDateTime.Should().Be(result);
         }

@@ -13,7 +13,6 @@ namespace Inventory.Helper.Parse
                 p.Id = m.Id;
                 p.Name = m.Name;
                 p.Description = m.Description;
-                p.Guid = m.Guid;
             }
             return p;
         }
@@ -21,14 +20,10 @@ namespace Inventory.Helper.Parse
         {
             if (from is not null)
             {
-                if (to is null)
-                {
-                    to = new Driver();
-                }
+                to ??= new Driver();
                 to.Id = from.Id;
                 to.Name = from.Name;
                 to.Description = from.Description;
-                to.Guid = from.Guid;
             }
         }
         public static DriverM PareseAsDriverM(this Driver p)
@@ -39,7 +34,6 @@ namespace Inventory.Helper.Parse
                 m.Id = p.Id;
                 m.Name = p.Name;
                 m.Description = p.Description;
-                m.Guid = p.Guid;
             }
             return m;
         }
@@ -48,14 +42,10 @@ namespace Inventory.Helper.Parse
         {
             if (from is not null)
             {
-                if (to is null)
-                {
-                    to = new DriverM();
-                }
+                to ??= new DriverM();
                 to.Id = from.Id;
                 to.Name = from.Name;
                 to.Description = from.Description;
-                to.Guid = from.Guid;
             }
         }
     }

@@ -8,6 +8,8 @@ namespace Inventory.Model
         public Guid Id { get; set; }
         public Guid DayId { get; set; }
         public Guid ProductNameId {  get; set; }
+        public Guid ProductPriceId { get; set; }
+
         [Ignore]
         public ProductName Name { get; set; }
         public string Description { get; set; } = "";

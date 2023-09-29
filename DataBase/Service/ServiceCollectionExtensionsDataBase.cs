@@ -6,7 +6,7 @@ namespace DataBase.Service
     {
         public static IServiceCollection AddMyServiceDataBase(this IServiceCollection services)
         {
-            services.AddSingleton<AccessDataBase>();
+            services.AddTransient<AccessDataBase>();
 
             services.AddSingleton<Pages.Log.LogData.LogDataVM>();
             services.AddSingleton<Pages.Log.LogData.LogDataV>();

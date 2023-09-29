@@ -49,10 +49,9 @@ namespace Inventory.Pages.SingleDay
         /// <returns></returns>
         async Task<bool> CheckDriver()
         {
-            var guid = DayM.DriverGuid;
             if (DayM.DriverGuid == Guid.Empty)
             {
-                guid = Helper.SelectedDriver.Guid;
+                DayM.DriverGuid = Helper.SelectedDriver.Id;
             }
             if (DayM.DriverGuid == Guid.Empty)
             {
@@ -62,7 +61,15 @@ namespace Inventory.Pages.SingleDay
             return false;
         }
 
-        void FastChangeProduct(ProductM product, int value)
+        static void FastChangeProductNumber(ProductM product, int value)
+        {
+            if (product is not null)
+            {
+                product.Number += value;
+            }
+        }
+
+        static void FastChangeProductEdit(ProductM product, int value)
         {
             if (product is not null)
             {
@@ -70,6 +77,13 @@ namespace Inventory.Pages.SingleDay
             }
         }
 
+        static void FastChangeProductReturn(ProductM product, int value)
+        {
+            if (product is not null)
+            {
+                product.NumberReturn += value;
+            }
+        }
         #endregion
         #region Command
 
@@ -88,16 +102,41 @@ namespace Inventory.Pages.SingleDay
             SingleDayM.ProductIsVisible = false;
         }
 
+
+
+
         [RelayCommand]
-        void FastAddProduct(ProductM productM)
+        static void FastAddProductNumber(ProductM productM)
         {
-            FastChangeProduct(productM, 1);
+            SingleDayVM.FastChangeProductNumber(productM, 1);
         }
         [RelayCommand]
-        void FastMinusProduct(ProductM productM)
+        static void FastMinusProductNumber(ProductM productM)
         {
-            FastChangeProduct(productM, -1);
+            SingleDayVM.FastChangeProductNumber(productM, -1);
         }
+        [RelayCommand]
+        static void FastAddProductEdit(ProductM productM)
+        {
+            SingleDayVM.FastChangeProductEdit(productM, 1);
+        }
+        [RelayCommand]
+        static void FastMinusProductEdit(ProductM productM)
+        {
+            SingleDayVM.FastChangeProductEdit(productM, -1);
+        }
+
+        [RelayCommand]
+        static void FastAddProductReturn(ProductM productM)
+        {
+            SingleDayVM.FastChangeProductReturn(productM, 1);
+        }
+        [RelayCommand]
+        static void FastMinusProductReturn(ProductM productM)
+        {
+            SingleDayVM.FastChangeProductReturn(productM, -1);
+        }
+
 
         [RelayCommand]
         async Task SaveDay()

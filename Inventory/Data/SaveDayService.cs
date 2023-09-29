@@ -23,12 +23,15 @@ namespace Inventory.Service
                 {
                     Service.ProductUpdatePriceService.EnableUpdate = false;
 
-                    if (await CheckDriver(dayM))
+                    if (await SaveDayService.CheckDriver(dayM))
                     {
                         return dayM;
                     }
 
-                    dayM.DriverGuid = Helper.SelectedDriver.Guid;
+                    if (dayM.DriverGuid == Guid.Empty)
+                    {
+                        dayM.DriverGuid = Helper.SelectedDriver.Id;
+                    }
                     var day = dayM.ParseAsDay();
 
                     if (day.Id != Guid.Empty)
@@ -58,12 +61,11 @@ namespace Inventory.Service
             return dayM;
         }
 
-        async Task<bool> CheckDriver(DayM dayM)
+        static async Task<bool> CheckDriver(DayM dayM)
         {
-            var guid = dayM.DriverGuid;
             if (dayM.DriverGuid == Guid.Empty)
             {
-                guid = Helper.SelectedDriver.Guid;
+                dayM.DriverGuid = Helper.SelectedDriver.Id;
             }
             if (dayM.DriverGuid == Guid.Empty)
             {

@@ -129,8 +129,79 @@
                         <DataTemplate>
                             <SwipeView>
                                 <SwipeView.RightItems>
-                                    <SwipeItems>
-                                        <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductCommand}" CommandParameter="{Binding .}">
+                                    <SwipeItems SwipeBehaviorOnInvoked="RemainOpen">
+
+                                        <SwipeItemView>
+
+
+                                            <Grid
+                                                ColumnDefinitions="*,*"
+                                                HorizontalOptions="Fill"
+                                                RowDefinitions="*,*,*"
+                                                VerticalOptions="Fill">
+
+                                                <Button
+                                                    Grid.Row="0"
+                                                    Grid.Column="0"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductNumberCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    FontSize="Medium"
+                                                    HorizontalOptions="Center"
+                                                    Text="-"
+                                                    VerticalOptions="Center" />
+                                                <Button
+                                                    Grid.Row="0"
+                                                    Grid.Column="1"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductNumberCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    FontSize="Medium"
+                                                    HorizontalOptions="Center"
+                                                    Text="+"
+                                                    VerticalOptions="Center" />
+
+                                                <Button
+                                                    Grid.Row="1"
+                                                    Grid.Column="0"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductEditCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    FontSize="Medium"
+                                                    HorizontalOptions="Center"
+                                                    Text="-"
+                                                    VerticalOptions="Center" />
+                                                <Button
+                                                    Grid.Row="1"
+                                                    Grid.Column="1"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductEditCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    FontSize="Medium"
+                                                    HorizontalOptions="Center"
+                                                    Text="+"
+                                                    VerticalOptions="Center" />
+
+                                                <Button
+                                                    Grid.Row="2"
+                                                    Grid.Column="0"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductReturnCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    FontSize="Medium"
+                                                    HorizontalOptions="Center"
+                                                    Text="-"
+                                                    VerticalOptions="Center" />
+                                                <Button
+                                                    Grid.Row="2"
+                                                    Grid.Column="1"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductReturnCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    FontSize="Medium"
+                                                    HorizontalOptions="Center"
+                                                    Text="+"
+                                                    VerticalOptions="Center" />
+
+                                            </Grid>
+
+                                        </SwipeItemView>
+
+                                        <!--<SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductCommand}" CommandParameter="{Binding .}">
                                             <Frame BackgroundColor="Blue">
                                                 <Label
                                                     FontSize="Large"
@@ -147,7 +218,9 @@
                                                     Text="-"
                                                     VerticalOptions="Center" />
                                             </Frame>
-                                        </SwipeItemView>
+                                        </SwipeItemView>-->
+
+
                                     </SwipeItems>
                                 </SwipeView.RightItems>
 

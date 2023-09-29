@@ -26,7 +26,7 @@ namespace Inventory.Pages.RangeDay
         ObservableCollection<string> ragne;
 
         [ObservableProperty]
-        string selectedDriverName;
+        ObservableCollection<DriverM> drivers;
 
         [ObservableProperty]
         bool enableSave;
@@ -59,6 +59,29 @@ namespace Inventory.Pages.RangeDay
             }
         }
 
+        DriverM selectedDriverName;
+        public DriverM SelectedDriverName
+        {
+            get => selectedDriverName;
+            set
+            {
+                if (SetProperty(ref selectedDriverName, value))
+                {
+                    OnPropertyChanged(nameof(SelectedDriverName));
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await SelectedDate(IsSelectedDate);
+                        }
+                        catch (Exception ex)
+                        {
+                            _db.SaveLog(ex);
+                        }
+                    });
+                }
+            }
+        }
         string isSelectedDate;
         public string IsSelectedDate
         {
@@ -100,6 +123,19 @@ namespace Inventory.Pages.RangeDay
                 "Rok",
                 //"Wybierz daty"
             };
+
+            var driver = _db.DataBase.Table<Driver>().ToArray();
+            Drivers = new ObservableCollection<DriverM>();
+            Drivers.Add(new DriverM()
+            {
+                Name= "Kierowcy",
+                Id= Guid.Empty,
+            });
+            for (int i = 0; i < driver.Length; i++)
+            {
+                Drivers.Add(driver[i].PareseAsDriverM());
+            }
+            SelectedDriverName = new DriverM() {Id=Guid.Empty,Name="Kierowcy"};
             EnableSave = false;
             _dayService = dayService;
         }
@@ -114,27 +150,27 @@ namespace Inventory.Pages.RangeDay
                 {
                     case "Dzisiaj":
                         {
-                            RangeDays = await SelectToday(SelectedDriverName);
+                            RangeDays = await SelectToday(SelectedDriverName.Id);
                         }
                         break;
                     case "Tydzień":
                         {
-                            RangeDays = await SelectWeek(SelectedDriverName);
+                            RangeDays = await SelectWeek(SelectedDriverName.Id);
                         }
                         break;
                     case "Miesiąc":
                         {
-                            RangeDays = await SelectMonth(SelectedDriverName);
+                            RangeDays = await SelectMonth(SelectedDriverName.Id);
                         }
                         break;
                     case "Rok":
                         {
-                            RangeDays = await SelectYear(SelectedDriverName);
+                            RangeDays = await SelectYear(SelectedDriverName.Id);
                         }
                         break;
                     case "Wybierz daty":
                         {
-                            RangeDays = await SelectMore(SelectedDriverName);
+                            RangeDays = await SelectMore(SelectedDriverName.Id);
                         }
                         break;
                     default:
@@ -149,7 +185,7 @@ namespace Inventory.Pages.RangeDay
             }
         }
 
-        async Task<ObservableCollection<RangeDayM>> SelectToday(string selectedDriverName = "")
+        async Task<ObservableCollection<RangeDayM>> SelectToday(Guid selectedDriverName)
         {
             var now = DateTime.Now;
             var from = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, 0, 0).ToUniversalTime().Ticks;
@@ -158,7 +194,7 @@ namespace Inventory.Pages.RangeDay
             var result = await SelectDays(from, to, selectedDriverName);
             return result;
         }
-        async Task<ObservableCollection<RangeDayM>> SelectWeek(string selectedDriverName = "")
+        async Task<ObservableCollection<RangeDayM>> SelectWeek(Guid selectedDriverName)
         {
             DateTime now = DateTime.Today;
             DayOfWeek startDayOfWeek = DayOfWeek.Monday;
@@ -177,7 +213,7 @@ namespace Inventory.Pages.RangeDay
             var result = await SelectDays(from, to, selectedDriverName);
             return result;
         }
-        async Task<ObservableCollection<RangeDayM>> SelectMonth(string selectedDriverName = "")
+        async Task<ObservableCollection<RangeDayM>> SelectMonth(Guid selectedDriverName)
         {
             var from = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1, 2, 0, 0).ToUniversalTime();
             var to = new DateTime(DateTime.Today.Year, DateTime.Today.AddMonths(1).Month, 1, 2, 0, 0).ToUniversalTime();
@@ -185,7 +221,7 @@ namespace Inventory.Pages.RangeDay
             var result = await SelectDays(from.Ticks, to.Ticks, selectedDriverName);
             return result;
         }
-        async Task<ObservableCollection<RangeDayM>> SelectYear(string selectedDriverName = "")
+        async Task<ObservableCollection<RangeDayM>> SelectYear(Guid selectedDriverName)
         {
             var from = new DateTime(DateTime.Today.Year, 1, 1, 1, 0, 0).ToUniversalTime();
             var to = new DateTime(DateTime.Today.AddYears(1).Year, 1, 1, 1, 0, 0).ToUniversalTime();
@@ -193,7 +229,7 @@ namespace Inventory.Pages.RangeDay
             var result = await SelectDays(from.Ticks, to.Ticks, selectedDriverName);
             return result;
         }
-        async Task<ObservableCollection<RangeDayM>> SelectMore(string selectedDriverName = "")
+        async Task<ObservableCollection<RangeDayM>> SelectMore(Guid selectedDriverName)
         {
 
             //var popup = new PopupSelectRangeDate.PopupSelectRangeDateV();
@@ -207,10 +243,10 @@ namespace Inventory.Pages.RangeDay
         }
 
 
-        async Task<ObservableCollection<RangeDayM>> SelectDays(long from, long to, string selectedDriverName = "")
+        async Task<ObservableCollection<RangeDayM>> SelectDays(long from, long to, Guid selectedDriverName)
         {
             Day[] days = Array.Empty<Day>();
-            if (string.IsNullOrWhiteSpace(selectedDriverName))
+            if (selectedDriverName == Guid.Empty)
             {
                 days = await _db.DataBaseAsync.Table<Inventory.Model.Day>().
                     Where(x => x.CreatedTicks >= from && x.CreatedTicks <= to).
@@ -218,9 +254,8 @@ namespace Inventory.Pages.RangeDay
             }
             else
             {
-                var selectedDriver = await _db.DataBaseAsync.Table<Driver>().FirstOrDefaultAsync(x => x.Name == selectedDriverName);
                 days = await _db.DataBaseAsync.Table<Inventory.Model.Day>().
-                    Where(x => x.CreatedTicks >= from && x.CreatedTicks <= to && x.DriverGuid == selectedDriver.Guid).
+                    Where(x => x.CreatedTicks >= from && x.CreatedTicks <= to && x.DriverGuid == selectedDriverName).
                     OrderByDescending(x => x.CreatedTicks).ToArrayAsync();
             }
 
@@ -230,7 +265,7 @@ namespace Inventory.Pages.RangeDay
                 dayM.Add(new RangeDayM());
                 dayM[i].DayM = days[i].ParseAsDayM();
                 var guid = days[i].DriverGuid;
-                var driver = await _db.DataBaseAsync.Table<Driver>().FirstOrDefaultAsync(x => x.Guid == guid);
+                var driver = await _db.DataBaseAsync.Table<Driver>().FirstOrDefaultAsync(x => x.Id == guid);
                 if (driver is not null)
                 {
                     dayM[i].Driver = driver.PareseAsDriverM();

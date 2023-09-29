@@ -13,6 +13,7 @@ namespace Inventory.Helper.Parse
                 p.Id = m.Id;
                 p.DayId = m.DayId;
                 p.ProductNameId = m.ProductNameId;
+                p.ProductPriceId = m.ProductPriceId;
                 p.Description = m.Description;
                 p.PriceTotalDecimal = m.PriceTotal;
                 p.PriceTotalCorrectDecimal = m.PriceTotalCorrect;
@@ -30,13 +31,11 @@ namespace Inventory.Helper.Parse
         {
             if (from is not null)
             {
-                if (to is null)
-                {
-                    to = new Product();
-                }
+                to ??= new Product();
                 to.Id = from.Id;
                 to.DayId = from.DayId;
                 to.ProductNameId = from.ProductNameId;
+                to.ProductPriceId = from.ProductPriceId;
                 to.Description = from.Description;
                 to.PriceTotalDecimal = from.PriceTotal;
                 to.PriceTotalCorrectDecimal = from.PriceTotalCorrect;
@@ -56,6 +55,7 @@ namespace Inventory.Helper.Parse
                 m.Id = p.Id;
                 m.DayId = p.DayId;
                 m.ProductNameId = p.ProductNameId;
+                m.ProductPriceId = p.ProductPriceId;
                 m.Description = p.Description;
                 m.PriceTotal = p.PriceTotalDecimal;
                 m.PriceTotalCorrect = p.PriceTotalCorrectDecimal;
@@ -73,13 +73,12 @@ namespace Inventory.Helper.Parse
         {
             if (from is not null)
             {
-                if (to is null)
-                {
-                    to = new ProductM();
-                }
+                to ??= new ProductM();
                 to.Id = from.Id;
                 to.DayId = from.DayId;
                 to.ProductNameId = from.ProductNameId;
+                to.ProductPriceId = from.ProductPriceId;
+
                 to.Description = from.Description;
                 to.PriceTotal = from.PriceTotalDecimal;
                 to.PriceTotalCorrect = from.PriceTotalCorrectDecimal;
@@ -155,10 +154,7 @@ namespace Inventory.Helper.Parse
         {
             if (from is not null)
             {
-                if (to is null)
-                {
-                    to = new();
-                }
+                to ??= new();
                 to.Id = from.Id;
                 to.ProductNameId = from.ProductNameId;
                 to.PriceDecimal = from.Price;
@@ -181,10 +177,7 @@ namespace Inventory.Helper.Parse
         {
             if (from is not null)
             {
-                if (to is null)
-                {
-                    to = new ProductPriceM();
-                }
+                to ??= new ProductPriceM();
 
                 to.Id = from.Id;
                 to.ProductNameId = from.ProductNameId;

@@ -14,12 +14,26 @@
 
 
     <Grid RowDefinitions="auto,auto,*,0.001*">
-        <Picker
-            Title="Wybierz zakres dat"
-            HorizontalOptions="Center"
-            ItemsSource="{Binding Ragne}"
-            SelectedItem="{Binding IsSelectedDate}" />
+        <HorizontalStackLayout HorizontalOptions="Center">
+            <Picker
+                Title="Wybierz kierowce"
+                HorizontalOptions="Center"
+                ItemDisplayBinding="{Binding Name}"
+                ItemsSource="{Binding Drivers}"
+                SelectedIndex="0"
+                SelectedItem="{Binding SelectedDriverName}" />
 
+            <Picker
+                Title="Wybierz zakres dat"
+                HorizontalOptions="Center"
+                ItemsSource="{Binding Ragne}"
+                SelectedItem="{Binding IsSelectedDate}" />
+            <Button
+                Margin="10"
+                Command="{Binding SaveAnotherDriverDataCommand}"
+                IsVisible="{Binding EnableSave}"
+                Text="Zapisz wczytany plik" />
+        </HorizontalStackLayout>
 
 
         <Border Grid.Row="1">

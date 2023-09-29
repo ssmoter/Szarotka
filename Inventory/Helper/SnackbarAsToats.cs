@@ -8,7 +8,7 @@ namespace Inventory.Helper
         {
             CancellationTokenSource cancellationTokenSource = new();
             string text = message;
-            TimeSpan _duration = TimeSpan.FromSeconds(2);
+            TimeSpan _duration = TimeSpan.FromSeconds(1.5d);
             var snackbar = Snackbar.Make(text, cancellationTokenSource.Cancel, duration: _duration);
 
             await snackbar.Show(cancellationTokenSource.Token);

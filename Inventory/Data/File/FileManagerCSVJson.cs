@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 
 using System.Collections.ObjectModel;
 using System.Text;
+using System;
 
 namespace Inventory.Data.File
 {
@@ -42,7 +43,6 @@ namespace Inventory.Data.File
                     model[i].Driver.Id = csv.GetField<Guid>("Kierowca_Id");
                     model[i].Driver.Name = csv.GetField<string>("Kierowca_Nazwa");
                     model[i].Driver.Description = csv.GetField<string>("Kierowca_Opis");
-                    model[i].Driver.Guid = csv.GetField<Guid>("Kierowca_Guid");
 
                     csv.Read();
                     csv.ReadHeader();
@@ -77,6 +77,7 @@ namespace Inventory.Data.File
                         model[i].DayM.Products[j].Id = csv.GetField<Guid>("Produkt_Id");
                         model[i].DayM.Products[j].DayId = csv.GetField<Guid>("Produkt_Dzień_Id");
                         model[i].DayM.Products[j].ProductNameId = csv.GetField<Guid>("Produkt_Nazwa_Id");
+                        model[i].DayM.Products[j].ProductNameId = csv.GetField<Guid>("Produkt_Wybrana_Cena_Id");
                         model[i].DayM.Products[j].Description = csv.GetField<string>("Produkt_Opis");
 
                         model[i].DayM.Products[j].Name.Id = csv.GetField<Guid>("Produkt_Nazwa_Id");
@@ -146,7 +147,7 @@ namespace Inventory.Data.File
 
                 byte[] buffer = new byte[0x1000];
                 int numRead;
-                while ((numRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length)) != 0)
+                while ((numRead = await sourceStream.ReadAsync(buffer)) != 0)
                 {
                     string text = Encoding.Unicode.GetString(buffer, 0, numRead);
                     sb.Append(text);
@@ -173,80 +174,78 @@ namespace Inventory.Data.File
 
                 using (var writer = new StreamWriter(path))
                 {
-                    using (var csv = new CsvWriter(writer, DataBase.Helper.Constants.CultureInfo))
+                    using var csv = new CsvWriter(writer, DataBase.Helper.Constants.CultureInfo);
+                    for (int i = 0; i < model.Count; i++)
                     {
-                        for (int i = 0; i < model.Count; i++)
+                        csv.NextRecord();
+
+                        CSVWriteHeader.Driver(csv);
+                        csv.NextRecord();
+                        csv.WriteField(model[i].Driver.Id);
+                        csv.WriteField(model[i].Driver.Name);
+                        csv.WriteField(model[i].Driver.Description);
+                        csv.NextRecord();
+
+                        CSVWriteHeader.Day(csv);
+                        csv.NextRecord();
+                        csv.WriteField(model[i].DayM.Id);
+                        csv.WriteField(model[i].DayM.DriverGuid);
+                        csv.WriteField(model[i].DayM.Description);
+                        csv.WriteField(model[i].DayM.Created);
+                        csv.WriteField(model[i].DayM.TotalPriceProduct);
+                        csv.WriteField(model[i].DayM.TotalPriceCake);
+                        csv.WriteField(model[i].DayM.TotalPrice);
+                        csv.WriteField(model[i].DayM.TotalPriceCorrect);
+                        csv.WriteField(model[i].DayM.TotalPriceAfterCorrect);
+                        csv.WriteField(model[i].DayM.TotalPriceMoney);
+                        csv.WriteField(model[i].DayM.TotalPriceDifference);
+
+                        csv.NextRecord();
+
+                        CSVWriteHeader.Product(csv);
+                        csv.NextRecord();
+                        for (int j = 0; j < model[i].DayM.Products.Count; j++)
                         {
+                            csv.WriteField(model[i].DayM.Products[j].Id);
+                            csv.WriteField(model[i].DayM.Products[j].DayId);
+                            csv.WriteField(model[i].DayM.Products[j].ProductNameId);
+                            csv.WriteField(model[i].DayM.Products[j].ProductPriceId);
+                            csv.WriteField(model[i].DayM.Products[j].Description);
+
+                            csv.WriteField(model[i].DayM.Products[j].Name.Id);
+                            csv.WriteField(model[i].DayM.Products[j].Name.Description);
+                            csv.WriteField(model[i].DayM.Products[j].Name.Img);
+                            csv.WriteField(model[i].DayM.Products[j].Name.Name);
+
+                            csv.WriteField(model[i].DayM.Products[j].Number);
+                            csv.WriteField(model[i].DayM.Products[j].NumberEdit);
+                            csv.WriteField(model[i].DayM.Products[j].NumberReturn);
+                            csv.WriteField(model[i].DayM.Products[j].PriceTotal);
+                            csv.WriteField(model[i].DayM.Products[j].PriceTotalCorrect);
+                            csv.WriteField(model[i].DayM.Products[j].PriceTotalAfterCorrect);
+
+
+                            csv.WriteField(model[i].DayM.Products[j].Price.Price);
+                            csv.WriteField(model[i].DayM.Products[j].Price.Id);
+                            csv.WriteField(model[i].DayM.Products[j].Price.ProductNameId);
+                            csv.WriteField(model[i].DayM.Products[j].Price.Created);
+
                             csv.NextRecord();
-
-                            CSVWriteHeader.Driver(csv);
-                            csv.NextRecord();
-                            csv.WriteField(model[i].Driver.Id);
-                            csv.WriteField(model[i].Driver.Name);
-                            csv.WriteField(model[i].Driver.Description);
-                            csv.WriteField(model[i].Driver.Guid);
-                            csv.NextRecord();
-
-                            CSVWriteHeader.Day(csv);
-                            csv.NextRecord();
-                            csv.WriteField(model[i].DayM.Id);
-                            csv.WriteField(model[i].DayM.DriverGuid);
-                            csv.WriteField(model[i].DayM.Description);
-                            csv.WriteField(model[i].DayM.Created);
-                            csv.WriteField(model[i].DayM.TotalPriceProduct);
-                            csv.WriteField(model[i].DayM.TotalPriceCake);
-                            csv.WriteField(model[i].DayM.TotalPrice);
-                            csv.WriteField(model[i].DayM.TotalPriceCorrect);
-                            csv.WriteField(model[i].DayM.TotalPriceAfterCorrect);
-                            csv.WriteField(model[i].DayM.TotalPriceMoney);
-                            csv.WriteField(model[i].DayM.TotalPriceDifference);
-
-                            csv.NextRecord();
-
-                            CSVWriteHeader.Product(csv);
-                            csv.NextRecord();
-                            for (int j = 0; j < model[i].DayM.Products.Count; j++)
-                            {
-                                csv.WriteField(model[i].DayM.Products[j].Id);
-                                csv.WriteField(model[i].DayM.Products[j].DayId);
-                                csv.WriteField(model[i].DayM.Products[j].ProductNameId);
-                                csv.WriteField(model[i].DayM.Products[j].Description);
-
-                                csv.WriteField(model[i].DayM.Products[j].Name.Id);
-                                csv.WriteField(model[i].DayM.Products[j].Name.Description);
-                                csv.WriteField(model[i].DayM.Products[j].Name.Img);
-                                csv.WriteField(model[i].DayM.Products[j].Name.Name);
-
-                                csv.WriteField(model[i].DayM.Products[j].Number);
-                                csv.WriteField(model[i].DayM.Products[j].NumberEdit);
-                                csv.WriteField(model[i].DayM.Products[j].NumberReturn);
-                                csv.WriteField(model[i].DayM.Products[j].PriceTotal);
-                                csv.WriteField(model[i].DayM.Products[j].PriceTotalCorrect);
-                                csv.WriteField(model[i].DayM.Products[j].PriceTotalAfterCorrect);
-
-
-                                csv.WriteField(model[i].DayM.Products[j].Price.Price);
-                                csv.WriteField(model[i].DayM.Products[j].Price.Id);
-                                csv.WriteField(model[i].DayM.Products[j].Price.ProductNameId);
-                                csv.WriteField(model[i].DayM.Products[j].Price.Created);
-
-                                csv.NextRecord();
-                            }
-
-                            CSVWriteHeader.Cake(csv);
-                            csv.NextRecord();
-                            for (int j = 0; j < model[i].DayM.Cakes.Count; j++)
-                            {
-                                csv.WriteField(model[i].DayM.Cakes[j].Id);
-                                csv.WriteField(model[i].DayM.Cakes[j].DayId);
-                                csv.WriteField(model[i].DayM.Cakes[j].Price);
-                                csv.WriteField(model[i].DayM.Cakes[j].IsSell);
-                                csv.NextRecord();
-                            }
-
-
-
                         }
+
+                        CSVWriteHeader.Cake(csv);
+                        csv.NextRecord();
+                        for (int j = 0; j < model[i].DayM.Cakes.Count; j++)
+                        {
+                            csv.WriteField(model[i].DayM.Cakes[j].Id);
+                            csv.WriteField(model[i].DayM.Cakes[j].DayId);
+                            csv.WriteField(model[i].DayM.Cakes[j].Price);
+                            csv.WriteField(model[i].DayM.Cakes[j].IsSell);
+                            csv.NextRecord();
+                        }
+
+
+
                     }
                 }
                 return path;
@@ -271,7 +270,7 @@ namespace Inventory.Data.File
                 path = FileIsExist(path, name, jsonTyp);
 
                 using var stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true);
-                await stream.WriteAsync(encodedtext, 0, encodedtext.Length);
+                await stream.WriteAsync(encodedtext);
 
                 return path;
             }

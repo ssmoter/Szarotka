@@ -20,17 +20,17 @@ namespace Inventory.Model
                 Price = (int)(value * 100);
             }
         }
-        public string Created { get; set; }
+        public long Created { get; set; }
         [Ignore]
         public DateTime CreatedDateTime
         {
             get
             {
-                return DateTime.Parse(Created, DataBase.Helper.Constants.CultureInfo);
+                return new DateTime(Created).ToLocalTime();
             }
             set
             {
-                Created = value.ToString(DataBase.Helper.Constants.CultureInfo);
+                Created = value.ToUniversalTime().Ticks;
             }
         }
 

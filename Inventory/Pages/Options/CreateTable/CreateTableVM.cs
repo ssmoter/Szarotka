@@ -3,7 +3,10 @@ using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
 
+using Inventory.Helper.Parse;
 using Inventory.Model;
+using Inventory.Model.MVVM;
+using Inventory.Pages.Options.EditDriver;
 
 using System.Collections.ObjectModel;
 
@@ -124,7 +127,7 @@ namespace Inventory.Pages.Options.CreateTable
 
 
         [RelayCommand]
-        async Task CreateDrive()
+        async Task CreateDriver()
         {
             try
             {
@@ -138,7 +141,6 @@ namespace Inventory.Pages.Options.CreateTable
                     var driver = new Driver()
                     {
                         Id = Guid.NewGuid(),
-                        Guid = Guid.NewGuid(),
                         Name = response,
                     };
                     if (TableMs.FirstOrDefault(x => x.RealTableName == nameof(Driver)).IsExist)
@@ -153,7 +155,7 @@ namespace Inventory.Pages.Options.CreateTable
             }
         }
         [RelayCommand]
-        async Task SelectDrive()
+        async Task SelectDriver()
         {
             try
             {
@@ -184,8 +186,7 @@ namespace Inventory.Pages.Options.CreateTable
                         Helper.SelectedDriver.Id = selectedDriver.Id;
                         Helper.SelectedDriver.Name = selectedDriver.Name;
                         Helper.SelectedDriver.Description = selectedDriver.Description;
-                        Helper.SelectedDriver.Guid = selectedDriver.Guid;
-                        await _db.DataBaseAsync.InsertOrReplaceAsync(new Model.SelectedDriver() { Id = 1, SelectedGuid = selectedDriver.Guid });
+                        await _db.DataBaseAsync.InsertOrReplaceAsync(new Model.SelectedDriver() { Id = 1, SelectedGuid = selectedDriver.Id });
                         Service.DriverNameUpdateService.OnUpdate();
                     }
 
@@ -197,9 +198,53 @@ namespace Inventory.Pages.Options.CreateTable
             }
 
         }
+        [RelayCommand]
+        async Task EditDriver()
+        {
+            try
+            {
+
+                if (_db is null)
+                {
+                    return;
+                }
+                if (TableMs.FirstOrDefault(x => x.RealTableName == nameof(Driver)).IsExist)
+                {
+                    var driver = await _db.DataBaseAsync.Table<Driver>().ToArrayAsync();
+                    if (driver.Length == 0)
+                    {
+                        await Shell.Current.DisplayAlert("Kierowcy", "Nie dodano żadnego kierowcy", "Ok");
+                        return;
+                    }
+
+                    var selected = await Shell.Current.DisplayActionSheet("Edytuj kierowce", "Anuluj", null, driver.Select(x => x.Name).ToArray());
+                    if (selected == "Anuluj")
+                    {
+                        return;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(selected))
+                    {
+                        var selectedDrivers = await _db.DataBaseAsync.Table<Driver>().Where(x=>x.Name ==selected).ToArrayAsync();
+                        var selectedDriver = selectedDrivers.FirstOrDefault();
+                        selectedDriver.Id = new Guid(selectedDriver.Id.ToString());
+
+                        await Shell.Current.GoToAsync($"{nameof(EditDriverV)}?",
+                            new Dictionary<string, object>
+                            {
+                                [nameof(DriverM)]= selectedDriver.PareseAsDriverM(),
+                            });
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
+
         #endregion
-
-
         async Task CheckTables()
         {
             for (int i = 0; i < TableMs.Count; i++)

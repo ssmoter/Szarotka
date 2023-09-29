@@ -6,30 +6,27 @@ namespace Inventory.Model.MVVM
 {
     public partial class ProductM : ObservableObject
     {
-        [Name("ProduktId")]
+
         public Guid Id { get; set; }
 
-        [Name("ProduktDzieńId")]
         public Guid DayId { get; set; }
 
-        [Name("ProduktNazwaId")]
         public Guid ProductNameId { get; set; }
+        public Guid ProductPriceId { get; set; }
+
         [ObservableProperty]
         ProductNameM name;
 
         [ObservableProperty]
-        [Name("ProduktOpis")]
         string description;
 
         [ObservableProperty]
         ProductPriceM price;
 
         [ObservableProperty]
-        [Name("ProduktUtarg")]
         decimal priceTotal;
 
         decimal priceTotalCorrect;
-        [Name("ProduktUtargKorekta")]
         public decimal PriceTotalCorrect
         {
             get => priceTotalCorrect;
@@ -44,11 +41,9 @@ namespace Inventory.Model.MVVM
         }
 
         [ObservableProperty]
-        [Name("ProduktUtargPoKorekcie")]
         decimal priceTotalAfterCorrect;
 
         int number;
-        [Name("ProduktIlość")]
         public int Number
         {
             get => number;
@@ -63,7 +58,6 @@ namespace Inventory.Model.MVVM
         }
 
         int numberEdit;
-        [Name("ProduktIlośćEdycja")]
         public int NumberEdit
         {
             get => numberEdit;
@@ -78,7 +72,6 @@ namespace Inventory.Model.MVVM
         }
 
         int numberReturn;
-        [Name("ProduktIlośćZwrot")]
         public int NumberReturn
         {
             get => numberReturn;

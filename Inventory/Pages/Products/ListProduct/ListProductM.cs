@@ -30,8 +30,8 @@ namespace Inventory.Pages.Products.ListProduct
             {
                 if (Prices.Count > 0)
                 {
-                    ActualPrice = Prices.LastOrDefault().Price;
-                    ActualCreated = Prices.LastOrDefault().Created.ToShortDateString();
+                    ActualPrice = Prices.FirstOrDefault().Price;
+                    ActualCreated = Prices.FirstOrDefault().Created.ToShortDateString();
                 }
             }
         }

@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Helper.Img;
+
 using Inventory.Helper.Parse;
 using Inventory.Model;
 
@@ -16,6 +18,7 @@ namespace Inventory.Pages.Products.ListProduct
         [ObservableProperty]
         bool isGenerateDefoultEnable;
 
+        Random random = new Random(2137);
         readonly DataBase.Data.AccessDataBase _db;
         public ListProductVM(DataBase.Data.AccessDataBase db)
         {
@@ -67,8 +70,11 @@ namespace Inventory.Pages.Products.ListProduct
         {
             var price = new ObservableCollection<Inventory.Model.MVVM.ProductPriceM>();
 
-            var priceM = await _db.DataBaseAsync.Table<ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(z => z.Id).FirstOrDefaultAsync();
-            price.Add(priceM.PareseAsProductPriceM());
+            var priceM = await _db.DataBaseAsync.Table<ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(z => z.Id).ToArrayAsync();
+            for (int i = 0; i < priceM.Length; i++)
+            {
+                price.Add(priceM[i].PareseAsProductPriceM());
+            }
 
             return price;
         }
@@ -108,6 +114,13 @@ namespace Inventory.Pages.Products.ListProduct
         }
 
         #endregion
+
+        Guid GetGuidSed()
+        {
+            byte[] guidBytes = new byte[16];
+            random.NextBytes(guidBytes);
+            return new Guid(guidBytes);
+        }
 
         #endregion
         #region Commend
@@ -186,94 +199,98 @@ namespace Inventory.Pages.Products.ListProduct
         {
             try
             {
-
                 var products = new Product[]
                 {
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Chleb",Img="chleb.png",Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=5.5m,Id = Guid.NewGuid()},
-                },
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Duży chleb",Img="chleb.png", Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=11m,Id = Guid.NewGuid()},
-                },
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Bułka",Img="chleb.png",Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=1.5m,Id = Guid.NewGuid()},
-                },
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Drożdżówka",Img="chleb.png",Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=2.5m,Id = Guid.NewGuid()},
-                },
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Drożdżówki na wagę (opak.)",Img="chleb.png",Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=9m,Id = Guid.NewGuid()},
-                },
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Mała bułka",Img="chleb.png",Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=0.7m,Id = Guid.NewGuid()},
-                },
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Bułka z serem",Img="chleb.png",Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=2.5m,Id = Guid.NewGuid()},
-                },
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Ciastka francuskie",Img="chleb.png",Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=3m,Id = Guid.NewGuid()},
-                },
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Ciastka (opak. 400g)",Img="chleb.png",Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=10m,Id = Guid.NewGuid()},
-                },
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Piernik/Babka",Img="chleb.png",Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=12m,Id = Guid.NewGuid()},
-                },
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Makowiec",Img="chleb.png",Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=14m,Id = Guid.NewGuid()},
-                },
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Wafle (opak. 400g)",Img="chleb.png",Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=10m,Id = Guid.NewGuid()},
-                },
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Kołacz",Img="chleb.png",Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=5m,Id = Guid.NewGuid()},
-                },
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Chałka",Img="chleb.png",Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=5m,Id = Guid.NewGuid()},
-                },
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Mini Pizza",Img="chleb.png",Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=3m,Id = Guid.NewGuid()},
-                },
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Bułka tarta",Img="chleb.png",Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=3.5m,Id = Guid.NewGuid()},
-                },
-                new Product()
-                {
-                  Name = new ProductName(){ Name ="Parówka w cieście",Img="chleb.png",Id = Guid.NewGuid()},
-                  Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=3.5m,Id = Guid.NewGuid()},
-                },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Chleb",Img=ImgBread.chleb,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=5.5m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Duży chleb",Img="chleb.png", Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=11m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Bułka",Img=ImgBread.Bulka,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=1.5m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Mała bułka",Img=ImgBread.Bulka,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=0.7m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Bułka z serem",Img=ImgBread.Bulka,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=2.5m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Drożdżówka",Img=ImgBuns.Ser,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=2.5m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Drożdżówki na wagę (opak.)",Img=ImgBuns.Ser,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=9m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Ciastka francuskie",Img=ImgOther.KrucheZSerem,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=3m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Ciastka (opak. 400g)",Img=ImgCookies.Czekolada,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=10m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Piernik/Babka",Img=ImgPath.Logo,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=12m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Makowiec",Img=ImgPath.Logo,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=14m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Wafle (opak. 400g)",Img=ImgCookies.Andrut,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=10m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Kołacz",Img=ImgBuns.Ser,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=5m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Chałka",Img=ImgPath.Logo,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=5m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Mini Pizza",Img=ImgPath.Logo,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=3m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Bułka tarta",Img=ImgPath.Logo,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=3.5m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Parówka w cieście",Img=ImgPath.Logo,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=3.5m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Chleb suchy",Img="chleb.png", Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=2m,Id = GetGuidSed()},
+                    },
                 };
 
                 for (int i = 0; i < products.Length; i++)

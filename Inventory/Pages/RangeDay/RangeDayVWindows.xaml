@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:VM="clr-namespace:Inventory.Pages.RangeDay"
+    xmlns:VMD="clr-namespace:Inventory.Model.MVVM"
     Title="Zakres dat"
     x:DataType="VM:RangeDayVM">
 
@@ -17,10 +18,18 @@
     <Grid RowDefinitions="auto,auto,*,0.001*">
 
         <HorizontalStackLayout HorizontalOptions="Center">
+            <Picker
+                Title="Wybierz kierowce"
+                HorizontalOptions="Center"
+                ItemDisplayBinding="{Binding Name}"
+                ItemsSource="{Binding Drivers}"
+                SelectedIndex="0"
+                SelectedItem="{Binding SelectedDriverName}" />
 
             <Picker
                 Title="Wybierz zakres dat"
                 ItemsSource="{Binding Ragne}"
+                SelectedIndex="0"
                 SelectedItem="{Binding IsSelectedDate}" />
             <Button
                 Margin="10"

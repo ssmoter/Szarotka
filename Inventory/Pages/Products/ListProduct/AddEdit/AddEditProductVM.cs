@@ -51,8 +51,10 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
         {
             try
             {
-
                 await Inventory.Service.ProductsUpdateService.OnUpdate();
+
+                Product.Prices.Clear();
+
                 await Shell.Current.GoToAsync("..");
             }
             catch (Exception ex)
@@ -98,7 +100,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                     Description = Product.Name.Description,
                     Img = Product.Name.Img,
                 };
-                productName.Img = "chleb.png";
+                productName.Img = DataBase.Helper.Img.ImgPath.Logo;
                 await _db.DataBaseAsync.InsertAsync(productName);
                 var id = await _db.DataBaseAsync.Table<ProductName>().Where(x => x.Name == productName.Name).FirstOrDefaultAsync();
                 Product.Name = id.PareseAsProductNameM();
@@ -141,6 +143,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                 {
                     Model.ProductPrice newPrice = new()
                     {
+                        Id = Guid.NewGuid(),
                         CreatedDateTime = DateTime.Now,
                         PriceDecimal = price,
                         ProductNameId = Product.Name.Id

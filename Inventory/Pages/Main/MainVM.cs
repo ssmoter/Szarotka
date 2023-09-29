@@ -34,13 +34,10 @@ namespace Inventory.Pages.Main
                 if (exist)
                 {
                     var selected = await db.DataBaseAsync.GetAsync<Model.SelectedDriver>(1);
-                    var selectedDriver = await db.DataBaseAsync.Table<Model.Driver>().FirstOrDefaultAsync(x => x.Guid == selected.SelectedGuid);
+                    var selectedDriver = await db.DataBaseAsync.Table<Model.Driver>().FirstOrDefaultAsync(x => x.Id == selected.SelectedGuid);
                     Helper.SelectedDriver.Id = selectedDriver.Id;
                     Helper.SelectedDriver.Name = selectedDriver.Name;
                     Helper.SelectedDriver.Description = selectedDriver.Description;
-                    Helper.SelectedDriver.Guid = selectedDriver.Guid;
-                    var a = Helper.SelectedDriver.Name;
-                    var a2 = Helper.SelectedDriver.Guid;
 
                     SetName();
                 }
@@ -69,6 +66,10 @@ namespace Inventory.Pages.Main
                     dayM = await _selectDayService.GetDay();
                 }
                 else if (dayM.Created.ToShortDateString() != DateTime.Now.ToShortDateString())
+                {
+                    dayM = await _selectDayService.GetDay();
+                }
+                else if (dayM.DriverGuid != Helper.SelectedDriver.Id)
                 {
                     dayM = await _selectDayService.GetDay();
                 }

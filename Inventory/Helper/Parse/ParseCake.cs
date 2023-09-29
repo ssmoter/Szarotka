@@ -21,10 +21,7 @@ namespace Inventory.Helper.Parse
         {
             if (from is not null)
             {
-                if (to is null)
-                {
-                    to = new Cake();
-                }
+                to ??= new Cake();
 
                 to.Id = from.Id;
                 to.DayId = from.DayId;
@@ -49,10 +46,7 @@ namespace Inventory.Helper.Parse
         {
             if (from is not null)
             {
-                if (to is null)
-                {
-                    to = new CakeM();
-                }
+                to ??= new CakeM();
                 to.Id = from.Id;
                 to.DayId = from.DayId;
                 to.Price = from.PriceDecimal;

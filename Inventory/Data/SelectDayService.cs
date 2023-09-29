@@ -31,12 +31,16 @@ namespace Inventory.Service
                 {
                     DayM.Created = createdDate;
                 }
-                DayM.DriverGuid = Helper.SelectedDriver.Guid;
+                if (DayM.DriverGuid == Guid.Empty)
+                {
+                    DayM.DriverGuid = Helper.SelectedDriver.Id;
+                }
+
                 return DayM;
             }
             catch (Exception ex)
             {
-                await _db.SaveLogAsync(ex);
+                _db.SaveLog(ex);
                 throw;
             }
             finally
@@ -52,15 +56,20 @@ namespace Inventory.Service
                 await SnackbarAsToats.OnShow("Pobieranie danego dnia ");
                 var DayM = new DayM();
                 Service.ProductUpdatePriceService.EnableUpdate = false;
-                var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == createdDate).FirstOrDefaultAsync();
+                var guid = Helper.SelectedDriver.Id;
+                var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == createdDate && x.DriverGuid == guid).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
                 await GetProductTable(DayM);
                 await GetCakeTable(DayM);
                 if (today is null)
                 {
                     DayM.Created = DateTime.Parse(createdDate, DataBase.Helper.Constants.CultureInfo);
+                    DayM.DriverGuid = guid;
                 }
-                DayM.DriverGuid = Helper.SelectedDriver.Guid;
+                if (DayM.DriverGuid == Guid.Empty)
+                {
+                    DayM.DriverGuid = Helper.SelectedDriver.Id;
+                }
                 return DayM;
             }
             catch (Exception ex)
@@ -89,7 +98,10 @@ namespace Inventory.Service
                 {
                     DayM.Created = DateTime.Now;
                 }
-                DayM.DriverGuid = Helper.SelectedDriver.Guid;
+                if (DayM.DriverGuid == Guid.Empty)
+                {
+                    DayM.DriverGuid = Helper.SelectedDriver.Id;
+                }
                 return DayM;
             }
             catch (Exception ex)
@@ -111,15 +123,22 @@ namespace Inventory.Service
                 var DayM = new DayM();
                 Service.ProductUpdatePriceService.EnableUpdate = false;
                 var time = DateTime.Now.ToString("dd.MM.yyyy");
-                var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == time).FirstOrDefaultAsync();
+                var guid = Helper.SelectedDriver.Id;
+                var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == time && x.DriverGuid == guid).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
                 await GetProductTable(DayM);
                 await GetCakeTable(DayM);
                 if (today is null)
                 {
                     DayM.Created = DateTime.Now;
+                    DayM.DriverGuid = guid;
                 }
-                DayM.DriverGuid = Helper.SelectedDriver.Guid;
+                if (DayM.DriverGuid == Guid.Empty)
+                {
+                    var a = DayM.DriverGuid.ToString();
+
+                    DayM.DriverGuid = Helper.SelectedDriver.Id;
+                }
                 return DayM;
             }
             catch (Exception ex)
@@ -142,9 +161,35 @@ namespace Inventory.Service
             {
                 var productNameId = product[i].ProductNameId;
                 product[i].Name = await _db.DataBaseAsync.Table<Model.ProductName>().FirstOrDefaultAsync(x => x.Id == productNameId);
-                product[i].Price = await _db.DataBaseAsync.Table<Model.ProductPrice>().OrderByDescending(x => x.Id).FirstOrDefaultAsync(x => x.ProductNameId == productNameId);
-
+                var priceId = product[i].ProductPriceId;
+                product[i].Price = await _db.DataBaseAsync.Table<Model.ProductPrice>().OrderByDescending(x => x.Id).FirstOrDefaultAsync(x => x.ProductNameId == productNameId && x.Id == priceId);
                 dayM.Products.Add(product[i].ParseAsProductM());
+            }
+            var length = await _db.DataBaseAsync.Table <Model.ProductName>().CountAsync();
+
+            if (product.Length<length)
+            {
+                var allProduct = await _db.DataBaseAsync.Table<Model.ProductName>().ToArrayAsync();
+
+                for (int i = 0; i < length; i++)
+                {
+                    var id = allProduct[i].Id;
+                    if (dayM.Products.Any(x=>x.Name.Id == id))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        var price = await _db.DataBaseAsync.Table<Model.ProductPrice>().OrderByDescending(x => x.Created).FirstOrDefaultAsync(x => x.ProductNameId == id);
+                        dayM.Products.Add(new ProductM()
+                        {
+                            Name = allProduct[i].PareseAsProductNameM(),
+                            Price = price.PareseAsProductPriceM(),
+                            ProductNameId = id,
+                            ProductPriceId = price.Id
+                        });
+                    }
+                }
             }
 
             if (dayM.Products.Count == 0)
@@ -153,8 +198,14 @@ namespace Inventory.Service
                 for (int i = 0; i < productName.Length; i++)
                 {
                     var nameId = productName[i].Id;
-                    var price = await _db.DataBaseAsync.Table<Model.ProductPrice>().OrderByDescending(x => x.Id).FirstOrDefaultAsync(x => x.ProductNameId == nameId);
-                    dayM.Products.Add(new ProductM() { Name = productName[i].PareseAsProductNameM(), ProductNameId = productName[i].Id, Price = price.PareseAsProductPriceM() });
+                    var price = await _db.DataBaseAsync.Table<Model.ProductPrice>().OrderByDescending(x => x.Created).FirstOrDefaultAsync(x => x.ProductNameId == nameId);
+                    dayM.Products.Add(new ProductM()
+                    {
+                        Name = productName[i].PareseAsProductNameM(),
+                        ProductNameId = productName[i].Id,
+                        Price = price.PareseAsProductPriceM(),
+                        ProductPriceId = price.Id
+                    });
                 }
             }
         }

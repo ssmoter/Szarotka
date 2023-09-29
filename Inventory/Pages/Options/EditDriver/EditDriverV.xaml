@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Inventory.Pages.Options.EditDriver.EditDriverV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:Img="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
+    xmlns:VM="clr-namespace:Inventory.Pages.Options.EditDriver"
+    Title="EditDriverV"
+    x:DataType="VM:EditDriverVM">
+
+    <VerticalStackLayout>
+
+        <Border Margin="5" Padding="5">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10" />
+            </Border.StrokeShape>
+
+            <VerticalStackLayout>
+
+                <Image
+                    HorizontalOptions="Center"
+                    MaximumHeightRequest="100"
+                    Source="{x:Static Img:ImgPath.Logo}" />
+                <VerticalStackLayout>
+                    <Label Text="Nazwa" />
+                    <Entry Text="{Binding Driver.Name}" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout>
+                    <Label Text="Opis" />
+                    <Editor AutoSize="TextChanges" Text="{Binding Driver.Description}" />
+                </VerticalStackLayout>
+
+
+                <HorizontalStackLayout HorizontalOptions="Center">
+                    <Button Command="{Binding SaveCommand}" Text="Zapisz" />
+                    <Button Command="{Binding BackCommand}" Text="Anuluj" />
+                </HorizontalStackLayout>
+
+
+            </VerticalStackLayout>
+
+        </Border>
+
+    </VerticalStackLayout>
+
+
+</ContentPage>

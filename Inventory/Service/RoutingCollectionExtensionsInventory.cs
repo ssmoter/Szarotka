@@ -6,6 +6,7 @@
         {
             Routing.RegisterRoute(nameof(Inventory.Pages.Main.MainV), typeof(Inventory.Pages.Main.MainV));
             Routing.RegisterRoute(nameof(Inventory.Pages.Products.ListProduct.AddEdit.AddEditProductV), typeof(Inventory.Pages.Products.ListProduct.AddEdit.AddEditProductV));
+            Routing.RegisterRoute(nameof(Inventory.Pages.Options.EditDriver.EditDriverV), typeof(Inventory.Pages.Options.EditDriver.EditDriverV));
 
 #if WINDOWS
             Routing.RegisterRoute(nameof(Inventory.Pages.SingleDay.SingleDayV), typeof(Inventory.Pages.SingleDay.SingleDayVWindows));
