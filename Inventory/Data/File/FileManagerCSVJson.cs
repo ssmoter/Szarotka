@@ -74,15 +74,10 @@ namespace Inventory.Data.File
                             break;
                         }
                         model[i].DayM.Products.Add(new());
-                        model[i].DayM.Products[j].Id = csv.GetField<Guid>("Produkt_Id");
-                        model[i].DayM.Products[j].DayId = csv.GetField<Guid>("Produkt_Dzień_Id");
-                        model[i].DayM.Products[j].ProductNameId = csv.GetField<Guid>("Produkt_Nazwa_Id");
-                        model[i].DayM.Products[j].ProductNameId = csv.GetField<Guid>("Produkt_Wybrana_Cena_Id");
-                        model[i].DayM.Products[j].Description = csv.GetField<string>("Produkt_Opis");
 
-                        model[i].DayM.Products[j].Name.Id = csv.GetField<Guid>("Produkt_Nazwa_Id");
-                        model[i].DayM.Products[j].Name.Description = csv.GetField<string>("Produkt_Nazwa_Opis");
-                        model[i].DayM.Products[j].Name.Img = csv.GetField<string>("Produkt_Nazwa_Img");
+
+
+
                         model[i].DayM.Products[j].Name.Name = csv.GetField<string>("Produkt_Nazwa");
 
                         model[i].DayM.Products[j].Number = csv.GetField<int>("Produkt_Ilość");
@@ -93,9 +88,21 @@ namespace Inventory.Data.File
                         model[i].DayM.Products[j].PriceTotalAfterCorrect = csv.GetField<decimal>("Produkt_Utarg_Po_Edycji");
 
                         model[i].DayM.Products[j].Price.Price = csv.GetField<decimal>("Produkt_Cena_Wartość");
+
                         model[i].DayM.Products[j].Price.Id = csv.GetField<Guid>("Produkt_Cena_Id");
                         model[i].DayM.Products[j].Price.ProductNameId = csv.GetField<Guid>("Produkt_Cena_Nazwa_Id");
                         model[i].DayM.Products[j].Price.Created = csv.GetField<DateTime>("Produkt_Cena_Stworzono");
+
+                        model[i].DayM.Products[j].Id = csv.GetField<Guid>("Produkt_Id");
+                        model[i].DayM.Products[j].DayId = csv.GetField<Guid>("Produkt_Dzień_Id");
+                        model[i].DayM.Products[j].ProductNameId = csv.GetField<Guid>("Produkt_Nazwa_Id");
+                        model[i].DayM.Products[j].ProductNameId = csv.GetField<Guid>("Produkt_Wybrana_Cena_Id");
+                        model[i].DayM.Products[j].Description = csv.GetField<string>("Produkt_Opis");
+
+                        model[i].DayM.Products[j].Name.Id = csv.GetField<Guid>("Produkt_Nazwa_Id");
+                        model[i].DayM.Products[j].Name.Description = csv.GetField<string>("Produkt_Nazwa_Opis");
+                        model[i].DayM.Products[j].Name.Img = csv.GetField<string>("Produkt_Nazwa_Img");
+
                         csv.Read();
                     }
                     csv.ReadHeader();
@@ -116,44 +123,18 @@ namespace Inventory.Data.File
                             break;
                         }
                         model[i].DayM.Cakes.Add(new());
-                        model[i].DayM.Cakes[j].Id = csv.GetField<Guid>("Ciasto_Id");
-                        model[i].DayM.Cakes[j].DayId = csv.GetField<Guid>("Ciasto_Dzień_Id");
                         model[i].DayM.Cakes[j].Price = csv.GetField<decimal>("Ciasto_Cena");
                         model[i].DayM.Cakes[j].IsSell = csv.GetField<bool>("Ciasto_CzySprzedane");
 
+                        model[i].DayM.Cakes[j].Id = csv.GetField<Guid>("Ciasto_Id");
+                        model[i].DayM.Cakes[j].DayId = csv.GetField<Guid>("Ciasto_Dzień_Id");
+ 
                         csv.Read();
 
                     }
                 }
 
 
-                return model;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public static async Task<T> GetFileJson<T>(string path)
-        {
-            try
-            {
-                using var sourceStream = new FileStream(path,
-                      FileMode.Open, FileAccess.Read, FileShare.Read,
-                      bufferSize: 4096, useAsync: true);
-
-                StringBuilder sb = new();
-
-                byte[] buffer = new byte[0x1000];
-                int numRead;
-                while ((numRead = await sourceStream.ReadAsync(buffer)) != 0)
-                {
-                    string text = Encoding.Unicode.GetString(buffer, 0, numRead);
-                    sb.Append(text);
-                }
-
-                var model = JsonConvert.DeserializeObject<T>(sb.ToString());
                 return model;
             }
             catch (Exception)
@@ -206,15 +187,6 @@ namespace Inventory.Data.File
                         csv.NextRecord();
                         for (int j = 0; j < model[i].DayM.Products.Count; j++)
                         {
-                            csv.WriteField(model[i].DayM.Products[j].Id);
-                            csv.WriteField(model[i].DayM.Products[j].DayId);
-                            csv.WriteField(model[i].DayM.Products[j].ProductNameId);
-                            csv.WriteField(model[i].DayM.Products[j].ProductPriceId);
-                            csv.WriteField(model[i].DayM.Products[j].Description);
-
-                            csv.WriteField(model[i].DayM.Products[j].Name.Id);
-                            csv.WriteField(model[i].DayM.Products[j].Name.Description);
-                            csv.WriteField(model[i].DayM.Products[j].Name.Img);
                             csv.WriteField(model[i].DayM.Products[j].Name.Name);
 
                             csv.WriteField(model[i].DayM.Products[j].Number);
@@ -224,11 +196,21 @@ namespace Inventory.Data.File
                             csv.WriteField(model[i].DayM.Products[j].PriceTotalCorrect);
                             csv.WriteField(model[i].DayM.Products[j].PriceTotalAfterCorrect);
 
-
                             csv.WriteField(model[i].DayM.Products[j].Price.Price);
+
                             csv.WriteField(model[i].DayM.Products[j].Price.Id);
                             csv.WriteField(model[i].DayM.Products[j].Price.ProductNameId);
                             csv.WriteField(model[i].DayM.Products[j].Price.Created);
+
+                            csv.WriteField(model[i].DayM.Products[j].Id);
+                            csv.WriteField(model[i].DayM.Products[j].DayId);
+                            csv.WriteField(model[i].DayM.Products[j].ProductNameId);
+                            csv.WriteField(model[i].DayM.Products[j].ProductPriceId);
+                            csv.WriteField(model[i].DayM.Products[j].Description);
+
+                            csv.WriteField(model[i].DayM.Products[j].Name.Id);
+                            csv.WriteField(model[i].DayM.Products[j].Name.Description);
+                            csv.WriteField(model[i].DayM.Products[j].Name.Img);
 
                             csv.NextRecord();
                         }
@@ -237,10 +219,13 @@ namespace Inventory.Data.File
                         csv.NextRecord();
                         for (int j = 0; j < model[i].DayM.Cakes.Count; j++)
                         {
-                            csv.WriteField(model[i].DayM.Cakes[j].Id);
-                            csv.WriteField(model[i].DayM.Cakes[j].DayId);
+
                             csv.WriteField(model[i].DayM.Cakes[j].Price);
                             csv.WriteField(model[i].DayM.Cakes[j].IsSell);
+
+                            csv.WriteField(model[i].DayM.Cakes[j].Id);
+                            csv.WriteField(model[i].DayM.Cakes[j].DayId);
+
                             csv.NextRecord();
                         }
 
@@ -249,6 +234,33 @@ namespace Inventory.Data.File
                     }
                 }
                 return path;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public static async Task<T> GetFileJson<T>(string path)
+        {
+            try
+            {
+                using var sourceStream = new FileStream(path,
+                      FileMode.Open, FileAccess.Read, FileShare.Read,
+                      bufferSize: 4096, useAsync: true);
+
+                StringBuilder sb = new();
+
+                byte[] buffer = new byte[0x1000];
+                int numRead;
+                while ((numRead = await sourceStream.ReadAsync(buffer)) != 0)
+                {
+                    string text = Encoding.Unicode.GetString(buffer, 0, numRead);
+                    sb.Append(text);
+                }
+
+                var model = JsonConvert.DeserializeObject<T>(sb.ToString());
+                return model;
             }
             catch (Exception)
             {

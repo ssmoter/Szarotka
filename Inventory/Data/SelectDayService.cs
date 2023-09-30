@@ -38,9 +38,8 @@ namespace Inventory.Service
 
                 return DayM;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _db.SaveLog(ex);
                 throw;
             }
             finally
@@ -72,9 +71,8 @@ namespace Inventory.Service
                 }
                 return DayM;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                await _db.SaveLogAsync(ex);
                 throw;
             }
             finally
@@ -104,9 +102,8 @@ namespace Inventory.Service
                 }
                 return DayM;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                await _db.SaveLogAsync(ex);
                 throw;
             }
             finally
@@ -141,9 +138,8 @@ namespace Inventory.Service
                 }
                 return DayM;
             }
-            catch (Exception ex)
+            catch (Exception)    
             {
-                _db.SaveLog(ex);
                 throw;
             }
             finally
@@ -181,6 +177,10 @@ namespace Inventory.Service
                     else
                     {
                         var price = await _db.DataBaseAsync.Table<Model.ProductPrice>().OrderByDescending(x => x.Created).FirstOrDefaultAsync(x => x.ProductNameId == id);
+                        if (price is null)
+                        {
+                            continue;
+                        }
                         dayM.Products.Add(new ProductM()
                         {
                             Name = allProduct[i].PareseAsProductNameM(),
@@ -199,6 +199,10 @@ namespace Inventory.Service
                 {
                     var nameId = productName[i].Id;
                     var price = await _db.DataBaseAsync.Table<Model.ProductPrice>().OrderByDescending(x => x.Created).FirstOrDefaultAsync(x => x.ProductNameId == nameId);
+                    if (price is null)
+                    {
+                        continue;
+                    }
                     dayM.Products.Add(new ProductM()
                     {
                         Name = productName[i].PareseAsProductNameM(),

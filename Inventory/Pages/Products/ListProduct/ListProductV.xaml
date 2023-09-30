@@ -46,20 +46,6 @@
                                 </SwipeItems>
                             </SwipeView.RightItems>
 
-                            <SwipeView.LeftItems>
-                                <SwipeItems SwipeBehaviorOnInvoked="Close">
-                                    <SwipeItem
-                                        BackgroundColor="Green"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=EditProductCommand}"
-                                        CommandParameter="{Binding .}"
-                                        Text="Edytuj" />
-                                    <SwipeItem
-                                        BackgroundColor="Red"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DeleteProductCommand}"
-                                        CommandParameter="{Binding .}"
-                                        Text="Usuń" />
-                                </SwipeItems>
-                            </SwipeView.LeftItems>
                             <Grid
                                 x:DataType="VM:ListProductM"
                                 ColumnDefinitions="*,*,*"

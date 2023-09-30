@@ -33,15 +33,7 @@ namespace Inventory.Data.File
 
         public static void Product(CsvWriter csv)
         {
-            csv.WriteField("Produkt_Id");
-            csv.WriteField("Produkt_Dzień_Id");
-            csv.WriteField("Produkt_Nazwa_Id");
-            csv.WriteField("Produkt_Wybrana_Cena_Id");
-            csv.WriteField("Produkt_Opis");
 
-            csv.WriteField("Produkt_Nazwa_Id");
-            csv.WriteField("Produkt_Nazwa_Opis");
-            csv.WriteField("Produkt_Nazwa_Img");
             csv.WriteField("Produkt_Nazwa");
 
             csv.WriteField("Produkt_Ilość");
@@ -52,17 +44,28 @@ namespace Inventory.Data.File
             csv.WriteField("Produkt_Utarg_Po_Edycji");
 
             csv.WriteField("Produkt_Cena_Wartość");
+
             csv.WriteField("Produkt_Cena_Id");
             csv.WriteField("Produkt_Cena_Nazwa_Id");
             csv.WriteField("Produkt_Cena_Stworzono");
+
+            csv.WriteField("Produkt_Id");
+            csv.WriteField("Produkt_Dzień_Id");
+            csv.WriteField("Produkt_Nazwa_Id");
+            csv.WriteField("Produkt_Wybrana_Cena_Id");
+            csv.WriteField("Produkt_Opis");
+
+            csv.WriteField("Produkt_Nazwa_Id");
+            csv.WriteField("Produkt_Nazwa_Opis");
+            csv.WriteField("Produkt_Nazwa_Img");
         }
         public static void Cake(CsvWriter csv)
         {
-            csv.WriteField("Ciasto_Id");
-            csv.WriteField("Ciasto_Dzień_Id");
             csv.WriteField("Ciasto_Cena");
             csv.WriteField("Ciasto_CzySprzedane");
-        }
 
+            csv.WriteField("Ciasto_Id");
+            csv.WriteField("Ciasto_Dzień_Id");
+        }
     }
 }

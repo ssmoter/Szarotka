@@ -18,7 +18,7 @@ namespace Inventory.Pages.Products.ListProduct
         [ObservableProperty]
         bool isGenerateDefoultEnable;
 
-        Random random = new Random(2137);
+        readonly Random random = new(2137);
         readonly DataBase.Data.AccessDataBase _db;
         public ListProductVM(DataBase.Data.AccessDataBase db)
         {
@@ -59,7 +59,7 @@ namespace Inventory.Pages.Products.ListProduct
                     ProductMs[i].Prices = await SelectPricesAsync(names[i].Id);
                     ProductMs[i].SetActualPrice();
                 }
-                IsGenerateDefoultEnable = ProductMs.Count() <= 0;
+                IsGenerateDefoultEnable = ProductMs.Count <= 0;
             }
             catch (Exception ex)
             {
@@ -233,8 +233,23 @@ namespace Inventory.Pages.Products.ListProduct
                     },
                     new Product()
                     {
+                      Name = new ProductName(){ Name ="Bułka maślana",Img=ImgPath.Logo,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=1.5m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
                       Name = new ProductName(){ Name ="Drożdżówki na wagę (opak.)",Img=ImgBuns.Ser,Id = GetGuidSed()},
                       Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=9m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Kołacz",Img=ImgBuns.Ser,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=5m,Id = GetGuidSed()},
+                    },
+                    new Product()
+                    {
+                      Name = new ProductName(){ Name ="Chałka",Img=ImgPath.Logo,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=5m,Id = GetGuidSed()},
                     },
                     new Product()
                     {
@@ -260,16 +275,6 @@ namespace Inventory.Pages.Products.ListProduct
                     {
                       Name = new ProductName(){ Name ="Wafle (opak. 400g)",Img=ImgCookies.Andrut,Id = GetGuidSed()},
                       Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=10m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Kołacz",Img=ImgBuns.Ser,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=5m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Chałka",Img=ImgPath.Logo,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=5m,Id = GetGuidSed()},
                     },
                     new Product()
                     {

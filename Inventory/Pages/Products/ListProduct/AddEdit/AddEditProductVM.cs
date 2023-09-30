@@ -139,6 +139,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                     return;
                 }
 
+                result = result.Replace('.', ',');
                 if (decimal.TryParse(result, out decimal price))
                 {
                     Model.ProductPrice newPrice = new()
@@ -159,7 +160,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
         }
     }
 
-#endregion
+    #endregion
 
 
 }

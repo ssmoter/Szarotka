@@ -125,12 +125,14 @@ namespace Inventory.Pages.RangeDay
             };
 
             var driver = _db.DataBase.Table<Driver>().ToArray();
-            Drivers = new ObservableCollection<DriverM>();
-            Drivers.Add(new DriverM()
+            Drivers = new ObservableCollection<DriverM>
             {
-                Name= "Kierowcy",
-                Id= Guid.Empty,
-            });
+                new DriverM()
+                {
+                    Name = "Kierowcy",
+                    Id = Guid.Empty,
+                }
+            };
             for (int i = 0; i < driver.Length; i++)
             {
                 Drivers.Add(driver[i].PareseAsDriverM());
@@ -343,7 +345,7 @@ namespace Inventory.Pages.RangeDay
             return string.Join('_', "Szarotka", from, to);
         }
 
-        ObservableCollection<ExistingFiles.ExistingFilesM> GetExistingFiles(IList<string> values)
+        static ObservableCollection<ExistingFiles.ExistingFilesM> GetExistingFiles(IList<string> values)
         {
             var response = new ObservableCollection<ExistingFiles.ExistingFilesM>();
             for (int i = 0; i < values.Count; i++)
@@ -433,7 +435,7 @@ namespace Inventory.Pages.RangeDay
                     await Shell.Current.GoToAsync($"{nameof(ExistingFiles.ExistingFilesV)}?GetTyp={FileManagerCSVJson.JsonFolder}",
                         new Dictionary<string, object>
                         {
-                            [nameof(ExistingFiles.ExistingFilesM)] = GetExistingFiles(files)
+                            [nameof(ExistingFiles.ExistingFilesM)] = RangeDayVM.GetExistingFiles(files)
                         }); ;
                 }
 
@@ -495,7 +497,7 @@ namespace Inventory.Pages.RangeDay
                     await Shell.Current.GoToAsync($"{nameof(ExistingFiles.ExistingFilesV)}?GetTyp={FileManagerCSVJson.CsvFolder}",
                         new Dictionary<string, object>
                         {
-                            [nameof(ExistingFiles.ExistingFilesM)] = GetExistingFiles(files)
+                            [nameof(ExistingFiles.ExistingFilesM)] = RangeDayVM.GetExistingFiles(files)
                         }); ;
                 }
 
