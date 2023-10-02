@@ -22,4 +22,16 @@ public partial class SingleDayV : ContentPage
             });
         }
     }
+
+    private void Entry_TextChanged_SetValueToSecendPosition(object sender, TextChangedEventArgs e)
+    {
+        if (sender is Entry entry)
+        {
+            if (entry.Text.Length > 0 && entry.Text.Length <= 1)
+            {
+                entry.CursorPosition = 1;
+            }
+        }
+
+    }
 }

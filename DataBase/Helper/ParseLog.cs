@@ -17,6 +17,21 @@ namespace DataBase.Helper
 
             return log;
         }
+        internal static void ParseAsLogM(this LogsModel from, LogM to)
+        {
+            if (from is null)
+            {
+                return;
+            }
+            to ??= new LogM();
+
+            to.Id = from.Id;
+            to.Message = from.Message;
+            to.StackTrace = from.StackTrace;
+            to.Created = from.CreatedDateTime;
+
+
+        }
         internal static LogsModel ParseAsLog(this LogM model)
         {
             var log = new LogsModel()
@@ -29,5 +44,23 @@ namespace DataBase.Helper
 
             return log;
         }
+
+        internal static void ParseAsLog(this LogM from, LogsModel to)
+        {
+            if (from is null)
+            {
+                return;
+
+            }
+            to ??= new LogsModel();
+
+            to.Id = from.Id;
+            to.Message = from.Message;
+            to.StackTrace = from.StackTrace;
+            to.CreatedDateTime = from.Created;
+        }
+
+
+
     }
 }

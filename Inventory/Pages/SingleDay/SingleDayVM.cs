@@ -241,6 +241,7 @@ namespace Inventory.Pages.SingleDay
                 _db.SaveLog(ex);
             }
         }
+
         #endregion
     }
 }

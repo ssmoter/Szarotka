@@ -7,34 +7,38 @@
     Title="{Binding Name}"
     x:DataType="vm:MainVM">
 
-    <VerticalStackLayout
-        Padding="30,0"
-        Spacing="25"
-        VerticalOptions="Start">
-        <Label Text="" />
-        <Button
-            Command="{Binding NavigationToSingleDayCommand}"
-            HorizontalOptions="Center"
-            Text="Aktualny dzień" />
-        <Button
-            Command="{Binding NavigationToRangeCommand}"
-            HorizontalOptions="Center"
-            Text="Wczytaj zakres dni" />
-        <Button
-            Command="{Binding NavigationToEditCommand}"
-            HorizontalOptions="Center"
-            Text="Dodaj/Edytuj product" />
+    <Grid RowDefinitions="*,1">
+        <ScrollView>
+            <VerticalStackLayout
+                Padding="30,0"
+                Spacing="25"
+                VerticalOptions="Start">
+                <Label Text="" />
+                <Button
+                    Command="{Binding NavigationToSingleDayCommand}"
+                    HorizontalOptions="Center"
+                    Text="Aktualny dzień" />
+                <Button
+                    Command="{Binding NavigationToRangeCommand}"
+                    HorizontalOptions="Center"
+                    Text="Wczytaj zakres dni" />
+                <Button
+                    Command="{Binding NavigationToEditCommand}"
+                    HorizontalOptions="Center"
+                    Text="Dodaj/Edytuj product" />
 
-        <Border Padding="5" HorizontalOptions="Center">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10" />
-            </Border.StrokeShape>
-            <VerticalStackLayout>
-                <DatePicker Date="{Binding MainM.Date}" HorizontalOptions="Center" />
-                <Label Text="Wczytaj wybraną date" />
-                <Button Command="{Binding NavigationToSingleDayWitchSelectedDayCommand}" Text="{Binding MainM.DisplyDate}" />
+                <Border Padding="5" HorizontalOptions="Center">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout>
+                        <DatePicker Date="{Binding MainM.Date}" HorizontalOptions="Center" />
+                        <Label Text="Wczytaj wybraną date" />
+                        <Button Command="{Binding NavigationToSingleDayWitchSelectedDayCommand}" Text="{Binding MainM.DisplyDate}" />
+                    </VerticalStackLayout>
+                </Border>
+
             </VerticalStackLayout>
-        </Border>
-
-    </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

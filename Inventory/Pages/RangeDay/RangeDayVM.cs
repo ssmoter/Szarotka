@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using Inventory.Data.File;
@@ -21,9 +22,6 @@ namespace Inventory.Pages.RangeDay
 
         [ObservableProperty]
         DayM totalPriceOfRange;
-
-        [ObservableProperty]
-        ObservableCollection<string> ragne;
 
         [ObservableProperty]
         ObservableCollection<DriverM> drivers;
@@ -72,30 +70,7 @@ namespace Inventory.Pages.RangeDay
                     {
                         try
                         {
-                            await SelectedDate(IsSelectedDate);
-                        }
-                        catch (Exception ex)
-                        {
-                            _db.SaveLog(ex);
-                        }
-                    });
-                }
-            }
-        }
-        string isSelectedDate;
-        public string IsSelectedDate
-        {
-            get => isSelectedDate;
-            set
-            {
-                if (SetProperty(ref isSelectedDate, value))
-                {
-                    OnPropertyChanged(nameof(IsSelectedDate));
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            await SelectedDate(IsSelectedDate);
+                            RangeDays = await SelectDays(PopupDate.From, PopupDate.To, SelectedDriverName.Id);
                         }
                         catch (Exception ex)
                         {
@@ -106,6 +81,7 @@ namespace Inventory.Pages.RangeDay
             }
         }
 
+        PopupDateModel PopupDate = new(DateTime.Today.Ticks, DateTime.Today.AddDays(1).Ticks);
         readonly DataBase.Data.AccessDataBase _db;
         readonly ISelectDayService _selectDayService;
         readonly ISaveDayService _dayService;
@@ -115,14 +91,7 @@ namespace Inventory.Pages.RangeDay
             TotalPriceOfRange = new DayM();
             _db = db;
             _selectDayService = selectDay;
-            ragne = new ObservableCollection<string>
-            {
-                "Dzisiaj",
-                "Tydzień",
-                "Miesiąc",
-                "Rok",
-                //"Wybierz daty"
-            };
+
 
             var driver = _db.DataBase.Table<Driver>().ToArray();
             Drivers = new ObservableCollection<DriverM>
@@ -137,112 +106,12 @@ namespace Inventory.Pages.RangeDay
             {
                 Drivers.Add(driver[i].PareseAsDriverM());
             }
-            SelectedDriverName = new DriverM() {Id=Guid.Empty,Name="Kierowcy"};
+            SelectedDriverName = new DriverM() { Id = Guid.Empty, Name = "Kierowcy" };
             EnableSave = false;
             _dayService = dayService;
         }
 
         #region Method
-
-        async Task SelectedDate(string range)
-        {
-            try
-            {
-                switch (range)
-                {
-                    case "Dzisiaj":
-                        {
-                            RangeDays = await SelectToday(SelectedDriverName.Id);
-                        }
-                        break;
-                    case "Tydzień":
-                        {
-                            RangeDays = await SelectWeek(SelectedDriverName.Id);
-                        }
-                        break;
-                    case "Miesiąc":
-                        {
-                            RangeDays = await SelectMonth(SelectedDriverName.Id);
-                        }
-                        break;
-                    case "Rok":
-                        {
-                            RangeDays = await SelectYear(SelectedDriverName.Id);
-                        }
-                        break;
-                    case "Wybierz daty":
-                        {
-                            RangeDays = await SelectMore(SelectedDriverName.Id);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
-                EnableSave = false;
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLog(ex);
-            }
-        }
-
-        async Task<ObservableCollection<RangeDayM>> SelectToday(Guid selectedDriverName)
-        {
-            var now = DateTime.Now;
-            var from = new DateTime(now.Year, now.Month, now.Day, 0, 0, 0, 0, 0).ToUniversalTime().Ticks;
-            var to = new DateTime(now.Year, now.Month, now.Day + 1, 0, 0, 0, 0, 0).ToUniversalTime().Ticks;
-
-            var result = await SelectDays(from, to, selectedDriverName);
-            return result;
-        }
-        async Task<ObservableCollection<RangeDayM>> SelectWeek(Guid selectedDriverName)
-        {
-            DateTime now = DateTime.Today;
-            DayOfWeek startDayOfWeek = DayOfWeek.Monday;
-            DateTime startOfWeek = now.AddDays(-(now.DayOfWeek - startDayOfWeek)).Date;
-            DateTime endOfWeek = startOfWeek.AddDays(+7).AddHours(-1);
-
-            if (now.DayOfWeek == DayOfWeek.Sunday)
-            {
-                startOfWeek = now.AddDays(-(now.DayOfWeek - startDayOfWeek)).AddDays(-7).Date;
-                endOfWeek = startOfWeek.AddDays(+7).AddHours(-1);
-            }
-
-            var from = startOfWeek.ToUniversalTime().Ticks;
-            var to = endOfWeek.ToUniversalTime().Ticks;
-
-            var result = await SelectDays(from, to, selectedDriverName);
-            return result;
-        }
-        async Task<ObservableCollection<RangeDayM>> SelectMonth(Guid selectedDriverName)
-        {
-            var from = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1, 2, 0, 0).ToUniversalTime();
-            var to = new DateTime(DateTime.Today.Year, DateTime.Today.AddMonths(1).Month, 1, 2, 0, 0).ToUniversalTime();
-
-            var result = await SelectDays(from.Ticks, to.Ticks, selectedDriverName);
-            return result;
-        }
-        async Task<ObservableCollection<RangeDayM>> SelectYear(Guid selectedDriverName)
-        {
-            var from = new DateTime(DateTime.Today.Year, 1, 1, 1, 0, 0).ToUniversalTime();
-            var to = new DateTime(DateTime.Today.AddYears(1).Year, 1, 1, 1, 0, 0).ToUniversalTime();
-
-            var result = await SelectDays(from.Ticks, to.Ticks, selectedDriverName);
-            return result;
-        }
-        async Task<ObservableCollection<RangeDayM>> SelectMore(Guid selectedDriverName)
-        {
-
-            //var popup = new PopupSelectRangeDate.PopupSelectRangeDateV();
-            // Shell.Current?.ShowPopup(popup);
-
-            var from = new DateTime().ToUniversalTime().Ticks;
-            var to = new DateTime().ToUniversalTime().Ticks;
-
-            var result = await SelectDays(from, to, selectedDriverName);
-            return result;
-        }
 
 
         async Task<ObservableCollection<RangeDayM>> SelectDays(long from, long to, Guid selectedDriverName)
@@ -523,6 +392,34 @@ namespace Inventory.Pages.RangeDay
             {
                 _db.SaveLog(ex);
             }
+        }
+
+        [RelayCommand]
+        async Task SelectMoreDate()
+        {
+            try
+            {
+                var popup = new PopupSelectRangeDate.PopupSelectRangeDateV();
+                var result = await Shell.Current.ShowPopupAsync(popup);
+
+                if (result is PopupDateModel model)
+                {
+                    PopupDate = model;
+                    RangeDays = await SelectDays(PopupDate.From, PopupDate.To, SelectedDriverName.Id);
+
+                    TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
+                    EnableSave = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
+        [RelayCommand]
+        static async Task Back()
+        {
+            await Shell.Current.GoToAsync("..");
         }
 
         #endregion

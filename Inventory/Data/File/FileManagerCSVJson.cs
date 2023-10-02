@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 
 using System.Collections.ObjectModel;
 using System.Text;
-using System;
 
 namespace Inventory.Data.File
 {
@@ -25,6 +24,9 @@ namespace Inventory.Data.File
 
                 using var reader = new StreamReader(path);
                 using var csv = new CsvReader(reader, DataBase.Helper.Constants.CultureInfo);
+                csv.Read();
+                csv.Read();
+
                 for (int i = 0; ; i++)
                 {
 
@@ -69,7 +71,7 @@ namespace Inventory.Data.File
 
                     for (int j = 0; ; j++)
                     {
-                        if ("Ciasto_Id" == csv.GetField(0))
+                        if ("Ciasto_Cena" == csv.GetField(0))
                         {
                             break;
                         }
@@ -128,7 +130,7 @@ namespace Inventory.Data.File
 
                         model[i].DayM.Cakes[j].Id = csv.GetField<Guid>("Ciasto_Id");
                         model[i].DayM.Cakes[j].DayId = csv.GetField<Guid>("Ciasto_Dzień_Id");
- 
+
                         csv.Read();
 
                     }
@@ -156,9 +158,21 @@ namespace Inventory.Data.File
                 using (var writer = new StreamWriter(path))
                 {
                     using var csv = new CsvWriter(writer, DataBase.Helper.Constants.CultureInfo);
+
+
+                    csv.NextRecord();
+                    CSVWriteHeader.WriteSum(csv);
+                    csv.NextRecord();
+                    csv.WriteField(SetRangeDay(model));
+                    csv.WriteField(model.Sum(x => x.DayM.TotalPriceMoney));
+                    csv.WriteField(model.Sum(x => x.DayM.TotalPriceAfterCorrect));
+                    csv.WriteField(model.Sum(x => x.DayM.TotalPriceDifference));
+
+                    csv.NextRecord();
+
                     for (int i = 0; i < model.Count; i++)
                     {
-                        csv.NextRecord();
+                        csv.NextRecord(); ;
 
                         CSVWriteHeader.Driver(csv);
                         csv.NextRecord();
@@ -332,5 +346,20 @@ namespace Inventory.Data.File
             }
         }
 
+        static string SetRangeDay(IList<Pages.RangeDay.RangeDayM> model)
+        {
+            string date;
+            if (model.Count > 1)
+            {
+                date = $"{model.FirstOrDefault().DayM.Created.ToShortDateString()}_{model.LastOrDefault().DayM.Created.ToShortDateString()}";
+            }
+            else
+            {
+                date = model.FirstOrDefault().DayM.Created.ToShortDateString();
+            }
+
+
+            return date;
+        }
     }
 }

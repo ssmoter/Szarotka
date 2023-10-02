@@ -18,9 +18,9 @@ namespace Inventory.Helper.Parse
                 p.PriceTotalDecimal = m.PriceTotal;
                 p.PriceTotalCorrectDecimal = m.PriceTotalCorrect;
                 p.PriceTotalAfterCorrectDecimal = m.PriceTotalAfterCorrect;
-                p.Number = m.Number;
-                p.NumberEdit = m.NumberEdit;
-                p.NumberReturn = m.NumberReturn;
+                p.Number = (int)m.Number;
+                p.NumberEdit = (int)m.NumberEdit;
+                p.NumberReturn = (int)m.NumberReturn;
                 p.Name = m.Name.PareseAsProductName();
                 p.Price = m.Price.PareseAsProductPrice();
             }
@@ -40,9 +40,9 @@ namespace Inventory.Helper.Parse
                 to.PriceTotalDecimal = from.PriceTotal;
                 to.PriceTotalCorrectDecimal = from.PriceTotalCorrect;
                 to.PriceTotalAfterCorrectDecimal = from.PriceTotalAfterCorrect;
-                to.Number = from.Number;
-                to.NumberEdit = from.NumberEdit;
-                to.NumberReturn = from.NumberReturn;
+                to.Number = (int)from.Number;
+                to.NumberEdit = (int)from.NumberEdit;
+                to.NumberReturn = (int)from.NumberReturn;
                 from.Name.PareseAsProductName(to.Name);
                 from.Price.PareseAsProductPrice(to.Price);
             }

@@ -8,6 +8,9 @@
     Title="Zakres dat"
     x:DataType="VM:RangeDayVM">
 
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior Command="{Binding BackCommand}" />
+    </Shell.BackButtonBehavior>
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding GenerateCSVFileCommand}" Text="CSV" />
@@ -18,6 +21,11 @@
     <Grid RowDefinitions="auto,auto,*,0.001*">
 
         <HorizontalStackLayout HorizontalOptions="Center">
+            <Button
+                Command="{Binding SelectMoreDateCommand}"
+                HorizontalOptions="Center"
+                Text="Zakres dat"
+                VerticalOptions="Center" />
             <Picker
                 Title="Wybierz kierowce"
                 HorizontalOptions="Center"
@@ -26,11 +34,6 @@
                 SelectedIndex="0"
                 SelectedItem="{Binding SelectedDriverName}" />
 
-            <Picker
-                Title="Wybierz zakres dat"
-                ItemsSource="{Binding Ragne}"
-                SelectedIndex="0"
-                SelectedItem="{Binding IsSelectedDate}" />
             <Button
                 Margin="10"
                 Command="{Binding SaveAnotherDriverDataCommand}"

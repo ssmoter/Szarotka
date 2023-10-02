@@ -3,31 +3,57 @@
     x:Class="Inventory.Pages.RangeDay.PopupSelectRangeDate.PopupSelectRangeDateV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:Inventory.Pages.RangeDay.PopupSelectRangeDate"
+    x:DataType="vm:PopupSelectRangeDateVM"
+    Color="{AppThemeBinding Light={StaticResource White},
+                            Dark={StaticResource Black}}">
 
 
-    <VerticalStackLayout>
 
-        <Border>
+    <Grid
+        ColumnDefinitions="auto"
+        HorizontalOptions="Center"
+        RowDefinitions="auto"
+        VerticalOptions="Center">
+        <Border Padding="20">
 
-            <VerticalStackLayout>
-                <HorizontalStackLayout>
+            <VerticalStackLayout Style="{StaticResource}">
 
-                    <VerticalStackLayout>
-                        <Label Text="Od:" />
-                        <DatePicker />
-                    </VerticalStackLayout>
+                <HorizontalStackLayout HorizontalOptions="Center">
 
-                    <VerticalStackLayout>
-                        <Label Text="Do:" />
-                        <DatePicker />
-                    </VerticalStackLayout>
+                    <HorizontalStackLayout>
+                        <Label
+                            Style="{StaticResource Label}"
+                            Text="Od:"
+                            VerticalOptions="Center" />
+                        <DatePicker Date="{Binding FromDate}" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
 
+                    <HorizontalStackLayout>
+                        <Label Text="Do:" VerticalOptions="Center" />
+                        <DatePicker Date="{Binding ToDate}" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+
+                </HorizontalStackLayout>
+                <Picker
+                    Title="Wybierz zakres dat"
+                    HorizontalOptions="Center"                    
+                    ItemsSource="{Binding Ragne}"
+                    SelectedItem="{Binding IsSelectedDate}" />
+                <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="End">
+                    <Button
+                        Command="{Binding SaveAndReturnCommand}"
+                        HorizontalOptions="Center"
+                        Text="Wczytaj" />
+                    <Button
+                        Command="{Binding CancelAndReturCommand}"
+                        HorizontalOptions="Center"
+                        Text="Anuluj" />
                 </HorizontalStackLayout>
             </VerticalStackLayout>
 
         </Border>
-    </VerticalStackLayout>
-
+    </Grid>
 
 </toolkit:Popup>

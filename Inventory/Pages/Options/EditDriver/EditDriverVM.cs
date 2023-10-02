@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using Inventory.Helper.Parse;
+
 namespace Inventory.Pages.Options.EditDriver
 {
     [QueryProperty(nameof(Driver), nameof(Model.MVVM.DriverM))]
@@ -30,7 +32,7 @@ namespace Inventory.Pages.Options.EditDriver
                     return;
                 }
 
-                await _db.DataBaseAsync.UpdateAsync(Driver);
+                await _db.DataBaseAsync.UpdateAsync(Driver.PareseAsDriver());
             }
             catch (Exception ex)
             {

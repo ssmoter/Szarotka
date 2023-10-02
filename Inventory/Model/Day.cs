@@ -126,25 +126,26 @@ namespace Inventory.Model
             Cakes = new List<Cake>();
         }
 
-        (int, int, int) parseDate(ReadOnlySpan<char> value)
-        {
+        //static (int, int, int) parseDate(ReadOnlySpan<char> value)
+        //{
 
-            int day = int.Parse(value.Slice(0, 2));
-            int month = int.Parse(value.Slice(3, 2));
-            int year = int.Parse(value.Slice(6, 4));
+        //    int day = int.Parse(value[..2]);
+        //    int month = int.Parse(value.Slice(3, 2));
+        //    int year = int.Parse(value.Slice(6, 4));
 
-            return (day, month, year);
+        //    return (day, month, year);
 
-        }
-        (int, int, int) parseTime(ReadOnlySpan<char> value)
-        {
+        //}
 
-            int hh = int.Parse(value.Slice(0, 2));
-            int mm = int.Parse(value.Slice(3, 2));
-            int ss = int.Parse(value.Slice(6, 2));
+        //static (int, int, int) parseTime(ReadOnlySpan<char> value)
+        //{
 
-            return (hh, mm, ss);
+        //    int hh = int.Parse(value[..2]);
+        //    int mm = int.Parse(value.Slice(3, 2));
+        //    int ss = int.Parse(value.Slice(6, 2));
 
-        }
+        //    return (hh, mm, ss);
+
+        //}
     }
 }

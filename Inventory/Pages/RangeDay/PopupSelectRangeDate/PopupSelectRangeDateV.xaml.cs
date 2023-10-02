@@ -7,6 +7,9 @@ public partial class PopupSelectRangeDateV : Popup
     public PopupSelectRangeDateV()
     {
         InitializeComponent();
-        BindingContext = new PopupSelectRangeDateVM();
+        var vm = new PopupSelectRangeDateVM();
+        vm.Close += CloseAsync;
+
+        BindingContext = vm;
     }
 }

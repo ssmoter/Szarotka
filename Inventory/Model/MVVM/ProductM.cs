@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-using CsvHelper.Configuration.Attributes;
-
 namespace Inventory.Model.MVVM
 {
     public partial class ProductM : ObservableObject
@@ -97,7 +95,7 @@ namespace Inventory.Model.MVVM
         {
             if (Service.ProductUpdatePriceService.EnableUpdate)
             {
-                PriceTotal = (Number + NumberEdit - NumberReturn) * Price.Price;
+                PriceTotal = (Number + numberEdit - NumberReturn) * Price.Price;
                 PriceTotalAfterCorrect = PriceTotal + PriceTotalCorrect;
                 Inventory.Service.ProductUpdatePriceService.OnUpdate();
             }

@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using Inventory.Service;
@@ -24,7 +25,7 @@ namespace Inventory.Pages.Main
         {
             _db = db;
             _selectDayService = selectDay;
-            MainM=new MainM();
+            MainM = new MainM();
             Name = "wybierz kierowcę";
             Service.DriverNameUpdateService.Update += SetName;
             Task.Run(async () =>

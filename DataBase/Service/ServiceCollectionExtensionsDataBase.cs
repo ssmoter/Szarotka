@@ -6,16 +6,16 @@ namespace DataBase.Service
     {
         public static IServiceCollection AddMyServiceDataBase(this IServiceCollection services)
         {
-            services.AddSingleton<AccessDataBase>();
+            services.AddTransient<AccessDataBase>();
 
-            services.AddSingleton<Pages.Log.LogData.LogDataVM>();
-            services.AddSingleton<Pages.Log.LogData.LogDataV>();
+            services.AddTransient<Pages.Log.LogData.LogDataVM>();
+            services.AddTransient<Pages.Log.LogData.LogDataV>();
 
-            services.AddSingleton<Pages.Log.LogVM>();
+            services.AddTransient<Pages.Log.LogVM>();
 #if WINDOWS
-            services.AddSingleton<Pages.Log.LogVWindows>();
+            services.AddTransient<Pages.Log.LogVWindows>();
 #else
-            services.AddSingleton<Pages.Log.LogV>();
+            services.AddTransient<Pages.Log.LogV>();
 #endif
 
             return services;

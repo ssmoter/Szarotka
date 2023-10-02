@@ -1,15 +1,16 @@
 ﻿using CsvHelper;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Inventory.Data.File
 {
     public static class CSVWriteHeader
     {
+        public static void WriteSum(CsvWriter csv)
+        {
+            csv.WriteField("Przedział_Czasu");
+            csv.WriteField("Suma_Pieniędzy");
+            csv.WriteField("Suma_Utarg");
+            csv.WriteField("Suma_Róznica");
+        }
         public static void Driver(CsvWriter csv)
         {
             csv.WriteField("Kierowca_Id");

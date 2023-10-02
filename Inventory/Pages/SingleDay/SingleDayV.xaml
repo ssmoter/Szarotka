@@ -70,7 +70,10 @@
 
                         <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
                             <Label Text="Korekta = " VerticalOptions="Center" />
-                            <Entry Keyboard="Numeric" Text="{Binding DayM.TotalPriceCorrect}" />
+                            <Entry
+                                Keyboard="Numeric"
+                                Text="{Binding DayM.TotalPriceCorrect}"
+                                TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
                             <Label Text="zł" VerticalOptions="Center" />
                         </HorizontalStackLayout>
 
@@ -82,7 +85,10 @@
 
                         <HorizontalStackLayout Grid.Row="4" Grid.Column="0">
                             <Label Text="Pieniądze = " VerticalOptions="Center" />
-                            <Entry Keyboard="Numeric" Text="{Binding DayM.TotalPriceMoney}" />
+                            <Entry
+                                Keyboard="Numeric"
+                                Text="{Binding DayM.TotalPriceMoney}"
+                                TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
                             <Label Text="zł" VerticalOptions="Center" />
                         </HorizontalStackLayout>
 
@@ -201,25 +207,6 @@
 
                                         </SwipeItemView>
 
-                                        <!--<SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductCommand}" CommandParameter="{Binding .}">
-                                            <Frame BackgroundColor="Blue">
-                                                <Label
-                                                    FontSize="Large"
-                                                    HorizontalOptions="Center"
-                                                    Text="+"
-                                                    VerticalOptions="Center" />
-                                            </Frame>
-                                        </SwipeItemView>
-                                        <SwipeItemView Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductCommand}" CommandParameter="{Binding .}">
-                                            <Frame BackgroundColor="Red">
-                                                <Label
-                                                    FontSize="Large"
-                                                    HorizontalOptions="Center"
-                                                    Text="-"
-                                                    VerticalOptions="Center" />
-                                            </Frame>
-                                        </SwipeItemView>-->
-
 
                                     </SwipeItems>
                                 </SwipeView.RightItems>
@@ -257,7 +244,10 @@
                                                 HorizontalOptions="Center"
                                                 Text="Ilość"
                                                 VerticalOptions="Center" />
-                                            <Entry Keyboard="Numeric" Text="{Binding Number}" />
+                                            <Entry
+                                                Keyboard="Numeric"
+                                                Text="{Binding Number}"
+                                                TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
                                         </HorizontalStackLayout>
 
                                         <HorizontalStackLayout Grid.Row="2" Grid.Column="1">
@@ -266,7 +256,10 @@
                                                 HorizontalOptions="Center"
                                                 Text="Edycja"
                                                 VerticalOptions="Center" />
-                                            <Entry Keyboard="Numeric" Text="{Binding NumberEdit}" />
+                                            <Entry
+                                                Keyboard="Numeric"
+                                                Text="{Binding NumberEdit}"
+                                                TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
                                         </HorizontalStackLayout>
 
                                         <HorizontalStackLayout Grid.Row="3" Grid.Column="1">
@@ -274,7 +267,10 @@
                                                 HorizontalOptions="Center"
                                                 Text="Zwrot"
                                                 VerticalOptions="Center" />
-                                            <Entry Keyboard="Numeric" Text="{Binding NumberReturn}" />
+                                            <Entry
+                                                Keyboard="Numeric"
+                                                Text="{Binding NumberReturn}"
+                                                TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
                                         </HorizontalStackLayout>
 
                                         <HorizontalStackLayout Grid.Row="1" Grid.Column="2">
@@ -297,7 +293,10 @@
                                                 HorizontalOptions="Center"
                                                 Text="Korekta"
                                                 VerticalOptions="Center" />
-                                            <Entry Keyboard="Numeric" Text="{Binding PriceTotalCorrect}" />
+                                            <Entry
+                                                Keyboard="Numeric"
+                                                Text="{Binding PriceTotalCorrect}"
+                                                TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
                                         </HorizontalStackLayout>
 
                                         <HorizontalStackLayout Grid.Row="3" Grid.Column="2">

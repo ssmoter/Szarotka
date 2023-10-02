@@ -20,6 +20,7 @@ namespace Inventory.Service
             services.AddSingleton<Pages.RangeDay.RangeDayVM>();
 
             services.AddSingleton<Pages.RangeDay.PopupSelectRangeDate.PopupSelectRangeDateV>();
+
             services.AddSingleton<Pages.Options.EditDriver.EditDriverVM>();
             services.AddSingleton<Pages.Options.EditDriver.EditDriverV>();
 
