@@ -31,6 +31,21 @@ public partial class SingleDayV : ContentPage
             {
                 entry.CursorPosition = 1;
             }
+
+            if (!string.IsNullOrWhiteSpace(e.OldTextValue))
+            {
+                if (e.OldTextValue.Contains('.'))
+                {
+                    entry.Text = entry.Text.Replace('.', ',');
+                    entry.CursorPosition = entry.Text.Length;
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(e.NewTextValue))
+            {
+                entry.Text = "0";
+            }
+
         }
 
     }

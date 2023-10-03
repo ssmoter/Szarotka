@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Helper.Img;
+
 using Inventory.Helper.Parse;
 using Inventory.Model;
 
@@ -75,7 +77,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                     Description = Product.Name.Description,
                     Img = Product.Name.Img,
                 };
-                productName.Img = "chleb.png";
+
                 await _db.DataBaseAsync.UpdateAsync(productName);
 
                 await Shell.Current.DisplayAlert("Aktualizacja", $"Produkt {Product.Name.Name} został zaktualizowany", "Ok");
