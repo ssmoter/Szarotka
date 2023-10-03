@@ -159,6 +159,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\DriversRoutes\DriversRoutes.csproj" />
 	  <ProjectReference Include="..\Inventory\Inventory.csproj" />
 	</ItemGroup>
 
