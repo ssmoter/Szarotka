@@ -23,7 +23,10 @@
                 <HorizontalStackLayout HorizontalOptions="Center">
 
                     <HorizontalStackLayout>
-                        <Label Text="Od:" VerticalOptions="Center" />
+                        <Label
+                            Style="{StaticResource Label}"
+                            Text="Od:"
+                            VerticalOptions="Center" />
                         <DatePicker Date="{Binding FromDate}" VerticalOptions="Center" />
                     </HorizontalStackLayout>
 
@@ -34,16 +37,10 @@
 
                 </HorizontalStackLayout>
                 <Picker
-                    Title="Szybki wybór"
+                    Title="Wybierz zakres dat"
                     HorizontalOptions="Center"
-                    ItemsSource="{Binding RangeFast}"                    
-                    SelectedItem="{Binding IsSelectedDateFast}" />
-                <Picker
-                    Title="Wybór miesiąca"
-                    HorizontalOptions="Center"
-                    ItemsSource="{Binding RangeMonth}"
-                    SelectedItem="{Binding IsSelectedDateMonth}" />
-
+                    ItemsSource="{Binding Ragne}"
+                    SelectedItem="{Binding IsSelectedDate}" />
                 <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="End">
                     <Button
                         Command="{Binding SaveAndReturnCommand}"

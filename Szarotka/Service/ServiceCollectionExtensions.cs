@@ -1,5 +1,7 @@
 ﻿using DataBase.Service;
 
+using DriversRoutes.Service;
+
 using Inventory.Service;
 
 using Szarotka.Pages.Options.Main;
@@ -13,6 +15,10 @@ namespace Szarotka.Service
             services.AddMyServiceDataBase();
 
             services.AddMyServiceInventory();
+
+#if ANDROID
+            services.AddMyServiceDriversRoutes();
+#endif
 
             services.AddSingleton<MainOptionsV>();
             services.AddSingleton<MainOptionsVM>();

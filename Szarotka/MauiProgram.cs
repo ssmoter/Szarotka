@@ -4,6 +4,7 @@ using DataBase.Service;
 
 using Microsoft.Extensions.Logging;
 
+
 using Szarotka.Service;
 
 namespace Szarotka
@@ -20,7 +21,9 @@ namespace Szarotka
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                });
+                })
+                .UseMauiMaps();
+
             builder.Services.AddMyServiceDataBase();
             builder.Services.AddMyService();
 #if DEBUG
