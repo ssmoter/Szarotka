@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataBase", "DataBase\DataBa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventoryUnitTest", "InventoryUnitTest\InventoryUnitTest.csproj", "{CD48E2C7-8672-4A97-80CB-92DC03A4CF8F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SzarotkaManifest", "SzarotkaManifest\SzarotkaManifest.csproj", "{4BEFDD3A-F457-4C2D-9CED-93D0CCEFD00D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{CD48E2C7-8672-4A97-80CB-92DC03A4CF8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD48E2C7-8672-4A97-80CB-92DC03A4CF8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD48E2C7-8672-4A97-80CB-92DC03A4CF8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BEFDD3A-F457-4C2D-9CED-93D0CCEFD00D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BEFDD3A-F457-4C2D-9CED-93D0CCEFD00D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BEFDD3A-F457-4C2D-9CED-93D0CCEFD00D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BEFDD3A-F457-4C2D-9CED-93D0CCEFD00D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -31,7 +31,7 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
                 if (SetProperty(ref toDate, value))
                 {
                     OnPropertyChanged(nameof(ToDate));
-                    to = ToDate.Ticks;
+                    to = ToDate.AddHours(23).Ticks;
                 }
             }
         }

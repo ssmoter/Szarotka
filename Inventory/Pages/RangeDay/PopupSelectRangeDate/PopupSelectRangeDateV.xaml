@@ -18,7 +18,7 @@
         VerticalOptions="Center">
         <Border Padding="20">
 
-            <VerticalStackLayout Style="{StaticResource}">
+            <VerticalStackLayout>
 
                 <HorizontalStackLayout HorizontalOptions="Center">
 
