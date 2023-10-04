@@ -23,10 +23,7 @@
                 <HorizontalStackLayout HorizontalOptions="Center">
 
                     <HorizontalStackLayout>
-                        <Label
-                            Style="{StaticResource Label}"
-                            Text="Od:"
-                            VerticalOptions="Center" />
+                        <Label Text="Od:" VerticalOptions="Center" />
                         <DatePicker Date="{Binding FromDate}" VerticalOptions="Center" />
                     </HorizontalStackLayout>
 
@@ -38,7 +35,7 @@
                 </HorizontalStackLayout>
                 <Picker
                     Title="Wybierz zakres dat"
-                    HorizontalOptions="Center"                    
+                    HorizontalOptions="Center"
                     ItemsSource="{Binding Ragne}"
                     SelectedItem="{Binding IsSelectedDate}" />
                 <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="End">
