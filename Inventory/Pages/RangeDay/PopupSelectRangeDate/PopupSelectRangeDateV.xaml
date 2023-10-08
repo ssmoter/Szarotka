@@ -34,10 +34,16 @@
 
                 </HorizontalStackLayout>
                 <Picker
-                    Title="Wybierz zakres dat"
+                    Title="Szybki wybór"
                     HorizontalOptions="Center"
-                    ItemsSource="{Binding Ragne}"
-                    SelectedItem="{Binding IsSelectedDate}" />
+                    ItemsSource="{Binding RangeFast}"                    
+                    SelectedItem="{Binding IsSelectedDateFast}" />
+                <Picker
+                    Title="Wybór miesiąca"
+                    HorizontalOptions="Center"
+                    ItemsSource="{Binding RangeMonth}"
+                    SelectedItem="{Binding IsSelectedDateMonth}" />
+
                 <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="End">
                     <Button
                         Command="{Binding SaveAndReturnCommand}"
