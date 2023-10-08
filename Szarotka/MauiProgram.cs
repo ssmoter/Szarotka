@@ -21,9 +21,10 @@ namespace Szarotka
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                })
-                .UseMauiMaps();
-
+                });
+#if ANDROID
+            builder.UseMauiMaps();
+#endif
             builder.Services.AddMyServiceDataBase();
             builder.Services.AddMyService();
 #if DEBUG

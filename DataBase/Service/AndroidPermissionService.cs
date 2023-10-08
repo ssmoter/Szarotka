@@ -1,4 +1,4 @@
-﻿namespace Szarotka.Service
+﻿namespace DataBase.Service
 {
     public static class AndroidPermissionService
     {
@@ -65,21 +65,41 @@
                 return false;
         }
 
+        public static async Task<bool> LocationWhenInUse()
+        {
+            var status = PermissionStatus.Unknown;
+
+            status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+
+            if (status == PermissionStatus.Granted)
+                return true;
+
+            if (Permissions.ShouldShowRationale<Permissions.LocationWhenInUse>())
+            {
+                await Shell.Current.DisplayAlert("Pozwolenie", "Pozwolenie na odczyt danych z galerii jest wymagane", "Ok");
+            }
+
+            status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+            if (status == PermissionStatus.Granted)
+                return true;
+            else
+                return false;
+        }
 
 
         public static async Task<bool> CheckAllPermissions()
         {
-            if (!await AndroidPermissionService.CheckMedia())
+            if (!await CheckMedia())
             {
                 await Shell.Current.DisplayAlert("Pozwolenie", "Dane pozwolenie jest wymagane", "Ok");
                 return false;
             }
-            if (!await AndroidPermissionService.CheckWrite())
+            if (!await CheckWrite())
             {
                 await Shell.Current.DisplayAlert("Pozwolenie", "Dane pozwolenie jest wymagane", "Ok");
                 return false;
             }
-            if (!await AndroidPermissionService.CheckRead())
+            if (!await CheckRead())
             {
                 await Shell.Current.DisplayAlert("Pozwolenie", "Dane pozwolenie jest wymagane", "Ok");
                 return false;
