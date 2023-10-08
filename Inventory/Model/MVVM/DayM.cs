@@ -141,6 +141,7 @@ namespace Inventory.Model.MVVM
         {
             Products.Clear();
             Cakes.Clear();
+            GC.SuppressFinalize(this);
         }
 
         public DayM()

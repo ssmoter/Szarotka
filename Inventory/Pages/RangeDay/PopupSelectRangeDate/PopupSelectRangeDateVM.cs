@@ -292,7 +292,7 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
         {
             this.RangeFast?.Clear();
             this.RangeMonth?.Clear();
-
+            GC.SuppressFinalize(this);
         }
     }
 }

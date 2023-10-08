@@ -4,7 +4,7 @@ using SQLite;
 
 namespace DataBase.Data
 {
-    public class AccessDataBase
+    public class AccessDataBase : IDisposable
     {
         public SQLiteAsyncConnection DataBaseAsync { get; private set; }
         public SQLiteConnection DataBase { get; private set; }
@@ -61,5 +61,11 @@ namespace DataBase.Data
             await Shell.Current.CurrentPage.DisplayAlert("Error", ex.Message, "Ok");
         }
 
+        public void Dispose()
+        {
+            DataBase.Dispose();
+            DataBaseAsync.CloseAsync();
+            GC.SuppressFinalize(this);
+        }
     }
 }

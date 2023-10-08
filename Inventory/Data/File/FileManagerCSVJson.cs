@@ -4,7 +4,6 @@ using Inventory.Pages.RangeDay;
 
 using Newtonsoft.Json;
 
-using System.Collections.ObjectModel;
 using System.Text;
 
 namespace Inventory.Data.File
@@ -16,11 +15,11 @@ namespace Inventory.Data.File
         public const string csvTyp = ".csv";
         public const string CsvFolder = "CSV";
 
-        public static ObservableCollection<RangeDayM> GetFileCSV(string path)
+        public static RangeDayM[] GetFileCSV(string path)
         {
             try
             {
-                var model = new ObservableCollection<RangeDayM>();
+                var model = new List<RangeDayM>();
 
                 using var reader = new StreamReader(path);
                 using var csv = new CsvReader(reader, DataBase.Helper.Constants.CultureInfo);
@@ -137,7 +136,7 @@ namespace Inventory.Data.File
                 }
 
 
-                return model;
+                return model.ToArray();
             }
             catch (Exception)
             {
