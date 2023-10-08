@@ -85,6 +85,7 @@ namespace Inventory.Pages.SingleDay
             }
         }
         #endregion
+
         #region Command
 
 
@@ -218,6 +219,8 @@ namespace Inventory.Pages.SingleDay
             try
             {
                 await SaveDay();
+                //await Shell.Current.GoToAsync("..");
+
                 await Shell.Current.GoToAsync("..?",
                     new Dictionary<string, object>()
                     {
@@ -243,5 +246,6 @@ namespace Inventory.Pages.SingleDay
         }
 
         #endregion
+
     }
 }

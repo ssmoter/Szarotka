@@ -150,6 +150,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AndroidResource Remove="Helper\**" />
+	  <Compile Remove="Helper\**" />
+	  <EmbeddedResource Remove="Helper\**" />
+	  <MauiCss Remove="Helper\**" />
+	  <MauiXaml Remove="Helper\**" />
+	  <None Remove="Helper\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <None Remove="Resources\Images\favicon.png" />
 	  <None Remove="Resources\Images\logo2.png" />
 	</ItemGroup>
@@ -167,10 +176,6 @@
 	  <MauiXaml Update="Pages\Options\Main\MainOptionsV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Helper\" />
 	</ItemGroup>
 
 </Project>

@@ -55,6 +55,7 @@ namespace Inventory.Pages.Main
 
 
         #endregion
+
         #region Command
 
         [RelayCommand]
@@ -125,5 +126,6 @@ namespace Inventory.Pages.Main
 
 
         #endregion
+        
     }
 }

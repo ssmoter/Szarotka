@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="DriversRoutes.Pages.Popups.SelectDay.SelectDayV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:VM="clr-namespace:DriversRoutes.Pages.Popups.SelectDay"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:DataType="VM:SelectDayVM"
+    Color="{AppThemeBinding Light={StaticResource White},
+                            Dark={StaticResource Black}}">
+
+    <Border
+        Margin="10,10,10,5"
+        Padding="10,10,10,5"
+        HorizontalOptions="Center"
+        VerticalOptions="Center">
+
+        <VerticalStackLayout HorizontalOptions="Center">
+
+
+            <Label
+                FontSize="Large"
+                HorizontalOptions="Center"
+                Text="Wybrany dzień" />
+
+            <Picker
+                FontSize="Medium"
+                HorizontalOptions="Center"
+                ItemDisplayBinding="{Binding Name}"
+                ItemsSource="{Binding SelectDayMs}"
+                SelectedIndex="{Binding SelectDayIndex}" />
+
+
+
+            <HorizontalStackLayout HorizontalOptions="Center">
+                <Button Command="{Binding SaveAndReturnCommand}" Text="Wczytaj" />
+                <Button Command="{Binding CancelAndReturCommand}" Text="Anuluj" />
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+
+    </Border>
+
+
+</toolkit:Popup>

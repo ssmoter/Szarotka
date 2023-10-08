@@ -1,26 +1,75 @@
-﻿using Microsoft.Maui.Controls.Maps;
+﻿using SQLite;
 
 namespace DriversRoutes.Model
 {
-    public class Customer : Location
+    public class Customer : IDisposable
     {
-        public int Index;
-        public Guid Id;
-        public string Name;
-        public string Description;
 
+        /// <summary>
+        /// Id
+        /// </summary>
+        public Guid Id { get; set; }
+        /// <summary>
+        /// Id trasy
+        /// </summary>
+        public Guid RoutesId { get; set; }
+        /// <summary>
+        /// Kolejność jazdy
+        /// </summary>
 
-
-        public Customer()
+        public int Index { get; set; }
+        /// <summary>
+        /// Nazwa
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// Opis
+        /// </summary>
+        public string Description { get; set; }
+        /// <summary>
+        /// Numer telefonu
+        /// </summary>
+        public string PhoneNumber { get; set; }
+        /// <summary>
+        /// Czas w Datetime
+        /// </summary>
+        [Ignore]
+        public DateTime CreatedDate
         {
-            Pin pin = new Pin
+            get
             {
-                Label = "Santa Cruz",
-                Address = "The city with a boardwalk",
-                Type = PinType.Place,
-                Location = new Location(36.9628066, -122.0194722)
-            };
-            var a = new Location() { };
+                return new DateTime(Created).ToLocalTime();
+            }
+            set
+            {
+                Created = value.ToUniversalTime().Ticks;
+            }
+        }
+        /// <summary>
+        /// Czas w Tick
+        /// </summary>
+        public long Created { get; set; }
+        public DayOfWeek DayOfWeek { get; set; }
+        /// <summary>
+        /// Długość geograficzna
+        /// </summary>
+        public double Longitude { get; set; }
+        /// <summary>
+        /// Szerokość geograficzna
+        /// </summary>
+        public double Latitude { get; set; }
+
+        public void Dispose()
+        {
+            Id = Guid.Empty;
+            RoutesId = Guid.Empty;
+            Index = 0;
+            Name = string.Empty;
+            Description = string.Empty;
+            PhoneNumber = string.Empty;
+            Longitude = 0;
+            Latitude = 0;
+            Created = 0;
         }
     }
 }
