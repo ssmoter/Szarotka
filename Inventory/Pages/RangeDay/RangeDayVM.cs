@@ -148,8 +148,6 @@ namespace Inventory.Pages.RangeDay
         static DayM SumTotalPriceOfRange(RangeDayM[] range)
         {
             var day = new DayM();
-            var lastValue = Service.ProductUpdatePriceService.EnableUpdate;
-            Service.ProductUpdatePriceService.EnableUpdate = false;
 
             day.TotalPriceProduct = range.Sum(x => x.DayM.TotalPriceProduct);
             day.TotalPriceCake = range.Sum(x => x.DayM.TotalPriceCake);
@@ -159,7 +157,6 @@ namespace Inventory.Pages.RangeDay
             day.TotalPriceDifference = range.Sum(x => x.DayM.TotalPriceDifference);
             day.TotalPriceAfterCorrect = range.Sum(x => x.DayM.TotalPriceAfterCorrect);
 
-            Service.ProductUpdatePriceService.EnableUpdate = lastValue;
             return day;
         }
 

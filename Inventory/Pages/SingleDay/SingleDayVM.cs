@@ -173,7 +173,7 @@ namespace Inventory.Pages.SingleDay
                 {
                     var cake = new CakeM()
                     {
-                        IsSell = false,
+                        IsSell = true,
                         Price = value,
                         DayId = DayM.Id,
                     };

@@ -21,7 +21,7 @@ namespace Inventory.Service
             {
                 if (dayM is not null)
                 {
-                    Service.ProductUpdatePriceService.EnableUpdate = false;
+                    dayM.CanUpadte = false;
 
                     if (await SaveDayService.CheckDriver(dayM))
                     {
@@ -44,14 +44,15 @@ namespace Inventory.Service
                         await _db.DataBaseAsync.InsertAsync(day);
                     }
 
-                    await SaveProductsAsync(day);
+                    day = await SaveProductsAsync(day);
 
-                    await SaveCakesAsync(day);
+                    day = await SaveCakesAsync(day);
+
                     day.ParseAsDayM(dayM);
 
                     day = null;
                     await SnackbarAsToats.OnShow("Zapisano");
-                    Service.ProductUpdatePriceService.EnableUpdate = true;
+                    dayM.CanUpadte = true;
                 }
             }
             catch (Exception ex)
@@ -76,7 +77,7 @@ namespace Inventory.Service
         }
 
 
-        private async Task SaveProductsAsync(Day day)
+        private async Task<Day> SaveProductsAsync(Day day)
         {
             for (int i = 0; i < day.Products.Count; i++)
             {
@@ -91,9 +92,10 @@ namespace Inventory.Service
                     await _db.DataBaseAsync.InsertAsync(day.Products[i]);
                 }
             }
+            return day;
         }
 
-        private async Task SaveCakesAsync(Day day)
+        private async Task<Day> SaveCakesAsync(Day day)
         {
             for (int i = 0; i < day.Cakes.Count; i++)
             {
@@ -108,6 +110,7 @@ namespace Inventory.Service
                     await _db.DataBaseAsync.InsertAsync(day.Cakes[i]);
                 }
             }
+            return day;
         }
     }
 }

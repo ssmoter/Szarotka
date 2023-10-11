@@ -2,7 +2,6 @@
 {
     public static class ProductUpdatePriceService
     {
-        public static bool EnableUpdate = false;
         public static event Action UpdatePrice;
         /// <summary>
         /// Aktualizowanie utargu

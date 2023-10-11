@@ -21,7 +21,7 @@ namespace Inventory.Service
             {
                 await SnackbarAsToats.OnShow("Pobieranie danego dnia ");
                 var DayM = new DayM();
-                Service.ProductUpdatePriceService.EnableUpdate = false;
+                DayM.CanUpadte = false;
                 var createdString = createdDate.ToString("dd.MM.yyyy");
                 var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == createdString).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
@@ -36,15 +36,12 @@ namespace Inventory.Service
                     DayM.DriverGuid = Helper.SelectedDriver.Id;
                 }
 
+                DayM.CanUpadte = true;
                 return DayM;
             }
             catch (Exception)
             {
                 throw;
-            }
-            finally
-            {
-                Service.ProductUpdatePriceService.EnableUpdate = true;
             }
         }
 
@@ -54,7 +51,7 @@ namespace Inventory.Service
             {
                 await SnackbarAsToats.OnShow("Pobieranie danego dnia ");
                 var DayM = new DayM();
-                Service.ProductUpdatePriceService.EnableUpdate = false;
+                DayM.CanUpadte = false;
                 var guid = Helper.SelectedDriver.Id;
                 var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == createdDate && x.DriverGuid == guid).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
@@ -69,15 +66,12 @@ namespace Inventory.Service
                 {
                     DayM.DriverGuid = Helper.SelectedDriver.Id;
                 }
+                DayM.CanUpadte = true;
                 return DayM;
             }
             catch (Exception)
             {
                 throw;
-            }
-            finally
-            {
-                Service.ProductUpdatePriceService.EnableUpdate = true;
             }
         }
 
@@ -87,7 +81,7 @@ namespace Inventory.Service
             {
                 await SnackbarAsToats.OnShow("Pobieranie danego dnia ");
                 var DayM = new DayM();
-                Service.ProductUpdatePriceService.EnableUpdate = false;
+                DayM.CanUpadte = false;
                 var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.Id == id).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
                 await GetProductTable(DayM);
@@ -100,15 +94,12 @@ namespace Inventory.Service
                 {
                     DayM.DriverGuid = Helper.SelectedDriver.Id;
                 }
+                DayM.CanUpadte = true;
                 return DayM;
             }
             catch (Exception)
             {
                 throw;
-            }
-            finally
-            {
-                Service.ProductUpdatePriceService.EnableUpdate = true;
             }
         }
 
@@ -118,7 +109,7 @@ namespace Inventory.Service
             {
                 await SnackbarAsToats.OnShow("Pobieranie danego dnia ");
                 var DayM = new DayM();
-                Service.ProductUpdatePriceService.EnableUpdate = false;
+                DayM.CanUpadte = false;
                 var time = DateTime.Now.ToString("dd.MM.yyyy");
                 var guid = Helper.SelectedDriver.Id;
                 var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == time && x.DriverGuid == guid).FirstOrDefaultAsync();
@@ -136,15 +127,12 @@ namespace Inventory.Service
 
                     DayM.DriverGuid = Helper.SelectedDriver.Id;
                 }
+                DayM.CanUpadte = true;
                 return DayM;
             }
-            catch (Exception)    
+            catch (Exception)
             {
                 throw;
-            }
-            finally
-            {
-                Service.ProductUpdatePriceService.EnableUpdate = true;
             }
         }
 
@@ -161,16 +149,16 @@ namespace Inventory.Service
                 product[i].Price = await _db.DataBaseAsync.Table<Model.ProductPrice>().OrderByDescending(x => x.Id).FirstOrDefaultAsync(x => x.ProductNameId == productNameId && x.Id == priceId);
                 dayM.Products.Add(product[i].ParseAsProductM());
             }
-            var length = await _db.DataBaseAsync.Table <Model.ProductName>().CountAsync();
+            var length = await _db.DataBaseAsync.Table<Model.ProductName>().CountAsync();
 
-            if (product.Length<length)
+            if (product.Length < length)
             {
                 var allProduct = await _db.DataBaseAsync.Table<Model.ProductName>().ToArrayAsync();
 
                 for (int i = 0; i < length; i++)
                 {
                     var id = allProduct[i].Id;
-                    if (dayM.Products.Any(x=>x.Name.Id == id))
+                    if (dayM.Products.Any(x => x.Name.Id == id))
                     {
                         continue;
                     }
@@ -186,7 +174,8 @@ namespace Inventory.Service
                             Name = allProduct[i].PareseAsProductNameM(),
                             Price = price.PareseAsProductPriceM(),
                             ProductNameId = id,
-                            ProductPriceId = price.Id
+                            ProductPriceId = price.Id,
+                            CanUpadte = true,
                         });
                     }
                 }
@@ -208,7 +197,9 @@ namespace Inventory.Service
                         Name = productName[i].PareseAsProductNameM(),
                         ProductNameId = productName[i].Id,
                         Price = price.PareseAsProductPriceM(),
-                        ProductPriceId = price.Id
+                        ProductPriceId = price.Id,
+                        CanUpadte = true,
+
                     });
                 }
             }
@@ -221,7 +212,6 @@ namespace Inventory.Service
             {
                 dayM.Cakes.Add(cake[i].PareseAsCakeM());
             }
-
         }
 
 

@@ -10,6 +10,7 @@ namespace Inventory.Helper.Parse
             var p = new Product();
             if (m is not null)
             {
+                m.CanUpadte = false;
                 p.Id = m.Id;
                 p.DayId = m.DayId;
                 p.ProductNameId = m.ProductNameId;
@@ -18,19 +19,21 @@ namespace Inventory.Helper.Parse
                 p.PriceTotalDecimal = m.PriceTotal;
                 p.PriceTotalCorrectDecimal = m.PriceTotalCorrect;
                 p.PriceTotalAfterCorrectDecimal = m.PriceTotalAfterCorrect;
-                p.Number = (int)m.Number;
-                p.NumberEdit = (int)m.NumberEdit;
-                p.NumberReturn = (int)m.NumberReturn;
+                p.Number = m.Number;
+                p.NumberEdit = m.NumberEdit;
+                p.NumberReturn = m.NumberReturn;
                 p.Name = m.Name.PareseAsProductName();
                 p.Price = m.Price.PareseAsProductPrice();
+                m.CanUpadte = true;
             }
 
             return p;
         }
-        public static void ParseAsProduct(this ProductM from,Product to)
+        public static void ParseAsProduct(this ProductM from, Product to)
         {
             if (from is not null)
             {
+                from.CanUpadte = false;
                 to ??= new Product();
                 to.Id = from.Id;
                 to.DayId = from.DayId;
@@ -40,11 +43,12 @@ namespace Inventory.Helper.Parse
                 to.PriceTotalDecimal = from.PriceTotal;
                 to.PriceTotalCorrectDecimal = from.PriceTotalCorrect;
                 to.PriceTotalAfterCorrectDecimal = from.PriceTotalAfterCorrect;
-                to.Number = (int)from.Number;
-                to.NumberEdit = (int)from.NumberEdit;
-                to.NumberReturn = (int)from.NumberReturn;
+                to.Number = from.Number;
+                to.NumberEdit = from.NumberEdit;
+                to.NumberReturn = from.NumberReturn;
                 from.Name.PareseAsProductName(to.Name);
                 from.Price.PareseAsProductPrice(to.Price);
+                from.CanUpadte = true;
             }
         }
         public static ProductM ParseAsProductM(this Product p)
@@ -52,6 +56,7 @@ namespace Inventory.Helper.Parse
             var m = new ProductM();
             if (p is not null)
             {
+                m.CanUpadte = false;
                 m.Id = p.Id;
                 m.DayId = p.DayId;
                 m.ProductNameId = p.ProductNameId;
@@ -65,6 +70,7 @@ namespace Inventory.Helper.Parse
                 m.NumberReturn = p.NumberReturn;
                 m.Name = p.Name.PareseAsProductNameM();
                 m.Price = p.Price.PareseAsProductPriceM();
+                m.CanUpadte = true;
             }
 
             return m;
@@ -74,6 +80,7 @@ namespace Inventory.Helper.Parse
             if (from is not null)
             {
                 to ??= new ProductM();
+                to.CanUpadte = false;
                 to.Id = from.Id;
                 to.DayId = from.DayId;
                 to.ProductNameId = from.ProductNameId;
@@ -88,8 +95,13 @@ namespace Inventory.Helper.Parse
                 to.NumberReturn = from.NumberReturn;
                 from.Name.PareseAsProductNameM(to.Name);
                 from.Price.PareseAsProductPriceM(to.Price);
+                to.CanUpadte = false;
             }
         }
+
+
+        #region Price
+
 
         public static ProductName PareseAsProductName(this ProductNameM m)
         {
@@ -137,6 +149,12 @@ namespace Inventory.Helper.Parse
                 to.Img = from.Img;
             }
         }
+
+        #endregion
+
+        #region Name
+
+
 
         public static ProductPrice PareseAsProductPrice(this ProductPriceM m)
         {
@@ -186,5 +204,6 @@ namespace Inventory.Helper.Parse
             }
         }
 
+        #endregion
     }
 }

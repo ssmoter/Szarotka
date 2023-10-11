@@ -84,6 +84,7 @@ namespace Inventory.Model.MVVM
         }
 
 
+        public bool CanUpadte { get; set; }
 
         public ProductM()
         {
@@ -93,7 +94,7 @@ namespace Inventory.Model.MVVM
 
         void CalculatePrice()
         {
-            if (Service.ProductUpdatePriceService.EnableUpdate)
+            if (CanUpadte)
             {
                 PriceTotal = (Number + numberEdit - NumberReturn) * Price.Price;
                 PriceTotalAfterCorrect = PriceTotal + PriceTotalCorrect;

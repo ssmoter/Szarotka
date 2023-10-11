@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-using CsvHelper.Configuration.Attributes;
-
 using System.Collections.ObjectModel;
 
 namespace Inventory.Model.MVVM
@@ -9,22 +7,17 @@ namespace Inventory.Model.MVVM
 
     public partial class DayM : ObservableObject, IDisposable
     {
-        [Name("DzieńId")]
         public Guid Id { get; set; }
 
-        [Name("DzieńKierowcaId")]
         public Guid DriverGuid { get; set; }
 
         [ObservableProperty]
-        [Name("DzieńOpis")]
         string description;
 
         [ObservableProperty]
-        [Name("DzieńStowrzono")]
         DateTime created;
 
         decimal totalPriceProduct;
-        [Name("DzieńUtargProdukty")]
         public decimal TotalPriceProduct
         {
             get => totalPriceProduct;
@@ -39,7 +32,6 @@ namespace Inventory.Model.MVVM
         }
 
         decimal totalPriceCake;
-        [Name("DzieńUtargCiasto")]
         public decimal TotalPriceCake
         {
             get => totalPriceCake;
@@ -53,11 +45,9 @@ namespace Inventory.Model.MVVM
             }
         }
         [ObservableProperty]
-        [Name("DzieńUtargSuma")]
         decimal totalPrice;
 
         decimal totalPriceCorrect;
-        [Name("DzieńUtargKorekta")]
         public decimal TotalPriceCorrect
         {
             get => totalPriceCorrect;
@@ -72,7 +62,6 @@ namespace Inventory.Model.MVVM
         }
 
         decimal totalPriceMoney;
-        [Name("DzieńUtargPieniądze")]
         public decimal TotalPriceMoney
         {
             get => totalPriceMoney;
@@ -87,12 +76,10 @@ namespace Inventory.Model.MVVM
         }
 
         [ObservableProperty]
-        [Name("DzieńUtagRóżnica")]
         decimal totalPriceDifference;
 
 
         [ObservableProperty]
-        [Name("DzieńUtargUtargPoKorekcie")]
         decimal totalPriceAfterCorrect;
 
         ObservableCollection<ProductM> products;
@@ -123,18 +110,21 @@ namespace Inventory.Model.MVVM
             }
         }
 
+        public bool CanUpadte { get; set; }
         void UpdateTotalPrice()
         {
-            if (Products is not null)
-                TotalPriceProduct = Products.Sum(x => x.PriceTotalAfterCorrect);
-            if (Cakes is not null)
-                TotalPriceCake = Cakes.Where(x => x.IsSell).Sum(x => x.Price);
+            if (CanUpadte)
+            {
+                if (Products is not null)
+                    TotalPriceProduct = Products.Sum(x => x.PriceTotalAfterCorrect);
+                if (Cakes is not null)
+                    TotalPriceCake = Cakes.Where(x => x.IsSell).Sum(x => x.Price);
 
-            TotalPrice = TotalPriceProduct + TotalPriceCake;
-            TotalPriceAfterCorrect = TotalPrice + TotalPriceCorrect;
+                TotalPrice = TotalPriceProduct + TotalPriceCake;
+                TotalPriceAfterCorrect = TotalPrice + TotalPriceCorrect;
 
-            TotalPriceDifference = TotalPriceMoney - TotalPriceAfterCorrect;
-
+                TotalPriceDifference = TotalPriceMoney - TotalPriceAfterCorrect;
+            }
         }
 
         public void Dispose()
