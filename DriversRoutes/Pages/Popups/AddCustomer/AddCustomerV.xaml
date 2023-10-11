@@ -23,7 +23,8 @@
                 Text="Dodawanie nowego punktu" />
 
             <VerticalStackLayout>
-                <Entry Placeholder="Nazwa" />
+                <Label Text="Nazwa" />
+                <Entry Placeholder="Nazwa" Text="{Binding AddCustomer.Name}" />
             </VerticalStackLayout>
             <VerticalStackLayout HorizontalOptions="Center">
                 <HorizontalStackLayout HorizontalOptions="Center">
@@ -77,29 +78,37 @@
             </VerticalStackLayout>
 
             <VerticalStackLayout>
-                <Entry Keyboard="Telephone" Placeholder="Numer Telefonu" />
+                <Label Text="Numer Telefonu" />
+                <Entry
+                    Keyboard="Telephone"
+                    Placeholder="Numer Telefonu"
+                    Text="{Binding AddCustomer.PhoneNumber}" />
             </VerticalStackLayout>
 
             <VerticalStackLayout>
-                <Editor AutoSize="TextChanges" Placeholder="Dodatkowy opis" />
+                <Label Text="Dodatkowy opis" />
+                <Editor
+                    AutoSize="TextChanges"
+                    Placeholder="Dodatkowy opis"
+                    Text="{Binding AddCustomer.Description}" />
             </VerticalStackLayout>
 
             <VerticalStackLayout>
 
                 <HorizontalStackLayout>
-                    <Label Text="Latitude" />
+                    <Label Text="Latitude :" />
                     <Label Text="{Binding AddCustomer.Latitude}" />
                 </HorizontalStackLayout>
                 <HorizontalStackLayout>
-                    <Label Text="Longitude" />
+                    <Label Text="Longitude :" />
                     <Label Text="{Binding AddCustomer.Longitude}" />
                 </HorizontalStackLayout>
-                
+
             </VerticalStackLayout>
 
             <HorizontalStackLayout HorizontalOptions="Center">
-                <Button Text="Zapisz" />
-                <Button Text="Analuj" />
+                <Button Command="{Binding SaveAndExitCommand}" Text="Zapisz" />
+                <Button Command="{Binding CancelAndExitCommand}" Text="Analuj" />
             </HorizontalStackLayout>
         </VerticalStackLayout>
 

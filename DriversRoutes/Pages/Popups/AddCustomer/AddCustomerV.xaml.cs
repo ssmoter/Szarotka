@@ -8,6 +8,7 @@ public partial class AddCustomerV : Popup
     {
         InitializeComponent();
         var vm = new AddCustomerVM(customer);
+        vm.Close += CloseAsync;
         BindingContext = vm;
     }
 }

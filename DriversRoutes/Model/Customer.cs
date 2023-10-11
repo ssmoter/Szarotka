@@ -49,7 +49,7 @@ namespace DriversRoutes.Model
         /// Czas w Tick
         /// </summary>
         public long Created { get; set; }
-        public DayOfWeek DayOfWeek { get; set; }
+        public SelectedDayOfWeek DayOfWeek { get; set; }
         /// <summary>
         /// Długość geograficzna
         /// </summary>
