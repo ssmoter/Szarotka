@@ -2,6 +2,10 @@
 
 using DataBase.Service;
 
+#if ANDROID
+using DriversRoutes.Platforms.Android;
+#endif
+
 using Microsoft.Extensions.Logging;
 
 
@@ -24,6 +28,10 @@ namespace Szarotka
                 });
 #if ANDROID
             builder.UseMauiMaps();
+            builder.ConfigureMauiHandlers(handlers =>
+            {
+                handlers.AddHandler<Microsoft.Maui.Controls.Maps.Map, CustomMapHandler>();
+            });
 #endif
             builder.Services.AddMyServiceDataBase();
             builder.Services.AddMyService();

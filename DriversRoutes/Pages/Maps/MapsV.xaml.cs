@@ -19,8 +19,6 @@ public partial class MapsV : ContentPage
     }
 
 
-
-
     private async void Map_MapClicked(object sender, MapClickedEventArgs e)
     {
         if (BindingContext is MapsVM vm)
@@ -33,10 +31,19 @@ public partial class MapsV : ContentPage
             var popup = new Popups.AddCustomer.AddCustomerV(new Model.Customer()
             {
                 Latitude = e.Location.Latitude,
-                Longitude = e.Location.Longitude
+                Longitude = e.Location.Longitude,
+                DayOfWeek = new Model.SelectedDayOfWeek()
             });
 
-            var a = await this.ShowPopupAsync(popup);
+            var update = await this.ShowPopupAsync(popup);
+            if (update is null)
+            {
+                return;
+            }
+            if (update is Model.Customer customerUpdate)
+            {
+                vm.AddNewPoint(customerUpdate);
+            }
         }
     }
 

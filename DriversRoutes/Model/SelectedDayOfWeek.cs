@@ -61,7 +61,25 @@ namespace DriversRoutes.Model
                 }
             }
         }
-
+        string valuesAsString;
+        public string ValuesAsString
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(valuesAsString))
+                {
+                    return this.ToString();
+                }
+                return valuesAsString;
+            }
+            set
+            {
+                if (SetProperty(ref valuesAsString, value))
+                {
+                    OnPropertyChanged(nameof(ValuesAsString));
+                }
+            }
+        }
 
         public override string ToString()
         {

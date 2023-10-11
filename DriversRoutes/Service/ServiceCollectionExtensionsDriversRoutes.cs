@@ -11,6 +11,7 @@
             services.AddTransient<Pages.Main.MainVDriversRoutesV>();
             services.AddTransient<Pages.Main.MainVDriversRoutesVM>();
 
+
             return services;
         }
     }
