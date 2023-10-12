@@ -1,10 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
+using SQLite;
+
 using System.Text;
 
 namespace DriversRoutes.Model
 {
-    public partial class SelectedDayOfWeek : ObservableObject
+    public partial class SelectedDayOfWeekRoutes : ObservableObject
     {
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
@@ -31,6 +33,7 @@ namespace DriversRoutes.Model
         bool saturday;
 
         bool setAll;
+        [Ignore]
         public bool SetAll
         {
             get => setAll;
@@ -83,7 +86,7 @@ namespace DriversRoutes.Model
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             if (Sunday)
             {
@@ -115,6 +118,5 @@ namespace DriversRoutes.Model
             }
             return sb.ToString();
         }
-
     }
 }

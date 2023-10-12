@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DriversRoutes.Helper;
 using DriversRoutes.Model;
 
 using Microsoft.Maui.Controls.Maps;
@@ -11,6 +12,8 @@ using System.Collections.ObjectModel;
 
 namespace DriversRoutes.Pages.Maps
 {
+    [QueryProperty(nameof(Routes), nameof(Model.Routes))]
+    [QueryProperty(nameof(AllPoints), nameof(MapsM))]
     public partial class MapsVM : ObservableObject
     {
         #region Variable
@@ -38,6 +41,7 @@ namespace DriversRoutes.Pages.Maps
         [ObservableProperty]
         string addLocationIsText = block;
 
+        public Routes Routes { get; set; }
         public bool AddLocationIs { get; set; } = false;
 
         const string enable = "Dostępne";
@@ -45,23 +49,25 @@ namespace DriversRoutes.Pages.Maps
 
         public Action<MapSpan> GoToLocation;
 
-        readonly MapSpan szarotka = new(new Location(49.74918684945343, 20.40889755094227), 0.1, 0.1);
+        public readonly MapSpan szarotka = new(new Location(49.74918684945343, 20.40889755094227), 0.1, 0.1);
 
         readonly DataBase.Data.AccessDataBase _db;
+        readonly Service.ISelectRoutes _selectRoutes;
         #endregion
-        public MapsVM(DataBase.Data.AccessDataBase db)
+        public MapsVM(DataBase.Data.AccessDataBase db, Service.ISelectRoutes selectRoutes)
         {
             _db = db;
             SelectedDayName = DisplaySelectedDayName(DateTime.Today.DayOfWeek);
             MapType = MapType.Street;
-            AllPoints = new();
-            for (int i = 0; i < 200; i++)
-            {
-                AllPoints.Add(new MapsM().CreateRandomPoint(i));
-            }
+            AllPoints ??= new();
+            _selectRoutes = selectRoutes;
+            //for (int i = 0; i < 200; i++)
+            //{
+            //    AllPoints.Add(new MapsM().CreateRandomPoint(i));
+            //}
 
-            AllPoints.FirstOrDefault().Pin.Location = new Location(49.7488002173044, 20.408379427432106);
-            MapsPoint = AllPoints.ToArray();
+            //AllPoints.FirstOrDefault().Pin.Location = new Location(49.7488002173044, 20.408379427432106);
+            //MapsPoint = AllPoints.ToArray();
         }
 
 
@@ -74,7 +80,6 @@ namespace DriversRoutes.Pages.Maps
 
                 var _cancelTokenSource = new CancellationTokenSource();
                 var location = await Geolocation.Default.GetLocationAsync(request, _cancelTokenSource.Token);
-
                 location ??= await Geolocation.Default.GetLastKnownLocationAsync();
                 if (location is null || location.IsFromMockProvider)
                 {
@@ -125,6 +130,38 @@ namespace DriversRoutes.Pages.Maps
             }
             return name;
         }
+        async Task<ObservableCollection<MapsM>> DisplaySelectedDayNameAsync(DayOfWeek day)
+        {
+            var week = new Model.SelectedDayOfWeekRoutes();
+            switch (day)
+            {
+                case DayOfWeek.Sunday:
+                    week.Sunday = true;
+                    break;
+                case DayOfWeek.Monday:
+                    week.Monday = true;
+                    break;
+                case DayOfWeek.Tuesday:
+                    week.Tuesday = true;
+                    break;
+                case DayOfWeek.Wednesday:
+                    week.Wednesday = true;
+                    break;
+                case DayOfWeek.Thursday:
+                    week.Thursday = true;
+                    break;
+                case DayOfWeek.Friday:
+                    week.Friday = true;
+                    break;
+                case DayOfWeek.Saturday:
+                    week.Saturday = true;
+                    break;
+                default:
+                    break;
+            }
+            var points = await GetSelectedDays(week);
+            return points;
+        }
 
         public void OnGoToLocation(MapSpan mapSpan)
         {
@@ -133,28 +170,88 @@ namespace DriversRoutes.Pages.Maps
         public void OpenMoreDetail(Pin pin)
         {
             SwipeViewGesture();
-            MapsPoint = AllPoints.Where(x => pin.Label.Contains(x.Name)).ToArray();
+            MapsPoint = AllPoints.Where(x => x.Description == pin.Address).ToArray();
         }
 
-        public void AddNewPoint(Model.Customer customer)
+        public async Task AddNewPoint(Model.CustomerRoutes customer)
         {
-            var point = new MapsM
+            try
             {
-                Id = customer.Id,
-                RoutesId = customer.RoutesId,
-                Index = customer.Index,
-                Name = customer.Name,
-                Description = customer.Description,
-                PhoneNumber = customer.PhoneNumber,
-                Created = customer.CreatedDate,
-                SelectedDayOfWeek = customer.DayOfWeek,
-                Longitude = customer.Longitude,
-                Latitude = customer.Latitude,
-            };
+                bool update = true;
+                if (customer.Id == Guid.Empty)
+                {
+                    customer.Id = Guid.NewGuid();
+                    update = false;
+                }
+                if (customer.DayOfWeek.Id == Guid.Empty)
+                {
+                    customer.DayOfWeek.Id = Guid.NewGuid();
+                }
+                if (customer.DayOfWeek.CustomerId == Guid.Empty)
+                {
+                    customer.DayOfWeek.CustomerId = customer.Id;
+                }
+                if (customer.RoutesId == Guid.Empty)
+                {
+                    customer.RoutesId = new Guid(Routes.Id.ToByteArray());
+                }
+                if (customer.Created == 0)
+                {
+                    customer.CreatedDate = DateTime.Now;
+                }
+                var point = new MapsM
+                {
+                    Id = new Guid(customer.Id.ToByteArray()),
+                    RoutesId = new Guid(customer.RoutesId.ToByteArray()),
+                    Index = AllPoints.Count,
+                    Name = customer.Name,
+                    Description = customer.Description,
+                    PhoneNumber = customer.PhoneNumber,
+                    Created = customer.CreatedDate,
+                    SelectedDayOfWeek = customer.DayOfWeek,
+                    Longitude = customer.Longitude,
+                    Latitude = customer.Latitude,
+                };
 
-            point.SetPin();
-            AllPoints.Add(point);
+
+                point.SetPin();
+
+                if (Routes is null)
+                {
+                    await Shell.Current.DisplayAlert("Brak trasy", "Zapisywanie jest dostępne tylko po wybraniu trasy konkretnego kierowcy", "Ok");
+                    return;
+                }
+
+                if (update)
+                {
+                    await _db.DataBaseAsync.UpdateAsync(customer);
+                    await _db.DataBaseAsync.UpdateAsync(customer.DayOfWeek);
+                }
+                else
+                {
+                    AllPoints.Add(point);
+                    await _db.DataBaseAsync.InsertAsync(customer);
+                    await _db.DataBaseAsync.InsertAsync(customer.DayOfWeek);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
         }
+
+        async Task<ObservableCollection<MapsM>> GetSelectedDays(Model.SelectedDayOfWeekRoutes week)
+        {
+            var result = await _selectRoutes.GetCustomerRoutesQuery(Routes, week);
+            var points = new ObservableCollection<MapsM>();
+            for (int i = 0; i < result.Length; i++)
+            {
+                points.Add(result[i].ParseAsCustomerM());
+            }
+            return points;
+        }
+
 
         #endregion
 
@@ -173,6 +270,11 @@ namespace DriversRoutes.Pages.Maps
             if (response is DayOfWeek day)
             {
                 SelectedDayName = DisplaySelectedDayName(day);
+                await Task.Run(async () =>
+                 {
+                     AllPoints = await DisplaySelectedDayNameAsync(day);
+
+                 });
             }
         }
 
@@ -196,10 +298,10 @@ namespace DriversRoutes.Pages.Maps
         void SwipeViewGesture()
         {
             IsVisibleList = !IsVisibleList;
-            if (MapsPoint.Length < AllPoints.Count && IsVisibleList)
-            {
-                MapsPoint = AllPoints.ToArray();
-            }
+            //if (MapsPoint.Length < AllPoints.Count && IsVisibleList)
+            //{
+            //    MapsPoint = AllPoints.ToArray();
+            //}
         }
 
         [RelayCommand]
@@ -229,47 +331,80 @@ namespace DriversRoutes.Pages.Maps
         [RelayCommand]
         async Task EditPin(MapsM point)
         {
-            if (point is null)
+            try
             {
-                return;
+                if (point is null)
+                {
+                    return;
+                }
+
+                var popup = new Popups.AddCustomer.AddCustomerV(new Model.CustomerRoutes()
+                {
+                    Id = new Guid(point.Id.ToByteArray()),
+                    RoutesId = new Guid(point.RoutesId.ToByteArray()),
+                    Index = point.Index,
+                    Name = point.Name,
+                    Description = point.Description,
+                    PhoneNumber = point.PhoneNumber,
+                    CreatedDate = point.Created,
+                    DayOfWeek = point.SelectedDayOfWeek,
+                    Longitude = point.Longitude,
+                    Latitude = point.Latitude,
+                });
+
+                var update = await Shell.Current.ShowPopupAsync(popup);
+                if (update is null)
+                {
+                    return;
+                }
+                int index = AllPoints.IndexOf(point);
+
+                if (update is CustomerRoutes customerUpdate)
+                {
+                    AllPoints[index].Id = new Guid(customerUpdate.Id.ToByteArray());
+                    AllPoints[index].RoutesId = new Guid(customerUpdate.RoutesId.ToByteArray());
+                    AllPoints[index].Index = customerUpdate.Index;
+                    AllPoints[index].Name = customerUpdate.Name;
+                    AllPoints[index].Description = customerUpdate.Description;
+                    AllPoints[index].PhoneNumber = customerUpdate.PhoneNumber;
+                    AllPoints[index].Created = customerUpdate.CreatedDate;
+                    AllPoints[index].SelectedDayOfWeek = customerUpdate.DayOfWeek;
+                    AllPoints[index].SelectedDayOfWeek.Id = new Guid(customerUpdate.DayOfWeek.Id.ToByteArray());
+                    AllPoints[index].SelectedDayOfWeek.CustomerId = new Guid(customerUpdate.DayOfWeek.CustomerId.ToByteArray());
+                    AllPoints[index].Longitude = customerUpdate.Longitude;
+                    AllPoints[index].Latitude = customerUpdate.Latitude;
+
+
+                    await _db.DataBaseAsync.UpdateAsync(customerUpdate);
+                    await _db.DataBaseAsync.UpdateAsync(customerUpdate.DayOfWeek);
+                }
             }
-
-            var popup = new Popups.AddCustomer.AddCustomerV(new Model.Customer()
+            catch (Exception ex)
             {
-                Id = point.Id,
-                RoutesId = point.RoutesId,
-                Index = point.Index,
-                Name = point.Name,
-                Description = point.Description,
-                PhoneNumber = point.PhoneNumber,
-                CreatedDate = point.Created,
-                DayOfWeek = point.SelectedDayOfWeek,
-                Longitude = point.Longitude,
-                Latitude = point.Latitude,
-            });
-
-            var update = await Shell.Current.ShowPopupAsync(popup);
-            if (update is null)
-            {
-                return;
-            }
-            int index = AllPoints.IndexOf(point);
-
-            if (update is Customer customerUpdate)
-            {
-                AllPoints[index].Id = customerUpdate.Id;
-                AllPoints[index].RoutesId = customerUpdate.RoutesId;
-                AllPoints[index].Index = customerUpdate.Index;
-                AllPoints[index].Name = customerUpdate.Name;
-                AllPoints[index].Description = customerUpdate.Description;
-                AllPoints[index].PhoneNumber = customerUpdate.PhoneNumber;
-                AllPoints[index].Created = customerUpdate.CreatedDate;
-                AllPoints[index].SelectedDayOfWeek = customerUpdate.DayOfWeek;
-                AllPoints[index].Longitude = customerUpdate.Longitude;
-                AllPoints[index].Latitude = customerUpdate.Latitude;
+                _db.SaveLog(ex);
             }
         }
 
+        [RelayCommand]
+        async Task CurrentLocationPin()
+        {
+            var mapSpan = await GetCurrentLocation();
+            if (mapSpan is null) { return; }
+            OnGoToLocation(mapSpan);
+
+            var popup = new Popups.AddCustomer.AddCustomerV(new CustomerRoutes()
+            {
+                Longitude = mapSpan.Center.Longitude,
+                Latitude = mapSpan.Center.Latitude,
+                RoutesId = new Guid(Routes.Id.ToByteArray()),
+            });
+
+            var result = await Shell.Current.ShowPopupAsync(popup);
+            if (result is Model.CustomerRoutes customerUpdate)
+            {
+                await AddNewPoint(customerUpdate);
+            }
+        }
 
         #endregion
 

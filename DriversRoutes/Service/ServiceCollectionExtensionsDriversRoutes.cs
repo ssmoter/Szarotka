@@ -11,6 +11,11 @@
             services.AddTransient<Pages.Main.MainVDriversRoutesV>();
             services.AddTransient<Pages.Main.MainVDriversRoutesVM>();
 
+            services.AddTransient<Pages.Options.CreateTable.CreateTableRoutesV>();
+            services.AddTransient<Pages.Options.CreateTable.CreateTableRoutesVM>();
+
+            services.AddTransient<Service.ISelectRoutes,Data.SelectRoutes>();
+            //services.AddTransient<Pages.Options.CreateTable.CreateTableRoutesVM>();
 
             return services;
         }

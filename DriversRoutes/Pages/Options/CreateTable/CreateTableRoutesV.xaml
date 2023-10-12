@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView
-    x:Class="Inventory.Pages.Options.CreateTable.CreateTableV"
+    x:Class="DriversRoutes.Pages.Options.CreateTable.CreateTableRoutesV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:VM="clr-namespace:Inventory.Pages.Options.CreateTable"
-    x:DataType="VM:CreateTableVM">
+    xmlns:VM="clr-namespace:DriversRoutes.Pages.Options.CreateTable"
+    x:DataType="VM:CreateTableRoutesVM">
 
     <Border>
         <Border.StrokeShape>
@@ -23,7 +23,7 @@
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="10" />
                             </Border.StrokeShape>
-                            <Grid x:DataType="VM:CreateTableM" ColumnDefinitions="auto,*,auto">
+                            <Grid x:DataType="VM:CreateTableRoutesM" ColumnDefinitions="auto,*,auto">
                                 <Label
                                     Grid.Column="0"
                                     HorizontalTextAlignment="Start"
@@ -52,31 +52,8 @@
                     HorizontalOptions="Center"
                     Text="Wygeneruj brakujące Tabele" />
             </HorizontalStackLayout>
-            <Border>
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                <VerticalStackLayout>
-                    <Label HorizontalOptions="Center" Text="Kierowcy:" />
-                    <HorizontalStackLayout HorizontalOptions="Center">
-
-                        <Button
-                            Command="{Binding CreateDriverCommand}"
-                            HorizontalOptions="Center"
-                            Text="Dodaj" />
-                        <Button
-                            Command="{Binding SelectDriverCommand}"
-                            HorizontalOptions="Center"
-                            Text="Wybierz" />
-                        <Button
-                            Command="{Binding EditDriverCommand}"
-                            HorizontalOptions="Center"
-                            Text="Edytuj" />
-                    </HorizontalStackLayout>
-                </VerticalStackLayout>
-            </Border>
 
         </VerticalStackLayout>
     </Border>
-    
+
 </ContentView>

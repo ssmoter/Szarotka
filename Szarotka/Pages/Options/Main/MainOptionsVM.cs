@@ -36,12 +36,9 @@ namespace Szarotka.Pages.Options.Main
 
             _appThemes = new Dictionary<string, int>()
             {
-                [nameof(AppTheme.Unspecified)] = (int)AppTheme.Unspecified
-                ,
-                [nameof(AppTheme.Light)] = (int)AppTheme.Light
-                ,
+                [nameof(AppTheme.Unspecified)] = (int)AppTheme.Unspecified,
+                [nameof(AppTheme.Light)] = (int)AppTheme.Light,
                 [nameof(AppTheme.Dark)] = (int)AppTheme.Dark
-
             };
         }
 

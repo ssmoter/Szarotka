@@ -2,7 +2,7 @@
 
 namespace DriversRoutes.Model
 {
-    public class Customer : IDisposable
+    public class CustomerRoutes : IDisposable
     {
 
         /// <summary>
@@ -49,7 +49,8 @@ namespace DriversRoutes.Model
         /// Czas w Tick
         /// </summary>
         public long Created { get; set; }
-        public SelectedDayOfWeek DayOfWeek { get; set; }
+        [Ignore]
+        public SelectedDayOfWeekRoutes DayOfWeek { get; set; }
         /// <summary>
         /// Długość geograficzna
         /// </summary>

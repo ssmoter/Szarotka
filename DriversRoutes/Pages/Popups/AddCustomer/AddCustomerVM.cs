@@ -12,12 +12,11 @@ namespace DriversRoutes.Pages.Popups.AddCustomer
         AddCustomerM addCustomer;
 
 
-        bool setAll = false;
         public Func<object, Task> Close;
 
         #endregion
 
-        public AddCustomerVM(Model.Customer customer)
+        public AddCustomerVM(Model.CustomerRoutes customer)
         {
             AddCustomer = new AddCustomerM()
             {
@@ -32,6 +31,7 @@ namespace DriversRoutes.Pages.Popups.AddCustomer
                 Longitude = customer.Longitude,
                 Latitude = customer.Latitude,
             };
+            addCustomer.SelectedDayOfWeek ??= new();
         }
 
 
@@ -40,7 +40,7 @@ namespace DriversRoutes.Pages.Popups.AddCustomer
         [RelayCommand]
         async Task SaveAndExit()
         {
-            var customer = new Model.Customer()
+            var customer = new Model.CustomerRoutes()
             {
                 Id = AddCustomer.Id,
                 RoutesId = AddCustomer.RoutesId,
@@ -80,6 +80,7 @@ namespace DriversRoutes.Pages.Popups.AddCustomer
         public void Dispose()
         {
             AddCustomer.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }
