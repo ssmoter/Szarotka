@@ -28,6 +28,8 @@
         <Frame
             Grid.Column="0"
             Padding="5"
+            BackgroundColor="{AppThemeBinding Light=White,
+                                              Dark=Black}"
             IsVisible="{Binding IsVisibleList}"
             ZIndex="102">
 
@@ -36,36 +38,95 @@
             </Frame.GestureRecognizers>
 
 
-            <Grid RowDefinitions="auto,*,1">
+            <Grid BackgroundColor="{AppThemeBinding Light=AliceBlue, Dark=Grey}" RowDefinitions="auto,*,1">
+
+                <VerticalStackLayout>
+                    <HorizontalStackLayout HorizontalOptions="Center">
+
+                        <VerticalStackLayout Margin="0,0,5,0" HorizontalOptions="Center">
+                            <Label HorizontalOptions="Center" Text="Dodawanie z mapy: " />
+                            <Button
+                                Padding="5,0,5,0"
+                                Command="{Binding ChangeAddLocationIsCommand}"
+                                CornerRadius="50"
+                                HorizontalOptions="Center"
+                                Text="{Binding AddLocationIsText}"
+                                VerticalOptions="Center" />
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Margin="5,0,0,0" HorizontalOptions="Center">
+                            <Label HorizontalOptions="Center" Text="Lista: " />
+                            <Button
+                                Grid.Row="0"
+                                Padding="5,0,5,0"
+                                Command="{Binding SwipeViewGestureCommand}"
+                                CornerRadius="50"
+                                HorizontalOptions="Center"
+                                Text="Schowaj"
+                                VerticalOptions="End"
+                                ZIndex="102" />
+                        </VerticalStackLayout>
 
 
-                <HorizontalStackLayout HorizontalOptions="Center">
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout HorizontalOptions="Center">
 
+                        <VerticalStackLayout Margin="0,0,5,0" HorizontalOptions="Center">
+                            <Label HorizontalOptions="Center" Text="Twoja pozycja: " />
+                            <Button
+                                Padding="5,0,5,0"
+                                Command="{Binding CurrentLocationPinCommand}"
+                                CornerRadius="50"
+                                HorizontalOptions="Center"
+                                Text="Dodaj" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Label HorizontalOptions="Center" Text="Zmień: " />
+                            <Button
+                                Padding="5,0,5,0"
+                                Command="{Binding DisplayTypeOfMapCommand}"
+                                CornerRadius="50"
+                                HorizontalOptions="Center"
+                                Text="Typ mapy" />
+                            <Border
+                                Margin="1"
+                                Padding="1"
+                                BackgroundColor="Transparent"
+                                HorizontalOptions="Center"
+                                IsVisible="{Binding IsVisibleTypeOfMap}">
 
-                    <VerticalStackLayout Margin="0,0,5,0" HorizontalOptions="Center">
-                        <Label HorizontalOptions="Center" Text="Dodawanie: " />
-                        <Button
-                            Padding="5,0,5,0"
-                            Command="{Binding ChangeAddLocationIsCommand}"
-                            HorizontalOptions="Center"
-                            Text="{Binding AddLocationIsText}"
-                            VerticalOptions="Center" />
-                    </VerticalStackLayout>
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10" />
+                                </Border.StrokeShape>
 
-                    <VerticalStackLayout Margin="5,0,0,0" HorizontalOptions="Center">
-                        <Label HorizontalOptions="Center" Text="Lista: " />
-                        <Button
-                            Grid.Row="0"
-                            Padding="5,0,5,0"
-                            Command="{Binding SwipeViewGestureCommand}"
-                            HorizontalOptions="Center"
-                            Text="Schowaj"
-                            VerticalOptions="End"
-                            ZIndex="102" />
-                    </VerticalStackLayout>
+                                <VerticalStackLayout Padding="0">
+                                    <Button
+                                        Command="{Binding ChangeTypeOfMapCommand}"
+                                        CommandParameter="0"
+                                        CornerRadius="50"
+                                        HorizontalOptions="Center"
+                                        Text="Ulica"
+                                        VerticalOptions="Center" />
+                                    <Button
+                                        Command="{Binding ChangeTypeOfMapCommand}"
+                                        CommandParameter="1"
+                                        CornerRadius="50"
+                                        HorizontalOptions="Center"
+                                        Text="Satelita"
+                                        VerticalOptions="Center" />
+                                    <Button
+                                        Command="{Binding ChangeTypeOfMapCommand}"
+                                        CommandParameter="2"
+                                        CornerRadius="50"
+                                        HorizontalOptions="Center"
+                                        Text="Hybryda"
+                                        VerticalOptions="Center" />
+                                </VerticalStackLayout>
+                            </Border>
 
-
-                </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
 
 
                 <CollectionView
@@ -173,51 +234,6 @@
                 CornerRadius="50"
                 LineBreakMode="WordWrap"
                 Text="{Binding SelectedDayName}" />
-
-            <Button
-                Margin="0,5,0,0"
-                Command="{Binding DisplayTypeOfMapCommand}"
-                CornerRadius="50"
-                Text="Typ mapy" />
-
-            <Border
-                Margin="1"
-                Padding="1"
-                BackgroundColor="Transparent"
-                HorizontalOptions="Start"
-                IsVisible="{Binding IsVisibleTypeOfMap}">
-
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-
-                <VerticalStackLayout Padding="0">
-                    <Button
-                        Command="{Binding ChangeTypeOfMapCommand}"
-                        CommandParameter="0"
-                        CornerRadius="50"
-                        FontSize="Micro"
-                        HorizontalOptions="Center"
-                        Text="Ulica"
-                        VerticalOptions="Center" />
-                    <Button
-                        Command="{Binding ChangeTypeOfMapCommand}"
-                        CommandParameter="1"
-                        CornerRadius="50"
-                        FontSize="Micro"
-                        HorizontalOptions="Center"
-                        Text="Satelita"
-                        VerticalOptions="Center" />
-                    <Button
-                        Command="{Binding ChangeTypeOfMapCommand}"
-                        CommandParameter="2"
-                        CornerRadius="50"
-                        FontSize="Micro"
-                        HorizontalOptions="Center"
-                        Text="Hybryda"
-                        VerticalOptions="Center" />
-                </VerticalStackLayout>
-            </Border>
 
             <Button
                 Margin="0,5,0,0"

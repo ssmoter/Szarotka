@@ -4,7 +4,7 @@ namespace DriversRoutes.Pages.Popups.AddCustomer;
 
 public partial class AddCustomerV : Popup
 {
-    public AddCustomerV(Model.Customer customer)
+    public AddCustomerV(Model.CustomerRoutes customer)
     {
         InitializeComponent();
         var vm = new AddCustomerVM(customer);

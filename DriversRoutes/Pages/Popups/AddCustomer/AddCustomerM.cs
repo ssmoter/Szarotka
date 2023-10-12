@@ -32,7 +32,7 @@ namespace DriversRoutes.Pages.Popups.AddCustomer
         double latitude;
 
         [ObservableProperty]
-        Model.SelectedDayOfWeek selectedDayOfWeek;
+        Model.SelectedDayOfWeekRoutes selectedDayOfWeek;
 
         public AddCustomerM()
         {
@@ -40,7 +40,7 @@ namespace DriversRoutes.Pages.Popups.AddCustomer
             {
                 Id = Guid.NewGuid();
             }
-            SelectedDayOfWeek ??= new Model.SelectedDayOfWeek();
+            SelectedDayOfWeek ??= new Model.SelectedDayOfWeekRoutes();
         }
 
         public void Dispose()

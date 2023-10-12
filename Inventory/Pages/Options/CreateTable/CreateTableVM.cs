@@ -245,6 +245,7 @@ namespace Inventory.Pages.Options.CreateTable
         }
 
         #endregion
+
         async Task CheckTables()
         {
             for (int i = 0; i < TableMs.Count; i++)

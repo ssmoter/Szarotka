@@ -22,13 +22,13 @@ namespace DriversRoutes.Pages.Popups.SelectDay
         {
             SelectDayMs = new ObservableCollection<SelectDayM>()
             {
-                new SelectDayM() {Day = DayOfWeek.Sunday,Name="Niedziela"},
                 new SelectDayM() {Day = DayOfWeek.Monday,Name="Poniedziałek"},
                 new SelectDayM() {Day = DayOfWeek.Tuesday,Name="Wtorek"},
                 new SelectDayM() {Day = DayOfWeek.Wednesday,Name="Środa"},
                 new SelectDayM() {Day = DayOfWeek.Thursday,Name="Czwartek"},
                 new SelectDayM() {Day = DayOfWeek.Friday,Name="Piątek"},
                 new SelectDayM() {Day = DayOfWeek.Saturday,Name="Sobota"},
+                new SelectDayM() {Day = DayOfWeek.Sunday,Name="Niedziela"},
             };
         }
 
