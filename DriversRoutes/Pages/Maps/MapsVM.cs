@@ -388,21 +388,33 @@ namespace DriversRoutes.Pages.Maps
         [RelayCommand]
         async Task CurrentLocationPin()
         {
-            var mapSpan = await GetCurrentLocation();
-            if (mapSpan is null) { return; }
-            OnGoToLocation(mapSpan);
-
-            var popup = new Popups.AddCustomer.AddCustomerV(new CustomerRoutes()
+            try
             {
-                Longitude = mapSpan.Center.Longitude,
-                Latitude = mapSpan.Center.Latitude,
-                RoutesId = new Guid(Routes.Id.ToByteArray()),
-            });
+                if (Routes is null)
+                {
+                    await Shell.Current.DisplayAlert("Brak trasy", "Zapisywanie jest dostępne tylko po wybraniu trasy konkretnego kierowcy", "Ok");
+                    return;
+                }
+                var mapSpan = await GetCurrentLocation();
+                if (mapSpan is null) { return; }
+                OnGoToLocation(mapSpan);
 
-            var result = await Shell.Current.ShowPopupAsync(popup);
-            if (result is Model.CustomerRoutes customerUpdate)
+                var popup = new Popups.AddCustomer.AddCustomerV(new CustomerRoutes()
+                {
+                    Longitude = mapSpan.Center.Longitude,
+                    Latitude = mapSpan.Center.Latitude,
+                    RoutesId = new Guid(Routes.Id.ToByteArray()),
+                });
+
+                var result = await Shell.Current.ShowPopupAsync(popup);
+                if (result is Model.CustomerRoutes customerUpdate)
+                {
+                    await AddNewPoint(customerUpdate);
+                }
+            }
+            catch (Exception ex)
             {
-                await AddNewPoint(customerUpdate);
+                _db.SaveLog(ex);
             }
         }
 
