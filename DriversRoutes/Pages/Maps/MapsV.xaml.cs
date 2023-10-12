@@ -1,4 +1,4 @@
-using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui.Views;
 
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
@@ -35,7 +35,11 @@ public partial class MapsV : ContentPage
             {
                 return;
             }
-
+            if (vm.Routes is null)
+            {
+                await Shell.Current.DisplayAlert("Brak trasy", "Zapisywanie jest dostępne tylko po wybraniu trasy konkretnego kierowcy", "Ok");
+                return;
+            }
             var popup = new Popups.AddCustomer.AddCustomerV(new Model.CustomerRoutes()
             {
                 Latitude = e.Location.Latitude,
