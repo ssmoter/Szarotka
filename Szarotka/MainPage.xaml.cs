@@ -1,7 +1,4 @@
-﻿using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Core;
-
-using Szarotka.Pages.Options.Main;
+﻿using Szarotka.Pages.Options.Main;
 
 namespace Szarotka
 {
@@ -20,6 +17,11 @@ namespace Szarotka
         private async void Inventory_Clicked(object sender, EventArgs e)
         {
             await Shell.Current.GoToAsync(nameof(Inventory.Pages.Main.MainV));
+        }
+
+        private async void Maps_Clicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync(nameof(DriversRoutes.Pages.Main.MainVDriversRoutesV));
         }
     }
 }

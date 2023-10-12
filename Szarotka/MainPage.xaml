@@ -23,6 +23,13 @@
                 Text="Inventory" />
 
             <Button
+                Clicked="Maps_Clicked"
+                HorizontalOptions="Center"
+                IsVisible="{OnPlatform Android=true,
+                                       Default=false}"
+                Text="Mapy" />
+
+            <Button
                 Clicked="DataBase_Clicked"
                 HorizontalOptions="Center"
                 Text="Opcje" />
