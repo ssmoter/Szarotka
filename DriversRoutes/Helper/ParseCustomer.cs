@@ -15,7 +15,7 @@ namespace DriversRoutes.Helper
 
             to.Id = from.Id;
             to.RoutesId = from.RoutesId;
-            to.Index = from.Index;
+            to.Index = from.QueueNumber;
             to.Name = from.Name;
             to.Description = from.Description;
             to.PhoneNumber = from.PhoneNumber;
@@ -36,7 +36,7 @@ namespace DriversRoutes.Helper
 
             to.Id = from.Id;
             to.RoutesId = from.RoutesId;
-            to.Index = from.Index;
+            to.QueueNumber = from.Index;
             to.Name = from.Name;
             to.Description = from.Description;
             to.PhoneNumber = from.PhoneNumber;
@@ -57,7 +57,7 @@ namespace DriversRoutes.Helper
 
             to.Id = from.Id;
             to.RoutesId = from.RoutesId;
-            to.Index = from.Index;
+            to.Index = from.QueueNumber;
             to.Name = from.Name;
             to.Description = from.Description;
             to.PhoneNumber = from.PhoneNumber;
@@ -79,7 +79,7 @@ namespace DriversRoutes.Helper
 
             to.Id = from.Id;
             to.RoutesId = from.RoutesId;
-            to.Index = from.Index;
+            to.QueueNumber = from.Index;
             to.Name = from.Name;
             to.Description = from.Description;
             to.PhoneNumber = from.PhoneNumber;

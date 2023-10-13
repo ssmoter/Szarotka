@@ -77,6 +77,27 @@ namespace DriversRoutes.Pages.Maps
             Pin.Type = PinType.SavedPin;
         }
 
+        const char colonChar = ':';
+        public static int GetIndex(ReadOnlySpan<char> chars)
+        {
+            int index = -1;
+            if (chars.IsEmpty)
+            {
+                return index;
+            }
+
+            for (int i = 0; i < chars.Length; i++)
+            {
+                if (chars[i] == colonChar)
+                {
+                    index = int.Parse(chars.Slice(0, i));
+                    break;
+                }
+            }
+            return index;
+        }
+
+
         public MapsM CreateRandomPoint(int i)
         {
             Index = i;

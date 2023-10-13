@@ -25,6 +25,15 @@ public partial class MapsV : ContentPage
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
+
+        if (BindingContext is MapsVM vm)
+        {
+            if (vm.Routes is not null)
+            {
+                vm.DriversRoutesName += vm.Routes.Name;
+            }
+        }
+
     }
 
     private async void Map_MapClicked(object sender, MapClickedEventArgs e)

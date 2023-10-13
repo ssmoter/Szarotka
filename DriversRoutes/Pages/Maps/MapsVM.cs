@@ -24,7 +24,7 @@ namespace DriversRoutes.Pages.Maps
         MapsM[] mapsPoint;
 
         [ObservableProperty]
-        string driversRoutesName = "Trasa kierowcy";
+        string driversRoutesName = "Trasa kierowcy: ";
 
         [ObservableProperty]
         string selectedDayName = "";
@@ -61,13 +61,13 @@ namespace DriversRoutes.Pages.Maps
             MapType = MapType.Street;
             AllPoints ??= new();
             _selectRoutes = selectRoutes;
-            //for (int i = 0; i < 200; i++)
-            //{
-            //    AllPoints.Add(new MapsM().CreateRandomPoint(i));
-            //}
+            for (int i = 0; i < 200; i++)
+            {
+                AllPoints.Add(new MapsM().CreateRandomPoint(i));
+            }
 
             //AllPoints.FirstOrDefault().Pin.Location = new Location(49.7488002173044, 20.408379427432106);
-            //MapsPoint = AllPoints.ToArray();
+            // MapsPoint = AllPoints.ToArray();
         }
 
 
@@ -101,6 +101,7 @@ namespace DriversRoutes.Pages.Maps
         static string DisplaySelectedDayName(DayOfWeek day)
         {
             string name = $"Dzień:{Environment.NewLine}";
+
             switch (day)
             {
                 case DayOfWeek.Sunday:
@@ -130,38 +131,6 @@ namespace DriversRoutes.Pages.Maps
             }
             return name;
         }
-        async Task<ObservableCollection<MapsM>> DisplaySelectedDayNameAsync(DayOfWeek day)
-        {
-            var week = new Model.SelectedDayOfWeekRoutes();
-            switch (day)
-            {
-                case DayOfWeek.Sunday:
-                    week.Sunday = true;
-                    break;
-                case DayOfWeek.Monday:
-                    week.Monday = true;
-                    break;
-                case DayOfWeek.Tuesday:
-                    week.Tuesday = true;
-                    break;
-                case DayOfWeek.Wednesday:
-                    week.Wednesday = true;
-                    break;
-                case DayOfWeek.Thursday:
-                    week.Thursday = true;
-                    break;
-                case DayOfWeek.Friday:
-                    week.Friday = true;
-                    break;
-                case DayOfWeek.Saturday:
-                    week.Saturday = true;
-                    break;
-                default:
-                    break;
-            }
-            var points = await GetSelectedDays(week);
-            return points;
-        }
 
         public void OnGoToLocation(MapSpan mapSpan)
         {
@@ -170,7 +139,11 @@ namespace DriversRoutes.Pages.Maps
         public void OpenMoreDetail(Pin pin)
         {
             SwipeViewGesture();
-            MapsPoint = AllPoints.Where(x => x.Description == pin.Address).ToArray();
+            var index = MapsM.GetIndex(pin.Label);
+            if (index == -1)
+                return;
+
+            MapsPoint = AllPoints.Where(x => x.Index == index).ToArray();
         }
 
         public async Task AddNewPoint(Model.CustomerRoutes customer)
@@ -199,11 +172,14 @@ namespace DriversRoutes.Pages.Maps
                 {
                     customer.CreatedDate = DateTime.Now;
                 }
+
+                customer.QueueNumber = _db.DataBase.Table<CustomerRoutes>().Count();
+
                 var point = new MapsM
                 {
                     Id = new Guid(customer.Id.ToByteArray()),
                     RoutesId = new Guid(customer.RoutesId.ToByteArray()),
-                    Index = AllPoints.Count,
+                    Index = customer.QueueNumber,
                     Name = customer.Name,
                     Description = customer.Description,
                     PhoneNumber = customer.PhoneNumber,
@@ -243,7 +219,8 @@ namespace DriversRoutes.Pages.Maps
 
         async Task<ObservableCollection<MapsM>> GetSelectedDays(Model.SelectedDayOfWeekRoutes week)
         {
-            var result = await _selectRoutes.GetCustomerRoutesQuery(Routes, week);
+
+            var result = await _selectRoutes.GetCustomerRoutesQueryAsync(Routes, week);
             var points = new ObservableCollection<MapsM>();
             for (int i = 0; i < result.Length; i++)
             {
@@ -261,20 +238,21 @@ namespace DriversRoutes.Pages.Maps
         [RelayCommand]
         async Task ChangeDay()
         {
+            if (Routes is null)
+            {
+                await Shell.Current.DisplayAlert("Brak trasy", "Zapisywanie jest dostępne tylko po wybraniu trasy konkretnego kierowcy", "Ok");
+                return;
+            }
             var popup = new Popups.SelectDay.SelectDayV();
             var response = await Shell.Current.ShowPopupAsync(popup);
             if (response is null)
             {
                 return;
             }
-            if (response is DayOfWeek day)
+            if (response is SelectedDayOfWeekRoutes day)
             {
-                SelectedDayName = DisplaySelectedDayName(day);
-                await Task.Run(async () =>
-                 {
-                     AllPoints = await DisplaySelectedDayNameAsync(day);
-
-                 });
+                SelectedDayName = day.ToString();
+                AllPoints = await GetSelectedDays(day);
             }
         }
 
@@ -342,7 +320,7 @@ namespace DriversRoutes.Pages.Maps
                 {
                     Id = new Guid(point.Id.ToByteArray()),
                     RoutesId = new Guid(point.RoutesId.ToByteArray()),
-                    Index = point.Index,
+                    QueueNumber = point.Index,
                     Name = point.Name,
                     Description = point.Description,
                     PhoneNumber = point.PhoneNumber,
@@ -363,7 +341,7 @@ namespace DriversRoutes.Pages.Maps
                 {
                     AllPoints[index].Id = new Guid(customerUpdate.Id.ToByteArray());
                     AllPoints[index].RoutesId = new Guid(customerUpdate.RoutesId.ToByteArray());
-                    AllPoints[index].Index = customerUpdate.Index;
+                    AllPoints[index].Index = customerUpdate.QueueNumber;
                     AllPoints[index].Name = customerUpdate.Name;
                     AllPoints[index].Description = customerUpdate.Description;
                     AllPoints[index].PhoneNumber = customerUpdate.PhoneNumber;
@@ -392,7 +370,7 @@ namespace DriversRoutes.Pages.Maps
             {
                 if (Routes is null)
                 {
-                    await Shell.Current.DisplayAlert("Brak trasy", "Zapisywanie jest dostępne tylko po wybraniu trasy konkretnego kierowcy", "Ok");
+                    await Shell.Current.DisplayAlert("Brak trasy", "Wczytywanie jest dostępne tylko po wybraniu trasy konkretnego kierowcy", "Ok");
                     return;
                 }
                 var mapSpan = await GetCurrentLocation();

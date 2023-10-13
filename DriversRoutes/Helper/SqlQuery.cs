@@ -13,6 +13,7 @@ namespace DriversRoutes.Helper
 SELECT 
 CustomerRoutes.Id,
 CustomerRoutes.RoutesId,
+CustomerRoutes.QueueNumber,
 CustomerRoutes.Name,
 CustomerRoutes.Description,
 CustomerRoutes.PhoneNumber,

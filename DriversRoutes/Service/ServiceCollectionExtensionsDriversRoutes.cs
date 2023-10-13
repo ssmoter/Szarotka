@@ -15,7 +15,10 @@
             services.AddTransient<Pages.Options.CreateTable.CreateTableRoutesVM>();
 
             services.AddTransient<Service.ISelectRoutes,Data.SelectRoutes>();
-            //services.AddTransient<Pages.Options.CreateTable.CreateTableRoutesVM>();
+            
+            services.AddTransient<Pages.ListOfPoints.ListOfPointsV>();
+            services.AddTransient<Pages.ListOfPoints.ListOfPointsVM>();
+
 
             return services;
         }

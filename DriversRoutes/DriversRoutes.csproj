@@ -26,6 +26,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Pages\ListOfPoints\ListOfPointsV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\Main\MainVDriversRoutesV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

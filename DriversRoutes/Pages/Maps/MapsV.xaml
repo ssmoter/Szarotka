@@ -27,7 +27,7 @@
         </Border>
         <Frame
             Grid.Column="0"
-            Padding="5"
+            Padding="5,5,10,5"
             BackgroundColor="{AppThemeBinding Light=White,
                                               Dark=Black}"
             IsVisible="{Binding IsVisibleList}"
@@ -239,7 +239,7 @@
                 Margin="0,5,0,0"
                 Command="{Binding SwipeViewGestureCommand}"
                 CornerRadius="50"
-                Text="Lista" />
+                Text="Opcje" />
 
         </VerticalStackLayout>
 
