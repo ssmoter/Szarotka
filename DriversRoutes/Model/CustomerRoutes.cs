@@ -17,7 +17,7 @@ namespace DriversRoutes.Model
         /// Kolejność jazdy
         /// </summary>
 
-        public int Index { get; set; }
+        public int QueueNumber { get; set; }
         /// <summary>
         /// Nazwa
         /// </summary>
@@ -64,7 +64,7 @@ namespace DriversRoutes.Model
         {
             Id = Guid.Empty;
             RoutesId = Guid.Empty;
-            Index = 0;
+            QueueNumber = 0;
             Name = string.Empty;
             Description = string.Empty;
             PhoneNumber = string.Empty;

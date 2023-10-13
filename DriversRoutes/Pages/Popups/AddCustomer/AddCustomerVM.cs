@@ -22,7 +22,7 @@ namespace DriversRoutes.Pages.Popups.AddCustomer
             {
                 Id = customer.Id,
                 RoutesId = customer.RoutesId,
-                Index = customer.Index,
+                Index = customer.QueueNumber,
                 Name = customer.Name,
                 Description = customer.Description,
                 PhoneNumber = customer.PhoneNumber,
@@ -44,7 +44,7 @@ namespace DriversRoutes.Pages.Popups.AddCustomer
             {
                 Id = AddCustomer.Id,
                 RoutesId = AddCustomer.RoutesId,
-                Index = AddCustomer.Index,
+                QueueNumber = AddCustomer.Index,
                 Name = AddCustomer.Name,
                 Description = AddCustomer.Description,
                 PhoneNumber = AddCustomer.PhoneNumber,

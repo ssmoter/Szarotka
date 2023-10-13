@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="DriversRoutes.Pages.ListOfPoints.ListOfPointsV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:Points="clr-namespace:DriversRoutes.Pages.Maps"
+    xmlns:VM="clr-namespace:DriversRoutes.Pages.ListOfPoints"
+    Title="{Binding Route.Name}"
+    x:DataType="VM:ListOfPointsVM">
+
+
+
+
+    <Grid RowDefinitions="auto,*,1">
+
+        <HorizontalStackLayout
+            Margin="2"
+            Padding="2"
+            HorizontalOptions="Center"
+            Spacing="5">
+
+            <Button Text="Eksportuj" />
+
+            <Button Command="{Binding SelectDaysOfWeekCommand}" Text="Wybierz Zakres Dni" />
+
+            <Button Text="Importuj" />
+
+        </HorizontalStackLayout>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding CustomerRoutes}">
+
+            <CollectionView.ItemTemplate>
+
+                <DataTemplate>
+
+                    <StackLayout>
+
+                        <Border Margin="5" Padding="5">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10" />
+                            </Border.StrokeShape>
+
+                            <VerticalStackLayout x:DataType="Points:MapsM">
+
+                                <Grid Margin="0,5,0,5" ColumnDefinitions="30,*">
+
+                                    <Label
+                                        Grid.Row="0"
+                                        Grid.Column="0"
+                                        FontAttributes="Bold"
+                                        Text="{Binding Index}" />
+
+
+                                    <Label
+                                        Grid.Row="0"
+                                        Grid.Column="2"
+                                        FontAttributes="Bold"
+                                        LineBreakMode="WordWrap"
+                                        Text="{Binding Name}"
+                                        VerticalOptions="Fill" />
+
+                                </Grid>
+
+
+                                <Line BackgroundColor="Grey" HorizontalOptions="FillAndExpand" />
+
+
+                                <Grid ColumnDefinitions="30,*">
+                                    <Label Grid.Column="0" Text="Dni:" />
+                                    <Label Grid.Column="1" Text="{Binding SelectedDayOfWeek.ValuesAsString}" />
+                                </Grid>
+
+                                <Grid ColumnDefinitions="30,*">
+                                    <Label Grid.Column="0" Text="Tel:" />
+                                    <Label Grid.Column="1" Text="{Binding PhoneNumber}" />
+                                </Grid>
+
+                                <Grid ColumnDefinitions="40,*">
+
+                                    <Label Grid.Column="0" Text="Opis:" />
+                                    <Label Grid.Column="1" Text="{Binding Description}" />
+
+                                </Grid>
+
+                                <HorizontalStackLayout>
+                                    <Label Text="Szerogość (Latitude) :" />
+                                    <Label Text="{Binding Latitude}" />
+                                </HorizontalStackLayout>
+
+                                <HorizontalStackLayout>
+                                    <Label Text="Długość (Longitude) :" />
+                                    <Label Text="{Binding Longitude}" />
+                                </HorizontalStackLayout>
+
+                                <HorizontalStackLayout x:DataType="VM:ListOfPointsVM" HorizontalOptions="Center">
+
+                                    <Button
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListOfPointsVM}}, Path=DeletePointCommand}"
+                                        CommandParameter="{Binding .}"
+                                        HorizontalOptions="Center"
+                                        Text="Usuń"
+                                        VerticalOptions="Center" />
+
+                                    <Button
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListOfPointsVM}}, Path=EditPinCommand}"
+                                        CommandParameter="{Binding .}"
+                                        HorizontalOptions="Center"
+                                        Text="Edytuj"
+                                        VerticalOptions="Center" />
+
+
+                                </HorizontalStackLayout>
+
+                            </VerticalStackLayout>
+
+                        </Border>
+
+                    </StackLayout>
+
+
+                </DataTemplate>
+
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </Grid>
+
+
+
+</ContentPage>

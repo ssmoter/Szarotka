@@ -23,12 +23,55 @@
                 HorizontalOptions="Center"
                 Text="Wybrany dzień" />
 
-            <Picker
-                FontSize="Medium"
-                HorizontalOptions="Center"
-                ItemDisplayBinding="{Binding Name}"
-                ItemsSource="{Binding SelectDayMs}"
-                SelectedIndex="{Binding SelectDayIndex}" />
+            <VerticalStackLayout HorizontalOptions="Center">
+                <HorizontalStackLayout HorizontalOptions="Center">
+
+
+                    <VerticalStackLayout Padding="5">
+                        <Label Text="Poniedziałek" />
+                        <CheckBox IsChecked="{Binding SelectDayMs.Monday}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Padding="5">
+                        <Label Text="Wtorek" />
+                        <CheckBox IsChecked="{Binding SelectDayMs.Tuesday}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Padding="5">
+                        <Label Text="Środa" />
+                        <CheckBox IsChecked="{Binding SelectDayMs.Wednesday}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Padding="5">
+                        <Label Text="Czwartek" />
+                        <CheckBox IsChecked="{Binding SelectDayMs.Thursday}" />
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout HorizontalOptions="Center">
+
+                    <VerticalStackLayout Padding="5">
+                        <Label Text="Piątek" />
+                        <CheckBox IsChecked="{Binding SelectDayMs.Friday}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Padding="5">
+                        <Label Text="Sobota" />
+                        <CheckBox IsChecked="{Binding SelectDayMs.Saturday}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Padding="5">
+                        <Label Text="Codziennie" />
+                        <CheckBox IsChecked="{Binding SelectDayMs.SetAll}" />
+                    </VerticalStackLayout>
+
+                </HorizontalStackLayout>
+
+
+
+
+            </VerticalStackLayout>
+
 
 
 

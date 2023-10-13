@@ -22,7 +22,7 @@
         <Border
             Margin="10"
             HorizontalOptions="Center"
-            WidthRequest="200">
+            WidthRequest="250">
 
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="50" />
@@ -36,14 +36,27 @@
                     <CollectionView.ItemTemplate>
 
                         <DataTemplate x:DataType="Route:CustomerRoutes">
+                            <VerticalStackLayout Padding="5" HorizontalOptions="Center">
 
-                            <Button
-                                Margin="5"
-                                Padding="20"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=NavigationToMapsSelectedCommand}"
-                                CommandParameter="{Binding .}"
-                                HorizontalOptions="Center"
-                                Text="{Binding Name}" />
+                                <Label HorizontalOptions="Center" Text="{Binding Name}" />
+
+                                <HorizontalStackLayout HorizontalOptions="Center">
+
+                                    <Button
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=NavigationToListOfPointsCommand}"
+                                        CommandParameter="{Binding .}"
+                                        HorizontalOptions="Center"
+                                        Text="Lista" />
+
+                                    <Button
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=NavigationToMapsSelectedCommand}"
+                                        CommandParameter="{Binding .}"
+                                        HorizontalOptions="Center"
+                                        Text="Mapa" />
+
+                                </HorizontalStackLayout>
+
+                            </VerticalStackLayout>
 
                         </DataTemplate>
 
@@ -56,7 +69,7 @@
 
         <Button
             Margin="5"
-            Padding="20"
+            Padding="15"
             Command="{Binding NavigationToMapsCommand}"
             HorizontalOptions="Center"
             Text="Czysta mapa" />

@@ -64,7 +64,7 @@ namespace DriversRoutes.Pages.Main
                 var week = new SelectedDayOfWeekRoutes();
                 week.SetTodayDayOfWeek(DateTime.Today);
 
-                var result = await selectRoutes.GetCustomerRoutesQuery(routes, week);
+                var result = await selectRoutes.GetCustomerRoutesQueryAsync(routes, week);
                 var points = new ObservableCollection<MapsM>();
                 for (int i = 0; i < result.Length; i++)
                 {
@@ -84,6 +84,16 @@ namespace DriversRoutes.Pages.Main
             }
         }
 
+        [RelayCommand]
+        async static Task NavigationToListOfPoints(Routes routes)
+        {
+           // await Shell.Current.GoToAsync(nameof(Pages.ListOfPoints.ListOfPointsV));
+            await Shell.Current.GoToAsync($"{nameof(Pages.ListOfPoints.ListOfPointsV)}?",
+                new Dictionary<string, object>()
+                {
+                    [nameof(Routes)] = routes,
+                });
+        }
 
     }
 }
