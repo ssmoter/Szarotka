@@ -66,6 +66,10 @@ namespace Inventory.Pages.SingleDay
             if (product is not null)
             {
                 product.Number += value;
+                if (product.CanUpadte == false)
+                {
+                    product.CanUpadte = true;
+                }
             }
         }
 
@@ -74,6 +78,10 @@ namespace Inventory.Pages.SingleDay
             if (product is not null)
             {
                 product.NumberEdit += value;
+                if (product.CanUpadte == false)
+                {
+                    product.CanUpadte = true;
+                }
             }
         }
 
@@ -84,6 +92,13 @@ namespace Inventory.Pages.SingleDay
                 product.NumberReturn += value;
             }
         }
+
+        static void SetCanUpdate(ProductM productM)
+        {
+            productM.CanUpadte = true;
+            productM.CalculatePrice();
+        }
+
         #endregion
 
         #region Command
@@ -172,14 +187,15 @@ namespace Inventory.Pages.SingleDay
                 response = response.Replace('.', ',');
                 if (decimal.TryParse(response, DataBase.Helper.Constants.CultureInfo, out decimal value))
                 {
-                    var cake = new CakeM()
+                    var cake = new CakeM
                     {
-                        IsSell = true,
                         Price = value,
                         DayId = DayM.Id,
                     };
 
                     DayM.Cakes.Add(cake);
+
+                    DayM.Cakes.LastOrDefault().IsSell = true;
 
                     await Helper.SnackbarAsToats.OnShow("Dodano ciasto");
                 }
@@ -245,6 +261,34 @@ namespace Inventory.Pages.SingleDay
             }
         }
 
+        [RelayCommand]
+        async Task AddPriceMoneyFromClipboard()
+        {
+            if (Clipboard.Default.HasText)
+            {
+                var paste = await Clipboard.Default.GetTextAsync();
+
+                if (decimal.TryParse(paste, out decimal result))
+                {
+                    DayM.TotalPriceMoney = result;
+                }
+            }
+        }
+
+        [RelayCommand]
+        void RefreshListOfProduct()
+        {
+            try
+            {
+                for (int i = 0; i < DayM.Products.Count; i++)
+                {
+                    SetCanUpdate(DayM.Products[i]);
+                }
+                DayM.UpdateTotalPrice();
+            }
+            catch (Exception ex) { _db.SaveLog(ex); }
+            finally { SingleDayM.ProductIsRefreshing = false; }
+        }
         #endregion
 
     }

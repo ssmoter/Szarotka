@@ -24,6 +24,8 @@ namespace Inventory.Service
             services.AddSingleton<Pages.Options.EditDriver.EditDriverVM>();
             services.AddSingleton<Pages.Options.EditDriver.EditDriverV>();
 
+            services.AddScoped<Pages.RangeDay.Graph.GraphV>();
+            services.AddScoped<Pages.RangeDay.Graph.GraphVM>();
 
             services.AddSingleton<ISaveDayService, SaveDayService>();
             services.AddSingleton<ISelectDayService, SelectDayService>();

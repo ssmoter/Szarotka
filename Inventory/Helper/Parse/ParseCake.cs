@@ -10,21 +10,21 @@ namespace Inventory.Helper.Parse
             var p = new Cake();
             if (m is not null)
             {
-                p.Id = m.Id;
-                p.DayId = m.DayId;
+                p.Id = new Guid(m.Id.ToByteArray());
+                p.DayId = new Guid(m.DayId.ToByteArray());
                 p.PriceDecimal = m.Price;
                 p.IsSell = m.IsSell;
             }
             return p;
         }
-        public static void PareseAsCake(this CakeM from,Cake to)
+        public static void PareseAsCake(this CakeM from, Cake to)
         {
             if (from is not null)
             {
                 to ??= new Cake();
 
-                to.Id = from.Id;
-                to.DayId = from.DayId;
+                to.Id = new Guid(from.Id.ToByteArray());
+                to.DayId = new Guid(from.DayId.ToByteArray());
                 to.PriceDecimal = from.Price;
                 to.IsSell = from.IsSell;
             }
@@ -34,21 +34,21 @@ namespace Inventory.Helper.Parse
             var m = new CakeM();
             if (p is not null)
             {
-                m.Id = p.Id;
-                m.DayId = p.DayId;
+                m.Id = new Guid(p.Id.ToByteArray());
+                m.DayId = new Guid(p.DayId.ToByteArray());
                 m.Price = p.PriceDecimal;
                 m.IsSell = p.IsSell;
             }
             return m;
         }
 
-        public static void PareseAsCakeM(this Cake from,CakeM to)
+        public static void PareseAsCakeM(this Cake from, CakeM to)
         {
             if (from is not null)
             {
                 to ??= new CakeM();
-                to.Id = from.Id;
-                to.DayId = from.DayId;
+                to.Id = new Guid(from.Id.ToByteArray());
+                to.DayId = new Guid(from.DayId.ToByteArray());
                 to.Price = from.PriceDecimal;
                 to.IsSell = from.IsSell;
             }

@@ -111,7 +111,7 @@ namespace Inventory.Model.MVVM
         }
 
         public bool CanUpadte { get; set; }
-        void UpdateTotalPrice()
+        public void UpdateTotalPrice()
         {
             if (CanUpadte)
             {

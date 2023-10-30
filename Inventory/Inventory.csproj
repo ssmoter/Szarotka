@@ -47,6 +47,12 @@
 	  <MauiXaml Update="Pages\RangeDay\ExistingFiles\ExistingFilesV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\RangeDay\Graph\GraphOptions\GraphOptionsV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\RangeDay\Graph\GraphV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\RangeDay\PopupSelectRangeDate\PopupSelectRangeDateV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

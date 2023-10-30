@@ -50,15 +50,15 @@ namespace Inventory.Helper.Parse
                 to.CreatedDateTime = from.Created;
 
 
-                from.Products ??= new System.Collections.ObjectModel.ObservableCollection<ProductM>();
-
+                to.Products ??= new List<Product>();
+                to.Products.Clear();
                 for (int i = 0; i < from.Products.Count; i++)
                 {
                     from.Products[i].ParseAsProduct(to.Products[i]);
                 }
-                from.Cakes ??= new System.Collections.ObjectModel.ObservableCollection<CakeM>();
+                to.Cakes ??= new List<Cake>();
 
-                from.Cakes.Clear();
+                to.Cakes.Clear();
                 for (int i = 0; i < from.Cakes.Count; i++)
                 {
                     from.Cakes[i].PareseAsCake(to.Cakes[i]);
@@ -123,27 +123,24 @@ namespace Inventory.Helper.Parse
 
 
                 to.Products ??= new System.Collections.ObjectModel.ObservableCollection<ProductM>();
+
                 for (int i = 0; i < from.Products.Count; i++)
                 {
-                    if (to.Products[i] is null)
+                    if (to.Products.Count < i)
                     {
-                        to.Products[i] = new ProductM();
+                        to.Products.Add(from.Products[i].ParseAsProductM());
                     }
-                    if (to.Products[i].ProductNameId == from.Products[i].ProductNameId)
+                    else if (to.Products[i].ProductNameId == from.Products[i].ProductNameId)
                     {
                         from.Products[i].ParseAsProductM(to.Products[i]);
                     }
                 }
 
                 to.Cakes ??= new System.Collections.ObjectModel.ObservableCollection<CakeM>();
-                from.Cakes.Clear();
+                to.Cakes.Clear();
                 for (int i = 0; i < from.Cakes.Count; i++)
                 {
-                    if (to.Cakes[i] is null)
-                    {
-                        to.Cakes[i] = new CakeM();
-                    }
-                    from.Cakes[i].PareseAsCakeM(to.Cakes[i]);
+                    to.Cakes.Add(from.Cakes[i].PareseAsCakeM());
                 }
 
                 to.TotalPriceProduct = from.TotalPriceProductsDecimal;

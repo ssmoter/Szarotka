@@ -23,7 +23,7 @@ public partial class SingleDayV : ContentPage
         }
     }
 
-    private void Entry_TextChanged_SetValueToSecendPosition(object sender, TextChangedEventArgs e)
+    private void Entry_TextChanged_SetValueToSecendPositionEmptyIsZero(object sender, TextChangedEventArgs e)
     {
         if (sender is Entry entry)
         {
@@ -47,6 +47,25 @@ public partial class SingleDayV : ContentPage
             }
 
         }
-
     }
+    private void Entry_TextChanged_SetValueToSecendPosition(object sender, TextChangedEventArgs e)
+    {
+        if (sender is Entry entry)
+        {
+            if (entry.Text.Length > 0 && entry.Text.Length <= 1)
+            {
+                entry.CursorPosition = 1;
+            }
+
+            if (!string.IsNullOrWhiteSpace(e.OldTextValue))
+            {
+                if (e.OldTextValue.Contains('.'))
+                {
+                    entry.Text = entry.Text.Replace('.', ',');
+                    entry.CursorPosition = entry.Text.Length;
+                }
+            }
+        }
+    }
+
 }

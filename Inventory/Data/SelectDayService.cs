@@ -4,6 +4,8 @@ using Inventory.Helper;
 using Inventory.Helper.Parse;
 using Inventory.Model.MVVM;
 
+using System.Collections.ObjectModel;
+
 namespace Inventory.Service
 {
     public class SelectDayService : ISelectDayService
@@ -20,13 +22,16 @@ namespace Inventory.Service
             try
             {
                 await SnackbarAsToats.OnShow("Pobieranie danego dnia ");
-                var DayM = new DayM();
-                DayM.CanUpadte = false;
+                var DayM = new DayM
+                {
+                    CanUpadte = false
+                };
+                var guid = Helper.SelectedDriver.Id;
                 var createdString = createdDate.ToString("dd.MM.yyyy");
-                var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == createdString).FirstOrDefaultAsync();
+                var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == createdString && x.DriverGuid == guid).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
-                await GetProductTable(DayM);
-                await GetCakeTable(DayM);
+                DayM.Products = await GetProductTable(DayM);
+                DayM.Cakes = await GetCakeTable(DayM);
                 if (today is null)
                 {
                     DayM.Created = createdDate;
@@ -50,13 +55,15 @@ namespace Inventory.Service
             try
             {
                 await SnackbarAsToats.OnShow("Pobieranie danego dnia ");
-                var DayM = new DayM();
-                DayM.CanUpadte = false;
+                var DayM = new DayM
+                {
+                    CanUpadte = false
+                };
                 var guid = Helper.SelectedDriver.Id;
                 var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == createdDate && x.DriverGuid == guid).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
-                await GetProductTable(DayM);
-                await GetCakeTable(DayM);
+                DayM.Products = await GetProductTable(DayM);
+                DayM.Cakes = await GetCakeTable(DayM);
                 if (today is null)
                 {
                     DayM.Created = DateTime.Parse(createdDate, DataBase.Helper.Constants.CultureInfo);
@@ -80,12 +87,14 @@ namespace Inventory.Service
             try
             {
                 await SnackbarAsToats.OnShow("Pobieranie danego dnia ");
-                var DayM = new DayM();
-                DayM.CanUpadte = false;
+                var DayM = new DayM
+                {
+                    CanUpadte = false
+                };
                 var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.Id == id).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
-                await GetProductTable(DayM);
-                await GetCakeTable(DayM);
+                DayM.Products = await GetProductTable(DayM);
+                DayM.Cakes = await GetCakeTable(DayM);
                 if (today is null)
                 {
                     DayM.Created = DateTime.Now;
@@ -108,14 +117,16 @@ namespace Inventory.Service
             try
             {
                 await SnackbarAsToats.OnShow("Pobieranie danego dnia ");
-                var DayM = new DayM();
-                DayM.CanUpadte = false;
+                var DayM = new DayM
+                {
+                    CanUpadte = false
+                };
                 var time = DateTime.Now.ToString("dd.MM.yyyy");
                 var guid = Helper.SelectedDriver.Id;
                 var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == time && x.DriverGuid == guid).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
-                await GetProductTable(DayM);
-                await GetCakeTable(DayM);
+                DayM.Products = await GetProductTable(DayM);
+                DayM.Cakes = await GetCakeTable(DayM);
                 if (today is null)
                 {
                     DayM.Created = DateTime.Now;
@@ -136,7 +147,7 @@ namespace Inventory.Service
             }
         }
 
-        public async Task GetProductTable(DayM dayM)
+        public async Task<ObservableCollection<ProductM>> GetProductTable(DayM dayM)
         {
             var product = await _db.DataBaseAsync.Table<Model.Product>().Where(x => x.DayId == dayM.Id).ToArrayAsync();
             dayM.Products.Clear();
@@ -203,8 +214,10 @@ namespace Inventory.Service
                     });
                 }
             }
+
+            return dayM.Products;
         }
-        public async Task GetCakeTable(DayM dayM)
+        public async Task<ObservableCollection<CakeM>> GetCakeTable(DayM dayM)
         {
             var cake = await _db.DataBaseAsync.Table<Model.Cake>().Where(x => x.DayId == dayM.Id).ToArrayAsync();
             dayM.Cakes.Clear();
@@ -212,6 +225,7 @@ namespace Inventory.Service
             {
                 dayM.Cakes.Add(cake[i].PareseAsCakeM());
             }
+            return dayM.Cakes;
         }
 
 

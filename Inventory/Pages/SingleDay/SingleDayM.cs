@@ -8,5 +8,7 @@ namespace Inventory.Pages.SingleDay
         bool productIsVisible=true;
         [ObservableProperty]
         bool cakeIsVisible = false;
+        [ObservableProperty]
+        bool productIsRefreshing;
     }
 }

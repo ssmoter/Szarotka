@@ -92,7 +92,7 @@ namespace Inventory.Model.MVVM
             Price = new ProductPriceM();
         }
 
-        void CalculatePrice()
+        public void CalculatePrice()
         {
             if (CanUpadte)
             {

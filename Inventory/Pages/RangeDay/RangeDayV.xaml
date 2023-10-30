@@ -3,15 +3,22 @@
     x:Class="Inventory.Pages.RangeDay.RangeDayV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:Convert="clr-namespace:DataBase.Helper;assembly=DataBase"
     xmlns:VM="clr-namespace:Inventory.Pages.RangeDay"
+    xmlns:VMD="clr-namespace:Inventory.Model.MVVM"
     Title="Zakres dat"
     x:DataType="VM:RangeDayVM">
+
+    <ContentPage.Resources>
+        <Convert:TranslateDayOfWeek x:Key="ANGToPL"/>
+    </ContentPage.Resources>
 
     <Shell.BackButtonBehavior>
         <BackButtonBehavior Command="{Binding BackCommand}" />
     </Shell.BackButtonBehavior>
 
     <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding GoToGraphCommand}" Text="Wykres" />
         <ToolbarItem Command="{Binding GenerateCSVFileCommand}" Text="CSV" />
         <ToolbarItem Command="{Binding GenerateJsonFileCommand}" Text="JSON" />
     </ContentPage.ToolbarItems>
@@ -24,13 +31,6 @@
                 HorizontalOptions="Center"
                 Text="Zakres dat"
                 VerticalOptions="Center" />
-            <Picker
-                Title="Wybierz kierowce"
-                HorizontalOptions="Center"
-                ItemDisplayBinding="{Binding Name}"
-                ItemsSource="{Binding Drivers}"
-                SelectedIndex="0"
-                SelectedItem="{Binding SelectedDriverName}" />
 
             <Button
                 Margin="10"
@@ -56,7 +56,7 @@
                     Grid.Row="1"
                     Grid.Column="0"
                     HorizontalOptions="Center">
-                    <Label Text="Pieniądze = " />
+                    <Label Text="Zapłacono = " />
                     <Label Text="{Binding TotalPriceOfRange.TotalPriceMoney}" />
                     <Label Text="zł" />
 
@@ -74,7 +74,7 @@
                     Grid.Row="1"
                     Grid.Column="2"
                     HorizontalOptions="Center">
-                    <Label Text="Braki = " />
+                    <Label Text="Różnica = " />
                     <Label Text="{Binding TotalPriceOfRange.TotalPriceDifference}" />
                     <Label Text="zł" />
                 </HorizontalStackLayout>
@@ -100,7 +100,7 @@
                         <Label
                             Grid.Column="2"
                             HorizontalOptions="Center"
-                            Text="Pieniądze" />
+                            Text="Zapłacono" />
                         <Label
                             Grid.Column="3"
                             HorizontalOptions="Center"
@@ -108,7 +108,7 @@
                         <Label
                             Grid.Column="4"
                             HorizontalOptions="Center"
-                            Text="Braki" />
+                            Text="Różnica" />
 
                     </Grid>
                 </Border>
@@ -134,10 +134,10 @@
                                         x:DataType="VM:RangeDayM"
                                         ColumnDefinitions="*,*,*,*,*">
 
-                                        <Label
-                                            Grid.Column="0"
-                                            Text="{Binding DayM.Created}"
-                                            VerticalOptions="Center" />
+                                        <VerticalStackLayout Grid.Column="0">
+                                            <Label Text="{Binding Path=DayM.Created.DayOfWeek,Converter={StaticResource ANGToPL}}" VerticalOptions="Center" />
+                                            <Label Text="{Binding DayM.Created}" VerticalOptions="Center" />
+                                        </VerticalStackLayout>
                                         <Label
                                             Grid.Column="1"
                                             Text="{Binding Driver.Name}"
