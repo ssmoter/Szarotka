@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Helper;
 using DataBase.Service;
 
 using Inventory.Data.File;
@@ -11,6 +12,8 @@ using Inventory.Model.MVVM;
 using Inventory.Service;
 
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Inventory.Pages.RangeDay
 {
@@ -23,8 +26,7 @@ namespace Inventory.Pages.RangeDay
         [ObservableProperty]
         DayM totalPriceOfRange;
 
-        [ObservableProperty]
-        ObservableCollection<DriverM> drivers;
+        readonly Driver[] _allDrivers;
 
         [ObservableProperty]
         bool enableSave;
@@ -57,31 +59,8 @@ namespace Inventory.Pages.RangeDay
             }
         }
 
-        DriverM selectedDriverName;
-        public DriverM SelectedDriverName
-        {
-            get => selectedDriverName;
-            set
-            {
-                if (SetProperty(ref selectedDriverName, value))
-                {
-                    OnPropertyChanged(nameof(SelectedDriverName));
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            RangeDays = await SelectDays(PopupDate.From, PopupDate.To, SelectedDriverName.Id);
-                        }
-                        catch (Exception ex)
-                        {
-                            _db.SaveLog(ex);
-                        }
-                    });
-                }
-            }
-        }
 
-        PopupDateModel PopupDate = new(DateTime.Today.Ticks, DateTime.Today.AddDays(1).Ticks);
+        PopupDateModel PopupDate = new(DateTime.Today.Ticks, DateTime.Today.AddDays(1).Ticks, false, Array.Empty<Guid>());
         readonly DataBase.Data.AccessDataBase _db;
         readonly ISelectDayService _selectDayService;
         readonly ISaveDayService _dayService;
@@ -93,30 +72,24 @@ namespace Inventory.Pages.RangeDay
 
 
             var driver = _db.DataBase.Table<Driver>().ToArray();
-            Drivers = new ObservableCollection<DriverM>
-            {
-                new DriverM()
-                {
-                    Name = "Kierowcy",
-                    Id = Guid.Empty,
-                }
-            };
-            for (int i = 0; i < driver.Length; i++)
-            {
-                Drivers.Add(driver[i].PareseAsDriverM());
-            }
-            SelectedDriverName = new DriverM() { Id = Guid.Empty, Name = "Kierowcy" };
+            _allDrivers = driver;
+
             EnableSave = false;
             _dayService = dayService;
+        }
+
+        public RangeDayVM(Driver[] allDrivers)
+        {
+            _allDrivers = allDrivers;
         }
 
         #region Method
 
 
-        async Task<RangeDayM[]> SelectDays(long from, long to, Guid selectedDriverName)
+        async Task<RangeDayM[]> SelectDays(long from, long to, Guid[] selectedDriverName, bool moreData)
         {
             Day[] days = Array.Empty<Day>();
-            if (selectedDriverName == Guid.Empty)
+            if (selectedDriverName is null || selectedDriverName.Length == 0)
             {
                 days = await _db.DataBaseAsync.Table<Inventory.Model.Day>().
                     Where(x => x.CreatedTicks >= from && x.CreatedTicks <= to).
@@ -124,15 +97,50 @@ namespace Inventory.Pages.RangeDay
             }
             else
             {
-                days = await _db.DataBaseAsync.Table<Inventory.Model.Day>().
-                    Where(x => x.CreatedTicks >= from && x.CreatedTicks <= to && x.DriverGuid == selectedDriverName).
-                    OrderByDescending(x => x.CreatedTicks).ToArrayAsync();
+                var sb = new StringBuilder();
+
+                sb.Append("SELECT * FROM Day ");
+                sb.Append("WHERE CreatedTicks >= ");
+                sb.Append(from);
+                sb.Append(" AND CreatedTicks <= ");
+                sb.Append(to);
+
+                if (selectedDriverName.Length > 0)
+                {
+                    sb.Append(" AND (");
+                }
+
+                for (int i = 0; i < selectedDriverName.Length; i++)
+                {
+                    if (i == 0)
+                        sb.Append(" DriverGuid == '");
+                    else if (i < selectedDriverName.Length)
+                        sb.Append(" OR DriverGuid == '");
+
+                    sb.Append(selectedDriverName[i]);
+                    sb.Append('\'');
+                }
+
+                if (selectedDriverName.Length > 0)
+                {
+                    sb.Append(" )");
+                }
+                sb.Append("ORDER BY CreatedTicks DESC");
+
+                var result = await _db.DataBaseAsync.QueryAsync<Day>(sb.ToString());
+                days = result.ToArray();
+                result.Clear();
+
+                //days = await _db.DataBaseAsync.Table<Inventory.Model.Day>().
+                //    Where(x => x.CreatedTicks >= from && x.CreatedTicks <= to && x.DriverGuid == selectedDriverName).
+                //    OrderByDescending(x => x.CreatedTicks).ToArrayAsync();
+
             }
 
             RangeDayM[] dayM = new RangeDayM[days.Length];
             for (int i = 0; i < days.Length; i++)
             {
-                dayM[i]=new RangeDayM();
+                dayM[i] = new RangeDayM();
                 dayM[i].DayM = days[i].ParseAsDayM();
                 var guid = days[i].DriverGuid;
                 var driver = await _db.DataBaseAsync.Table<Driver>().FirstOrDefaultAsync(x => x.Id == guid);
@@ -142,20 +150,29 @@ namespace Inventory.Pages.RangeDay
                 }
             }
 
+            if (moreData)
+            {
+                for (int i = 0; i < dayM.Length; i++)
+                {
+                    dayM[i].DayM = await _selectDayService.GetDay(dayM[i].DayM.Id);
+                }
+            }
+
             return dayM;
         }
 
         static DayM SumTotalPriceOfRange(RangeDayM[] range)
         {
-            var day = new DayM();
-
-            day.TotalPriceProduct = range.Sum(x => x.DayM.TotalPriceProduct);
-            day.TotalPriceCake = range.Sum(x => x.DayM.TotalPriceCake);
-            day.TotalPrice = range.Sum(x => x.DayM.TotalPrice);
-            day.TotalPriceCorrect = range.Sum(x => x.DayM.TotalPriceCorrect);
-            day.TotalPriceMoney = range.Sum(x => x.DayM.TotalPriceMoney);
-            day.TotalPriceDifference = range.Sum(x => x.DayM.TotalPriceDifference);
-            day.TotalPriceAfterCorrect = range.Sum(x => x.DayM.TotalPriceAfterCorrect);
+            var day = new DayM
+            {
+                TotalPriceProduct = range.Sum(x => x.DayM.TotalPriceProduct),
+                TotalPriceCake = range.Sum(x => x.DayM.TotalPriceCake),
+                TotalPrice = range.Sum(x => x.DayM.TotalPrice),
+                TotalPriceCorrect = range.Sum(x => x.DayM.TotalPriceCorrect),
+                TotalPriceMoney = range.Sum(x => x.DayM.TotalPriceMoney),
+                TotalPriceDifference = range.Sum(x => x.DayM.TotalPriceDifference),
+                TotalPriceAfterCorrect = range.Sum(x => x.DayM.TotalPriceAfterCorrect)
+            };
 
             return day;
         }
@@ -208,7 +225,7 @@ namespace Inventory.Pages.RangeDay
             var from = RangeDays.FirstOrDefault().DayM.Created.ToString("dd.MM.yyyy");
             var to = RangeDays.LastOrDefault().DayM.Created.ToString("dd.MM.yyyy");
             return string.Join('_', "Szarotka", from, to);
-        }
+        }        
 
         static ObservableCollection<ExistingFiles.ExistingFilesM> GetExistingFiles(IList<string> values)
         {
@@ -284,7 +301,8 @@ namespace Inventory.Pages.RangeDay
                 {
                     for (int i = 0; i < RangeDays.Length; i++)
                     {
-                        RangeDays[i].DayM = await _selectDayService.GetDay(RangeDays[i].DayM.Id);
+                        if (RangeDays[i].DayM.Products.Count <= 0)
+                            RangeDays[i].DayM = await _selectDayService.GetDay(RangeDays[i].DayM.Id);
                     }
                     var name = CreateFileName();
                     var response = await FileManagerCSVJson.SaveFileJson(RangeDays, name);
@@ -346,7 +364,8 @@ namespace Inventory.Pages.RangeDay
                 {
                     for (int i = 0; i < RangeDays.Length; i++)
                     {
-                        RangeDays[i].DayM = await _selectDayService.GetDay(RangeDays[i].DayM.Id);
+                        if (RangeDays[i].DayM.Products.Count <= 0)
+                            RangeDays[i].DayM = await _selectDayService.GetDay(RangeDays[i].DayM.Id);
                     }
                     var name = CreateFileName();
                     var response = FileManagerCSVJson.SaveFileCSV(RangeDays, name);
@@ -395,13 +414,13 @@ namespace Inventory.Pages.RangeDay
         {
             try
             {
-                var popup = new PopupSelectRangeDate.PopupSelectRangeDateV();
+                var popup = new PopupSelectRangeDate.PopupSelectRangeDateV(_allDrivers);
                 var result = await Shell.Current.ShowPopupAsync(popup);
 
                 if (result is PopupDateModel model)
                 {
                     PopupDate = model;
-                    RangeDays = await SelectDays(PopupDate.From, PopupDate.To, SelectedDriverName.Id);
+                    RangeDays = await SelectDays(PopupDate.From, PopupDate.To, PopupDate.DriverId, PopupDate.MoreData);
 
                     TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
                     EnableSave = false;
@@ -412,10 +431,28 @@ namespace Inventory.Pages.RangeDay
                 _db.SaveLog(ex);
             }
         }
+
         [RelayCommand]
         static async Task Back()
         {
             await Shell.Current.GoToAsync("..");
+        }
+
+        [RelayCommand]
+        async Task GoToGraph()
+        {
+            try
+            {
+                await Shell.Current.GoToAsync($"{nameof(Graph.GraphV)}?",
+                    new Dictionary<string, object>()
+                    {
+                        [nameof(RangeDayM)] = RangeDays
+                    });
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
         }
 
         #endregion

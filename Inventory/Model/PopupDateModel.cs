@@ -1,6 +1,8 @@
-﻿namespace Inventory.Model
+﻿using Inventory.Model.MVVM;
+
+namespace Inventory.Model
 {
-    public record class PopupDateModel(long From, long To)
+    public record class PopupDateModel(long From, long To,bool MoreData , Guid[] DriverId)
     {
     }
 }

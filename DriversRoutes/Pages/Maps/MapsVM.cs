@@ -61,10 +61,10 @@ namespace DriversRoutes.Pages.Maps
             MapType = MapType.Street;
             AllPoints ??= new();
             _selectRoutes = selectRoutes;
-            for (int i = 0; i < 200; i++)
-            {
-                AllPoints.Add(new MapsM().CreateRandomPoint(i));
-            }
+            //for (int i = 0; i < 200; i++)
+            //{
+            //    AllPoints.Add(new MapsM().CreateRandomPoint(i));
+            //}
 
             //AllPoints.FirstOrDefault().Pin.Location = new Location(49.7488002173044, 20.408379427432106);
             // MapsPoint = AllPoints.ToArray();

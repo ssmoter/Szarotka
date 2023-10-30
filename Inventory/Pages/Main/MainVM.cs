@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using Inventory.Model;
 using Inventory.Service;
 
 namespace Inventory.Pages.Main
@@ -110,7 +111,7 @@ namespace Inventory.Pages.Main
                     return;
                 }
 
-                dayM = await _selectDayService.GetDay(MainM.Date);
+                dayM = await _selectDayService.GetDay(MainM.Date.AddHours(12));
 
                 await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
                     new Dictionary<string, object>()

@@ -73,7 +73,7 @@
                             <Entry
                                 Keyboard="Numeric"
                                 Text="{Binding DayM.TotalPriceCorrect}"
-                                TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
+                                TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
                             <Label Text="zł" VerticalOptions="Center" />
                         </HorizontalStackLayout>
 
@@ -83,14 +83,22 @@
                             <Label Text="zł" />
                         </HorizontalStackLayout>
 
-                        <HorizontalStackLayout Grid.Row="4" Grid.Column="0">
-                            <Label Text="Pieniądze = " VerticalOptions="Center" />
-                            <Entry
-                                Keyboard="Numeric"
-                                Text="{Binding DayM.TotalPriceMoney}"
-                                TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
-                            <Label Text="zł" VerticalOptions="Center" />
-                        </HorizontalStackLayout>
+                        <VerticalStackLayout Grid.Row="4" Grid.Column="0">
+
+                            <HorizontalStackLayout>
+                                <Label Text="Pieniądze = " VerticalOptions="Center" />
+                                <Entry
+                                    Keyboard="Numeric"
+                                    Text="{Binding DayM.TotalPriceMoney}"
+                                    TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                <Label Text="zł" VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                            <Button
+                                Command="{Binding AddPriceMoneyFromClipboardCommand}"
+                                HeightRequest="10"
+                                HorizontalOptions="Fill"
+                                VerticalOptions="Center" />
+                        </VerticalStackLayout>
 
                         <HorizontalStackLayout Grid.Row="4" Grid.Column="1">
                             <Label Text="Różnica = " VerticalOptions="Center" />
@@ -130,197 +138,203 @@
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
-                <CollectionView ItemsSource="{Binding DayM.Products}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <SwipeView>
-                                <SwipeView.RightItems>
-                                    <SwipeItems SwipeBehaviorOnInvoked="RemainOpen">
 
-                                        <SwipeItemView>
+                <RefreshView Command="{Binding RefreshListOfProductCommand}" IsRefreshing="{Binding SingleDayM.ProductIsRefreshing}">
+
+                    <CollectionView ItemsSource="{Binding DayM.Products}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <SwipeView>
+                                    <SwipeView.RightItems>
+                                        <SwipeItems SwipeBehaviorOnInvoked="RemainOpen">
+
+                                            <SwipeItemView>
 
 
-                                            <Grid
-                                                ColumnDefinitions="*,*"
-                                                HorizontalOptions="Fill"
-                                                RowDefinitions="*,*,*"
-                                                VerticalOptions="Fill">
+                                                <Grid
+                                                    ColumnDefinitions="*,*"
+                                                    HorizontalOptions="Fill"
+                                                    RowDefinitions="*,*,*"
+                                                    VerticalOptions="Fill">
 
-                                                <Button
-                                                    Grid.Row="0"
-                                                    Grid.Column="0"
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductNumberCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                    FontSize="Medium"
+                                                    <Button
+                                                        Grid.Row="0"
+                                                        Grid.Column="0"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductNumberCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        FontSize="Medium"
+                                                        HorizontalOptions="Center"
+                                                        Text="-"
+                                                        VerticalOptions="Center" />
+                                                    <Button
+                                                        Grid.Row="0"
+                                                        Grid.Column="1"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductNumberCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        FontSize="Medium"
+                                                        HorizontalOptions="Center"
+                                                        Text="+"
+                                                        VerticalOptions="Center" />
+
+                                                    <Button
+                                                        Grid.Row="1"
+                                                        Grid.Column="0"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductEditCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        FontSize="Medium"
+                                                        HorizontalOptions="Center"
+                                                        Text="-"
+                                                        VerticalOptions="Center" />
+                                                    <Button
+                                                        Grid.Row="1"
+                                                        Grid.Column="1"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductEditCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        FontSize="Medium"
+                                                        HorizontalOptions="Center"
+                                                        Text="+"
+                                                        VerticalOptions="Center" />
+
+                                                    <Button
+                                                        Grid.Row="2"
+                                                        Grid.Column="0"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductReturnCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        FontSize="Medium"
+                                                        HorizontalOptions="Center"
+                                                        Text="-"
+                                                        VerticalOptions="Center" />
+                                                    <Button
+                                                        Grid.Row="2"
+                                                        Grid.Column="1"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductReturnCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        FontSize="Medium"
+                                                        HorizontalOptions="Center"
+                                                        Text="+"
+                                                        VerticalOptions="Center" />
+
+                                                </Grid>
+
+                                            </SwipeItemView>
+
+
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
+
+                                    <Border Margin="2">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10" />
+                                        </Border.StrokeShape>
+                                        <Grid
+                                            Padding="5"
+                                            x:DataType="Product:ProductM"
+                                            ColumnDefinitions="50,*,*"
+                                            ColumnSpacing="5"
+                                            RowDefinitions="*,*,*,*">
+
+                                            <Label
+                                                Grid.Row="0"
+                                                Grid.Column="0"
+                                                Grid.ColumnSpan="3"
+                                                Margin="0,0,0,5"
+                                                FontAttributes="Bold"
+                                                FontSize="Medium"
+                                                HorizontalOptions="Center"
+                                                Text="{Binding Name.Name}"
+                                                VerticalOptions="Center" />
+                                            <Image
+                                                Grid.Row="1"
+                                                Grid.RowSpan="3"
+                                                Grid.Column="0"
+                                                HeightRequest="50"
+                                                Source="{Binding Name.Img}"
+                                                WidthRequest="50" />
+                                            <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
+                                                <Label
                                                     HorizontalOptions="Center"
-                                                    Text="-"
+                                                    Text="Ilość"
                                                     VerticalOptions="Center" />
-                                                <Button
-                                                    Grid.Row="0"
-                                                    Grid.Column="1"
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductNumberCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                    FontSize="Medium"
+                                                <Entry
+                                                    Keyboard="Numeric"
+                                                    Text="{Binding Number}"
+                                                    TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                            </HorizontalStackLayout>
+
+                                            <HorizontalStackLayout Grid.Row="2" Grid.Column="1">
+
+                                                <Label
                                                     HorizontalOptions="Center"
-                                                    Text="+"
+                                                    Text="Edycja"
                                                     VerticalOptions="Center" />
+                                                <Entry
+                                                    Keyboard="Numeric"
+                                                    Text="{Binding NumberEdit}"
+                                                    TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                            </HorizontalStackLayout>
 
-                                                <Button
-                                                    Grid.Row="1"
-                                                    Grid.Column="0"
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductEditCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                    FontSize="Medium"
+                                            <HorizontalStackLayout Grid.Row="3" Grid.Column="1">
+                                                <Label
                                                     HorizontalOptions="Center"
-                                                    Text="-"
+                                                    Text="Zwrot"
                                                     VerticalOptions="Center" />
-                                                <Button
-                                                    Grid.Row="1"
-                                                    Grid.Column="1"
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductEditCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                    FontSize="Medium"
+                                                <Entry
+                                                    Keyboard="Numeric"
+                                                    Text="{Binding NumberReturn}"
+                                                    TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                            </HorizontalStackLayout>
+
+                                            <HorizontalStackLayout Grid.Row="1" Grid.Column="2">
+                                                <Label
                                                     HorizontalOptions="Center"
-                                                    Text="+"
+                                                    Text="Suma = "
                                                     VerticalOptions="Center" />
-
-                                                <Button
-                                                    Grid.Row="2"
-                                                    Grid.Column="0"
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductReturnCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                    FontSize="Medium"
+                                                <Label
                                                     HorizontalOptions="Center"
-                                                    Text="-"
+                                                    Text="{Binding PriceTotal}"
                                                     VerticalOptions="Center" />
-                                                <Button
-                                                    Grid.Row="2"
-                                                    Grid.Column="1"
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductReturnCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                    FontSize="Medium"
+                                                <Label
                                                     HorizontalOptions="Center"
-                                                    Text="+"
+                                                    Text="zł"
                                                     VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
 
-                                            </Grid>
+                                            <HorizontalStackLayout Grid.Row="2" Grid.Column="2">
+                                                <Label
+                                                    HorizontalOptions="Center"
+                                                    Text="Korekta"
+                                                    VerticalOptions="Center" />
+                                                <Entry
+                                                    Keyboard="Numeric"
+                                                    Text="{Binding PriceTotalCorrect}"
+                                                    TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                            </HorizontalStackLayout>
 
-                                        </SwipeItemView>
+                                            <HorizontalStackLayout Grid.Row="3" Grid.Column="2">
+                                                <Label
+                                                    HorizontalOptions="Center"
+                                                    Text="Po korekcie = "
+                                                    VerticalOptions="Center" />
+                                                <Label
+                                                    HorizontalOptions="Center"
+                                                    Text="{Binding PriceTotalAfterCorrect}"
+                                                    VerticalOptions="Center" />
+                                                <Label
+                                                    HorizontalOptions="Center"
+                                                    Text="zł"
+                                                    VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
 
+                                        </Grid>
+                                    </Border>
 
-                                    </SwipeItems>
-                                </SwipeView.RightItems>
+                                </SwipeView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
 
-                                <Border Margin="2">
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="10" />
-                                    </Border.StrokeShape>
-                                    <Grid
-                                        Padding="5"
-                                        x:DataType="Product:ProductM"
-                                        ColumnDefinitions="50,*,*"
-                                        ColumnSpacing="5"
-                                        RowDefinitions="*,*,*,*">
+                </RefreshView>
 
-                                        <Label
-                                            Grid.Row="0"
-                                            Grid.Column="0"
-                                            Grid.ColumnSpan="3"
-                                            Margin="0,0,0,5"
-                                            FontAttributes="Bold"
-                                            FontSize="Medium"
-                                            HorizontalOptions="Center"
-                                            Text="{Binding Name.Name}"
-                                            VerticalOptions="Center" />
-                                        <Image
-                                            Grid.Row="1"
-                                            Grid.RowSpan="3"
-                                            Grid.Column="0"
-                                            HeightRequest="50"
-                                            Source="{Binding Name.Img}"
-                                            WidthRequest="50" />
-                                        <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
-                                            <Label
-                                                HorizontalOptions="Center"
-                                                Text="Ilość"
-                                                VerticalOptions="Center" />
-                                            <Entry
-                                                Keyboard="Numeric"
-                                                Text="{Binding Number}"
-                                                TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
-                                        </HorizontalStackLayout>
-
-                                        <HorizontalStackLayout Grid.Row="2" Grid.Column="1">
-
-                                            <Label
-                                                HorizontalOptions="Center"
-                                                Text="Edycja"
-                                                VerticalOptions="Center" />
-                                            <Entry
-                                                Keyboard="Numeric"
-                                                Text="{Binding NumberEdit}"
-                                                TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
-                                        </HorizontalStackLayout>
-
-                                        <HorizontalStackLayout Grid.Row="3" Grid.Column="1">
-                                            <Label
-                                                HorizontalOptions="Center"
-                                                Text="Zwrot"
-                                                VerticalOptions="Center" />
-                                            <Entry
-                                                Keyboard="Numeric"
-                                                Text="{Binding NumberReturn}"
-                                                TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
-                                        </HorizontalStackLayout>
-
-                                        <HorizontalStackLayout Grid.Row="1" Grid.Column="2">
-                                            <Label
-                                                HorizontalOptions="Center"
-                                                Text="Suma = "
-                                                VerticalOptions="Center" />
-                                            <Label
-                                                HorizontalOptions="Center"
-                                                Text="{Binding PriceTotal}"
-                                                VerticalOptions="Center" />
-                                            <Label
-                                                HorizontalOptions="Center"
-                                                Text="zł"
-                                                VerticalOptions="Center" />
-                                        </HorizontalStackLayout>
-
-                                        <HorizontalStackLayout Grid.Row="2" Grid.Column="2">
-                                            <Label
-                                                HorizontalOptions="Center"
-                                                Text="Korekta"
-                                                VerticalOptions="Center" />
-                                            <Entry
-                                                Keyboard="Numeric"
-                                                Text="{Binding PriceTotalCorrect}"
-                                                TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
-                                        </HorizontalStackLayout>
-
-                                        <HorizontalStackLayout Grid.Row="3" Grid.Column="2">
-                                            <Label
-                                                HorizontalOptions="Center"
-                                                Text="Po korekcie = "
-                                                VerticalOptions="Center" />
-                                            <Label
-                                                HorizontalOptions="Center"
-                                                Text="{Binding PriceTotalAfterCorrect}"
-                                                VerticalOptions="Center" />
-                                            <Label
-                                                HorizontalOptions="Center"
-                                                Text="zł"
-                                                VerticalOptions="Center" />
-                                        </HorizontalStackLayout>
-
-                                    </Grid>
-                                </Border>
-
-                            </SwipeView>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
             </Border>
 
             <!--  Ciasto  -->

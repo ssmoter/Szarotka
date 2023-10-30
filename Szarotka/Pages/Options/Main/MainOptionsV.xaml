@@ -14,6 +14,7 @@
     </ContentPage.ToolbarItems>
 
     <ScrollView>
+        
         <Grid RowDefinitions="auto,*,*,*">
 
             <Border Grid.Row="0">
@@ -59,7 +60,7 @@
                         <Label
                             FontSize="Large"
                             HorizontalOptions="Center"
-                            Text="Inventory"
+                            Text="Mapy"
                             VerticalOptions="Center" />
 
                         <DriversRoutesCreateTableV:CreateTableRoutesV />

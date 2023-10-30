@@ -11,44 +11,108 @@
 
 
 
-    <Grid
-        ColumnDefinitions="auto"
-        HorizontalOptions="Center"
-        RowDefinitions="auto"
-        VerticalOptions="Center">
+    <Grid ColumnDefinitions="*" RowDefinitions="*">
         <Border Padding="20">
+            <ScrollView>
 
-            <VerticalStackLayout>
+                <VerticalStackLayout>
 
-                <HorizontalStackLayout HorizontalOptions="Center">
+                    <HorizontalStackLayout HorizontalOptions="Center">
 
-                    <HorizontalStackLayout>
-                        <Label Text="Od:" VerticalOptions="Center" />
-                        <DatePicker Date="{Binding FromDate}" VerticalOptions="Center" />
+                        <HorizontalStackLayout>
+                            <Label Text="Od:" VerticalOptions="Center" />
+                            <DatePicker Date="{Binding FromDate}" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+
+                        <HorizontalStackLayout>
+                            <Label Text="Do:" VerticalOptions="Center" />
+                            <DatePicker Date="{Binding ToDate}" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+
+                    </HorizontalStackLayout>
+                    <Picker
+                        Title="Szybki wybór"
+                        HorizontalOptions="Center"
+                        ItemsSource="{Binding RangeFast}"
+                        SelectedItem="{Binding IsSelectedDateFast}" />
+                    <Picker
+                        Title="Wybór miesiąca"
+                        HorizontalOptions="Center"
+                        ItemsSource="{Binding RangeMonth}"
+                        SelectedItem="{Binding IsSelectedDateMonth}" />
+
+
+                    <HorizontalStackLayout HorizontalOptions="Center">
+                        <Label
+                            HorizontalOptions="Center"
+                            Text="Wczytaj więcej danych "
+                            VerticalOptions="Center" />
+                        <CheckBox
+                            HorizontalOptions="Center"
+                            IsChecked="{Binding MoreData}"
+                            VerticalOptions="Center" />
                     </HorizontalStackLayout>
 
-                    <HorizontalStackLayout>
-                        <Label Text="Do:" VerticalOptions="Center" />
-                        <DatePicker Date="{Binding ToDate}" VerticalOptions="Center" />
+                    <Border Padding="5" HorizontalOptions="Center">
+
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Label
+                                HorizontalOptions="Center"
+                                Text="Wybierz kierowców do wczytania"
+                                VerticalOptions="Center" />
+
+                            <ScrollView MaximumHeightRequest="100">
+
+                                <CollectionView ItemsSource="{Binding SelectRangeDateMs}">
+
+                                    <CollectionView.ItemTemplate>
+
+                                        <DataTemplate>
+
+                                            <Grid x:DataType="vm:PopupSelectRangeDateM" ColumnDefinitions="*,*">
+
+                                                <Label
+                                                    Grid.Column="0"
+                                                    HorizontalOptions="Center"
+                                                    Text="{Binding Name}"
+                                                    VerticalOptions="Center" />
+                                                <CheckBox
+                                                    Grid.Column="1"
+                                                    HorizontalOptions="Center"
+                                                    IsChecked="{Binding IsChecked}"
+                                                    VerticalOptions="Center" />
+
+                                            </Grid>
+
+                                        </DataTemplate>
+
+                                    </CollectionView.ItemTemplate>
+
+
+
+                                </CollectionView>
+
+                            </ScrollView>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="End">
+                        <Button
+                            Command="{Binding SaveAndReturnCommand}"
+                            HorizontalOptions="Center"
+                            Text="Wczytaj" />
+                        <Button
+                            Command="{Binding CancelAndReturCommand}"
+                            HorizontalOptions="Center"
+                            Text="Anuluj" />
                     </HorizontalStackLayout>
 
-                </HorizontalStackLayout>
-                <Picker
-                    Title="Wybierz zakres dat"
-                    HorizontalOptions="Center"
-                    ItemsSource="{Binding Ragne}"
-                    SelectedItem="{Binding IsSelectedDate}" />
-                <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="End">
-                    <Button
-                        Command="{Binding SaveAndReturnCommand}"
-                        HorizontalOptions="Center"
-                        Text="Wczytaj" />
-                    <Button
-                        Command="{Binding CancelAndReturCommand}"
-                        HorizontalOptions="Center"
-                        Text="Anuluj" />
-                </HorizontalStackLayout>
-            </VerticalStackLayout>
+
+
+
+                </VerticalStackLayout>
+
+            </ScrollView>
 
         </Border>
     </Grid>

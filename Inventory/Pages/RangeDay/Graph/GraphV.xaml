@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Inventory.Pages.RangeDay.Graph.GraphV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:DrawGraph="clr-namespace:Inventory.Data.Draw"
+    xmlns:VM="clr-namespace:Inventory.Pages.RangeDay.Graph"
+    Title="Wykres"
+    x:DataType="VM:GraphVM">
+
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior Command="{Binding BackCommand}" />
+    </Shell.BackButtonBehavior>
+
+    <Grid RowDefinitions="auto,*,1">
+        <VerticalStackLayout>
+
+            <HorizontalStackLayout HorizontalOptions="Center">
+
+
+                <Button
+                    Command="{Binding SelectMoreDateCommand}"
+                    HorizontalOptions="Center"
+                    Text="Zakres dat"
+                    VerticalOptions="Center" />
+
+                <Button
+                    Command="{Binding OpenOptonsGraphCommand}"
+                    HorizontalOptions="Center"
+                    Text="Opcje Wyświetlania"
+                    VerticalOptions="Center" />
+                <Button
+                    Command="{Binding GetRandomDataCommand}"
+                    HorizontalOptions="Center"
+                    Text="Test"
+                    VerticalOptions="Center" />
+
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <RefreshView
+            Grid.Row="1"
+            Command="{Binding RefreshGraphCommand}"
+            IsRefreshing="{Binding IsRefreshingGraph}">
+            <ScrollView>
+
+                <Grid ColumnDefinitions="*,auto">
+                    <GraphicsView x:Name="GVDrawGraph" Grid.ColumnSpan="2" />
+
+                    <Grid Grid.Column="1" RowDefinitions="*">
+                        <CollectionView ItemsSource="{Binding Legend}">
+
+                            <CollectionView.ItemTemplate>
+
+                                <DataTemplate x:DataType="VM:GraphM">
+                                    <HorizontalStackLayout>
+                                        <Rectangle
+                                            BackgroundColor="{Binding Color}"
+                                            HeightRequest="10"
+                                            WidthRequest="10" />
+                                        <Label Text="{Binding Name}" TextColor="{Binding Color}" />
+                                    </HorizontalStackLayout>
+
+                                </DataTemplate>
+
+                            </CollectionView.ItemTemplate>
+
+                        </CollectionView>
+
+                    </Grid>
+
+                </Grid>
+            </ScrollView>
+        </RefreshView>
+
+    </Grid>
+
+
+</ContentPage>
