@@ -15,11 +15,7 @@
             <Image
                 HeightRequest="100"
                 HorizontalOptions="Center"
-                Source="logo2.png" >
-                <Image.GestureRecognizers>
-                    <DragGestureRecognizer/>
-                </Image.GestureRecognizers>
-            </Image>
+                Source="logo2.png" />
 
 
             <Button
