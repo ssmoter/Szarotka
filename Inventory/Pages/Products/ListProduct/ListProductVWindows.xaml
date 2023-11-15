@@ -3,6 +3,8 @@
     x:Class="Inventory.Pages.Products.ListProduct.ListProductVWindows"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:CustomControls="clr-namespace:DataBase.CustomControls;assembly=DataBase"
+    xmlns:ImgPath="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
     xmlns:MVVM="clr-namespace:Inventory.Model.MVVM"
     xmlns:VM="clr-namespace:Inventory.Pages.Products.ListProduct"
     Title="Lista produktów"
@@ -24,6 +26,7 @@
             Text="Dodaj podstawowe"
             VerticalOptions="Center" />
         <CollectionView
+            x:Name="ListOfProductCV"
             Grid.Row="1"
             ItemsSource="{Binding ProductMs}"
             SelectionMode="Single">
@@ -34,16 +37,24 @@
                             <RoundRectangle CornerRadius="10" />
                         </Border.StrokeShape>
 
+                        <Border.GestureRecognizers>
+                            <DragGestureRecognizer
+                                DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DragCommand}"
+                                DragStartingCommandParameter="{Binding .}"
+                                DropCompletedCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DropComplitedCommand}" />
+                            <DropGestureRecognizer DropCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DropCommand}" DropCommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+
                         <Grid
                             x:DataType="VM:ListProductM"
-                            ColumnDefinitions="*,*,*,*"
+                            ColumnDefinitions="*,*,*,*,*"
                             RowDefinitions="*,*,*">
 
-                            <Image
+                            <CustomControls:StringImage
                                 Grid.Row="0"
                                 Grid.RowSpan="4"
                                 Grid.Column="0"
-                                Source="{Binding Name.Img}" />
+                                String64Base="{Binding Name.Img}" />
 
                             <Label
                                 Grid.Row="0"
@@ -73,9 +84,33 @@
                                 <Label Text="{Binding ActualCreated}" />
                             </VerticalStackLayout>
 
-                            <HorizontalStackLayout
+                            <VerticalStackLayout
                                 Grid.RowSpan="3"
                                 Grid.Column="3"
+                                x:DataType="VM:ListProductVM"
+                                HorizontalOptions="End"
+                                VerticalOptions="Center">
+
+                                <ImageButton
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=SetDownCommand}"
+                                    CommandParameter="{Binding .}"
+                                    HeightRequest="10"
+                                    Source="{AppThemeBinding Light={Static ImgPath:ImgArrow.ArrowUpwardBlack},
+                                                             Dark={Static ImgPath:ImgArrow.ArrowUpwardWhite}}"
+                                    WidthRequest="10" />
+                                <ImageButton
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=SetUpCommand}"
+                                    CommandParameter="{Binding .}"
+                                    HeightRequest="10"
+                                    Source="{AppThemeBinding Light={Static ImgPath:ImgArrow.ArrowDownwardBlack},
+                                                             Dark={Static ImgPath:ImgArrow.ArrowDownwardWhite}}"
+                                    WidthRequest="10" />
+
+                            </VerticalStackLayout>
+
+                            <HorizontalStackLayout
+                                Grid.RowSpan="3"
+                                Grid.Column="4"
                                 HorizontalOptions="End"
                                 VerticalOptions="Center">
                                 <Button
@@ -83,11 +118,11 @@
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=EditProductCommand}"
                                     CommandParameter="{Binding .}"
                                     Text="Edytuj" />
-                                <Button
+                                <!--<Button
                                     BackgroundColor="Red"
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DeleteProductCommand}"
                                     CommandParameter="{Binding .}"
-                                    Text="Usuń" />
+                                    Text="Usuń" />-->
                             </HorizontalStackLayout>
 
                         </Grid>

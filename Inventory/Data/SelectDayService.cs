@@ -2,6 +2,7 @@
 
 using Inventory.Helper;
 using Inventory.Helper.Parse;
+using Inventory.Model;
 using Inventory.Model.MVVM;
 
 using System.Collections.ObjectModel;
@@ -17,6 +18,8 @@ namespace Inventory.Service
             _db = db;
         }
 
+        #region CodeFirst
+
         public async Task<DayM> GetDay(DateTime createdDate)
         {
             try
@@ -26,7 +29,7 @@ namespace Inventory.Service
                 {
                     CanUpadte = false
                 };
-                var guid = Helper.SelectedDriver.Id;
+                var guid = new Guid(Helper.SelectedDriver.Id);
                 var createdString = createdDate.ToString("dd.MM.yyyy");
                 var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == createdString && x.DriverGuid == guid).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
@@ -38,7 +41,7 @@ namespace Inventory.Service
                 }
                 if (DayM.DriverGuid == Guid.Empty)
                 {
-                    DayM.DriverGuid = Helper.SelectedDriver.Id;
+                    DayM.DriverGuid = guid;
                 }
 
                 DayM.CanUpadte = true;
@@ -59,7 +62,7 @@ namespace Inventory.Service
                 {
                     CanUpadte = false
                 };
-                var guid = Helper.SelectedDriver.Id;
+                var guid = new Guid(Helper.SelectedDriver.Id);
                 var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == createdDate && x.DriverGuid == guid).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
                 DayM.Products = await GetProductTable(DayM);
@@ -71,7 +74,7 @@ namespace Inventory.Service
                 }
                 if (DayM.DriverGuid == Guid.Empty)
                 {
-                    DayM.DriverGuid = Helper.SelectedDriver.Id;
+                    DayM.DriverGuid = guid;
                 }
                 DayM.CanUpadte = true;
                 return DayM;
@@ -101,7 +104,7 @@ namespace Inventory.Service
                 }
                 if (DayM.DriverGuid == Guid.Empty)
                 {
-                    DayM.DriverGuid = Helper.SelectedDriver.Id;
+                    DayM.DriverGuid = new Guid(Helper.SelectedDriver.Id);
                 }
                 DayM.CanUpadte = true;
                 return DayM;
@@ -122,7 +125,7 @@ namespace Inventory.Service
                     CanUpadte = false
                 };
                 var time = DateTime.Now.ToString("dd.MM.yyyy");
-                var guid = Helper.SelectedDriver.Id;
+                var guid = new Guid(Helper.SelectedDriver.Id);
                 var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == time && x.DriverGuid == guid).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
                 DayM.Products = await GetProductTable(DayM);
@@ -136,7 +139,7 @@ namespace Inventory.Service
                 {
                     var a = DayM.DriverGuid.ToString();
 
-                    DayM.DriverGuid = Helper.SelectedDriver.Id;
+                    DayM.DriverGuid = new Guid(Helper.SelectedDriver.Id);
                 }
                 DayM.CanUpadte = true;
                 return DayM;
@@ -228,6 +231,130 @@ namespace Inventory.Service
             return dayM.Cakes;
         }
 
+        #endregion
+
+
+        #region Procedure
+
+        public async Task<DayM> GetDayProcedure(DateTime createdDate)
+        {
+            var id = await DateFindId(createdDate);
+            if (id != Guid.Empty)
+            {
+                var queryId = Helper.StoredProcedure.GetSingleDay(id);
+                var dayId = await GetDateProcedureLogic(queryId);
+                return dayId;
+            }
+
+            var query = Helper.StoredProcedure.GetSingleDay(createdDate.ToShortDateString(), Helper.SelectedDriver.Id);
+            var day = await GetDateProcedureLogic(query);
+            if (day.Id == Guid.Empty)
+            {
+                day.Id = new();
+                day.Created = createdDate;
+                if (day.Created.Hour == 0)
+                {
+                    day.Created = new DateTime(createdDate.Year, createdDate.Month, createdDate.Day, 12, 0, 0);
+                }
+            }
+            return day;
+        }
+        public async Task<DayM> GetDayProcedure(Guid id)
+        {
+            var query = Helper.StoredProcedure.GetSingleDay(id);
+            var day = await GetDateProcedureLogic(query);
+            if (day.Id == Guid.Empty)
+            {
+                day.Id = new();
+                day.Created = DateTime.Now;
+            }
+            return day;
+        }
+
+        //public async Task<DayM> GetDaysProcedure(long from, long to, Guid[] selectedDriverName, bool moreData)
+        //{
+
+
+        //}
+
+
+        async Task<DayM> GetDateProcedureLogic(string query)
+        {
+            var response = await _db.DataBaseAsync.FindWithQueryAsync<GetDayM>(query);
+            Day dayM = response;
+            if (response is not null)
+            {
+                var product = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Product>>(response.ProductsJson);
+
+                dayM.Products = product;
+                dayM.Cakes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Cake>>(response.CakesJson);
+            }
+            else
+            {
+                dayM ??= new();
+                var products = await _db.DataBaseAsync.QueryAsync<GetProductNameM>(Helper.StoredProcedure.GetAllProductsNameAndPrice());
+                for (int i = 0; i < products.Count; i++)
+                {
+                    var price = Newtonsoft.Json.JsonConvert.DeserializeObject<ProductPrice>(products[i].JsonPrice);
+                    dayM.Products.Add(new Product()
+                    {
+                        Name = products[i],
+                        Price = price,
+                        DayId = dayM.Id,
+                        ProductNameId = products[i].Id,
+                        ProductPriceId = price.Id,
+                    });
+                }
+
+
+                return dayM.ParseAsDayM();
+            }
+            var allOfProducts = await _db.DataBaseAsync.QueryAsync<GetProductNameM>(Helper.StoredProcedure.GetAllProductsNameAndPrice());
+
+            if (dayM.Products.Count != allOfProducts.Count)
+            {
+                for (int i = 0; i < allOfProducts.Count; i++)
+                {
+                    if (dayM.Products.Any(x => x.Name.Id == allOfProducts[i].Id))
+                        continue;
+
+                    var price = Newtonsoft.Json.JsonConvert.DeserializeObject<ProductPrice>(allOfProducts[i].JsonPrice);
+                    dayM.Products.Add(new Product()
+                    {
+                        Name = allOfProducts[i],
+                        Price = price,
+                        DayId = dayM.Id,
+                        ProductNameId = allOfProducts[i].Id,
+                        ProductPriceId = price.Id,
+                    });
+                }
+            }
+
+            return dayM.ParseAsDayM();
+        }
+
+        async Task<Guid> DateFindId(DateTime createdDate)
+        {
+            var guid = new Guid(Helper.SelectedDriver.Id);
+            var createdString = createdDate.ToString("dd.MM.yyyy");
+            var id = await _db.DataBaseAsync.Table<Model.Day>().FirstOrDefaultAsync(x => x.CreatedDate == createdString && x.DriverGuid == guid);
+            if (id != null)
+                return id.Id;
+            return Guid.Empty;
+        }
+
+
+        class GetDayM : Day
+        {
+            public string ProductsJson { get; set; }
+            public string CakesJson { get; set; }
+        }
+        class GetProductNameM : ProductName
+        {
+            public string JsonPrice { get; set; }
+        }
+
+        #endregion
 
     }
 }

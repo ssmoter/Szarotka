@@ -14,7 +14,7 @@
         public static string Napoleon => "napeleon.png";
         public static string Ptys => "ptys.png";
         public static string Ptys2 => "ptys2.png";
-        public static string Rogaliki => "rogaliki.png";
+        public static string Rogaliki => "rogalikiF.png";
         public static string Rurka => "rurka.png";
 
 

@@ -257,13 +257,13 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
         static (long, long) SelectMonth(int month = 0)
         {
             DateTime to;
-            var from = new DateTime(DateTime.Today.Year, month, 1, 0, 0, 0).ToUniversalTime();
+            var from = new DateTime(DateTime.Today.Year, month, 1, 0, 0, 0);
             if (month == 1)
-                to = new DateTime(DateTime.Today.Year,2, 1, 0, 0, 0).ToUniversalTime();
+                to = new DateTime(DateTime.Today.Year, 2, 1, 0, 0, 0);
             else if (month == 12)
-                to = new DateTime(DateTime.Today.Year + 1, 1, 1, 0, 0, 0).ToUniversalTime();
+                to = new DateTime(DateTime.Today.Year + 1, 1, 1, 0, 0, 0);
             else
-                to = new DateTime(DateTime.Today.Year, month + 1, 1, 0, 0, 0).ToUniversalTime();
+                to = new DateTime(DateTime.Today.Year, month + 1, 1, 0, 0, 0);
 
             return (from.Ticks, to.Ticks);
         }

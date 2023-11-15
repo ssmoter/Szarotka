@@ -1,15 +1,13 @@
 ﻿using CommunityToolkit.Maui;
 
+using Microsoft.Extensions.Logging;
+
 using DataBase.Service;
+using Szarotka.Service;
 
 #if ANDROID
 using DriversRoutes.Platforms.Android;
 #endif
-
-using Microsoft.Extensions.Logging;
-
-
-using Szarotka.Service;
 
 namespace Szarotka
 {
@@ -26,6 +24,7 @@ namespace Szarotka
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+
 #if ANDROID
             builder.UseMauiMaps();
             builder.ConfigureMauiHandlers(handlers =>
@@ -35,6 +34,8 @@ namespace Szarotka
 #endif
             builder.Services.AddMyServiceDataBase();
             builder.Services.AddMyService();
+
+
 #if DEBUG
             builder.Logging.AddDebug();
 #endif

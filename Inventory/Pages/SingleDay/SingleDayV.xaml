@@ -3,6 +3,7 @@
     x:Class="Inventory.Pages.SingleDay.SingleDayV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:CustomControls="clr-namespace:DataBase.CustomControls;assembly=DataBase"
     xmlns:Product="clr-namespace:Inventory.Model.MVVM"
     xmlns:VM="clr-namespace:Inventory.Pages.SingleDay"
     Title="{Binding DayM.Created}"
@@ -47,64 +48,94 @@
                             HorizontalOptions="Center"
                             Text="Suma utargów :" />
 
-                        <HorizontalStackLayout
+                        <Label
                             Grid.Row="1"
                             Grid.Column="0"
+                            VerticalTextAlignment="Center">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Produkty = " />
+                                    <Span Text="{Binding DayM.TotalPriceProduct}" />
+                                    <Span Text=" zł" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <Label
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            VerticalTextAlignment="Center">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Ciasto = " />
+                                    <Span Text="{Binding DayM.TotalPriceCake}" />
+                                    <Span Text=" zł" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <Label
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            VerticalTextAlignment="Center">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Suma = " />
+                                    <Span Text="{Binding DayM.TotalPrice}" />
+                                    <Span Text=" zł" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <HorizontalStackLayout
+                            Grid.Row="1"
+                            Grid.Column="2"
                             VerticalOptions="Center">
-                            <Label Text="Produkty = " />
-                            <Label Text="{Binding DayM.TotalPriceProduct}" />
-                            <Label Text="zł" />
-                        </HorizontalStackLayout>
-
-                        <HorizontalStackLayout Grid.Row="2" Grid.Column="0">
-                            <Label Text="Ciasto = " />
-                            <Label Text="{Binding DayM.TotalPriceCake}" />
-                            <Label Text="zł" />
-                        </HorizontalStackLayout>
-
-                        <HorizontalStackLayout Grid.Row="3" Grid.Column="0">
-                            <Label Text="Suma = " />
-                            <Label Text="{Binding DayM.TotalPrice}" />
-                            <Label Text="zł" />
-                        </HorizontalStackLayout>
-
-                        <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
                             <Label Text="Korekta = " VerticalOptions="Center" />
                             <Entry
                                 Keyboard="Numeric"
                                 Text="{Binding DayM.TotalPriceCorrect}"
-                                TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
-                            <Label Text="zł" VerticalOptions="Center" />
+                                TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
+                            <Label Text=" zł" VerticalOptions="Center" />
                         </HorizontalStackLayout>
 
-                        <HorizontalStackLayout Grid.Row="3" Grid.Column="1">
-                            <Label Text="Po korekcie = " />
-                            <Label Text="{Binding DayM.TotalPriceAfterCorrect}" />
-                            <Label Text="zł" />
+                        <Label
+                            Grid.Row="3"
+                            Grid.Column="2"
+                            VerticalTextAlignment="Center">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Po korekcie = " />
+                                    <Span Text="{Binding DayM.TotalPriceAfterCorrect}" />
+                                    <Span Text=" zł" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+
+
+                        <HorizontalStackLayout Grid.Row="4" Grid.Column="0">
+                            <Label Text="Zapłacono = " VerticalOptions="Center" />
+                            <Entry
+                                Keyboard="Numeric"
+                                Text="{Binding DayM.TotalPriceMoney}"
+                                TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
+                            <Label Text=" zł" VerticalOptions="Center" />
                         </HorizontalStackLayout>
 
-                        <VerticalStackLayout Grid.Row="4" Grid.Column="0">
+                        <Label
+                            Grid.Row="4"
+                            Grid.Column="2"
+                            VerticalTextAlignment="Center">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Różnica = " />
+                                    <Span Text="{Binding DayM.TotalPriceDifference}" />
+                                    <Span Text=" zł" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
 
-                            <HorizontalStackLayout>
-                                <Label Text="Pieniądze = " VerticalOptions="Center" />
-                                <Entry
-                                    Keyboard="Numeric"
-                                    Text="{Binding DayM.TotalPriceMoney}"
-                                    TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
-                                <Label Text="zł" VerticalOptions="Center" />
-                            </HorizontalStackLayout>
-                            <Button
-                                Command="{Binding AddPriceMoneyFromClipboardCommand}"
-                                HeightRequest="10"
-                                HorizontalOptions="Fill"
-                                VerticalOptions="Center" />
-                        </VerticalStackLayout>
-
-                        <HorizontalStackLayout Grid.Row="4" Grid.Column="1">
-                            <Label Text="Różnica = " VerticalOptions="Center" />
-                            <Label Text="{Binding DayM.TotalPriceDifference}" VerticalOptions="Center" />
-                            <Label Text="zł" VerticalOptions="Center" />
-                        </HorizontalStackLayout>
 
 
                     </Grid>
@@ -229,7 +260,7 @@
                                         <Grid
                                             Padding="5"
                                             x:DataType="Product:ProductM"
-                                            ColumnDefinitions="50,*,*"
+                                            ColumnDefinitions="70,*,*"
                                             ColumnSpacing="5"
                                             RowDefinitions="*,*,*,*">
 
@@ -243,14 +274,27 @@
                                                 HorizontalOptions="Center"
                                                 Text="{Binding Name.Name}"
                                                 VerticalOptions="Center" />
-                                            <Image
+
+                                            <CustomControls:StringImage
                                                 Grid.Row="1"
                                                 Grid.RowSpan="3"
                                                 Grid.Column="0"
-                                                HeightRequest="50"
-                                                Source="{Binding Name.Img}"
-                                                WidthRequest="50" />
-                                            <HorizontalStackLayout Grid.Row="1" Grid.Column="1">
+                                                String64Base="{Binding Name.Img}"
+                                                WidthRequestCustom="70" />
+
+                                            <!--<Image
+                                    Grid.Row="1"
+                                    Grid.RowSpan="3"
+                                    Grid.Column="0"
+                                    HeightRequest="100"
+                                    Source="{Binding Name.Img}"
+                                    WidthRequest="100" />-->
+
+                                            <HorizontalStackLayout
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                                HorizontalOptions="Center"
+                                                VerticalOptions="Center">
                                                 <Label
                                                     HorizontalOptions="Center"
                                                     Text="Ilość"
@@ -261,19 +305,35 @@
                                                     TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
                                             </HorizontalStackLayout>
 
-                                            <HorizontalStackLayout Grid.Row="2" Grid.Column="1">
+                                            <HorizontalStackLayout
+                                                Grid.Row="2"
+                                                Grid.Column="1"
+                                                HorizontalOptions="Center"
+                                                VerticalOptions="Center">
 
                                                 <Label
                                                     HorizontalOptions="Center"
                                                     Text="Edycja"
-                                                    VerticalOptions="Center" />
+                                                    VerticalOptions="Center">
+                                                    <Label.GestureRecognizers>
+                                                        <TapGestureRecognizer
+                                                            x:DataType="VM:SingleDayVM"
+                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=PopupToAddValueFromListCommand}"
+                                                            CommandParameter="{Binding .}"
+                                                            NumberOfTapsRequired="2" />
+                                                    </Label.GestureRecognizers>
+                                                </Label>
                                                 <Entry
                                                     Keyboard="Numeric"
                                                     Text="{Binding NumberEdit}"
                                                     TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
                                             </HorizontalStackLayout>
 
-                                            <HorizontalStackLayout Grid.Row="3" Grid.Column="1">
+                                            <HorizontalStackLayout
+                                                Grid.Row="3"
+                                                Grid.Column="1"
+                                                HorizontalOptions="Center"
+                                                VerticalOptions="Center">
                                                 <Label
                                                     HorizontalOptions="Center"
                                                     Text="Zwrot"
@@ -284,22 +344,25 @@
                                                     TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
                                             </HorizontalStackLayout>
 
-                                            <HorizontalStackLayout Grid.Row="1" Grid.Column="2">
-                                                <Label
-                                                    HorizontalOptions="Center"
-                                                    Text="Suma = "
-                                                    VerticalOptions="Center" />
-                                                <Label
-                                                    HorizontalOptions="Center"
-                                                    Text="{Binding PriceTotal}"
-                                                    VerticalOptions="Center" />
-                                                <Label
-                                                    HorizontalOptions="Center"
-                                                    Text="zł"
-                                                    VerticalOptions="Center" />
-                                            </HorizontalStackLayout>
+                                            <Label
+                                                Grid.Row="1"
+                                                Grid.Column="2"
+                                                HorizontalOptions="Center"
+                                                VerticalOptions="Center">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="Suma = " />
+                                                        <Span Text="{Binding PriceTotal}" />
+                                                        <Span Text=" zł" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
 
-                                            <HorizontalStackLayout Grid.Row="2" Grid.Column="2">
+                                            <HorizontalStackLayout
+                                                Grid.Row="2"
+                                                Grid.Column="2"
+                                                HorizontalOptions="Center"
+                                                VerticalOptions="Center">
                                                 <Label
                                                     HorizontalOptions="Center"
                                                     Text="Korekta"
@@ -310,20 +373,19 @@
                                                     TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
                                             </HorizontalStackLayout>
 
-                                            <HorizontalStackLayout Grid.Row="3" Grid.Column="2">
-                                                <Label
-                                                    HorizontalOptions="Center"
-                                                    Text="Po korekcie = "
-                                                    VerticalOptions="Center" />
-                                                <Label
-                                                    HorizontalOptions="Center"
-                                                    Text="{Binding PriceTotalAfterCorrect}"
-                                                    VerticalOptions="Center" />
-                                                <Label
-                                                    HorizontalOptions="Center"
-                                                    Text="zł"
-                                                    VerticalOptions="Center" />
-                                            </HorizontalStackLayout>
+                                            <Label
+                                                Grid.Row="3"
+                                                Grid.Column="2"
+                                                HorizontalOptions="Center"
+                                                VerticalOptions="Center">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="Po korekcie = " />
+                                                        <Span Text="{Binding PriceTotalAfterCorrect}" />
+                                                        <Span Text=" zł" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
 
                                         </Grid>
                                     </Border>
@@ -386,14 +448,23 @@
                                         <Grid
                                             Padding="10"
                                             x:DataType="Product:CakeM"
-                                            ColumnDefinitions="*,.5*,*"
+                                            ColumnDefinitions="30,*,auto"
                                             ColumnSpacing="5">
 
-                                            <HorizontalStackLayout Grid.Column="0" VerticalOptions="Center">
-                                                <Label Text="Cena = " />
-                                                <Label Text="{Binding Price}" />
-                                                <Label Text="zł" />
-                                            </HorizontalStackLayout>
+                                            <Label
+                                                Grid.Column="0"
+                                                Text="{Binding Index}"
+                                                VerticalOptions="Center" />
+
+                                            <Label Grid.Column="1" VerticalOptions="Center">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="Cena = " />
+                                                        <Span Text="{Binding Price}" />
+                                                        <Span Text=" zł" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
 
                                             <HorizontalStackLayout Grid.Column="2">
                                                 <Label Text="Czy sprzedane" VerticalOptions="Center" />

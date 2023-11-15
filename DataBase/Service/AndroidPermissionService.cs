@@ -87,7 +87,7 @@
         }
 
 
-        public static async Task<bool> CheckAllPermissions()
+        public static async Task<bool> CheckAllPermissionsAboutStorage()
         {
             if (!await CheckMedia())
             {

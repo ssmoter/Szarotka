@@ -2,7 +2,7 @@
 {
     public static class SelectedDriver
     {
-        public static Guid Id { get; set; }
+        public static string Id { get; set; }
         public static string Name { get; set; }
         public static string Description { get; set; }
     }

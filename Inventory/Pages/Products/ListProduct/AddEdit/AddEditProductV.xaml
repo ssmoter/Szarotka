@@ -3,6 +3,7 @@
     x:Class="Inventory.Pages.Products.ListProduct.AddEdit.AddEditProductV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:CustomControls="clr-namespace:DataBase.CustomControls;assembly=DataBase"
     xmlns:MVVM="clr-namespace:Inventory.Model.MVVM"
     xmlns:vm="clr-namespace:Inventory.Pages.Products.ListProduct.AddEdit"
     Title="{Binding Product.Name.Name}"
@@ -12,11 +13,135 @@
         <BackButtonBehavior Command="{Binding BackCommand}" />
     </Shell.BackButtonBehavior>
 
-    <Grid RowDefinitions="*,auto,*,auto">
+    <Grid
+        BackgroundColor="Black"
+        ColumnDefinitions="*,2*"
+        RowDefinitions="*,auto,*,auto">
 
-        <Image Grid.Row="0" Source="{Binding Product.Name.Img}" />
+        <Frame
+            Grid.RowSpan="4"
+            Grid.Column="1"
+            Padding="5,5,10,5"
+            BackgroundColor="{AppThemeBinding Light=White,
+                                              Dark=Black}"
+            IsVisible="{Binding AddEdit.IsVisibleFrame}"
+            ZIndex="102">
+            <Frame.GestureRecognizers>
+                <SwipeGestureRecognizer
+                    Command="{Binding SwipeViewGestureCommand}"
+                    CommandParameter="0"
+                    Direction="Right" />
+            </Frame.GestureRecognizers>
 
-        <Grid Grid.Row="1" RowDefinitions="auto,*">
+            <Grid Padding="5" RowDefinitions="auto,*,1">
+
+                <VerticalStackLayout Padding="5" Spacing="5">
+
+                    <Button
+                        Command="{Binding SwipeViewGestureCommand}"
+                        CommandParameter="0"
+                        HorizontalOptions="FillAndExpand"
+                        Text="Schowaj" />
+                    <Button
+                        Command="{Binding SelectImageFromDeviceCommand}"
+                        HorizontalOptions="FillAndExpand"
+                        Text="Wybierz z pamięci" />
+
+                    <ScrollView
+                        HorizontalOptions="Center"
+                        HorizontalScrollBarVisibility="Always"
+                        Orientation="Both">
+                        <HorizontalStackLayout>
+                            <Button
+                                Command="{Binding SwipeViewGestureCommand}"
+                                CommandParameter="6"
+                                HorizontalOptions="Center"
+                                Text="Podstawowe"
+                                VerticalOptions="Center" />
+                            <Button
+                                Command="{Binding SwipeViewGestureCommand}"
+                                CommandParameter="1"
+                                HorizontalOptions="Center"
+                                Text="Pieczywo"
+                                VerticalOptions="Center" />
+                            <Button
+                                Command="{Binding SwipeViewGestureCommand}"
+                                CommandParameter="2"
+                                HorizontalOptions="Center"
+                                Text="Drożdżówki"
+                                VerticalOptions="Center" />
+                            <Button
+                                Command="{Binding SwipeViewGestureCommand}"
+                                CommandParameter="3"
+                                HorizontalOptions="Center"
+                                Text="Ciasta"
+                                VerticalOptions="Center" />
+                            <Button
+                                Command="{Binding SwipeViewGestureCommand}"
+                                CommandParameter="4"
+                                HorizontalOptions="Center"
+                                Text="Ciastka"
+                                VerticalOptions="Center" />
+                            <Button
+                                Command="{Binding SwipeViewGestureCommand}"
+                                CommandParameter="5"
+                                HorizontalOptions="Center"
+                                Text="Inne"
+                                VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </ScrollView>
+
+                </VerticalStackLayout>
+
+                <CollectionView
+                    Grid.Row="1"
+                    HorizontalOptions="Center"                   
+                    ItemsSource="{Binding ImgList}"
+                    SelectionMode="Single"
+                    VerticalOptions="FillAndExpand"
+                    VerticalScrollBarVisibility="Always">
+
+                    <CollectionView.ItemTemplate>
+
+                        <DataTemplate>
+
+                            <HorizontalStackLayout HorizontalOptions="Center">
+
+                                <Image
+                                    HorizontalOptions="Center"
+                                    Source="{Binding .}"
+                                    WidthRequest="{OnPlatform Android=100,
+                                                              Default=300}">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AddEditProductVM}}, Path=SetCurrentImgCommand}" CommandParameter="{Binding .}" />
+                                    </Image.GestureRecognizers>
+                                </Image>
+
+                            </HorizontalStackLayout>
+
+                        </DataTemplate>
+
+                    </CollectionView.ItemTemplate>
+
+                </CollectionView>
+
+            </Grid>
+
+        </Frame>
+
+        <CustomControls:StringImage
+            Grid.Row="0"
+            Grid.ColumnSpan="2"
+            String64Base="{Binding Product.Name.Img}">
+            <CustomControls:StringImage.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding SwipeViewGestureCommand}" CommandParameter="0" />
+            </CustomControls:StringImage.GestureRecognizers>
+        </CustomControls:StringImage>
+
+        <Grid
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            RowDefinitions="auto,*">
             <Entry
                 Grid.Row="0"
                 Placeholder="Nazwa produktu"
@@ -28,7 +153,10 @@
                 Text="{Binding Product.Name.Description}" />
         </Grid>
 
-        <Grid Grid.Row="2" RowDefinitions="auto,auto,*,0.01*">
+        <Grid
+            Grid.Row="2"
+            Grid.ColumnSpan="2"
+            RowDefinitions="auto,auto,*,0.01*">
             <Button
                 Grid.Row="0"
                 Command="{Binding UpdatePriceCommand}"
@@ -63,7 +191,10 @@
             </CollectionView>
         </Grid>
 
-        <Grid Grid.Row="3" ColumnDefinitions="*,*">
+        <Grid
+            Grid.Row="3"
+            Grid.ColumnSpan="2"
+            ColumnDefinitions="*,*">
             <Button
                 Grid.Column="0"
                 Command="{Binding InsertProductCommand}"
@@ -79,6 +210,7 @@
                 Command="{Binding BackCommand}"
                 Text="Anuluj" />
         </Grid>
+
     </Grid>
 
 

@@ -22,7 +22,7 @@
             ImgCake.Migdalowiec,
             ImgCake.Pychotka,
             ImgCake.Rafaello,
-            ImgCake.Roloda,
+            ImgCake.Rolada,
             ImgCake.Sernik,
             ImgCake.SernikGotowany,
             ImgCake.Seromak,

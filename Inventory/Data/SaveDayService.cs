@@ -30,7 +30,7 @@ namespace Inventory.Service
 
                     if (dayM.DriverGuid == Guid.Empty)
                     {
-                        dayM.DriverGuid = Helper.SelectedDriver.Id;
+                        dayM.DriverGuid = new Guid(Helper.SelectedDriver.Id);
                     }
                     var day = dayM.ParseAsDay();
 
@@ -53,6 +53,11 @@ namespace Inventory.Service
                     day = null;
                     await SnackbarAsToats.OnShow("Zapisano");
                     dayM.CanUpadte = true;
+
+                    for (int i = 0; i < dayM.Products.Count; i++)
+                    {
+                        dayM.Products[i].CanUpadte = true;
+                    }
                 }
             }
             catch (Exception ex)
@@ -66,7 +71,7 @@ namespace Inventory.Service
         {
             if (dayM.DriverGuid == Guid.Empty)
             {
-                dayM.DriverGuid = Helper.SelectedDriver.Id;
+                dayM.DriverGuid = new Guid(Helper.SelectedDriver.Id);
             }
             if (dayM.DriverGuid == Guid.Empty)
             {

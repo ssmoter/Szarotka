@@ -5,6 +5,7 @@ public partial class ListProductV : ContentPage
     public ListProductV(ListProductVM vm)
     {
         InitializeComponent();
+        vm.ScrollTo += ListOfProductCV.ScrollTo;
         BindingContext = vm;
     }
 
@@ -20,8 +21,6 @@ public partial class ListProductV : ContentPage
     //        });
     //    }
     //}
-
-
 
 
 }

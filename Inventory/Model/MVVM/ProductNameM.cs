@@ -20,5 +20,8 @@ namespace Inventory.Model.MVVM
         [ObservableProperty]
         [Name("NazwaProduktuZdjęcie")]
         string img;
+
+        public int Arrangement { get; set; }
+
     }
 }

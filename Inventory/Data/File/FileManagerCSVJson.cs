@@ -154,7 +154,7 @@ namespace Inventory.Data.File
 
                 path = FileIsExist(path, name, csvTyp);
 
-                using (var writer = new StreamWriter(path))
+                using (var writer = new StreamWriter(path, false, Encoding.UTF8))
                 {
                     using var csv = new CsvWriter(writer, DataBase.Helper.Constants.CultureInfo);
 

@@ -100,7 +100,7 @@ namespace Inventory.Helper.Parse
         }
 
 
-        #region Price
+        #region Name
 
 
         public static ProductName PareseAsProductName(this ProductNameM m)
@@ -112,6 +112,7 @@ namespace Inventory.Helper.Parse
                 p.Name = m.Name;
                 p.Description = m.Description;
                 p.Img = m.Img;
+                p.Arrangement = m.Arrangement;
             }
             return p;
         }
@@ -123,6 +124,7 @@ namespace Inventory.Helper.Parse
                 to.Name = from.Name;
                 to.Description = from.Description;
                 to.Img = from.Img;
+                to.Arrangement =  from.Arrangement;
             }
         }
 
@@ -135,6 +137,7 @@ namespace Inventory.Helper.Parse
                 m.Name = p.Name;
                 m.Description = p.Description;
                 m.Img = p.Img;
+                m.Arrangement = p.Arrangement;
             }
             return m;
         }
@@ -147,12 +150,13 @@ namespace Inventory.Helper.Parse
                 to.Name = from.Name;
                 to.Description = from.Description;
                 to.Img = from.Img;
+                to.Arrangement = from.Arrangement;
             }
         }
 
         #endregion
 
-        #region Name
+        #region Price
 
 
 

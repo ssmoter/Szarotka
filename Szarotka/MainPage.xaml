@@ -5,22 +5,27 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:Img="clr-namespace:DataBase.Helper.Img;assembly=DataBase">
 
-
     <ScrollView>
         <VerticalStackLayout
             Padding="30,0"
             Spacing="25"
             VerticalOptions="Center">
 
+
             <Image
                 HeightRequest="100"
                 HorizontalOptions="Center"
-                Source="logo2.png" />
+                Source="logo2.png" >
+                <Image.GestureRecognizers>
+                    <DragGestureRecognizer/>
+                </Image.GestureRecognizers>
+            </Image>
+
 
             <Button
                 Clicked="Inventory_Clicked"
                 HorizontalOptions="Center"
-                Text="Inventory" />
+                Text="Inwentarz" />
 
             <Button
                 Clicked="Maps_Clicked"
@@ -33,8 +38,6 @@
                 Clicked="DataBase_Clicked"
                 HorizontalOptions="Center"
                 Text="Opcje" />
-
-
         </VerticalStackLayout>
     </ScrollView>
 

@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using DataBase.Helper;
 using DataBase.Service;
 
 using Inventory.Data.File;
@@ -12,7 +11,7 @@ using Inventory.Model.MVVM;
 using Inventory.Service;
 
 using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
+using System.Diagnostics;
 using System.Text;
 
 namespace Inventory.Pages.RangeDay
@@ -154,7 +153,7 @@ namespace Inventory.Pages.RangeDay
             {
                 for (int i = 0; i < dayM.Length; i++)
                 {
-                    dayM[i].DayM = await _selectDayService.GetDay(dayM[i].DayM.Id);
+                    dayM[i].DayM = await _selectDayService.GetDayProcedure(dayM[i].DayM.Id);
                 }
             }
 
@@ -225,7 +224,7 @@ namespace Inventory.Pages.RangeDay
             var from = RangeDays.FirstOrDefault().DayM.Created.ToString("dd.MM.yyyy");
             var to = RangeDays.LastOrDefault().DayM.Created.ToString("dd.MM.yyyy");
             return string.Join('_', "Szarotka", from, to);
-        }        
+        }
 
         static ObservableCollection<ExistingFiles.ExistingFilesM> GetExistingFiles(IList<string> values)
         {
@@ -271,7 +270,7 @@ namespace Inventory.Pages.RangeDay
             try
             {
 #if ANDROID
-                if (!await AndroidPermissionService.CheckAllPermissions())
+                if (!await AndroidPermissionService.CheckAllPermissionsAboutStorage())
                 {
                     return;
                 }
@@ -335,7 +334,7 @@ namespace Inventory.Pages.RangeDay
             try
             {
 #if ANDROID
-                if (!await AndroidPermissionService.CheckAllPermissions())
+                if (!await AndroidPermissionService.CheckAllPermissionsAboutStorage())
                 {
                     return;
                 }

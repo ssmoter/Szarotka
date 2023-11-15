@@ -16,25 +16,22 @@ namespace Inventory.Pages.Products.ListProduct
         ObservableCollection<ListProductM> productMs;
 
         [ObservableProperty]
+        ListProductM dragAndDropProduct;
+
+        [ObservableProperty]
         bool isGenerateDefoultEnable;
 
         readonly Random random = new(2137);
         readonly DataBase.Data.AccessDataBase _db;
+
+        public Action<int, int, ScrollToPosition, bool> ScrollTo;
         public ListProductVM(DataBase.Data.AccessDataBase db)
         {
             ProductMs = new ObservableCollection<ListProductM>();
             this._db = db;
-            Task.Run(async () =>
-            {
-                try
-                {
-                    await SelectAllProductsAsync();
-                }
-                catch (Exception ex)
-                {
-                    _db.SaveLog(ex);
-                }
-            });
+
+            SelectAllProducts();
+
             Inventory.Service.ProductsUpdateService.Update += SelectAllProductsAsync;
         }
         #region Method
@@ -47,7 +44,7 @@ namespace Inventory.Pages.Products.ListProduct
             try
             {
                 ProductMs.Clear();
-                var names = await _db.DataBaseAsync.Table<ProductName>().ToArrayAsync();
+                var names = await _db.DataBaseAsync.Table<ProductName>().OrderBy(x => x.Arrangement).ToArrayAsync();
 
 
                 for (int i = 0; i < names.Length; i++)
@@ -63,7 +60,7 @@ namespace Inventory.Pages.Products.ListProduct
             }
             catch (Exception ex)
             {
-                await _db.SaveLogAsync(ex);
+                _db.SaveLog(ex);
             }
         }
         async Task<ObservableCollection<Inventory.Model.MVVM.ProductPriceM>> SelectPricesAsync(Guid id)
@@ -88,7 +85,7 @@ namespace Inventory.Pages.Products.ListProduct
             try
             {
                 ProductMs.Clear();
-                var names = _db.DataBase.Table<ProductName>().ToArray();
+                var names = _db.DataBase.Table<ProductName>().OrderBy(x => x.Arrangement).ToArray();
 
                 for (int i = 0; i < names.Length; i++)
                 {
@@ -99,6 +96,8 @@ namespace Inventory.Pages.Products.ListProduct
                     ProductMs[i].Prices = SelectPrices(names[i].Id);
                     ProductMs[i].SetActualPrice();
                 }
+                IsGenerateDefoultEnable = ProductMs.Count <= 0;
+
             }
             catch (Exception ex)
             {
@@ -112,8 +111,31 @@ namespace Inventory.Pages.Products.ListProduct
             price.Add(priceM.PareseAsProductPriceM());
             return price;
         }
+        void OnScrollTo(int index, int groupIndex = -1, ScrollToPosition position = ScrollToPosition.MakeVisible, bool animate = true)
+        {
+            ScrollTo?.Invoke(index, groupIndex, position, animate);
+        }
+        void SetPositions(int index, ListProductM value)
+        {
+            ProductMs.Remove(value);
+            ProductMs.Insert(index, value);
+
+            SetArrangement(index);
+        }
+
+        private void SetArrangement(int index)
+        {
+            for (int i = 0; i < ProductMs.Count; i++)
+            {
+                int arrangement = i + 1;
+                ProductMs[i].Name.Arrangement = arrangement;
+                _db.DataBase.Update(ProductMs[i].Name.PareseAsProductName());
+            }
+            OnScrollTo(index, position: ScrollToPosition.Center, animate: false);
+        }
 
         #endregion
+
 
         Guid GetGuidSed()
         {
@@ -123,6 +145,7 @@ namespace Inventory.Pages.Products.ListProduct
         }
 
         #endregion
+
         #region Commend
 
         [RelayCommand]
@@ -276,11 +299,7 @@ namespace Inventory.Pages.Products.ListProduct
                       Name = new ProductName(){ Name ="Wafle (opak. 400g)",Img=ImgCookies.Andrut,Id = GetGuidSed()},
                       Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=10m,Id = GetGuidSed()},
                     },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Mini Pizza",Img=ImgPath.Logo,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=3m,Id = GetGuidSed()},
-                    },
+
                     new Product()
                     {
                       Name = new ProductName(){ Name ="Bułka tarta",Img=ImgPath.Logo,Id = GetGuidSed()},
@@ -300,11 +319,12 @@ namespace Inventory.Pages.Products.ListProduct
 
                 for (int i = 0; i < products.Length; i++)
                 {
-                    var id = await _db.DataBaseAsync.InsertAsync(products[i].Name);
+                    products[i].Name.Arrangement = i;
+                    var id = _db.DataBase.Insert(products[i].Name);
                     var name = products[i].Name.Name;
-                    products[i].Name = await _db.DataBaseAsync.Table<ProductName>().Where(x => x.Name == name).FirstOrDefaultAsync();
+                    products[i].Name = _db.DataBase.Table<ProductName>().FirstOrDefault(x => x.Name == name);
                     products[i].Price.ProductNameId = products[i].Name.Id;
-                    await _db.DataBaseAsync.InsertAsync(products[i].Price);
+                    _db.DataBase.Insert(products[i].Price);
                 }
                 await SelectAllProductsAsync();
             }
@@ -315,6 +335,59 @@ namespace Inventory.Pages.Products.ListProduct
         }
 
 
+        [RelayCommand]
+        void SetUp(ListProductM value)
+        {
+            var index = ProductMs.IndexOf(value);
+            index += 1;
+            if (index >= ProductMs.Count)
+            {
+                return;
+            }
+            SetPositions(index, value);
+        }
+        [RelayCommand]
+        void SetDown(ListProductM value)
+        {
+            var index = ProductMs.IndexOf(value);
+            index -= 1;
+            if (0 > index)
+            {
+                return;
+            }
+            SetPositions(index, value);
+        }
+
+
+        [RelayCommand]
+        void OnDrag(ListProductM value)
+        {
+            if (value is null)
+                return;
+
+            DragAndDropProduct = value;
+            ProductMs.Remove(value);
+        }
+
+        [RelayCommand]
+        void OnDropComplited()
+        {
+            if (DragAndDropProduct is null)
+                return;
+
+            ProductMs.Clear();
+            SelectAllProducts();
+        }
+
+        [RelayCommand]
+        void OnDrop(ListProductM value)
+        {
+            var index = ProductMs.IndexOf(value);
+
+            SetPositions(index, DragAndDropProduct);
+
+            DragAndDropProduct = null;
+        }
         #endregion
 
 
