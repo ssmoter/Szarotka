@@ -3,21 +3,32 @@
     x:Class="Inventory.Pages.Main.MainV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:Convert="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
+    xmlns:CustomControls="clr-namespace:DataBase.CustomControls;assembly=DataBase"
     xmlns:vm="clr-namespace:Inventory.Pages.Main"
     Title="{Binding Name}"
     x:DataType="vm:MainVM">
 
-    <Grid RowDefinitions="*,1">
+    <ContentPage.Resources>
+        <Convert:ConvertImgToDisplay x:Key="StrToImg" />
+    </ContentPage.Resources>
+
+    <Grid Padding="5" RowDefinitions="*,1">
         <ScrollView>
+
             <VerticalStackLayout
-                Padding="30,0"
+                Padding="20,0"
                 Spacing="25"
                 VerticalOptions="Start">
+
                 <Label Text="" />
+
+
                 <Button
                     Command="{Binding NavigationToSingleDayCommand}"
                     HorizontalOptions="Center"
                     Text="Aktualny dzień" />
+
                 <Button
                     Command="{Binding NavigationToRangeCommand}"
                     HorizontalOptions="Center"
@@ -25,7 +36,7 @@
                 <Button
                     Command="{Binding NavigationToEditCommand}"
                     HorizontalOptions="Center"
-                    Text="Dodaj/Edytuj product" />
+                    Text="Dodaj/Edytuj produkt" />
 
                 <Border Padding="5" HorizontalOptions="Center">
                     <Border.StrokeShape>

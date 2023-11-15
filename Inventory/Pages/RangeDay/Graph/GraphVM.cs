@@ -26,6 +26,14 @@ namespace Inventory.Pages.RangeDay.Graph
         [ObservableProperty]
         bool isRefreshingGraph;
 
+        [ObservableProperty]
+        bool isVisibleFrame;
+
+        [ObservableProperty]
+        TypeOfGraphM typeOfGraphM;
+
+        GraphOptionsM _optionsM;
+
         public Action<IDrawable> ReDraw { get; set; }
         const string _szt = " _szt.";
         const string _zl = " zł";
@@ -36,6 +44,9 @@ namespace Inventory.Pages.RangeDay.Graph
         {
             RangeDayMs ??= Array.Empty<RangeDayM>();
             Legend ??= new ObservableCollection<GraphM>();
+            TypeOfGraphM ??= new TypeOfGraphM();
+            TypeOfGraphM.Column = true;
+            TypeOfGraphM.ChangeGraphType += OnReDrawTypeOfGraph;
 
             _db = db;
             DrawGraph ??= new();
@@ -120,7 +131,7 @@ namespace Inventory.Pages.RangeDay.Graph
             {
                 for (int i = 0; i < dayM.Length; i++)
                 {
-                    dayM[i].DayM = await _selectDayService.GetDay(dayM[i].DayM.Id);
+                    dayM[i].DayM = await _selectDayService.GetDayProcedure(dayM[i].DayM.Id);
                 }
             }
 
@@ -131,6 +142,15 @@ namespace Inventory.Pages.RangeDay.Graph
         {
 
             ReDraw?.Invoke(drawable);
+        }
+        void OnReDrawTypeOfGraph(int graphType)
+        {
+            DrawGraph.TypeOfGraph = graphType;
+            try
+            {
+                OnReDraw(DrawGraph);
+            }
+            catch { }
         }
 
         void SetValuesToDraw(GraphOptionsM optionsM)
@@ -328,62 +348,64 @@ namespace Inventory.Pages.RangeDay.Graph
                     current++;
                 }
 
-
-                for (int j = 0; j < optionsM.ProductMs.Length; j++)
+                if (optionsM.ProductMs is not null)
                 {
-                    if (optionsM.ProductMs[j].IsNumber)
+                    for (int j = 0; j < optionsM.ProductMs.Length; j++)
                     {
-                        int x = 0;
-                        for (int i = 0; i < RangeDayMs.Length; i++)
+                        if (optionsM.ProductMs[j].IsNumber)
                         {
-                            if (RangeDayMs[i].DayM.DriverGuid == drivers[d].Id)
+                            int x = 0;
+                            for (int i = 0; i < RangeDayMs.Length; i++)
                             {
-                                for (int k = 0; k < RangeDayMs[i].DayM.Products.Count; k++)
+                                if (RangeDayMs[i].DayM.DriverGuid == drivers[d].Id)
                                 {
-                                    if (RangeDayMs[i].DayM.Products[k].Name.Name == optionsM.ProductMs[j].Name)
+                                    for (int k = 0; k < RangeDayMs[i].DayM.Products.Count; k++)
                                     {
-                                        var point = new PointF(x, -(float)(RangeDayMs[i].DayM.Products[k].Number
-                                            + RangeDayMs[i].DayM.Products[k].NumberEdit
-                                            - RangeDayMs[i].DayM.Products[k].NumberReturn));
-                                        DrawGraph.GraphValues[current].Path.LineTo(point);
-                                        x++;
-                                        break;
+                                        if (RangeDayMs[i].DayM.Products[k].Name.Name == optionsM.ProductMs[j].Name)
+                                        {
+                                            var point = new PointF(x, -(float)(RangeDayMs[i].DayM.Products[k].Number
+                                                + RangeDayMs[i].DayM.Products[k].NumberEdit
+                                                - RangeDayMs[i].DayM.Products[k].NumberReturn));
+                                            DrawGraph.GraphValues[current].Path.LineTo(point);
+                                            x++;
+                                            break;
+                                        }
                                     }
                                 }
                             }
-                        }
-                        DrawGraph.GraphValues[current].Name = $"{optionsM.ProductMs[j].Name} {_szt} {drivers[d].Name}";
-                        Legend[current] = new GraphM() { Name = DrawGraph.GraphValues[current].Name, Color = DrawGraph.GraphValues[current].Color.Color };
+                            DrawGraph.GraphValues[current].Name = $"{optionsM.ProductMs[j].Name} {_szt} {drivers[d].Name}";
+                            Legend[current] = new GraphM() { Name = DrawGraph.GraphValues[current].Name, Color = DrawGraph.GraphValues[current].Color.Color };
 
-                        current++;
+                            current++;
+                        }
                     }
-                }
 
-                for (int j = 0; j < optionsM.ProductMs.Length; j++)
-                {
-                    if (optionsM.ProductMs[j].IsPrice)
+                    for (int j = 0; j < optionsM.ProductMs.Length; j++)
                     {
-                        int x = 0;
-                        for (int i = 0; i < RangeDayMs.Length; i++)
+                        if (optionsM.ProductMs[j].IsPrice)
                         {
-                            if (RangeDayMs[i].DayM.DriverGuid == drivers[d].Id)
+                            int x = 0;
+                            for (int i = 0; i < RangeDayMs.Length; i++)
                             {
-                                for (int k = 0; k < RangeDayMs[i].DayM.Products.Count; k++)
+                                if (RangeDayMs[i].DayM.DriverGuid == drivers[d].Id)
                                 {
-                                    if (RangeDayMs[i].DayM.Products[k].Name.Name == optionsM.ProductMs[j].Name)
+                                    for (int k = 0; k < RangeDayMs[i].DayM.Products.Count; k++)
                                     {
-                                        var point = new PointF(x, -(float)(RangeDayMs[i].DayM.Products[k].PriceTotalAfterCorrect));
-                                        DrawGraph.GraphValues[current].Path.LineTo(point);
-                                        x++;
-                                        break;
+                                        if (RangeDayMs[i].DayM.Products[k].Name.Name == optionsM.ProductMs[j].Name)
+                                        {
+                                            var point = new PointF(x, -(float)(RangeDayMs[i].DayM.Products[k].PriceTotalAfterCorrect));
+                                            DrawGraph.GraphValues[current].Path.LineTo(point);
+                                            x++;
+                                            break;
+                                        }
                                     }
                                 }
                             }
-                        }
-                        DrawGraph.GraphValues[current].Name = $"{optionsM.ProductMs[j].Name} {_zl} {drivers[d].Name}";
-                        Legend[current] = new GraphM() { Name = DrawGraph.GraphValues[current].Name, Color = DrawGraph.GraphValues[current].Color.Color };
+                            DrawGraph.GraphValues[current].Name = $"{optionsM.ProductMs[j].Name} {_zl} {drivers[d].Name}";
+                            Legend[current] = new GraphM() { Name = DrawGraph.GraphValues[current].Name, Color = DrawGraph.GraphValues[current].Color.Color };
 
-                        current++;
+                            current++;
+                        }
                     }
                 }
             }
@@ -412,12 +434,14 @@ namespace Inventory.Pages.RangeDay.Graph
             if (optionsM.TotalPriceDifference) n++;
             if (optionsM.NumberOfCakes) n++;
 
-            for (int i = 0; i < optionsM.ProductMs.Length; i++)
+            if (optionsM.ProductMs is not null)
             {
-                if (optionsM.ProductMs[i].IsNumber) n++;
-                if (optionsM.ProductMs[i].IsPrice) n++;
+                for (int i = 0; i < optionsM.ProductMs.Length; i++)
+                {
+                    if (optionsM.ProductMs[i].IsNumber) n++;
+                    if (optionsM.ProductMs[i].IsPrice) n++;
+                }
             }
-
             return n;
         }
 
@@ -497,6 +521,16 @@ namespace Inventory.Pages.RangeDay.Graph
                 if (result is PopupDateModel model)
                 {
                     RangeDayMs = await SelectDays(model.From, model.To, model.DriverId, model.MoreData);
+
+                    try
+                    {
+                        DrawGraph.Dispose();
+                        Legend.Clear();
+                        SetValuesToDraw(_optionsM);
+                        OnReDraw(DrawGraph);
+                    }
+                    catch { }
+                    finally { IsRefreshingGraph = false; }
                 }
             }
             catch (Exception ex)
@@ -592,6 +626,7 @@ namespace Inventory.Pages.RangeDay.Graph
 
                 if (result is GraphOptionsM optionsM)
                 {
+                    _optionsM = optionsM;
                     SetValuesToDraw(optionsM);
                 }
             }
@@ -616,6 +651,12 @@ namespace Inventory.Pages.RangeDay.Graph
             {
                 Dispose();
             }
+        }
+
+        [RelayCommand]
+        void SwipeViewGesture()
+        {
+            IsVisibleFrame = !IsVisibleFrame;
         }
 
         #endregion

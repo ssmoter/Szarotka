@@ -8,6 +8,7 @@ namespace Szarotka
         {
             InitializeComponent();
             RoutingCollectionExtensions.AddRoutings();
+
         }
     }
 }

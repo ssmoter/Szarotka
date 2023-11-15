@@ -47,7 +47,7 @@ namespace DataBase.Helper
             {
                 return day.TranslateSelectedDay();
             }
-            return parameter;
+            return value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

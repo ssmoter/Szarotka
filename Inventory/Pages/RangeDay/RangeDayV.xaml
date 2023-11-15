@@ -10,7 +10,7 @@
     x:DataType="VM:RangeDayVM">
 
     <ContentPage.Resources>
-        <Convert:TranslateDayOfWeek x:Key="ANGToPL"/>
+        <Convert:TranslateDayOfWeek x:Key="ANGToPL" />
     </ContentPage.Resources>
 
     <Shell.BackButtonBehavior>
@@ -135,7 +135,7 @@
                                         ColumnDefinitions="*,*,*,*,*">
 
                                         <VerticalStackLayout Grid.Column="0">
-                                            <Label Text="{Binding Path=DayM.Created.DayOfWeek,Converter={StaticResource ANGToPL}}" VerticalOptions="Center" />
+                                            <Label Text="{Binding Path=DayM.Created.DayOfWeek, Converter={StaticResource ANGToPL}}" VerticalOptions="Center" />
                                             <Label Text="{Binding DayM.Created}" VerticalOptions="Center" />
                                         </VerticalStackLayout>
                                         <Label

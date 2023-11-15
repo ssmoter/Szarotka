@@ -77,24 +77,25 @@ namespace Inventory.Helper.Parse
         }
 
 
-        public static DayM ParseAsDayM(this Day d)
+        public static DayM ParseAsDayM(this Day from)
         {
-            var m = new DayM();
-            if (d is not null)
+            var to = new DayM();
+            if (from is not null)
             {
-                m.Id = d.Id;
-                m.Description = d.Description;
-                m.DriverGuid = d.DriverGuid;
-                m.Created = d.CreatedDateTime;
+                to.Id = from.Id;
+                to.Description = from.Description;
+                to.DriverGuid = from.DriverGuid;
+                to.Created = from.CreatedDateTime;
 
 
-                for (int i = 0; i < d.Products.Count; i++)
+                for (int i = 0; i < from.Products.Count; i++)
                 {
-                    m.Products.Add(d.Products[i].ParseAsProductM());
+                    to.Products.Add(from.Products[i].ParseAsProductM());
                 }
-                for (int i = 0; i < d.Cakes.Count; i++)
+                for (int i = 0; i < from.Cakes.Count; i++)
                 {
-                    m.Cakes.Add(d.Cakes[i].PareseAsCakeM());
+                    to.Cakes.Add(from.Cakes[i].PareseAsCakeM());
+                    to.Cakes[i].Index = i + 1;
                 }
 
 
@@ -106,8 +107,15 @@ namespace Inventory.Helper.Parse
                 m.TotalPriceDifference = d.TotalPriceDifferenceDecimal;
                 m.TotalPriceAfterCorrect = d.TotalPriceAfterCorrectDecimal;
 
+                to.TotalPriceProduct = from.TotalPriceProductsDecimal;
+                to.TotalPriceCake = from.TotalPriceCakeDecimal;
+                to.TotalPrice = from.TotalPriceDecimal;
+                to.TotalPriceCorrect = from.TotalPriceCorrectDecimal;
+                to.TotalPriceMoney = from.TotalPriceMoneyDecimal;
+                to.TotalPriceDifference = from.TotalPriceDifferenceDecimal;
+                to.TotalPriceAfterCorrect = from.TotalPriceAfterCorrectDecimal;
             }
-            return m;
+            return to;
         }
 
         public static void ParseAsDayM(this Day from, DayM to)
@@ -141,6 +149,7 @@ namespace Inventory.Helper.Parse
                 for (int i = 0; i < from.Cakes.Count; i++)
                 {
                     to.Cakes.Add(from.Cakes[i].PareseAsCakeM());
+                    to.Cakes[i].Index = i + 1;
                 }
 
                 to.TotalPriceProduct = from.TotalPriceProductsDecimal;

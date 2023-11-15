@@ -135,22 +135,22 @@ namespace DriversRoutes.Pages.Options.CreateTable
                 new Routes()
                 {
                     Id = GetGuidSed(),
-                    Name = "Andrzej"
+                    Name = "Szyk"
                 },
                 new Routes()
                 {
                     Id = GetGuidSed(),
-                    Name = "Ignac"
+                    Name = "Pasierbiec"
                 },
                 new Routes()
                 {
                     Id = GetGuidSed(),
-                    Name = "Artek"
+                    Name = "Słopnice"
                 },
                  new Routes()
                 {
                     Id = GetGuidSed(),
-                    Name = "Sławek"
+                    Name = "Sowliny"
                 },
             };            
             _db.DataBase.InsertAll(routes);

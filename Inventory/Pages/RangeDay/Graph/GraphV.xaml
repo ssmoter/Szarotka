@@ -12,8 +12,8 @@
         <BackButtonBehavior Command="{Binding BackCommand}" />
     </Shell.BackButtonBehavior>
 
-    <Grid RowDefinitions="auto,*,1">
-        <VerticalStackLayout>
+    <Grid ColumnDefinitions="*,*" RowDefinitions="auto,*,1">
+        <VerticalStackLayout Grid.ColumnSpan="2">
 
             <HorizontalStackLayout HorizontalOptions="Center">
 
@@ -24,22 +24,99 @@
                     Text="Zakres dat"
                     VerticalOptions="Center" />
 
+
                 <Button
                     Command="{Binding OpenOptonsGraphCommand}"
                     HorizontalOptions="Center"
                     Text="Opcje Wyświetlania"
                     VerticalOptions="Center" />
                 <Button
+                    Command="{Binding SwipeViewGestureCommand}"
+                    HorizontalOptions="Center"
+                    Text="Opcje Wykresu"
+                    VerticalOptions="Center" />
+
+                <!--<Button
                     Command="{Binding GetRandomDataCommand}"
                     HorizontalOptions="Center"
                     Text="Test"
-                    VerticalOptions="Center" />
+                    VerticalOptions="Center" />-->
 
             </HorizontalStackLayout>
         </VerticalStackLayout>
 
+        <Frame
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            BackgroundColor="{AppThemeBinding Light=White,
+                                              Dark=Black}"
+            IsVisible="{Binding IsVisibleFrame}"
+            ZIndex="102">
+            <Frame.GestureRecognizers>
+                <SwipeGestureRecognizer Command="{Binding SwipeViewGestureCommand}" Direction="Right" />
+            </Frame.GestureRecognizers>
+
+            <VerticalStackLayout Spacing="5">
+
+                <Button
+                    Command="{Binding SwipeViewGestureCommand}"
+                    HorizontalOptions="Fill"
+                    Text="Schowaj" />
+                <Border>
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="20" />
+                    </Border.StrokeShape>
+
+                    <VerticalStackLayout>
+                        <Label HorizontalOptions="Center" Text="Typ Wykresu" />
+                        <Grid ColumnDefinitions="*,*" RowDefinitions="*,*,*,*">
+
+                            <CheckBox
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                IsChecked="{Binding TypeOfGraphM.Column}" />
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Text="Kolumnowy" />
+
+                            <CheckBox
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                IsChecked="{Binding TypeOfGraphM.Line}" />
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Text="Liniowy" />
+
+                            <CheckBox
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                IsChecked="{Binding TypeOfGraphM.Point}" />
+                            <Label
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Text="Punktowy" />
+
+                            <CheckBox
+                                Grid.Row="3"
+                                Grid.Column="0"
+                                IsChecked="{Binding TypeOfGraphM.LinePoint}" />
+                            <Label
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                Text="Liniowo/Punktowy" />
+
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+
+        </Frame>
+
         <RefreshView
             Grid.Row="1"
+            Grid.ColumnSpan="2"
             Command="{Binding RefreshGraphCommand}"
             IsRefreshing="{Binding IsRefreshingGraph}">
             <ScrollView>

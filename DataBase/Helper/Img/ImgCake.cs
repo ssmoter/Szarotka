@@ -18,7 +18,7 @@
         public static string Migdalowiec => "migdalowiec.png";
         public static string Pychotka => "pychotka.png";
         public static string Rafaello => "rafaello.png";
-        public static string Roloda => "roloda.png";
+        public static string Rolada => "rolada.png";
         public static string Sernik => "sernik.png";
         public static string SernikGotowany => "sernik_gotow.png";
         public static string Seromak => "seromak.png";

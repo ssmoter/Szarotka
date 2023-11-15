@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using Inventory.Helper;
@@ -51,7 +52,7 @@ namespace Inventory.Pages.SingleDay
         {
             if (DayM.DriverGuid == Guid.Empty)
             {
-                DayM.DriverGuid = Helper.SelectedDriver.Id;
+                DayM.DriverGuid = new Guid(Helper.SelectedDriver.Id);
             }
             if (DayM.DriverGuid == Guid.Empty)
             {
@@ -65,11 +66,11 @@ namespace Inventory.Pages.SingleDay
         {
             if (product is not null)
             {
-                product.Number += value;
                 if (product.CanUpadte == false)
                 {
-                    product.CanUpadte = true;
+                    SetCanUpdate(product);
                 }
+                product.Number += value;
             }
         }
 
@@ -77,11 +78,11 @@ namespace Inventory.Pages.SingleDay
         {
             if (product is not null)
             {
-                product.NumberEdit += value;
                 if (product.CanUpadte == false)
                 {
-                    product.CanUpadte = true;
+                    SetCanUpdate(product);
                 }
+                product.NumberEdit += value;
             }
         }
 
@@ -89,6 +90,10 @@ namespace Inventory.Pages.SingleDay
         {
             if (product is not null)
             {
+                if (product.CanUpadte == false)
+                {
+                    SetCanUpdate(product);
+                }
                 product.NumberReturn += value;
             }
         }
@@ -191,6 +196,7 @@ namespace Inventory.Pages.SingleDay
                     {
                         Price = value,
                         DayId = DayM.Id,
+                        Index = DayM.Cakes.Count + 1,
                     };
 
                     DayM.Cakes.Add(cake);
@@ -284,11 +290,27 @@ namespace Inventory.Pages.SingleDay
                 {
                     SetCanUpdate(DayM.Products[i]);
                 }
+                DayM.CanUpadte = true;
                 DayM.UpdateTotalPrice();
             }
             catch (Exception ex) { _db.SaveLog(ex); }
             finally { SingleDayM.ProductIsRefreshing = false; }
         }
+
+        [RelayCommand]
+        static async Task PopupToAddValueFromList(ProductM productM)
+        {
+            var popup = new DataBase.Pages.Popups.SubAddLastValue.SubAddLastValueV(productM.NumberEdit, productM.Name.Name);
+
+            var result = await Shell.Current.ShowPopupAsync(popup);
+
+            if (result is not null)
+            {
+                productM.NumberEdit = (int)result;
+            }
+        }
+
+
         #endregion
 
     }

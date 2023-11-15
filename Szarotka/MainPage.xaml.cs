@@ -4,6 +4,8 @@ namespace Szarotka
 {
     public partial class MainPage : ContentPage
     {
+        int count = 0;
+
         public MainPage()
         {
             InitializeComponent();
@@ -24,4 +26,5 @@ namespace Szarotka
             await Shell.Current.GoToAsync(nameof(DriversRoutes.Pages.Main.MainVDriversRoutesV));
         }
     }
+
 }

@@ -8,6 +8,7 @@ namespace Inventory.Data.Draw
     {
         public GraphValues[] GraphValues { get; set; }
         public DateTime[] XValues { get; set; }
+        public int TypeOfGraph { get; set; }
 
         protected float _max = 0;
         protected float _min = 0;
@@ -51,6 +52,20 @@ namespace Inventory.Data.Draw
                 {
                     canvas.FontColor = Colors.Black;
                 }
+                else
+                {
+                    theme = Application.Current.RequestedTheme;
+
+                    if (theme is AppTheme.Dark)
+                    {
+                        canvas.FontColor = Colors.White;
+                    }
+                    else if (theme is AppTheme.Light)
+                    {
+                        canvas.FontColor = Colors.Black;
+                    }
+
+                }
 
                 DrawX(canvas, dirtyRect, scale);
 
@@ -58,10 +73,35 @@ namespace Inventory.Data.Draw
 
 
                 DrawNet(canvas, dirtyRect, scale);
+
                 canvas.Translate(_fromLeft, dirtyRect.Height - _fromBotton);
+
+
+                switch (TypeOfGraph)
+                {
+                    case 0:
+                        DrawGraphColumn.DrawColumn(canvas, scale, GraphValues);
+                        break;
+                    case 1:
+                        DrawGraphLine.DrawLine(canvas, scale, GraphValues);
+
+                        break;
+                    case 2:
+                        DrawGraphPoint.DrawPoint(canvas, scale, GraphValues);
+
+                        break;
+                    case 3:
+                        DrawGraphPoint.DrawPoint(canvas, scale, GraphValues);
+                        DrawGraphLine.DrawLine(canvas, scale, GraphValues);
+                        break;
+                    default:
+                        break;
+                }
+
+
                 // DrawLegend(canvas, dirtyRect);
 
-                DrawColumn(canvas, scale);
+                // DrawColumn(canvas, scale);
 
                 //  DrawPoint(canvas, scale);
 
@@ -398,6 +438,7 @@ namespace Inventory.Data.Draw
         protected void YDrawValuesMore(ICanvas canvas, RectF dirtyRect, (float, float) scale)
         {
             canvas.SaveState();
+            
             canvas.DrawString((-_max).ToString(), 0, (-_min * scale.Item2) + _fromBotton, HorizontalAlignment.Left);
             canvas.DrawString((-_min).ToString(), 0, (-_max * scale.Item2) + _fromBotton, HorizontalAlignment.Left);
             canvas.RestoreState();

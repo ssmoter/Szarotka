@@ -97,14 +97,17 @@
                     </Border>
 
                     <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="End">
-                        <Button
-                            Command="{Binding SaveAndReturnCommand}"
-                            HorizontalOptions="Center"
-                            Text="Wczytaj" />
+
                         <Button
                             Command="{Binding CancelAndReturCommand}"
                             HorizontalOptions="Center"
                             Text="Anuluj" />
+
+                        <Button
+                            Command="{Binding SaveAndReturnCommand}"
+                            HorizontalOptions="Center"
+                            Text="Wczytaj" />
+
                     </HorizontalStackLayout>
 
 

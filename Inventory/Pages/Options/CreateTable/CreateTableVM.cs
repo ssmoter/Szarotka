@@ -88,6 +88,10 @@ namespace Inventory.Pages.Options.CreateTable
 
                 await CheckTables();
 
+                Helper.SelectedDriver.Id = "";
+                Helper.SelectedDriver.Name = "";
+                Helper.SelectedDriver.Description = "";
+                Service.DriverNameUpdateService.OnUpdate();
             }
             catch (Exception ex)
             {
@@ -183,7 +187,7 @@ namespace Inventory.Pages.Options.CreateTable
                     if (!string.IsNullOrWhiteSpace(selected))
                     {
                         var selectedDriver = driver.FirstOrDefault(x => x.Name == selected);
-                        Helper.SelectedDriver.Id = selectedDriver.Id;
+                        Helper.SelectedDriver.Id = selectedDriver.Id.ToString();
                         Helper.SelectedDriver.Name = selectedDriver.Name;
                         Helper.SelectedDriver.Description = selectedDriver.Description;
                         await _db.DataBaseAsync.InsertOrReplaceAsync(new Model.SelectedDriver() { Id = 1, SelectedGuid = selectedDriver.Id });

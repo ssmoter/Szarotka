@@ -29,24 +29,43 @@ namespace Inventory.Pages.Main
             MainM = new MainM();
             Name = "wybierz kierowcę";
             Service.DriverNameUpdateService.Update += SetName;
-            Task.Run(async () =>
-            {
-                var tableInfo = await db.DataBaseAsync.GetTableInfoAsync(nameof(Model.SelectedDriver));
-                bool exist = tableInfo.Count > 0;
-                if (exist)
-                {
-                    var selected = await db.DataBaseAsync.GetAsync<Model.SelectedDriver>(1);
-                    var selectedDriver = await db.DataBaseAsync.Table<Model.Driver>().FirstOrDefaultAsync(x => x.Id == selected.SelectedGuid);
-                    Helper.SelectedDriver.Id = selectedDriver.Id;
-                    Helper.SelectedDriver.Name = selectedDriver.Name;
-                    Helper.SelectedDriver.Description = selectedDriver.Description;
-
-                    SetName();
-                }
-            });
         }
 
         #region Method
+
+        public void LookingForSelectedDriver()
+        {
+            var tableInfo = _db.DataBase.GetTableInfo(nameof(Model.SelectedDriver));
+            bool exist = tableInfo.Count > 0;
+            if (exist)
+            {
+                var selectedDriver = _db.DataBase.Table<Model.SelectedDriver>().FirstOrDefault();
+                if (selectedDriver is not null)
+                {
+                    var driver = _db.DataBase.Table<Model.Driver>().FirstOrDefault(x => x.Id == selectedDriver.SelectedGuid);
+                    Helper.SelectedDriver.Id = driver.Id.ToString();
+                    Helper.SelectedDriver.Name = driver.Name;
+                    Helper.SelectedDriver.Description = driver.Description;
+                    SetName();
+                }
+            }
+            if (CheckDriver())
+            {
+                Shell.Current.GoToAsync("..");
+            }
+        }
+
+        #region Method
+
+        bool CheckDriver()
+        {
+            if (string.IsNullOrWhiteSpace(Helper.SelectedDriver.Id))
+            {
+                Shell.Current.DisplayAlert("Kierowca", $"Kierowca nie został wybrany{Environment.NewLine}Wybierz kierowcę w celu wczytania", "Ok");
+                return true;
+            }
+            return false;
+        }
 
         void SetName()
         {
@@ -64,17 +83,26 @@ namespace Inventory.Pages.Main
         {
             try
             {
+                if (CheckDriver())
+                    return;
+
                 if (dayM is null)
                 {
-                    dayM = await _selectDayService.GetDay();
+                    dayM = await _selectDayService.GetDayProcedure(DateTime.Now);
                 }
                 else if (dayM.Created.ToShortDateString() != DateTime.Now.ToShortDateString())
                 {
-                    dayM = await _selectDayService.GetDay();
+                    dayM = await _selectDayService.GetDayProcedure(DateTime.Now);
                 }
-                else if (dayM.DriverGuid != Helper.SelectedDriver.Id)
+                else if (dayM.DriverGuid != new Guid(Helper.SelectedDriver.Id))
                 {
-                    dayM = await _selectDayService.GetDay();
+                    dayM = await _selectDayService.GetDayProcedure(DateTime.Now);
+                }
+
+                dayM.CanUpadte = true;
+                for (int i = 0; i < dayM.Products.Count; i++)
+                {
+                    dayM.Products[i].CanUpadte = true;
                 }
 
                 await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
@@ -106,17 +134,25 @@ namespace Inventory.Pages.Main
         {
             try
             {
+                if (CheckDriver())
+                    return;
                 if (string.IsNullOrWhiteSpace(MainM.DisplyDate))
                 {
                     return;
                 }
 
-                dayM = await _selectDayService.GetDay(MainM.Date.AddHours(12));
+                var day = await _selectDayService.GetDayProcedure(MainM.Date);
 
+                //dayM = await _selectDayService.GetDay(MainM.Date.AddHours(12));
+                day.CanUpadte = true;
+                for (int i = 0; i < day.Products.Count; i++)
+                {
+                    day.Products[i].CanUpadte = true;
+                }
                 await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
                     new Dictionary<string, object>()
                     {
-                        [nameof(Model.MVVM.DayM)] = dayM
+                        [nameof(Model.MVVM.DayM)] = day
                     });
             }
             catch (Exception ex)
@@ -127,6 +163,6 @@ namespace Inventory.Pages.Main
 
 
         #endregion
-        
+
     }
 }

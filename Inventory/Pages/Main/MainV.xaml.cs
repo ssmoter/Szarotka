@@ -10,5 +10,10 @@ public partial class MainV : ContentPage
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
+        if (BindingContext is MainVM vm)
+        {
+            vm.LookingForSelectedDriver();
+        }
+
     }
 }

@@ -3,6 +3,8 @@
     x:Class="Inventory.Pages.Products.ListProduct.ListProductV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:CustomControls="clr-namespace:DataBase.CustomControls;assembly=DataBase"
+    xmlns:ImgPath="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
     xmlns:MVVM="clr-namespace:Inventory.Model.MVVM"
     xmlns:VM="clr-namespace:Inventory.Pages.Products.ListProduct"
     Title="Lista produktów"
@@ -20,17 +22,57 @@
             IsVisible="{Binding IsGenerateDefoultEnable}"
             Text="Dodaj podstawowe"
             VerticalOptions="Center" />
+
+
         <CollectionView
+            x:Name="ListOfProductCV"
             Grid.Row="1"
             ItemsSource="{Binding ProductMs}"
             SelectionMode="Single">
+
             <CollectionView.ItemTemplate>
                 <DataTemplate>
+
                     <Border Margin="2" Padding="5">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="10" />
                         </Border.StrokeShape>
+
+                        <Border.GestureRecognizers>
+                            <DragGestureRecognizer
+                                DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DragCommand}"
+                                DragStartingCommandParameter="{Binding .}"
+                                DropCompletedCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DropComplitedCommand}" />
+                            <DropGestureRecognizer DropCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DropCommand}" DropCommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+
                         <SwipeView>
+
+                            <SwipeView.LeftItems>
+                                <SwipeItems SwipeBehaviorOnInvoked="RemainOpen">
+
+                                    <SwipeItemView VerticalOptions="FillAndExpand">
+                                        <VerticalStackLayout VerticalOptions="Center">
+
+                                            <ImageButton
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=SetDownCommand}"
+                                                CommandParameter="{Binding .}"
+                                                Source="{AppThemeBinding Light={Static ImgPath:ImgArrow.ArrowUpwardBlack},
+                                                                         Dark={Static ImgPath:ImgArrow.ArrowUpwardWhite}}"
+                                                VerticalOptions="Center" />
+                                            <ImageButton
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=SetUpCommand}"
+                                                CommandParameter="{Binding .}"
+                                                Source="{AppThemeBinding Light={Static ImgPath:ImgArrow.ArrowDownwardBlack},
+                                                                         Dark={Static ImgPath:ImgArrow.ArrowDownwardWhite}}"
+                                                VerticalOptions="Center" />
+
+                                        </VerticalStackLayout>
+                                    </SwipeItemView>
+
+                                </SwipeItems>
+                            </SwipeView.LeftItems>
+
                             <SwipeView.RightItems>
                                 <SwipeItems SwipeBehaviorOnInvoked="Close">
                                     <SwipeItem
@@ -38,11 +80,11 @@
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=EditProductCommand}"
                                         CommandParameter="{Binding .}"
                                         Text="Edytuj" />
-                                    <SwipeItem
+                                    <!--<SwipeItem
                                         BackgroundColor="Red"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DeleteProductCommand}"
                                         CommandParameter="{Binding .}"
-                                        Text="Usuń" />
+                                        Text="Usuń" />-->
                                 </SwipeItems>
                             </SwipeView.RightItems>
 
@@ -51,11 +93,12 @@
                                 ColumnDefinitions="*,*,*"
                                 RowDefinitions="*,*,*">
 
-                                <Image
+
+                                <CustomControls:StringImage
                                     Grid.Row="0"
                                     Grid.RowSpan="4"
                                     Grid.Column="0"
-                                    Source="{Binding Name.Img}" />
+                                    String64Base="{Binding Name.Img}" />
 
                                 <Label
                                     Grid.Row="0"
@@ -85,7 +128,13 @@
 
                             </Grid>
 
+
                         </SwipeView>
+
+
+
+
+
                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

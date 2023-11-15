@@ -175,14 +175,14 @@
                     HorizontalOptions="Center"
                     VerticalOptions="Center">
                     <Button
-                        Command="{Binding SaveAndReturnCommand}"
-                        HorizontalOptions="Center"
-                        Text="Ustaw"
-                        VerticalOptions="Center" />
-                    <Button
                         Command="{Binding CancelAndReturnCommand}"
                         HorizontalOptions="Center"
                         Text="Anuluj"
+                        VerticalOptions="Center" />
+                    <Button
+                        Command="{Binding SaveAndReturnCommand}"
+                        HorizontalOptions="Center"
+                        Text="Ustaw"
                         VerticalOptions="Center" />
                 </HorizontalStackLayout>
 

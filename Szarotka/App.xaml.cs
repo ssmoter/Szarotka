@@ -5,9 +5,10 @@
         public App()
         {
             var theme = Preferences.Get("Theme", 0);
-            App.Current.UserAppTheme = (AppTheme)theme;
+            UserAppTheme = (AppTheme)theme;
 
             InitializeComponent();
+
             MainPage = new AppShell();
         }
     }

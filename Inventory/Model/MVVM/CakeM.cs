@@ -10,6 +10,8 @@ namespace Inventory.Model.MVVM
         [ObservableProperty]
         decimal price;
 
+        [ObservableProperty]
+        int index;
 
         bool isSell;
         public bool IsSell
