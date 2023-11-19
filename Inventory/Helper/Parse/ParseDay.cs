@@ -98,15 +98,6 @@ namespace Inventory.Helper.Parse
                     to.Cakes[i].Index = i + 1;
                 }
 
-
-                m.TotalPriceProduct = d.TotalPriceProductsDecimal;
-                m.TotalPriceCake = d.TotalPriceCakeDecimal;
-                m.TotalPrice = d.TotalPriceDecimal;
-                m.TotalPriceCorrect = d.TotalPriceCorrectDecimal;
-                m.TotalPriceMoney = d.TotalPriceMoneyDecimal;
-                m.TotalPriceDifference = d.TotalPriceDifferenceDecimal;
-                m.TotalPriceAfterCorrect = d.TotalPriceAfterCorrectDecimal;
-
                 to.TotalPriceProduct = from.TotalPriceProductsDecimal;
                 to.TotalPriceCake = from.TotalPriceCakeDecimal;
                 to.TotalPrice = from.TotalPriceDecimal;

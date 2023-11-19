@@ -6,6 +6,10 @@
     xmlns:VM="clr-namespace:Inventory.Pages.Options.CreateTable"
     x:DataType="VM:CreateTableVM">
 
+
+
+
+
     <Border>
         <Border.StrokeShape>
             <RoundRectangle CornerRadius="10" />
@@ -16,7 +20,7 @@
                 HorizontalOptions="Center"
                 Text="Stworzone tabele:"
                 VerticalOptions="Center" />
-            <CollectionView ItemsSource="{Binding TableMs}">
+            <CollectionView ItemsSource="{Binding TableMs}" SelectionMode="None">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Border>

@@ -45,16 +45,16 @@
             </HorizontalStackLayout>
         </VerticalStackLayout>
 
-        <Frame
+        <Border
             Grid.RowSpan="2"
             Grid.Column="1"
             BackgroundColor="{AppThemeBinding Light=White,
                                               Dark=Black}"
             IsVisible="{Binding IsVisibleFrame}"
             ZIndex="102">
-            <Frame.GestureRecognizers>
+            <Border.GestureRecognizers>
                 <SwipeGestureRecognizer Command="{Binding SwipeViewGestureCommand}" Direction="Right" />
-            </Frame.GestureRecognizers>
+            </Border.GestureRecognizers>
 
             <VerticalStackLayout Spacing="5">
 
@@ -112,7 +112,7 @@
                 </Border>
             </VerticalStackLayout>
 
-        </Frame>
+        </Border>
 
         <RefreshView
             Grid.Row="1"

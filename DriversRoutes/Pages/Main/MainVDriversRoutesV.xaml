@@ -38,7 +38,10 @@
                         <DataTemplate x:DataType="Route:CustomerRoutes">
                             <VerticalStackLayout Padding="5" HorizontalOptions="Center">
 
-                                <Label HorizontalOptions="Center" Text="{Binding Name}" />
+                                <Label
+                                    FontSize="Title"
+                                    HorizontalOptions="Center"
+                                    Text="{Binding Name}" />
 
                                 <HorizontalStackLayout HorizontalOptions="Center">
 

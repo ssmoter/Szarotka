@@ -95,7 +95,7 @@
 
                 <CollectionView
                     Grid.Row="1"
-                    HorizontalOptions="Center"                   
+                    HorizontalOptions="Center"
                     ItemsSource="{Binding ImgList}"
                     SelectionMode="Single"
                     VerticalOptions="FillAndExpand"

@@ -34,6 +34,7 @@
                 Clicked="DataBase_Clicked"
                 HorizontalOptions="Center"
                 Text="Opcje" />
+
         </VerticalStackLayout>
     </ScrollView>
 

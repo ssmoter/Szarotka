@@ -1,8 +1,6 @@
-﻿using CommunityToolkit.Maui.Views;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Inventory.Model;
 using Inventory.Service;
 
 namespace Inventory.Pages.Main
@@ -54,9 +52,6 @@ namespace Inventory.Pages.Main
                 Shell.Current.GoToAsync("..");
             }
         }
-
-        #region Method
-
         bool CheckDriver()
         {
             if (string.IsNullOrWhiteSpace(Helper.SelectedDriver.Id))

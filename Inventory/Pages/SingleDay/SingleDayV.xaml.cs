@@ -1,10 +1,14 @@
+using Inventory.Model.MVVM;
+
 namespace Inventory.Pages.SingleDay;
 
 public partial class SingleDayV : ContentPage
 {
+    readonly SingleDayVM _vm;
     public SingleDayV(SingleDayVM vm)
     {
         InitializeComponent();
+        _vm = vm;
         BindingContext = vm;
     }
 
@@ -68,4 +72,80 @@ public partial class SingleDayV : ContentPage
         }
     }
 
+    #region Product SwipeView RightItems 
+
+    private void Button_Clicked_FastMinusProductNumber(object sender, EventArgs e)
+    {
+        var item = sender as Button;
+        if (item is null) { return; }
+
+        var product = item.BindingContext as ProductM;
+        if (product == null) { return; }
+
+        _vm.FastMinusProductNumberCommand.Execute(product);
+    }
+    private void Button_Clicked_FastAddProductNumber(object sender, EventArgs e)
+    {
+        var item = sender as Button;
+        if (item is null) { return; }
+
+        var product = item.BindingContext as ProductM;
+        if (product == null) { return; }
+
+        _vm.FastAddProductNumberCommand.Execute(product);
+    }
+    private void Button_Clicked_FastMinusProductEdit(object sender, EventArgs e)
+    {
+        var item = sender as Button;
+        if (item is null) { return; }
+
+        var product = item.BindingContext as ProductM;
+        if (product == null) { return; }
+
+        _vm.FastMinusProductEditCommand.Execute(product);
+    }
+    private void Button_Clicked_FastAddProductEdit(object sender, EventArgs e)
+    {
+        var item = sender as Button;
+        if (item is null) { return; }
+
+        var product = item.BindingContext as ProductM;
+        if (product == null) { return; }
+
+        _vm.FastAddProductEditCommand.Execute(product);
+    }
+    private void Button_Clicked_FastMinusProductReturn(object sender, EventArgs e)
+    {
+        var item = sender as Button;
+        if (item is null) { return; }
+
+        var product = item.BindingContext as ProductM;
+        if (product == null) { return; }
+
+        _vm.FastMinusProductReturnCommand.Execute(product);
+    }
+    private void Button_Clicked_FastAddProductReturn(object sender, EventArgs e)
+    {
+        var item = sender as Button;
+        if (item is null) { return; }
+
+        var product = item.BindingContext as ProductM;
+        if (product == null) { return; }
+
+        _vm.FastAddProductReturnCommand.Execute(product);
+    }
+
+
+    #endregion
+
+    private void SwipeItem_Invoked_DeleteCake(object sender, EventArgs e)
+    {
+        var item = sender as SwipeItem;
+        if (item is null) { return; }
+
+        var product = item.BindingContext as CakeM;
+        if (product == null) { return; }
+
+        _vm.DeleteCakeCommand.Execute(product);
+    }
 }

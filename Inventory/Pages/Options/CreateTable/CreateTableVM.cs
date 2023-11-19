@@ -229,14 +229,14 @@ namespace Inventory.Pages.Options.CreateTable
 
                     if (!string.IsNullOrWhiteSpace(selected))
                     {
-                        var selectedDrivers = await _db.DataBaseAsync.Table<Driver>().Where(x=>x.Name ==selected).ToArrayAsync();
+                        var selectedDrivers = await _db.DataBaseAsync.Table<Driver>().Where(x => x.Name == selected).ToArrayAsync();
                         var selectedDriver = selectedDrivers.FirstOrDefault();
                         selectedDriver.Id = new Guid(selectedDriver.Id.ToString());
 
                         await Shell.Current.GoToAsync($"{nameof(EditDriverV)}?",
                             new Dictionary<string, object>
                             {
-                                [nameof(DriverM)]= selectedDriver.PareseAsDriverM(),
+                                [nameof(DriverM)] = selectedDriver.PareseAsDriverM(),
                             });
                     }
 

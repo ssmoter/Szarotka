@@ -19,18 +19,25 @@ namespace DataBase.Data
             }
             Task.Run(async () =>
             {
-
-                if (!System.IO.Directory.Exists(Constants.GetPathFolder))
+                try
                 {
-                    System.IO.Directory.CreateDirectory(Constants.GetPathFolder);
+                    if (!System.IO.Directory.Exists(Constants.GetPathFolder))
+                    {
+                        System.IO.Directory.CreateDirectory(Constants.GetPathFolder);
+                    }
+
+                    var tableInfo = await DataBaseAsync.GetTableInfoAsync(nameof(Model.LogsModel));
+                    bool exist = tableInfo.Count > 0;
+                    if (!exist)
+                    {
+                        await DataBaseAsync.CreateTableAsync<Model.LogsModel>();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await Shell.Current.CurrentPage.DisplayAlert("Error", ex.Message, "Ok");
                 }
 
-                var tableInfo = await DataBaseAsync.GetTableInfoAsync(nameof(Model.LogsModel));
-                bool exist = tableInfo.Count > 0;
-                if (!exist)
-                {
-                    await DataBaseAsync.CreateTableAsync<Model.LogsModel>();
-                }
             });
         }
 

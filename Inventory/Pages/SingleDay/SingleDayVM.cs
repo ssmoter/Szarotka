@@ -179,10 +179,10 @@ namespace Inventory.Pages.SingleDay
                     return;
                 }
 
-#if __ANDROID_24__
-                var response = await Shell.Current.DisplayPromptAsync("Ciasto", "Podaj cene ciasta", "Tak", "Anuluj", keyboard: Keyboard.Telephone);
-#else
                 var response = await Shell.Current.DisplayPromptAsync("Ciasto", "Podaj cene ciasta", "Tak", "Anuluj", keyboard: Keyboard.Numeric);
+#if __ANDROID_24__
+                //var response = await Shell.Current.DisplayPromptAsync("Ciasto", "Podaj cene ciasta", "Tak", "Anuluj", keyboard: Keyboard.Telephone);
+#else
 #endif
 
                 if (string.IsNullOrWhiteSpace(response))

@@ -55,18 +55,23 @@
                                         <VerticalStackLayout VerticalOptions="Center">
 
                                             <ImageButton
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=SetDownCommand}"
-                                                CommandParameter="{Binding .}"
+                                                Clicked="ImageButton_Clicked_SetDown"
                                                 Source="{AppThemeBinding Light={Static ImgPath:ImgArrow.ArrowUpwardBlack},
                                                                          Dark={Static ImgPath:ImgArrow.ArrowUpwardWhite}}"
                                                 VerticalOptions="Center" />
-                                            <ImageButton
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=SetUpCommand}"
+                                            <!--
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=SetDownCommand}"
                                                 CommandParameter="{Binding .}"
+                                            -->
+                                            <ImageButton
+                                                Clicked="ImageButton_Clicked_SetUp"
                                                 Source="{AppThemeBinding Light={Static ImgPath:ImgArrow.ArrowDownwardBlack},
                                                                          Dark={Static ImgPath:ImgArrow.ArrowDownwardWhite}}"
                                                 VerticalOptions="Center" />
-
+                                            <!--
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=SetUpCommand}"
+                                                CommandParameter="{Binding .}"
+                                            -->
                                         </VerticalStackLayout>
                                     </SwipeItemView>
 
@@ -77,9 +82,14 @@
                                 <SwipeItems SwipeBehaviorOnInvoked="Close">
                                     <SwipeItem
                                         BackgroundColor="Green"
+                                        Invoked="SwipeItem_Invoked"
+                                        Text="Edytuj" />
+                                    <!--
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=EditProductCommand}"
                                         CommandParameter="{Binding .}"
-                                        Text="Edytuj" />
+                                    -->
+
+
                                     <!--<SwipeItem
                                         BackgroundColor="Red"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DeleteProductCommand}"

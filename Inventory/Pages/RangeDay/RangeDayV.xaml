@@ -119,10 +119,11 @@
                             <SwipeView>
                                 <SwipeView.RightItems>
                                     <SwipeItems>
-                                        <SwipeItem
+                                        <SwipeItem Invoked="SwipeItem_Invoked_OpenDay" Text="Wczytaj dzień" />
+                                        <!--
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type VM:RangeDayVM}}, Path=OpenDetailpageCommand}"
                                             CommandParameter="{Binding .}"
-                                            Text="Wczytaj dzień" />
+                                        -->
                                     </SwipeItems>
                                 </SwipeView.RightItems>
                                 <Border>

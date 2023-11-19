@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="DataBase.Pages.Log.LogData.LogDataV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:VM="clr-namespace:DataBase.Pages.Log.LogData"
+    Title="{Binding SingleLog.Id}"
+    x:DataType="VM:LogDataVM">
+
+
+
+
+    <VerticalStackLayout HorizontalOptions="Center">
+
+        <VerticalStackLayout>
+            <Border>
+                <Label HorizontalOptions="Center" Text="Data" />
+            </Border>
+            <Label Text="{Binding SingleLog.Created}" />
+            <Line Background="red" />
+        </VerticalStackLayout>
+        <VerticalStackLayout>
+            <Border>
+                <Label HorizontalOptions="Center" Text="Wiadomość" />
+            </Border>
+            <Label Text="{Binding SingleLog.Message}" />
+            <Line Background="red" />
+
+        </VerticalStackLayout>
+        <VerticalStackLayout>
+            <Border>
+                <Label HorizontalOptions="Center" Text="Miejsce wystąpienia" />
+            </Border>
+            <Label Text="{Binding SingleLog.StackTrace}" />
+            <Line Background="red" />
+
+        </VerticalStackLayout>
+
+    </VerticalStackLayout>
+
+
+
+
+</ContentPage>

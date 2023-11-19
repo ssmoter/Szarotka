@@ -169,7 +169,7 @@ WHERE Id == ""{Id}"" ";
 
         public static string GetAllProductsNameAndPrice()
         {
-            string sql = $@"
+			string sql = $@"
 SELECT * 
 ,(SELECT json_object(
 'Id',Id,
@@ -180,8 +180,6 @@ SELECT *
 FROM ProductPrice WHERE ProductPrice.ProductNameId == ProductName.Id ORDER BY Created DESC LIMIT 1) as 'JsonPrice'
 
 FROM ProductName ORDER BY Arrangement";
-
-					WHERE Id == ""{Id}"" ";
 
             return sql;
         }
