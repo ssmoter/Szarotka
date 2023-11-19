@@ -11,19 +11,26 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding GoToLogsCommand}" Text="Logi" />
+        <ToolbarItem IsEnabled="False" Text="{Binding AppVersion}" />
     </ContentPage.ToolbarItems>
 
+
+
     <ScrollView>
-        
+
         <Grid RowDefinitions="auto,*,*,*">
 
             <Border Grid.Row="0">
                 <VerticalStackLayout>
+
                     <Label
                         FontSize="Large"
                         HorizontalOptions="Center"
                         Text="Ogólne"
                         VerticalOptions="Center" />
+
+
+
                     <VerticalStackLayout HorizontalOptions="Center">
                         <Border Padding="5">
                             <Border.StrokeShape>

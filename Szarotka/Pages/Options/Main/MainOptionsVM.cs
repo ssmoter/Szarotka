@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 
 using System.Collections.ObjectModel;
+using System.Reflection;
 
 namespace Szarotka.Pages.Options.Main
 {
@@ -25,8 +26,14 @@ namespace Szarotka.Pages.Options.Main
             }
         }
 
+        [ObservableProperty]
+        string appVersion;
+
         public MainOptionsVM()
         {
+            AppVersion = Assembly.GetExecutingAssembly()
+                                 .GetName().Version
+                                 .ToString();
             Themes = new ObservableCollection<string>()
                 {
                     nameof(AppTheme.Unspecified)

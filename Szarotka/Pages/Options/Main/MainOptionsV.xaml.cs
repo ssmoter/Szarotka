@@ -1,3 +1,5 @@
+using System.Reflection;
+
 namespace Szarotka.Pages.Options.Main;
 
 public partial class MainOptionsV : ContentPage

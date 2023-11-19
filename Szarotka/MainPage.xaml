@@ -23,12 +23,12 @@
                 HorizontalOptions="Center"
                 Text="Inwentarz" />
 
-            <Button
+            <!--<Button
                 Clicked="Maps_Clicked"
                 HorizontalOptions="Center"
                 IsVisible="{OnPlatform Android=true,
                                        Default=false}"
-                Text="Mapy" />
+                Text="Mapy" />-->
 
             <Button
                 Clicked="DataBase_Clicked"
