@@ -100,45 +100,45 @@ namespace DriversRoutes.Pages.ListOfPoints
                     return;
                 }
 
-                var popup = new Popups.AddCustomer.AddCustomerV(new Model.CustomerRoutes()
-                {
-                    Id = new Guid(point.Id.ToByteArray()),
-                    RoutesId = new Guid(point.RoutesId.ToByteArray()),
-                    QueueNumber = point.Index,
-                    Name = point.Name,
-                    Description = point.Description,
-                    PhoneNumber = point.PhoneNumber,
-                    CreatedDate = point.Created,
-                    DayOfWeek = point.SelectedDayOfWeek,
-                    Longitude = point.Longitude,
-                    Latitude = point.Latitude,
-                });
+                //var popup = new Popups.AddCustomer.AddCustomerV(new Model.CustomerRoutes()
+                //{
+                //    Id = new Guid(point.Id.ToByteArray()),
+                //    RoutesId = new Guid(point.RoutesId.ToByteArray()),
+                //    QueueNumber = point.Index,
+                //    Name = point.Name,
+                //    Description = point.Description,
+                //    PhoneNumber = point.PhoneNumber,
+                //    CreatedDate = point.Created,
+                //    DayOfWeek = point.SelectedDayOfWeek,
+                //    Longitude = point.Longitude,
+                //    Latitude = point.Latitude,
+                //});
 
-                var update = await Shell.Current.ShowPopupAsync(popup);
-                if (update is null)
-                {
-                    return;
-                }
-                int index = CustomerRoutes.IndexOf(point);
-
-                if (update is CustomerRoutes customerUpdate)
-                {
-                    CustomerRoutes[index].Id = new Guid(customerUpdate.Id.ToByteArray());
-                    CustomerRoutes[index].RoutesId = new Guid(customerUpdate.RoutesId.ToByteArray());
-                    CustomerRoutes[index].Index = customerUpdate.QueueNumber;
-                    CustomerRoutes[index].Name = customerUpdate.Name;
-                    CustomerRoutes[index].Description = customerUpdate.Description;
-                    CustomerRoutes[index].PhoneNumber = customerUpdate.PhoneNumber;
-                    CustomerRoutes[index].Created = customerUpdate.CreatedDate;
-                    CustomerRoutes[index].SelectedDayOfWeek = customerUpdate.DayOfWeek;
-                    CustomerRoutes[index].SelectedDayOfWeek.Id = new Guid(customerUpdate.DayOfWeek.Id.ToByteArray());
-                    CustomerRoutes[index].SelectedDayOfWeek.CustomerId = new Guid(customerUpdate.DayOfWeek.CustomerId.ToByteArray());
-                    CustomerRoutes[index].Longitude = customerUpdate.Longitude;
-                    CustomerRoutes[index].Latitude = customerUpdate.Latitude;
-
-                    await _db.DataBaseAsync.UpdateAsync(customerUpdate);
-                    await _db.DataBaseAsync.UpdateAsync(customerUpdate.DayOfWeek);
-                }
+               // var update = await Shell.Current.ShowPopupAsync(popup);
+               // if (update is null)
+               // {
+               //     return;
+               // }
+               // int index = CustomerRoutes.IndexOf(point);
+               //
+               // if (update is CustomerRoutes customerUpdate)
+               // {
+               //     CustomerRoutes[index].Id = new Guid(customerUpdate.Id.ToByteArray());
+               //     CustomerRoutes[index].RoutesId = new Guid(customerUpdate.RoutesId.ToByteArray());
+               //     CustomerRoutes[index].Index = customerUpdate.QueueNumber;
+               //     CustomerRoutes[index].Name = customerUpdate.Name;
+               //     CustomerRoutes[index].Description = customerUpdate.Description;
+               //     CustomerRoutes[index].PhoneNumber = customerUpdate.PhoneNumber;
+               //     CustomerRoutes[index].Created = customerUpdate.CreatedDate;
+               //     CustomerRoutes[index].SelectedDayOfWeek = customerUpdate.DayOfWeek;
+               //     CustomerRoutes[index].SelectedDayOfWeek.Id = new Guid(customerUpdate.DayOfWeek.Id.ToByteArray());
+               //     CustomerRoutes[index].SelectedDayOfWeek.CustomerId = new Guid(customerUpdate.DayOfWeek.CustomerId.ToByteArray());
+               //     CustomerRoutes[index].Longitude = customerUpdate.Longitude;
+               //     CustomerRoutes[index].Latitude = customerUpdate.Latitude;
+               //
+               //     await _db.DataBaseAsync.UpdateAsync(customerUpdate);
+               //     await _db.DataBaseAsync.UpdateAsync(customerUpdate.DayOfWeek);
+               // }
             }
             catch (Exception ex)
             {

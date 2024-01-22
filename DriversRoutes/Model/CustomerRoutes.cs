@@ -16,7 +16,7 @@ namespace DriversRoutes.Model
         /// <summary>
         /// Kolejność jazdy
         /// </summary>
-
+        [Ignore]
         public int QueueNumber { get; set; }
         /// <summary>
         /// Nazwa
@@ -51,6 +51,8 @@ namespace DriversRoutes.Model
         public long Created { get; set; }
         [Ignore]
         public SelectedDayOfWeekRoutes DayOfWeek { get; set; }
+        [Ignore]
+        public ResidentialAddress ResidentialAddress { get; set; }
         /// <summary>
         /// Długość geograficzna
         /// </summary>
@@ -59,6 +61,12 @@ namespace DriversRoutes.Model
         /// Szerokość geograficzna
         /// </summary>
         public double Latitude { get; set; }
+
+        public CustomerRoutes()
+        {
+            DayOfWeek ??= new();
+            ResidentialAddress ??= new();
+        }
 
         public void Dispose()
         {

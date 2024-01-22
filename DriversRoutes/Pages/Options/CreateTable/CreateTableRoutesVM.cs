@@ -24,7 +24,9 @@ namespace DriversRoutes.Pages.Options.CreateTable
             {
                 new CreateTableRoutesM() { RealTableName = nameof(Routes), TableName = "- z trasami" },
                 new CreateTableRoutesM() { RealTableName = nameof(CustomerRoutes), TableName = "- z przystankami" },
-                new CreateTableRoutesM() { RealTableName = nameof(SelectedDayOfWeekRoutes), TableName = "- z dni przyjazdu" },
+                new CreateTableRoutesM() { RealTableName = nameof(SelectedDayOfWeekRoutes), TableName = "- z dniami przyjazdu" },
+                new CreateTableRoutesM() { RealTableName = nameof(ResidentialAddress), TableName = "- z adresami" },
+
             };
 
             Task.Run(async () =>
@@ -63,6 +65,7 @@ namespace DriversRoutes.Pages.Options.CreateTable
                 await _db.DataBaseAsync.DropTableAsync<Routes>();
                 await _db.DataBaseAsync.DropTableAsync<CustomerRoutes>();
                 await _db.DataBaseAsync.DropTableAsync<SelectedDayOfWeekRoutes>();
+                await _db.DataBaseAsync.DropTableAsync<ResidentialAddress>();
 
 
                 await CheckTables();
@@ -70,6 +73,8 @@ namespace DriversRoutes.Pages.Options.CreateTable
                 await _db.DataBaseAsync.CreateTableAsync<Routes>();
                 await _db.DataBaseAsync.CreateTableAsync<CustomerRoutes>();
                 await _db.DataBaseAsync.CreateTableAsync<SelectedDayOfWeekRoutes>();
+                await _db.DataBaseAsync.CreateTableAsync<ResidentialAddress>();
+
                 CreateDefoutlRoutes();
 
                 await CheckTables();
@@ -96,6 +101,8 @@ namespace DriversRoutes.Pages.Options.CreateTable
                 await _db.DataBaseAsync.CreateTableAsync<Routes>();
                 await _db.DataBaseAsync.CreateTableAsync<CustomerRoutes>();
                 await _db.DataBaseAsync.CreateTableAsync<SelectedDayOfWeekRoutes>();
+                await _db.DataBaseAsync.CreateTableAsync<ResidentialAddress>();
+
                 CreateDefoutlRoutes();
                 await CheckTables();
 
@@ -152,7 +159,13 @@ namespace DriversRoutes.Pages.Options.CreateTable
                     Id = GetGuidSed(),
                     Name = "Sowliny"
                 },
-            };            
+            };
+
+            var check = _db.DataBase.Table<Routes>().Count();
+            if (check > 0)
+            {
+                return;
+            }
             _db.DataBase.InsertAll(routes);
         }
         Guid GetGuidSed()

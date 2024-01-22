@@ -10,10 +10,14 @@ using Microsoft.Maui.Maps;
 
 using System.Collections.ObjectModel;
 
+using Location = Microsoft.Maui.Devices.Sensors.Location;
+
 namespace DriversRoutes.Pages.Maps
 {
     [QueryProperty(nameof(Routes), nameof(Model.Routes))]
     [QueryProperty(nameof(AllPoints), nameof(MapsM))]
+    [QueryProperty(nameof(LastSeectedDayOfWeek), nameof(SelectedDayOfWeekRoutes))]
+
     public partial class MapsVM : ObservableObject
     {
         #region Variable
@@ -41,6 +45,7 @@ namespace DriversRoutes.Pages.Maps
         [ObservableProperty]
         string addLocationIsText = block;
 
+        public SelectedDayOfWeekRoutes LastSeectedDayOfWeek { get; set; }
         public Routes Routes { get; set; }
         public bool AddLocationIs { get; set; } = false;
 
@@ -49,7 +54,7 @@ namespace DriversRoutes.Pages.Maps
 
         public Action<MapSpan> GoToLocation;
 
-        public readonly MapSpan szarotka = new(new Location(49.74918684945343, 20.40889755094227), 0.1, 0.1);
+        public readonly MapSpan szarotka = new(new Location(49.74918622300343, 20.40891067705071), 0.1, 0.1);
 
         readonly DataBase.Data.AccessDataBase _db;
         readonly Service.ISelectRoutes _selectRoutes;
@@ -61,6 +66,7 @@ namespace DriversRoutes.Pages.Maps
             MapType = MapType.Street;
             AllPoints ??= new();
             _selectRoutes = selectRoutes;
+
             //for (int i = 0; i < 200; i++)
             //{
             //    AllPoints.Add(new MapsM().CreateRandomPoint(i));
@@ -94,8 +100,29 @@ namespace DriversRoutes.Pages.Maps
                 _db.SaveLog(ex);
                 return szarotka;
             }
-
         }
+
+        public async Task StartListeningLocation(Microsoft.Maui.Controls.Maps.Map map)
+        {
+            try
+            {
+                var result = await Geolocation.StartListeningForegroundAsync(new GeolocationListeningRequest(GeolocationAccuracy.High, TimeSpan.FromSeconds(10)));
+                Geolocation.LocationChanged += (sender, e) =>
+                {
+                    var location = e.Location;
+                    map.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(location.Latitude, location.Longitude), Distance.FromMiles(1)));
+                };
+                if (!result)
+                {
+                    throw new Exception("Can't Start Listening Foreground Async");
+                }
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
+
 
 
         static string DisplaySelectedDayName(DayOfWeek day)
@@ -145,7 +172,6 @@ namespace DriversRoutes.Pages.Maps
 
             MapsPoint = AllPoints.Where(x => x.Index == index).ToArray();
         }
-
         public async Task AddNewPoint(Model.CustomerRoutes customer)
         {
             try
@@ -217,18 +243,17 @@ namespace DriversRoutes.Pages.Maps
             }
         }
 
-        async Task<ObservableCollection<MapsM>> GetSelectedDays(Model.SelectedDayOfWeekRoutes week)
+        public async Task<ObservableCollection<MapsM>> GetSelectedDays(Model.SelectedDayOfWeekRoutes week)
         {
-
             var result = await _selectRoutes.GetCustomerRoutesQueryAsync(Routes, week);
             var points = new ObservableCollection<MapsM>();
             for (int i = 0; i < result.Length; i++)
             {
+                result[i].QueueNumber = i;
                 points.Add(result[i].ParseAsCustomerM());
             }
             return points;
         }
-
 
         #endregion
 
@@ -251,8 +276,9 @@ namespace DriversRoutes.Pages.Maps
             }
             if (response is SelectedDayOfWeekRoutes day)
             {
+                LastSeectedDayOfWeek = day;
                 SelectedDayName = day.ToString();
-                AllPoints = await GetSelectedDays(day);
+                AllPoints = await GetSelectedDays(LastSeectedDayOfWeek);
             }
         }
 
@@ -316,46 +342,24 @@ namespace DriversRoutes.Pages.Maps
                     return;
                 }
 
-                var popup = new Popups.AddCustomer.AddCustomerV(new Model.CustomerRoutes()
-                {
-                    Id = new Guid(point.Id.ToByteArray()),
-                    RoutesId = new Guid(point.RoutesId.ToByteArray()),
-                    QueueNumber = point.Index,
-                    Name = point.Name,
-                    Description = point.Description,
-                    PhoneNumber = point.PhoneNumber,
-                    CreatedDate = point.Created,
-                    DayOfWeek = point.SelectedDayOfWeek,
-                    Longitude = point.Longitude,
-                    Latitude = point.Latitude,
-                });
-
-                var update = await Shell.Current.ShowPopupAsync(popup);
-                if (update is null)
-                {
-                    return;
-                }
-                int index = AllPoints.IndexOf(point);
-
-                if (update is CustomerRoutes customerUpdate)
-                {
-                    AllPoints[index].Id = new Guid(customerUpdate.Id.ToByteArray());
-                    AllPoints[index].RoutesId = new Guid(customerUpdate.RoutesId.ToByteArray());
-                    AllPoints[index].Index = customerUpdate.QueueNumber;
-                    AllPoints[index].Name = customerUpdate.Name;
-                    AllPoints[index].Description = customerUpdate.Description;
-                    AllPoints[index].PhoneNumber = customerUpdate.PhoneNumber;
-                    AllPoints[index].Created = customerUpdate.CreatedDate;
-                    AllPoints[index].SelectedDayOfWeek = customerUpdate.DayOfWeek;
-                    AllPoints[index].SelectedDayOfWeek.Id = new Guid(customerUpdate.DayOfWeek.Id.ToByteArray());
-                    AllPoints[index].SelectedDayOfWeek.CustomerId = new Guid(customerUpdate.DayOfWeek.CustomerId.ToByteArray());
-                    AllPoints[index].Longitude = customerUpdate.Longitude;
-                    AllPoints[index].Latitude = customerUpdate.Latitude;
-
-
-                    await _db.DataBaseAsync.UpdateAsync(customerUpdate);
-                    await _db.DataBaseAsync.UpdateAsync(customerUpdate.DayOfWeek);
-                }
+                await Shell.Current.GoToAsync($"{nameof(Pages.AddCustomer.AddCustomerV)}?",
+                    new Dictionary<string, object>()
+                    {
+                        [nameof(Model.CustomerRoutes)] = new Model.CustomerRoutes()
+                        {
+                            Id = new Guid(point.Id.ToByteArray()),
+                            RoutesId = new Guid(point.RoutesId.ToByteArray()),
+                            QueueNumber = point.Index,
+                            Name = point.Name,
+                            Description = point.Description,
+                            PhoneNumber = point.PhoneNumber,
+                            CreatedDate = point.Created,
+                            DayOfWeek = point.SelectedDayOfWeek,
+                            ResidentialAddress = point.ResidentialAddress,
+                            Longitude = point.Longitude,
+                            Latitude = point.Latitude,
+                        }
+                    });
             }
             catch (Exception ex)
             {
@@ -377,18 +381,21 @@ namespace DriversRoutes.Pages.Maps
                 if (mapSpan is null) { return; }
                 OnGoToLocation(mapSpan);
 
-                var popup = new Popups.AddCustomer.AddCustomerV(new CustomerRoutes()
+                var customer = new Model.CustomerRoutes()
                 {
+                    CreatedDate = DateTime.Now,
                     Longitude = mapSpan.Center.Longitude,
                     Latitude = mapSpan.Center.Latitude,
-                    RoutesId = new Guid(Routes.Id.ToByteArray()),
-                });
+                    RoutesId = Routes.Id,
+                };
 
-                var result = await Shell.Current.ShowPopupAsync(popup);
-                if (result is Model.CustomerRoutes customerUpdate)
-                {
-                    await AddNewPoint(customerUpdate);
-                }
+                await Shell.Current.GoToAsync($"{nameof(Pages.AddCustomer.AddCustomerV)}"
+                    , new Dictionary<string, object>
+                    {
+                        [nameof(Model.CustomerRoutes)] = customer,
+                        [nameof(Routes)] = Routes,
+                    });
+
             }
             catch (Exception ex)
             {

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Szarotka", "Szarotka\Szarotka.csproj", "{FFBFAA73-2020-45DF-AD2E-1271969C86DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Szarotka", "Szarotka\Szarotka.csproj", "{FFBFAA73-2020-45DF-AD2E-1271969C86DE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataBase", "DataBase\DataBase.csproj", "{04125819-6CAD-47AD-9EEF-88FF74B92234}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventory", "Inventory\Inventory.csproj", "{C238482E-25A0-4451-94B6-2755744C332D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventoryUnitTest", "InventoryUnitTest\InventoryUnitTest.csproj", "{A7894092-BFAF-4507-AD80-5AA725BC1B5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DriversRoutesUnitTest", "DriversRoutesUnitTest\DriversRoutesUnitTest.csproj", "{1480A55C-FBB1-4679-A114-1779C56E1B3D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +91,18 @@ Global
 		{A7894092-BFAF-4507-AD80-5AA725BC1B5D}.Release|x64.Build.0 = Release|Any CPU
 		{A7894092-BFAF-4507-AD80-5AA725BC1B5D}.Release|x86.ActiveCfg = Release|x86
 		{A7894092-BFAF-4507-AD80-5AA725BC1B5D}.Release|x86.Build.0 = Release|x86
+		{1480A55C-FBB1-4679-A114-1779C56E1B3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1480A55C-FBB1-4679-A114-1779C56E1B3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1480A55C-FBB1-4679-A114-1779C56E1B3D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1480A55C-FBB1-4679-A114-1779C56E1B3D}.Debug|x64.Build.0 = Debug|Any CPU
+		{1480A55C-FBB1-4679-A114-1779C56E1B3D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1480A55C-FBB1-4679-A114-1779C56E1B3D}.Debug|x86.Build.0 = Debug|Any CPU
+		{1480A55C-FBB1-4679-A114-1779C56E1B3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1480A55C-FBB1-4679-A114-1779C56E1B3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1480A55C-FBB1-4679-A114-1779C56E1B3D}.Release|x64.ActiveCfg = Release|Any CPU
+		{1480A55C-FBB1-4679-A114-1779C56E1B3D}.Release|x64.Build.0 = Release|Any CPU
+		{1480A55C-FBB1-4679-A114-1779C56E1B3D}.Release|x86.ActiveCfg = Release|Any CPU
+		{1480A55C-FBB1-4679-A114-1779C56E1B3D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

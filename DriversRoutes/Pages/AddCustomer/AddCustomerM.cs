@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace DriversRoutes.Pages.Popups.AddCustomer
+
+namespace DriversRoutes.Pages.AddCustomer
 {
     public partial class AddCustomerM : ObservableObject, IDisposable
     {
@@ -32,15 +33,18 @@ namespace DriversRoutes.Pages.Popups.AddCustomer
         double latitude;
 
         [ObservableProperty]
+        bool address;
+
+        [ObservableProperty]
         Model.SelectedDayOfWeekRoutes selectedDayOfWeek;
+        [ObservableProperty]
+        Model.ResidentialAddress residentialAddress;
 
         public AddCustomerM()
         {
-            if (Id == Guid.Empty)
-            {
-                Id = Guid.NewGuid();
-            }
-            SelectedDayOfWeek ??= new Model.SelectedDayOfWeekRoutes();
+            Created = DateTime.Now;
+            SelectedDayOfWeek ??= new();
+            ResidentialAddress ??= new();
         }
 
         public void Dispose()

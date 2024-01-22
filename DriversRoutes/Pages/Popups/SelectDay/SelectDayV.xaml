@@ -76,8 +76,8 @@
 
 
             <HorizontalStackLayout HorizontalOptions="Center">
-                <Button Command="{Binding SaveAndReturnCommand}" Text="Wczytaj" />
                 <Button Command="{Binding CancelAndReturCommand}" Text="Anuluj" />
+                <Button Command="{Binding SaveAndReturnCommand}" Text="Wczytaj" />
             </HorizontalStackLayout>
 
         </VerticalStackLayout>

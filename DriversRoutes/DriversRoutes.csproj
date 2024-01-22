@@ -31,6 +31,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Pages\AddCustomer\ProbableAddresses\ProbableAddressesV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\ListOfPoints\ListOfPointsV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -43,7 +46,7 @@
 	  <MauiXaml Update="Pages\Options\CreateTable\CreateTableRoutesV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\Popups\AddCustomer\AddCustomerV.xaml">
+	  <MauiXaml Update="Pages\AddCustomer\AddCustomerV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\Popups\SelectDay\SelectDayV.xaml">

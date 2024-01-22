@@ -34,7 +34,6 @@
 
 
 	<ItemGroup>
-	  <Folder Include="Platforms\Android\" />
 	  <Folder Include="Platforms\Windows\" />
 	</ItemGroup>
 

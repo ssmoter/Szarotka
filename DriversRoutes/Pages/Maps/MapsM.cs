@@ -6,6 +6,8 @@ using DriversRoutes.Platforms.Android;
 
 using Microsoft.Maui.Controls.Maps;
 
+using SQLite;
+
 namespace DriversRoutes.Pages.Maps
 {
     public partial class MapsM : ObservableObject
@@ -25,8 +27,19 @@ namespace DriversRoutes.Pages.Maps
         [ObservableProperty]
         Guid routesId;
 
-        [ObservableProperty]
         int index;
+        [Ignore]
+        public int Index
+        {
+            get => index;
+            set
+            {
+                if (SetProperty(ref index, value))
+                {
+                    OnPropertyChanged(nameof(Index));
+                }
+            }
+        }
 
         [ObservableProperty]
         string name;
@@ -48,6 +61,8 @@ namespace DriversRoutes.Pages.Maps
 
         [ObservableProperty]
         Model.SelectedDayOfWeekRoutes selectedDayOfWeek;
+        [ObservableProperty]
+        Model.ResidentialAddress residentialAddress;
 
         [ObservableProperty]
         ImageSource imageSource;

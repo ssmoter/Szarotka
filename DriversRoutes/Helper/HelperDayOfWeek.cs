@@ -34,5 +34,40 @@ namespace DriversRoutes.Helper
 
 
         }
+
+        public static bool IfAnyIsTrue(this SelectedDayOfWeekRoutes dayOf)
+        {
+            if (dayOf.Sunday)
+            {
+                return true;
+            }
+            if (dayOf.Monday)
+            {
+                return true;
+            }
+            if (dayOf.Tuesday)
+            {
+                return true;
+            }
+            if (dayOf.Wednesday)
+            {
+                return true;
+            }
+            if (dayOf.Thursday)
+            {
+                return true;
+            }
+            if (dayOf.Friday)
+            {
+                return true;
+            }
+            if (dayOf.Saturday)
+            {
+                return true;
+            }
+            return false;
+        }
+
+
     }
 }

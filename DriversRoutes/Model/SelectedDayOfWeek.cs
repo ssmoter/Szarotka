@@ -11,26 +11,176 @@ namespace DriversRoutes.Model
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
 
+
         [ObservableProperty]
         bool sunday;
 
+        long _sundayTicks;
+        public long SundayTicks
+        {
+            get => _sundayTicks;
+            set => _sundayTicks = value;
+        }
+        [Ignore]
+        public TimeSpan SundayTimeSpan
+        {
+            get
+            {
+                return new TimeSpan(_sundayTicks);
+            }
+            set
+            {
+                if (SetProperty(ref _sundayTicks, value.Ticks))
+                {
+                    OnPropertyChanged(nameof(SundayTimeSpan));
+                }
+            }
+        }
+
         [ObservableProperty]
         bool monday;
+        long _mondayTicks;
+        public long MondayTicks
+        {
+            get => _mondayTicks;
+            set => _mondayTicks = value;
+        }
+        [Ignore]
+        public TimeSpan MondayTimeSpan
+        {
+            get
+            {
+                return new TimeSpan(_mondayTicks);
+            }
+            set
+            {
+                if (SetProperty(ref _mondayTicks, value.Ticks))
+                {
+                    OnPropertyChanged(nameof(MondayTimeSpan));
+                }
+            }
+        }
 
         [ObservableProperty]
         bool tuesday;
+        long _tuesdayTicks;
+        public long TuesdayTicks
+        {
+            get => _tuesdayTicks;
+            set => _tuesdayTicks = value;
+        }
+        [Ignore]
+        public TimeSpan TuesdayTimeSpan
+        {
+            get
+            {
+                return new TimeSpan(_tuesdayTicks);
+            }
+            set
+            {
+                if (SetProperty(ref _tuesdayTicks, value.Ticks))
+                {
+                    OnPropertyChanged(nameof(TuesdayTimeSpan));
+                }
+            }
+        }
 
         [ObservableProperty]
         bool wednesday;
+        long _wednesdayTicks;
+        public long WednesdayTicks
+        {
+            get => _wednesdayTicks;
+            set => _wednesdayTicks = value;
+        }
+        [Ignore]
+        public TimeSpan WednesdayTimeSpan
+        {
+            get
+            {
+                return new TimeSpan(_wednesdayTicks);
+            }
+            set
+            {
+                if (SetProperty(ref _wednesdayTicks, value.Ticks))
+                {
+                    OnPropertyChanged(nameof(WednesdayTimeSpan));
+                }
+            }
+        }
 
         [ObservableProperty]
         bool thursday;
+        long _thursdayTicks;
+        public long ThursdayTicks
+        {
+            get => _thursdayTicks;
+            set => _thursdayTicks = value;
+        }
+        [Ignore]
+        public TimeSpan ThursdayTimeSpan
+        {
+            get
+            {
+                return new TimeSpan(_thursdayTicks);
+            }
+            set
+            {
+                if (SetProperty(ref _thursdayTicks, value.Ticks))
+                {
+                    OnPropertyChanged(nameof(ThursdayTimeSpan));
+                }
+            }
+        }
 
         [ObservableProperty]
         bool friday;
+        long _fridayTicks;
+        public long FridayTicks
+        {
+            get => _fridayTicks;
+            set => _fridayTicks = value;
+        }
+        [Ignore]
+        public TimeSpan FridayTimeSpan
+        {
+            get
+            {
+                return new TimeSpan(_fridayTicks);
+            }
+            set
+            {
+                if (SetProperty(ref _fridayTicks, value.Ticks))
+                {
+                    OnPropertyChanged(nameof(FridayTimeSpan));
+                }
+            }
+        }
 
         [ObservableProperty]
         bool saturday;
+        long _saturdayTicks;
+        public long SaturdayTicks
+        {
+            get => _saturdayTicks;
+            set => _saturdayTicks = value;
+        }
+        [Ignore]
+        public TimeSpan SaturdayTimeSpan
+        {
+            get
+            {
+                return new TimeSpan(_saturdayTicks);
+            }
+            set
+            {
+                if (SetProperty(ref _saturdayTicks, value.Ticks))
+                {
+                    OnPropertyChanged(nameof(SaturdayTimeSpan));
+                }
+            }
+        }
+
 
         bool setAll;
         [Ignore]
@@ -64,6 +214,37 @@ namespace DriversRoutes.Model
                 }
             }
         }
+
+        long _setAllTicks;
+        [Ignore]
+        public TimeSpan SetAllTimeSpan
+        {
+            get
+            {
+                return new TimeSpan(_setAllTicks);
+            }
+            set
+            {
+                if (SetProperty(ref _setAllTicks, value.Ticks))
+                {
+                    OnPropertyChanged(nameof(SetAllTimeSpan));
+                }
+                if (SetAll)
+                {
+                    SundayTimeSpan = SetAllTimeSpan;
+                    MondayTimeSpan = SetAllTimeSpan;
+                    TuesdayTimeSpan = SetAllTimeSpan;
+                    WednesdayTimeSpan = SetAllTimeSpan;
+                    ThursdayTimeSpan = SetAllTimeSpan;
+                    FridayTimeSpan = SetAllTimeSpan;
+                    SaturdayTimeSpan = SetAllTimeSpan;
+                }
+            }
+        }
+
+        [ObservableProperty]
+        bool optional;
+
         string valuesAsString;
         public string ValuesAsString
         {
@@ -83,6 +264,27 @@ namespace DriversRoutes.Model
                 }
             }
         }
+        string valuesAsStringWithTheTime;
+        [Ignore]
+        public string ValuesAsStringWithTheTime
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(valuesAsStringWithTheTime))
+                {
+                    return this.ToStringWithTheTime();
+                }
+                return valuesAsStringWithTheTime;
+            }
+            set
+            {
+                if (SetProperty(ref valuesAsStringWithTheTime, value))
+                {
+                    OnPropertyChanged(nameof(ValuesAsStringWithTheTime));
+                }
+            }
+        }
+
 
         public override string ToString()
         {
@@ -117,6 +319,61 @@ namespace DriversRoutes.Model
                 sb.Append("Sobota; ");
             }
             return sb.ToString();
+        }
+
+        public string ToStringWithTheTime()
+        {
+            StringBuilder sb = new();
+            if (Sunday)
+            {
+                sb.Append("Niedziela-");
+                sb.AppendLine(SundayTimeSpan.ToString("hh\\:mm"));
+            }
+            if (Monday)
+            {
+                sb.Append("Poniedziałek-");
+                sb.AppendLine(MondayTimeSpan.ToString("hh\\:mm"));
+            }
+            if (Tuesday)
+            {
+                sb.Append("Wtorek-");
+                sb.AppendLine(TuesdayTimeSpan.ToString("hh\\:mm"));
+            }
+            if (Wednesday)
+            {
+                sb.Append("Środa-");
+                sb.AppendLine(WednesdayTimeSpan.ToString("hh\\:mm"));
+            }
+            if (Thursday)
+            {
+                sb.Append("Czwartek-");
+                sb.AppendLine(ThursdayTimeSpan.ToString("hh\\:mm"));
+            }
+            if (Friday)
+            {
+                sb.Append("Piątek-");
+                sb.AppendLine(FridayTimeSpan.ToString("hh\\:mm"));
+            }
+            if (Saturday)
+            {
+                sb.Append("Sobota-");
+                sb.AppendLine(SaturdayTimeSpan.ToString("hh\\:mm"));
+            }
+            return sb.ToString();
+        }
+
+
+        public SelectedDayOfWeekRoutes()
+        {
+            var timeSpan = DateTime.Now.TimeOfDay;
+            SundayTimeSpan = timeSpan;
+            MondayTimeSpan = timeSpan;
+            TuesdayTimeSpan = timeSpan;
+            WednesdayTimeSpan = timeSpan;
+            ThursdayTimeSpan = timeSpan;
+            FridayTimeSpan = timeSpan;
+            SaturdayTimeSpan = timeSpan;
+            SetAllTimeSpan = timeSpan;
         }
     }
 }

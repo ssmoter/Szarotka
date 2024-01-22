@@ -107,7 +107,8 @@ namespace Inventory.Pages.Products.ListProduct
         ObservableCollection<Inventory.Model.MVVM.ProductPriceM> SelectPrices(Guid id)
         {
             var price = new ObservableCollection<Model.MVVM.ProductPriceM>();
-            var priceM = _db.DataBase.Table<ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(z => z.Id).FirstOrDefault();
+            var priceM = _db.DataBase.Table<ProductPrice>().LastOrDefault(x=>x.ProductNameId == id);
+            //var priceM = _db.DataBase.Table<ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(z => z.Id).FirstOrDefault();
             price.Add(priceM.PareseAsProductPriceM());
             return price;
         }

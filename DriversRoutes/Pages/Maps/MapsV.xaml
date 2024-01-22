@@ -4,12 +4,12 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:VM="clr-namespace:DriversRoutes.Pages.Maps"
-    xmlns:customPin="clr-namespace:DriversRoutes.Platforms.Android"
     xmlns:maps="clr-namespace:Microsoft.Maui.Controls.Maps;assembly=Microsoft.Maui.Controls.Maps"
     xmlns:sensors="clr-namespace:Microsoft.Maui.Devices.Sensors;assembly=Microsoft.Maui.Essentials"
     Title="{Binding DriversRoutesName}"
     x:DataType="VM:MapsVM">
 
+    <!--  xmlns:customPin="clr-namespace:DriversRoutes.Platforms.Android"  -->
 
 
 
@@ -25,7 +25,7 @@
             </Border.GestureRecognizers>
 
         </Border>
-        <Frame
+        <Border
             Grid.Column="0"
             Padding="5,5,10,5"
             BackgroundColor="{AppThemeBinding Light=White,
@@ -33,9 +33,9 @@
             IsVisible="{Binding IsVisibleList}"
             ZIndex="102">
 
-            <Frame.GestureRecognizers>
+            <Border.GestureRecognizers>
                 <SwipeGestureRecognizer Command="{Binding SwipeViewGestureCommand}" Direction="Left" />
-            </Frame.GestureRecognizers>
+            </Border.GestureRecognizers>
 
 
             <Grid BackgroundColor="{AppThemeBinding Light=AliceBlue, Dark=Grey}" RowDefinitions="auto,*,1">
@@ -88,41 +88,31 @@
                                 CornerRadius="50"
                                 HorizontalOptions="Center"
                                 Text="Typ mapy" />
-                            <Border
-                                Margin="1"
-                                Padding="1"
-                                BackgroundColor="Transparent"
-                                HorizontalOptions="Center"
-                                IsVisible="{Binding IsVisibleTypeOfMap}">
 
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="10" />
-                                </Border.StrokeShape>
 
-                                <VerticalStackLayout Padding="0">
-                                    <Button
-                                        Command="{Binding ChangeTypeOfMapCommand}"
-                                        CommandParameter="0"
-                                        CornerRadius="50"
-                                        HorizontalOptions="Center"
-                                        Text="Ulica"
-                                        VerticalOptions="Center" />
-                                    <Button
-                                        Command="{Binding ChangeTypeOfMapCommand}"
-                                        CommandParameter="1"
-                                        CornerRadius="50"
-                                        HorizontalOptions="Center"
-                                        Text="Satelita"
-                                        VerticalOptions="Center" />
-                                    <Button
-                                        Command="{Binding ChangeTypeOfMapCommand}"
-                                        CommandParameter="2"
-                                        CornerRadius="50"
-                                        HorizontalOptions="Center"
-                                        Text="Hybryda"
-                                        VerticalOptions="Center" />
-                                </VerticalStackLayout>
-                            </Border>
+                            <VerticalStackLayout Padding="0" IsVisible="{Binding IsVisibleTypeOfMap}">
+                                <Button
+                                    Command="{Binding ChangeTypeOfMapCommand}"
+                                    CommandParameter="0"
+                                    CornerRadius="50"
+                                    HorizontalOptions="Center"
+                                    Text="Ulica"
+                                    VerticalOptions="Center" />
+                                <Button
+                                    Command="{Binding ChangeTypeOfMapCommand}"
+                                    CommandParameter="1"
+                                    CornerRadius="50"
+                                    HorizontalOptions="Center"
+                                    Text="Satelita"
+                                    VerticalOptions="Center" />
+                                <Button
+                                    Command="{Binding ChangeTypeOfMapCommand}"
+                                    CommandParameter="2"
+                                    CornerRadius="50"
+                                    HorizontalOptions="Center"
+                                    Text="Hybryda"
+                                    VerticalOptions="Center" />
+                            </VerticalStackLayout>
 
                         </VerticalStackLayout>
                     </HorizontalStackLayout>
@@ -170,7 +160,7 @@
 
                                         <Grid ColumnDefinitions="30,*">
                                             <Label Grid.Column="0" Text="Dni:" />
-                                            <Label Grid.Column="1" Text="{Binding SelectedDayOfWeek.ValuesAsString}" />
+                                            <Label Grid.Column="1" Text="{Binding SelectedDayOfWeek.ValuesAsStringWithTheTime}" />
                                         </Grid>
 
                                         <Grid ColumnDefinitions="30,*">
@@ -219,7 +209,7 @@
 
 
             </Grid>
-        </Frame>
+        </Border>
 
         <VerticalStackLayout
             Grid.Row="0"

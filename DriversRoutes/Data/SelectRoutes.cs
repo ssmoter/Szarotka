@@ -43,6 +43,7 @@ namespace DriversRoutes.Data
             var queryResult = await _db.DataBaseAsync.QueryAsync<FullModelForQuery>(Helper.SqlQuery.GetQueryForSelectedRoutes(routes.Id.ToString(), dayOf));
             var customers = new CustomerRoutes[queryResult.Count];
 
+
             for (int i = 0; i < queryResult.Count; i++)
             {
                 var cust = new CustomerRoutes()
@@ -54,15 +55,16 @@ namespace DriversRoutes.Data
                     Description = queryResult[i].Description,
                     PhoneNumber = queryResult[i].PhoneNumber,
                     CreatedDate = queryResult[i].CreatedDate,
-                    Longitude = queryResult[i].Longitude,
+                    Longitude = queryResult[i].Longitude,                    
                     Latitude = queryResult[i].Latitude,
                     DayOfWeek = Newtonsoft.Json.JsonConvert.DeserializeObject<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek),
+                    ResidentialAddress = Newtonsoft.Json.JsonConvert.DeserializeObject<ResidentialAddress>(queryResult[i].JsonAddress)
                 };
                 customers[i] = cust;
             }
 
             queryResult.Clear();
-            return customers.ToArray();
+            return customers;
         }
 
         public CustomerRoutes[] GetCustomerRoutesQuery(Routes routes, SelectedDayOfWeekRoutes dayOf)
@@ -84,17 +86,20 @@ namespace DriversRoutes.Data
                     Longitude = queryResult[i].Longitude,
                     Latitude = queryResult[i].Latitude,
                     DayOfWeek = Newtonsoft.Json.JsonConvert.DeserializeObject<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek),
+                    ResidentialAddress = Newtonsoft.Json.JsonConvert.DeserializeObject<ResidentialAddress>(queryResult[i].JsonAddress)
                 };
                 customers[i] = cust;
             }
 
             queryResult.Clear();
-            return customers.ToArray();
+            return customers;
         }
 
         class FullModelForQuery : Model.CustomerRoutes
         {
             public string JsonDayOfWeek { get; set; }
+            public string JsonAddress { get; set; }
+
         }
 
     }
