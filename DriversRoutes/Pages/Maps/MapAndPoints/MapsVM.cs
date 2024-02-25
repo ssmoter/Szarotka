@@ -12,11 +12,11 @@ using System.Collections.ObjectModel;
 
 using Location = Microsoft.Maui.Devices.Sensors.Location;
 
-namespace DriversRoutes.Pages.Maps
+namespace DriversRoutes.Pages.Maps.MapAndPoints
 {
     [QueryProperty(nameof(Routes), nameof(Model.Routes))]
     [QueryProperty(nameof(AllPoints), nameof(MapsM))]
-    [QueryProperty(nameof(LastSeectedDayOfWeek), nameof(SelectedDayOfWeekRoutes))]
+    [QueryProperty(nameof(LastSelectedDayOfWeek), nameof(SelectedDayOfWeekRoutes))]
 
     public partial class MapsVM : ObservableObject
     {
@@ -45,7 +45,9 @@ namespace DriversRoutes.Pages.Maps
         [ObservableProperty]
         string addLocationIsText = block;
 
-        public SelectedDayOfWeekRoutes LastSeectedDayOfWeek { get; set; }
+        public SelectedDayOfWeekRoutes LastSelectedDayOfWeek { get; set; }
+        public SelectedDayOfWeekRoutes LastSelectedDayOfWeekWhenNavigation { get; set; }
+
         public Routes Routes { get; set; }
         public bool AddLocationIs { get; set; } = false;
 
@@ -66,7 +68,6 @@ namespace DriversRoutes.Pages.Maps
             MapType = MapType.Street;
             AllPoints ??= new();
             _selectRoutes = selectRoutes;
-
             //for (int i = 0; i < 200; i++)
             //{
             //    AllPoints.Add(new MapsM().CreateRandomPoint(i));
@@ -165,7 +166,7 @@ namespace DriversRoutes.Pages.Maps
         }
         public void OpenMoreDetail(Pin pin)
         {
-            SwipeViewGesture();
+            IsVisibleList = true;
             var index = MapsM.GetIndex(pin.Label);
             if (index == -1)
                 return;
@@ -249,7 +250,6 @@ namespace DriversRoutes.Pages.Maps
             var points = new ObservableCollection<MapsM>();
             for (int i = 0; i < result.Length; i++)
             {
-                result[i].QueueNumber = i;
                 points.Add(result[i].ParseAsCustomerM());
             }
             return points;
@@ -276,9 +276,9 @@ namespace DriversRoutes.Pages.Maps
             }
             if (response is SelectedDayOfWeekRoutes day)
             {
-                LastSeectedDayOfWeek = day;
+                LastSelectedDayOfWeek = day;
                 SelectedDayName = day.ToString();
-                AllPoints = await GetSelectedDays(LastSeectedDayOfWeek);
+                AllPoints = await GetSelectedDays(LastSelectedDayOfWeek);
             }
         }
 
@@ -302,6 +302,7 @@ namespace DriversRoutes.Pages.Maps
         void SwipeViewGesture()
         {
             IsVisibleList = !IsVisibleList;
+
             //if (MapsPoint.Length < AllPoints.Count && IsVisibleList)
             //{
             //    MapsPoint = AllPoints.ToArray();
@@ -309,12 +310,12 @@ namespace DriversRoutes.Pages.Maps
         }
 
         [RelayCommand]
-        void DisplayLocationOfPin(MapsM mapsM)
+        void LocationOfPin(MapsM mapsM)
         {
             if (mapsM is null)
                 return;
 
-            var mapSpan = new MapSpan(mapsM.Pin.Location, 0.1, 0.1);
+            var mapSpan = new MapSpan(mapsM.Pin.Location, 0.01, 0.01);
             OnGoToLocation(mapSpan);
         }
 
@@ -333,7 +334,7 @@ namespace DriversRoutes.Pages.Maps
         }
 
         [RelayCommand]
-        async Task EditPin(MapsM point)
+        async Task DisplayPin(MapsM point)
         {
             try
             {
@@ -342,7 +343,7 @@ namespace DriversRoutes.Pages.Maps
                     return;
                 }
 
-                await Shell.Current.GoToAsync($"{nameof(Pages.AddCustomer.AddCustomerV)}?",
+                await Shell.Current.GoToAsync($"{nameof(Pages.Customer.DisplayCustomer.DisplayCustomerV)}?",
                     new Dictionary<string, object>()
                     {
                         [nameof(Model.CustomerRoutes)] = new Model.CustomerRoutes()
@@ -359,6 +360,8 @@ namespace DriversRoutes.Pages.Maps
                             Longitude = point.Longitude,
                             Latitude = point.Latitude,
                         }
+                        ,
+                        [nameof(SelectedDayOfWeekRoutes)] = LastSelectedDayOfWeek
                     });
             }
             catch (Exception ex)
@@ -389,7 +392,7 @@ namespace DriversRoutes.Pages.Maps
                     RoutesId = Routes.Id,
                 };
 
-                await Shell.Current.GoToAsync($"{nameof(Pages.AddCustomer.AddCustomerV)}"
+                await Shell.Current.GoToAsync($"{nameof(Pages.Customer.AddCustomer.AddCustomerV)}"
                     , new Dictionary<string, object>
                     {
                         [nameof(Model.CustomerRoutes)] = customer,

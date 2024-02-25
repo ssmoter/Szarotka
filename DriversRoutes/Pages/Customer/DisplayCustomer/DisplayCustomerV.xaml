@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="DriversRoutes.Pages.Customer.DisplayCustomer.DisplayCustomerV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:Customer="clr-namespace:DriversRoutes.Pages.Customer.CustomerSmall"
+    xmlns:CustomerData="clr-namespace:DriversRoutes.Model"
+    xmlns:MapSmall="clr-namespace:DriversRoutes.Pages.Maps.MapSmall"
+    xmlns:Vm="clr-namespace:DriversRoutes.Pages.Customer.DisplayCustomer"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    Title="DisplayCustomerV"
+    x:DataType="Vm:DisplayCustomerVM">
+
+
+    <Grid RowDefinitions="*,*">
+
+
+        <MapSmall:MapSmallV
+            Customer="{Binding Customer}"
+            EditIsVisible="False"
+            IsVisible="{Binding DisplayCustomerM.ShowLocationThisCustomer}"
+            MapSmallVIsVisible="{Binding DisplayCustomerM.ShowLocationThisCustomer}" />
+
+
+        <ScrollView Grid.Row="{Binding DisplayCustomerM.ShowLocationThisCustomerInt}" Grid.RowSpan="2">
+
+            <Customer:CustomerSmallV
+                Name="{Binding Customer.Name}"
+                CreatedDate="{Binding Customer.Created}"
+                DayOfWeek="{Binding Customer.DayOfWeek}"
+                DeleteButtonCommand="{Binding DeleteCommand}"
+                DeleteButtonCommandParameter="{Binding Customer}"
+                DeleteIsVisible="True"
+                Description="{Binding Customer.Description}"
+                DisplayIsVisible="False"
+                EditButtonCommand="{Binding EditPinCommand}"
+                EditButtonCommandParameter="{Binding Customer}"
+                EditIsVisible="True"
+                Latitude="{Binding Customer.Latitude}"
+                LocationButtonCommand="{Binding LocationOfPinCommand}"
+                LocationButtonCommandParameter="{Binding Customer}"
+                LocationIsVisible="True"
+                Longitude="{Binding Customer.Longitude}"
+                PhoneNumber="{Binding Customer.PhoneNumber}"
+                QueueNumber="{Binding Customer.QueueNumber}"
+                ResidentialAddress="{Binding Customer.ResidentialAddress}" />
+
+        </ScrollView>
+
+    </Grid>
+
+</ContentPage>

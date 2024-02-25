@@ -5,17 +5,17 @@ using DriversRoutes.Model;
 
 
 
-namespace DriversRoutes.Pages.AddCustomer.ProbableAddresses
+namespace DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses
 {
     public partial class ProbableAddressesVM : ObservableObject
     {
         [ObservableProperty]
         ProbableAddressesM probableAddressesM;
 
-        public Func<object, Task> Close;
-        public Task OnClose(object result = null)
+        public Func<object, CancellationToken, Task> Close;
+        public Task OnClose(object result = null, CancellationToken token = default(CancellationToken))
         {
-            return Close?.Invoke(result);
+            return Close?.Invoke(result, token);
         }
         public ProbableAddressesVM()
         {

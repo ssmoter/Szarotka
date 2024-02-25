@@ -1,4 +1,4 @@
-namespace DriversRoutes.Pages.AddCustomer;
+namespace DriversRoutes.Pages.Customer.AddCustomer;
 
 public partial class AddCustomerV : ContentPage
 {
@@ -14,10 +14,7 @@ public partial class AddCustomerV : ContentPage
         base.OnNavigatedTo(args);
         if (BindingContext is AddCustomerVM vm)
         {
-            if (vm.Customer is not null)
-            {
-                vm.SetCustomer(vm.Customer);
-            }
+
         }
     }
 }

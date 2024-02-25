@@ -15,11 +15,11 @@ namespace DataBase.Platforms.Android
 
                 //return myKey;
             }
-            catch (PackageManager.NameNotFoundException ex)
+            catch (PackageManager.NameNotFoundException)
             {
                 throw;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

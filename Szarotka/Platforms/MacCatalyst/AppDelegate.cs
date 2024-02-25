@@ -1,6 +1,6 @@
 ﻿using Foundation;
 
-namespace Szarotka
+namespace Szarotka.Platforms.MacCatalyst
 {
     [Register("AppDelegate")]
     public class AppDelegate : MauiUIApplicationDelegate

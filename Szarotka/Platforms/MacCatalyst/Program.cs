@@ -2,7 +2,7 @@
 
 using UIKit;
 
-namespace Szarotka
+namespace Szarotka.Platforms.MacCatalyst
 {
     public class Program
     {

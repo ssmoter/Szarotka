@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="DriversRoutes.Pages.Customer.AddCustomer.AddCustomerV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:MapSmall="clr-namespace:DriversRoutes.Pages.Maps.MapSmall"
+    xmlns:VM="clr-namespace:DriversRoutes.Pages.Customer.AddCustomer"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:DataType="VM:AddCustomerVM"
+    Shell.PresentationMode="Modal">
+
+    <Grid ColumnDefinitions="*,3*" RowDefinitions="*,*">
+
+        <MapSmall:MapSmallV
+            Grid.Row="0"
+            Grid.Column="1"
+            Customer="{Binding Customer}"
+            EditIsVisible="True"
+            IsVisible="{Binding AddCustomer.MapIsVisible}"
+            MapSmallVIsVisible="{Binding AddCustomer.MapIsVisible}"
+            ZIndex="102" />
+
+        <ScrollView
+            Grid.RowSpan="2"
+            Grid.ColumnSpan="2"
+            HorizontalOptions="CenterAndExpand">
+
+            <Border
+                Margin="10"
+                Padding="10"
+                HorizontalOptions="FillAndExpand"
+                VerticalOptions="FillAndExpand">
+
+                <VerticalStackLayout>
+
+                    <VerticalStackLayout>
+                        <Label Text="Nazwa" />
+                        <Entry Placeholder="Nazwa" Text="{Binding Customer.Name}" />
+                    </VerticalStackLayout>
+
+                    <Border />
+                    <Grid
+                        Padding="5,2,5,2"
+                        ColumnDefinitions="*,*,*"
+                        RowSpacing="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            HorizontalOptions="Center"
+                            HorizontalTextAlignment="Center"
+                            Text="Dzień &#10;tygodnia" />
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            HorizontalOptions="Center"
+                            HorizontalTextAlignment="Center"
+                            Text="Czy &#10;przyjechać" />
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            HorizontalOptions="Center"
+                            HorizontalTextAlignment="Center"
+                            Text="Czas &#10;przyjazdu" />
+
+
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Text="Poniedziałek"
+                            VerticalOptions="Center" />
+                        <CheckBox
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            HorizontalOptions="Center"
+                            IsChecked="{Binding Customer.DayOfWeek.Monday}"
+                            VerticalOptions="Center" />
+                        <TimePicker
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Time="{Binding Customer.DayOfWeek.MondayTimeSpan}"
+                            VerticalOptions="Center" />
+
+
+                        <Label
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Text="Wtorek"
+                            VerticalOptions="Center" />
+                        <CheckBox
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            HorizontalOptions="Center"
+                            IsChecked="{Binding Customer.DayOfWeek.Tuesday}"
+                            VerticalOptions="Center" />
+                        <TimePicker
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            Time="{Binding Customer.DayOfWeek.TuesdayTimeSpan}"
+                            VerticalOptions="Center" />
+
+
+
+                        <Label
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Text="Środa"
+                            VerticalOptions="Center" />
+                        <CheckBox
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            HorizontalOptions="Center"
+                            IsChecked="{Binding Customer.DayOfWeek.Wednesday}"
+                            VerticalOptions="Center" />
+                        <TimePicker
+                            Grid.Row="3"
+                            Grid.Column="2"
+                            Time="{Binding Customer.DayOfWeek.WednesdayTimeSpan}"
+                            VerticalOptions="Center" />
+
+
+
+                        <Label
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Text="Czwartek"
+                            VerticalOptions="Center" />
+                        <CheckBox
+                            Grid.Row="4"
+                            Grid.Column="1"
+                            HorizontalOptions="Center"
+                            IsChecked="{Binding Customer.DayOfWeek.Thursday}"
+                            VerticalOptions="Center" />
+                        <TimePicker
+                            Grid.Row="4"
+                            Grid.Column="2"
+                            Time="{Binding Customer.DayOfWeek.ThursdayTimeSpan}"
+                            VerticalOptions="Center" />
+
+
+
+
+                        <Label
+                            Grid.Row="5"
+                            Grid.Column="0"
+                            Text="Piątek"
+                            VerticalOptions="Center" />
+                        <CheckBox
+                            Grid.Row="5"
+                            Grid.Column="1"
+                            HorizontalOptions="Center"
+                            IsChecked="{Binding Customer.DayOfWeek.Friday}"
+                            VerticalOptions="Center" />
+                        <TimePicker
+                            Grid.Row="5"
+                            Grid.Column="2"
+                            Time="{Binding Customer.DayOfWeek.FridayTimeSpan}"
+                            VerticalOptions="Center" />
+
+
+
+                        <Label
+                            Grid.Row="6"
+                            Grid.Column="0"
+                            Text="Sobota"
+                            VerticalOptions="Center" />
+                        <CheckBox
+                            Grid.Row="6"
+                            Grid.Column="1"
+                            HorizontalOptions="Center"
+                            IsChecked="{Binding Customer.DayOfWeek.Saturday}"
+                            VerticalOptions="Center" />
+                        <TimePicker
+                            Grid.Row="6"
+                            Grid.Column="2"
+                            Time="{Binding Customer.DayOfWeek.SaturdayTimeSpan}"
+                            VerticalOptions="Center" />
+
+
+
+                        <Label
+                            Grid.Row="7"
+                            Grid.Column="0"
+                            Text="Codziennie"
+                            VerticalOptions="Center" />
+                        <CheckBox
+                            Grid.Row="7"
+                            Grid.Column="1"
+                            HorizontalOptions="Center"
+                            IsChecked="{Binding Customer.DayOfWeek.SetAll}"
+                            VerticalOptions="Center" />
+                        <TimePicker
+                            Grid.Row="7"
+                            Grid.Column="2"
+                            Time="{Binding Customer.DayOfWeek.SetAllTimeSpan}"
+                            VerticalOptions="Center" />
+
+
+
+
+                    </Grid>
+                    <Border />
+
+                    <HorizontalStackLayout HorizontalOptions="Center" ToolTipProperties.Text="Jest to osoba która kupuje okazjonalnie i nie będzie brana pod uwagę przy obliczaniu trasy.">
+                        <Label Text="klient opcjonalny" VerticalOptions="Center" />
+                        <CheckBox IsChecked="{Binding Customer.DayOfWeek.Optional}" />
+                    </HorizontalStackLayout>
+                    <Border />
+
+                    <VerticalStackLayout>
+                        <Label Text="Numer Telefonu" />
+                        <Entry
+                            Keyboard="Telephone"
+                            Placeholder="Numer Telefonu"
+                            Text="{Binding Customer.PhoneNumber}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout>
+                        <Label Text="Dodatkowy opis" />
+                        <Editor
+                            AutoSize="TextChanges"
+                            Placeholder="Dodatkowy opis"
+                            Text="{Binding Customer.Description}" />
+                    </VerticalStackLayout>
+
+                    <HorizontalStackLayout HorizontalOptions="Center" ToolTipProperties.Text="Adres nie jest brany pod uwagę przy wyznaczaniu punktów.">
+                        <Label Text="Dodaj adres" VerticalOptions="Center" />
+                        <CheckBox IsChecked="{Binding AddCustomer.Address}" />
+                    </HorizontalStackLayout>
+
+                    <VerticalStackLayout IsVisible="{Binding AddCustomer.Address}">
+
+                        <Button Command="{Binding GetAddressFromApiCommand}" Text="Pobierz adres" />
+
+                        <Grid ColumnDefinitions="*,*">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Text="Imię"
+                                VerticalOptions="Center" />
+                            <Entry
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                HorizontalOptions="FillAndExpand"
+                                Placeholder="Imię"
+                                Text="{Binding Customer.ResidentialAddress.Name}" />
+
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Text="Nazwisko"
+                                VerticalOptions="Center" />
+                            <Entry
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                HorizontalOptions="FillAndExpand"
+                                Placeholder="Nazwisko"
+                                Text="{Binding Customer.ResidentialAddress.Surname}" />
+
+                            <Label
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Text="Ulica"
+                                VerticalOptions="Center" />
+                            <Entry
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                HorizontalOptions="FillAndExpand"
+                                Placeholder="Ulica"
+                                Text="{Binding Customer.ResidentialAddress.Street}" />
+
+                            <Label
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                Text="Numer domu"
+                                VerticalOptions="Center" />
+                            <Entry
+                                Grid.Row="4"
+                                Grid.Column="1"
+                                Placeholder="Numer domu"
+                                Text="{Binding Customer.ResidentialAddress.HouseNumber}" />
+
+                            <Label
+                                Grid.Row="3"
+                                Grid.Column="0"
+                                Text="Numer mieszkania"
+                                VerticalOptions="Center" />
+                            <Entry
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                HorizontalOptions="FillAndExpand"
+                                Placeholder="Numer mieszkania"
+                                Text="{Binding Customer.ResidentialAddress.ApartmentNumber}" />
+
+
+
+                            <Label
+                                Grid.Row="5"
+                                Grid.Column="0"
+                                Text="Kraj"
+                                VerticalOptions="Center" />
+                            <Entry
+                                Grid.Row="5"
+                                Grid.Column="1"
+                                Placeholder="Kraj"
+                                Text="{Binding Customer.ResidentialAddress.Country}" />
+
+                            <Label
+                                Grid.Row="6"
+                                Grid.Column="0"
+                                Text="Miasto"
+                                VerticalOptions="Center" />
+                            <Entry
+                                Grid.Row="6"
+                                Grid.Column="1"
+                                Placeholder="Miasto"
+                                Text="{Binding Customer.ResidentialAddress.City}" />
+
+                            <Label
+                                Grid.Row="7"
+                                Grid.Column="0"
+                                Text="Kod pocztowy"
+                                VerticalOptions="Center" />
+                            <Entry
+                                Grid.Row="7"
+                                Grid.Column="1"
+                                Placeholder="Kod pocztowy"
+                                Text="{Binding Customer.ResidentialAddress.PostalCode}" />
+                        </Grid>
+
+                    </VerticalStackLayout>
+                    <Border />
+
+                    <VerticalStackLayout ToolTipProperties.Text="Punkty na mapie są wyznaczane na podstawie szerokości i wysokości geograficznej">
+
+                        <HorizontalStackLayout>
+                            <Label Text="Latitude : " />
+                            <Label Text="{Binding Customer.Latitude}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout>
+                            <Label Text="Longitude : " />
+                            <Label Text="{Binding Customer.Longitude}" />
+                        </HorizontalStackLayout>
+
+                        <Button
+                            Command="{Binding DisplayPinOnMapCommand}"
+                            HorizontalOptions="Center"
+                            Text="Pokaż na mapie"
+                            VerticalOptions="Center" />
+                    </VerticalStackLayout>
+
+
+                    <Border />
+                    <HorizontalStackLayout HorizontalOptions="Center">
+                        <Button Command="{Binding CancelAndExitCommand}" Text="Analuj" />
+                        <Button Command="{Binding SaveAndExitCommand}" Text="Zapisz" />
+                    </HorizontalStackLayout>
+
+                </VerticalStackLayout>
+
+            </Border>
+
+        </ScrollView>
+    </Grid>
+
+</ContentPage>

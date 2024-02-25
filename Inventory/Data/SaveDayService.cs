@@ -4,12 +4,13 @@ using Inventory.Helper;
 using Inventory.Helper.Parse;
 using Inventory.Model;
 using Inventory.Model.MVVM;
+using Inventory.Service;
 
-namespace Inventory.Service
+namespace Inventory.Data
 {
     public class SaveDayService : ISaveDayService
     {
-        readonly DataBase.Data.AccessDataBase _db;
+        readonly AccessDataBase _db;
 
         public SaveDayService(AccessDataBase db)
         {
@@ -23,7 +24,7 @@ namespace Inventory.Service
                 {
                     dayM.CanUpadte = false;
 
-                    if (await SaveDayService.CheckDriver(dayM))
+                    if (await CheckDriver(dayM))
                     {
                         return dayM;
                     }

@@ -1,9 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
+using SQLite;
+
 namespace DriversRoutes.Model
 {
     public partial class ResidentialAddress : ObservableObject, IDisposable
     {
+        [PrimaryKey]
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
 
@@ -25,11 +28,7 @@ namespace DriversRoutes.Model
         string country;
 
         public ResidentialAddress()
-        {
-            Country = "Polska";
-            City = "Limanowa";
-            postalCode = "34-600";
-        }
+        {   }
 
         public void Dispose()
         {

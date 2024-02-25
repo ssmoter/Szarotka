@@ -5,8 +5,8 @@
         public static IServiceCollection AddMyServiceDriversRoutes(this IServiceCollection services)
         {
 
-            services.AddScoped<Pages.Maps.MapsV>();
-            services.AddScoped<Pages.Maps.MapsVM>();
+            services.AddScoped<Pages.Maps.MapAndPoints.MapsV>();
+            services.AddScoped<Pages.Maps.MapAndPoints.MapsVM>();
 
             services.AddScoped<Pages.Main.MainVDriversRoutesV>();
             services.AddScoped<Pages.Main.MainVDriversRoutesVM>();
@@ -23,8 +23,12 @@
             services.AddScoped<Pages.ListOfPoints.ListOfPointsV>();
             services.AddScoped<Pages.ListOfPoints.ListOfPointsVM>();
 
-            services.AddScoped<Pages.AddCustomer.AddCustomerV>();
-            services.AddScoped<Pages.AddCustomer.AddCustomerVM>();
+            services.AddScoped<Pages.Customer.AddCustomer.AddCustomerV>();
+            services.AddScoped<Pages.Customer.AddCustomer.AddCustomerVM>();
+
+            services.AddScoped<Pages.Customer.DisplayCustomer.DisplayCustomerV>();
+            services.AddScoped<Pages.Customer.DisplayCustomer.DisplayCustomerVM>();
+
 
             return services;
         }

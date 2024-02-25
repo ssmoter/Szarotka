@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="DriversRoutes.Pages.Customer.CustomerSmall.DayOfWeek.DayOfWeekV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Name="this">
+
+    <VerticalStackLayout Padding="5" BindingContext="{x:Reference this}">
+        
+        <VerticalStackLayout.GestureRecognizers>
+            <TapGestureRecognizer
+                Buttons="Primary"
+                NumberOfTapsRequired="2"
+                Tapped="TapGestureRecognizer_Tapped_CopyDayOfWeek" />
+        </VerticalStackLayout.GestureRecognizers>
+        
+        <Grid ColumnDefinitions="*,*" RowDefinitions="*,*,*,*,*,*,*">
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                HorizontalOptions="Start"
+                IsVisible="{Binding DayOfWeek.Sunday}"
+                Text="Niedziela" />
+            <Label
+                Grid.Row="0"
+                Grid.Column="1"
+                HorizontalOptions="Center"
+                IsVisible="{Binding DayOfWeek.Sunday}"
+                Text="{Binding DayOfWeek.SundayTimeSpan, StringFormat='{0:hh\\:mm}'}" />
+
+            <Label
+                Grid.Row="1"
+                Grid.Column="0"
+                HorizontalOptions="Start"
+                IsVisible="{Binding DayOfWeek.Monday}"
+                Text="Poniedziałek" />
+            <Label
+                Grid.Row="1"
+                Grid.Column="1"
+                HorizontalOptions="Center"
+                IsVisible="{Binding DayOfWeek.Monday}"
+                Text="{Binding DayOfWeek.MondayTimeSpan, StringFormat='{0:hh\\:mm}'}" />
+
+            <Label
+                Grid.Row="2"
+                Grid.Column="0"
+                HorizontalOptions="Start"
+                IsVisible="{Binding DayOfWeek.Tuesday}"
+                Text="Wtorek" />
+            <Label
+                Grid.Row="2"
+                Grid.Column="1"
+                HorizontalOptions="Center"
+                IsVisible="{Binding DayOfWeek.Tuesday}"
+                Text="{Binding DayOfWeek.TuesdayTimeSpan, StringFormat='{0:hh\\:mm}'}" />
+
+            <Label
+                Grid.Row="3"
+                Grid.Column="0"
+                HorizontalOptions="Start"
+                IsVisible="{Binding DayOfWeek.Wednesday}"
+                Text="Środa" />
+            <Label
+                Grid.Row="3"
+                Grid.Column="1"
+                HorizontalOptions="Center"
+                IsVisible="{Binding DayOfWeek.Wednesday}"
+                Text="{Binding DayOfWeek.WednesdayTimeSpan, StringFormat='{0:hh\\:mm}'}" />
+
+            <Label
+                Grid.Row="4"
+                Grid.Column="0"
+                HorizontalOptions="Start"
+                IsVisible="{Binding DayOfWeek.Thursday}"
+                Text="Czwartek" />
+            <Label
+                Grid.Row="4"
+                Grid.Column="1"
+                HorizontalOptions="Center"
+                IsVisible="{Binding DayOfWeek.Thursday}"
+                Text="{Binding DayOfWeek.ThursdayTimeSpan, StringFormat='{0:hh\\:mm}'}" />
+
+            <Label
+                Grid.Row="5"
+                Grid.Column="0"
+                HorizontalOptions="Start"
+                IsVisible="{Binding DayOfWeek.Friday}"
+                Text="Piatek" />
+            <Label
+                Grid.Row="5"
+                Grid.Column="1"
+                HorizontalOptions="Center"
+                IsVisible="{Binding DayOfWeek.Friday}"
+                Text="{Binding DayOfWeek.FridayTimeSpan, StringFormat='{0:hh\\:mm}'}" />
+
+            <Label
+                Grid.Row="6"
+                Grid.Column="0"
+                HorizontalOptions="Start"
+                IsVisible="{Binding DayOfWeek.Saturday}"
+                Text="Sobota" />
+            <Label
+                Grid.Row="6"
+                Grid.Column="1"
+                HorizontalOptions="Center"
+                IsVisible="{Binding DayOfWeek.Saturday}"
+                Text="{Binding DayOfWeek.SaturdayTimeSpan, StringFormat='{0:hh\\:mm}'}" />
+
+        </Grid>
+
+        <Label
+            HorizontalOptions="Center"
+            IsVisible="{Binding DayOfWeek.Optional}"
+            Text="Klient Okazjonalny" />
+
+    </VerticalStackLayout>
+
+
+</ContentView>

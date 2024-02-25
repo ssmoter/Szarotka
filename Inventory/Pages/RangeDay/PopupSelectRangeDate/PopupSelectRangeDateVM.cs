@@ -86,10 +86,10 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
         long from = 0;
         long to = 0;
 
-        public Func<object, Task> Close;
-        public Task OnClose(object result = null)
+        public Func<object, CancellationToken, Task> Close;
+        public Task OnClose(object result = null, CancellationToken token = default(CancellationToken))
         {
-            return Close?.Invoke(result);
+            return Close?.Invoke(result, token);
         }
 
         public PopupSelectRangeDateVM(Model.Driver[] drivers)

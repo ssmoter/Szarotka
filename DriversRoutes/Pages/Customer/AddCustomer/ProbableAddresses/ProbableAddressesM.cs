@@ -4,7 +4,7 @@ using DriversRoutes.Model;
 
 using System.Collections.ObjectModel;
 
-namespace DriversRoutes.Pages.AddCustomer.ProbableAddresses
+namespace DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses
 {
     public partial class ProbableAddressesM : ObservableObject
     {

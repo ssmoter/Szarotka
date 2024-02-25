@@ -1,66 +1,116 @@
-﻿using SQLite;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+using SQLite;
 
 namespace DriversRoutes.Model
 {
-    public class CustomerRoutes : IDisposable
+    public partial class CustomerRoutes : ObservableObject, IDisposable
     {
 
         /// <summary>
         /// Id
         /// </summary>
-        public Guid Id { get; set; }
+        Guid id;
+        [PrimaryKey]
+        public Guid Id
+        {
+            get => id;
+            set
+            {
+                if (SetProperty(ref id, value))
+                    OnPropertyChanged(nameof(Id));
+            }
+        }
+
+
         /// <summary>
         /// Id trasy
         /// </summary>
-        public Guid RoutesId { get; set; }
+        [ObservableProperty]
+        Guid routesId;
         /// <summary>
         /// Kolejność jazdy
         /// </summary>
+        int queueNumber;
         [Ignore]
-        public int QueueNumber { get; set; }
+        public int QueueNumber
+        {
+            get => queueNumber;
+            set
+            {
+                if (SetProperty(ref queueNumber, value))
+                    OnPropertyChanged(nameof(QueueNumber));
+            }
+        }
         /// <summary>
         /// Nazwa
         /// </summary>
-        public string Name { get; set; }
+        [ObservableProperty]
+        string name;
         /// <summary>
         /// Opis
         /// </summary>
-        public string Description { get; set; }
+        [ObservableProperty]
+        string description;
         /// <summary>
         /// Numer telefonu
         /// </summary>
-        public string PhoneNumber { get; set; }
+        [ObservableProperty]
+        string phoneNumber;
         /// <summary>
         /// Czas w Datetime
         /// </summary>
         [Ignore]
         public DateTime CreatedDate
-        {
+        {           
             get
-            {
+            { 
                 return new DateTime(Created).ToLocalTime();
             }
             set
             {
                 Created = value.ToUniversalTime().Ticks;
+                OnPropertyChanged(nameof(CreatedDate));
             }
         }
         /// <summary>
         /// Czas w Tick
         /// </summary>
         public long Created { get; set; }
+
+        SelectedDayOfWeekRoutes dayOfWeek;
         [Ignore]
-        public SelectedDayOfWeekRoutes DayOfWeek { get; set; }
+        public SelectedDayOfWeekRoutes DayOfWeek
+        {
+            get => dayOfWeek;
+            set
+            {
+                if (SetProperty(ref dayOfWeek, value))
+                    OnPropertyChanged(nameof(DayOfWeek));
+            }
+        }
+
+        ResidentialAddress residentialAddress;
         [Ignore]
-        public ResidentialAddress ResidentialAddress { get; set; }
+        public ResidentialAddress ResidentialAddress
+        {
+            get => residentialAddress;
+            set
+            {
+                if (SetProperty(ref residentialAddress, value))
+                    OnPropertyChanged(nameof(ResidentialAddress));
+            }
+        }
         /// <summary>
         /// Długość geograficzna
         /// </summary>
-        public double Longitude { get; set; }
+        [ObservableProperty]
+        double longitude;
         /// <summary>
         /// Szerokość geograficzna
         /// </summary>
-        public double Latitude { get; set; }
+        [ObservableProperty]
+        double latitude;
 
         public CustomerRoutes()
         {

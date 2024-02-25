@@ -20,7 +20,7 @@ namespace DriversRoutes.Platforms.Android
                 var lat = latitude.ToString().Replace(',', '.');
                 var lon = longitude.ToString().Replace(',', '.');
 
-                var uri = new Uri($"https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lon}&key={DataBase.Platforms.Android.ValueFromManifest.GetValue("", "")}");
+                var uri = new Uri($"https://_maps.googleapis.com/_maps/api/geocode/json?latlng={lat},{lon}&key={DataBase.Platforms.Android.ValueFromManifest.GetValue("", "")}");
 
                 _client.BaseAddress = uri;
 

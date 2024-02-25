@@ -4,14 +4,15 @@ using Inventory.Helper;
 using Inventory.Helper.Parse;
 using Inventory.Model;
 using Inventory.Model.MVVM;
+using Inventory.Service;
 
 using System.Collections.ObjectModel;
 
-namespace Inventory.Service
+namespace Inventory.Data
 {
     public class SelectDayService : ISelectDayService
     {
-        readonly DataBase.Data.AccessDataBase _db;
+        readonly AccessDataBase _db;
 
         public SelectDayService(AccessDataBase db)
         {
@@ -31,7 +32,7 @@ namespace Inventory.Service
                 };
                 var guid = new Guid(Helper.SelectedDriver.Id);
                 var createdString = createdDate.ToString("dd.MM.yyyy");
-                var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == createdString && x.DriverGuid == guid).FirstOrDefaultAsync();
+                var today = await _db.DataBaseAsync.Table<Day>().Where(x => x.CreatedDate == createdString && x.DriverGuid == guid).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
                 DayM.Products = await GetProductTable(DayM);
                 DayM.Cakes = await GetCakeTable(DayM);
@@ -63,7 +64,7 @@ namespace Inventory.Service
                     CanUpadte = false
                 };
                 var guid = new Guid(Helper.SelectedDriver.Id);
-                var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == createdDate && x.DriverGuid == guid).FirstOrDefaultAsync();
+                var today = await _db.DataBaseAsync.Table<Day>().Where(x => x.CreatedDate == createdDate && x.DriverGuid == guid).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
                 DayM.Products = await GetProductTable(DayM);
                 DayM.Cakes = await GetCakeTable(DayM);
@@ -94,7 +95,7 @@ namespace Inventory.Service
                 {
                     CanUpadte = false
                 };
-                var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.Id == id).FirstOrDefaultAsync();
+                var today = await _db.DataBaseAsync.Table<Day>().Where(x => x.Id == id).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
                 DayM.Products = await GetProductTable(DayM);
                 DayM.Cakes = await GetCakeTable(DayM);
@@ -126,7 +127,7 @@ namespace Inventory.Service
                 };
                 var time = DateTime.Now.ToString("dd.MM.yyyy");
                 var guid = new Guid(Helper.SelectedDriver.Id);
-                var today = await _db.DataBaseAsync.Table<Model.Day>().Where(x => x.CreatedDate == time && x.DriverGuid == guid).FirstOrDefaultAsync();
+                var today = await _db.DataBaseAsync.Table<Day>().Where(x => x.CreatedDate == time && x.DriverGuid == guid).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
                 DayM.Products = await GetProductTable(DayM);
                 DayM.Cakes = await GetCakeTable(DayM);
@@ -152,22 +153,22 @@ namespace Inventory.Service
 
         public async Task<ObservableCollection<ProductM>> GetProductTable(DayM dayM)
         {
-            var product = await _db.DataBaseAsync.Table<Model.Product>().Where(x => x.DayId == dayM.Id).ToArrayAsync();
+            var product = await _db.DataBaseAsync.Table<Product>().Where(x => x.DayId == dayM.Id).ToArrayAsync();
             dayM.Products.Clear();
 
             for (int i = 0; i < product.Length; i++)
             {
                 var productNameId = product[i].ProductNameId;
-                product[i].Name = await _db.DataBaseAsync.Table<Model.ProductName>().FirstOrDefaultAsync(x => x.Id == productNameId);
+                product[i].Name = await _db.DataBaseAsync.Table<ProductName>().FirstOrDefaultAsync(x => x.Id == productNameId);
                 var priceId = product[i].ProductPriceId;
-                product[i].Price = await _db.DataBaseAsync.Table<Model.ProductPrice>().OrderByDescending(x => x.Id).FirstOrDefaultAsync(x => x.ProductNameId == productNameId && x.Id == priceId);
+                product[i].Price = await _db.DataBaseAsync.Table<ProductPrice>().OrderByDescending(x => x.Id).FirstOrDefaultAsync(x => x.ProductNameId == productNameId && x.Id == priceId);
                 dayM.Products.Add(product[i].ParseAsProductM());
             }
-            var length = await _db.DataBaseAsync.Table<Model.ProductName>().CountAsync();
+            var length = await _db.DataBaseAsync.Table<ProductName>().CountAsync();
 
             if (product.Length < length)
             {
-                var allProduct = await _db.DataBaseAsync.Table<Model.ProductName>().ToArrayAsync();
+                var allProduct = await _db.DataBaseAsync.Table<ProductName>().ToArrayAsync();
 
                 for (int i = 0; i < length; i++)
                 {
@@ -178,7 +179,7 @@ namespace Inventory.Service
                     }
                     else
                     {
-                        var price = await _db.DataBaseAsync.Table<Model.ProductPrice>().OrderByDescending(x => x.Created).FirstOrDefaultAsync(x => x.ProductNameId == id);
+                        var price = await _db.DataBaseAsync.Table<ProductPrice>().OrderByDescending(x => x.Created).FirstOrDefaultAsync(x => x.ProductNameId == id);
                         if (price is null)
                         {
                             continue;
@@ -197,11 +198,11 @@ namespace Inventory.Service
 
             if (dayM.Products.Count == 0)
             {
-                var productName = await _db.DataBaseAsync.Table<Model.ProductName>().ToArrayAsync();
+                var productName = await _db.DataBaseAsync.Table<ProductName>().ToArrayAsync();
                 for (int i = 0; i < productName.Length; i++)
                 {
                     var nameId = productName[i].Id;
-                    var price = await _db.DataBaseAsync.Table<Model.ProductPrice>().OrderByDescending(x => x.Created).FirstOrDefaultAsync(x => x.ProductNameId == nameId);
+                    var price = await _db.DataBaseAsync.Table<ProductPrice>().OrderByDescending(x => x.Created).FirstOrDefaultAsync(x => x.ProductNameId == nameId);
                     if (price is null)
                     {
                         continue;
@@ -222,7 +223,7 @@ namespace Inventory.Service
         }
         public async Task<ObservableCollection<CakeM>> GetCakeTable(DayM dayM)
         {
-            var cake = await _db.DataBaseAsync.Table<Model.Cake>().Where(x => x.DayId == dayM.Id).ToArrayAsync();
+            var cake = await _db.DataBaseAsync.Table<Cake>().Where(x => x.DayId == dayM.Id).ToArrayAsync();
             dayM.Cakes.Clear();
             for (int i = 0; i < cake.Length; i++)
             {
@@ -241,12 +242,12 @@ namespace Inventory.Service
             var id = await DateFindId(createdDate);
             if (id != Guid.Empty)
             {
-                var queryId = Helper.StoredProcedure.GetSingleDay(id);
+                var queryId = StoredProcedure.GetSingleDay(id);
                 var dayId = await GetDateProcedureLogic(queryId);
                 return dayId;
             }
 
-            var query = Helper.StoredProcedure.GetSingleDay(createdDate.ToShortDateString(), Helper.SelectedDriver.Id);
+            var query = StoredProcedure.GetSingleDay(createdDate.ToShortDateString(), Helper.SelectedDriver.Id);
             var day = await GetDateProcedureLogic(query);
             if (day.Id == Guid.Empty)
             {
@@ -261,7 +262,7 @@ namespace Inventory.Service
         }
         public async Task<DayM> GetDayProcedure(Guid id)
         {
-            var query = Helper.StoredProcedure.GetSingleDay(id);
+            var query = StoredProcedure.GetSingleDay(id);
             var day = await GetDateProcedureLogic(query);
             if (day.Id == Guid.Empty)
             {
@@ -292,7 +293,7 @@ namespace Inventory.Service
             else
             {
                 dayM ??= new();
-                var products = await _db.DataBaseAsync.QueryAsync<GetProductNameM>(Helper.StoredProcedure.GetAllProductsNameAndPrice());
+                var products = await _db.DataBaseAsync.QueryAsync<GetProductNameM>(StoredProcedure.GetAllProductsNameAndPrice());
                 for (int i = 0; i < products.Count; i++)
                 {
                     var price = Newtonsoft.Json.JsonConvert.DeserializeObject<ProductPrice>(products[i].JsonPrice);
@@ -309,7 +310,7 @@ namespace Inventory.Service
 
                 return dayM.ParseAsDayM();
             }
-            var allOfProducts = await _db.DataBaseAsync.QueryAsync<GetProductNameM>(Helper.StoredProcedure.GetAllProductsNameAndPrice());
+            var allOfProducts = await _db.DataBaseAsync.QueryAsync<GetProductNameM>(StoredProcedure.GetAllProductsNameAndPrice());
 
             if (dayM.Products.Count != allOfProducts.Count)
             {
@@ -337,7 +338,7 @@ namespace Inventory.Service
         {
             var guid = new Guid(Helper.SelectedDriver.Id);
             var createdString = createdDate.ToString("dd.MM.yyyy");
-            var id = await _db.DataBaseAsync.Table<Model.Day>().FirstOrDefaultAsync(x => x.CreatedDate == createdString && x.DriverGuid == guid);
+            var id = await _db.DataBaseAsync.Table<Day>().FirstOrDefaultAsync(x => x.CreatedDate == createdString && x.DriverGuid == guid);
             if (id != null)
                 return id.Id;
             return Guid.Empty;

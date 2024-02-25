@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="DriversRoutes.Pages.Maps.MapSmall.MapSmallV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:Symbols="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
+    xmlns:maps="http://schemas.microsoft.com/dotnet/2021/maui/maps"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Name="this">
+
+
+    <Border HorizontalOptions="Fill" VerticalOptions="Fill">
+
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="10" />
+        </Border.StrokeShape>
+
+
+        <Grid
+            BindingContext="{x:Reference this}"
+            HorizontalOptions="Fill"
+            RowDefinitions="auto,*"
+            VerticalOptions="Fill">
+            <VerticalStackLayout Grid.Row="1" ZIndex="111">
+
+                <Button
+                    Clicked="Button_Clicked_Close"
+                    Command="{Binding MapSmallVM.CloseMapCommand}"
+                    CommandParameter="{Binding Customer}"
+                    CornerRadius="10"
+                    HorizontalOptions="StartAndExpand"
+                    Text="X"
+                    VerticalOptions="StartAndExpand" />
+                <Button
+                    Command="{Binding MapSmallVM.CenterOldLocationCommand}"
+                    CommandParameter="{Binding Customer}"
+                    CornerRadius="10"
+                    HorizontalOptions="StartAndExpand"
+                    Text="O"
+                    VerticalOptions="StartAndExpand" />
+
+            </VerticalStackLayout>
+
+            <VerticalStackLayout
+                Grid.Row="0"
+                HorizontalOptions="Fill"
+                IsVisible="{Binding EditIsVisible}">
+                <Button
+                    Command="{Binding MapSmallVM.ChangeLocationCommand}"
+                    CommandParameter="{Binding Customer}"
+                    HorizontalOptions="Fill"
+                    IsVisible="{Binding MapSmallVM.MapSmallM.ChangeLocation}"
+                    Text="Zmień lokalizacje"
+                    VerticalOptions="Center" />
+                <Grid ColumnDefinitions="*,*">
+                    <Button
+                        Grid.Column="0"
+                        Command="{Binding MapSmallVM.SetOldLocationCommand}"
+                        CommandParameter="{Binding Customer}"
+                        IsVisible="{Binding MapSmallVM.MapSmallM.SaveLocation}"
+                        Text="Anuluj" />
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding MapSmallVM.SaveNewLocationCommand}"
+                        CommandParameter="{Binding Customer}"
+                        IsVisible="{Binding MapSmallVM.MapSmallM.SaveLocation}"
+                        Text="Zapisz" />
+                </Grid>
+            </VerticalStackLayout>
+
+            <Grid Grid.Row="1" RowDefinitions="*,42">
+
+                <maps:Map
+                    x:Name="Map"
+                    Grid.Row="0"
+                    Grid.RowSpan="2"
+                    HorizontalOptions="FillAndExpand"
+                    IsShowingUser="True"
+                    MapType="Street"
+                    VerticalOptions="FillAndExpand" />
+                <Image
+                    Grid.Row="0"
+                    HorizontalOptions="Center"
+                    IsVisible="{Binding MapSmallVM.MapSmallM.SaveLocation}"
+                    Source="{AppThemeBinding Light={Static Symbols:ImgMapsSymbols.LocationOnWhite},
+                                             Dark={Static Symbols:ImgMapsSymbols.LocationOnBlack}}"
+                    VerticalOptions="Center" />
+            </Grid>
+
+        </Grid>
+    </Border>
+
+</ContentView>

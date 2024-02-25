@@ -13,10 +13,10 @@ namespace DriversRoutes.Pages.Popups.SelectDay
         [ObservableProperty]
         int selectDayIndex;
 
-        public Func<object, Task> Close;
-        public Task OnClose(object result = null)
+        public Func<object, CancellationToken, Task> Close;
+        public Task OnClose(object result = null, CancellationToken token = default(CancellationToken))
         {
-            return Close?.Invoke(result);
+            return Close?.Invoke(result, token);
         }
         public SelectDayVM()
         {

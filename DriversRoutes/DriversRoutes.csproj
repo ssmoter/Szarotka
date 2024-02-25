@@ -18,12 +18,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.Maui.Controls.Maps" Version="7.0.92" />
+	  <PackageReference Include="Microsoft.Maui.Controls.Maps" Version="8.0.6" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.6" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.6" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -31,7 +31,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Pages\AddCustomer\ProbableAddresses\ProbableAddressesV.xaml">
+	  <MauiXaml Update="Pages\Customer\AddCustomer\ProbableAddresses\ProbableAddressesV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Customer\CustomerSmall\CustomerSmallV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Customer\CustomerSmall\Address\ResidentialAddressV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Customer\CustomerSmall\DayOfWeek\DayOfWeekV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Customer\DisplayCustomer\DisplayCustomerV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\ListOfPoints\ListOfPointsV.xaml">
@@ -40,13 +52,16 @@
 	  <MauiXaml Update="Pages\Main\MainVDriversRoutesV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\Maps\MapsV.xaml">
+	  <MauiXaml Update="Pages\Maps\MapAndPoints\MapsV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Maps\MapSmall\MapSmallV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\Options\CreateTable\CreateTableRoutesV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\AddCustomer\AddCustomerV.xaml">
+	  <MauiXaml Update="Pages\Customer\AddCustomer\AddCustomerV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\Popups\SelectDay\SelectDayV.xaml">

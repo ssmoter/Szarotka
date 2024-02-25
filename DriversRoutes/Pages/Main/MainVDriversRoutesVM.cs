@@ -6,7 +6,6 @@ using DataBase.Service;
 
 using DriversRoutes.Helper;
 using DriversRoutes.Model;
-using DriversRoutes.Pages.Maps;
 
 using System.Collections.ObjectModel;
 
@@ -23,18 +22,22 @@ namespace DriversRoutes.Pages.Main
         {
             _db = db;
             this.selectRoutes = selectRoutes;
+        }
+
+
+        public async Task<ObservableCollection<Routes>> GetRoutes()
+        {
             try
             {
-                var result = _db.DataBase.Table<Routes>().ToArray();
-                Routes = new(result);
+                var result = await _db.DataBaseAsync.Table<Routes>().ToArrayAsync();
+                return new(result);
             }
             catch (Exception ex)
             {
-                Routes ??= new();
                 _db.SaveLog(ex);
+                return [];
             }
         }
-
 
         [RelayCommand]
         async static Task NavigationToMaps()
@@ -46,7 +49,7 @@ namespace DriversRoutes.Pages.Main
                 return;
             }
 
-            await Shell.Current.GoToAsync(nameof(Pages.Maps.MapsV));
+            await Shell.Current.GoToAsync(nameof(Pages.Maps.MapAndPoints.MapsV));
         }
 
         [RelayCommand]
@@ -65,10 +68,10 @@ namespace DriversRoutes.Pages.Main
                 week.SetTodayDayOfWeek(DateTime.Today);
 
 
-                await Shell.Current.GoToAsync($"{nameof(Pages.Maps.MapsV)}?",
+                await Shell.Current.GoToAsync($"{nameof(Pages.Maps.MapAndPoints.MapsV)}?",
                     new Dictionary<string, object>
                     {
-                       // [nameof(MapsM)] = points,
+                        // [nameof(MapsM)] = points,
                         [nameof(Model.Routes)] = routes,
                         [nameof(SelectedDayOfWeekRoutes)] = week,
                     });

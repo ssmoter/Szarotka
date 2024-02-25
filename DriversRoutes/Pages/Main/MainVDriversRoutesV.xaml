@@ -8,76 +8,77 @@
     Title="MainVDriversRoutesV"
     x:DataType="VM:MainVDriversRoutesVM">
 
+    <ScrollView>
+        <VerticalStackLayout VerticalOptions="Start">
+            <Label
+                Grid.Row="0"
+                Margin="5"
+                Padding="20"
+                FontAttributes="Bold"
+                FontSize="Large"
+                HorizontalOptions="Center"
+                Text="Dostępne Mapy" />
 
-    <VerticalStackLayout VerticalOptions="Start">
-        <Label
-            Grid.Row="0"
-            Margin="5"
-            Padding="20"
-            FontAttributes="Bold"
-            FontSize="Large"
-            HorizontalOptions="Center"
-            Text="Dostępne Mapy" />
+            <Border
+                Margin="10"
+                HorizontalOptions="Center"
+                WidthRequest="250">
 
-        <Border
-            Margin="10"
-            HorizontalOptions="Center"
-            WidthRequest="250">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="50" />
+                </Border.StrokeShape>
 
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="50" />
-            </Border.StrokeShape>
-
-            <Grid HorizontalOptions="Center" RowDefinitions="*,1">
+                <Grid HorizontalOptions="Center" RowDefinitions="*,1">
 
 
-                <CollectionView Grid.Row="0" ItemsSource="{Binding Routes}">
+                    <CollectionView Grid.Row="0" ItemsSource="{Binding Routes}">
 
-                    <CollectionView.ItemTemplate>
+                        <CollectionView.ItemTemplate>
 
-                        <DataTemplate x:DataType="Route:CustomerRoutes">
-                            <VerticalStackLayout Padding="5" HorizontalOptions="Center">
+                            <DataTemplate x:DataType="Route:CustomerRoutes">
+                                <VerticalStackLayout Padding="5" HorizontalOptions="Center">
 
-                                <Label
-                                    FontSize="Title"
-                                    HorizontalOptions="Center"
-                                    Text="{Binding Name}" />
-
-                                <HorizontalStackLayout HorizontalOptions="Center">
-
-                                    <Button
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=NavigationToListOfPointsCommand}"
-                                        CommandParameter="{Binding .}"
+                                    <Label
+                                        FontSize="Title"
                                         HorizontalOptions="Center"
-                                        Text="Lista" />
+                                        Text="{Binding Name}" />
 
-                                    <Button
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=NavigationToMapsSelectedCommand}"
-                                        CommandParameter="{Binding .}"
-                                        HorizontalOptions="Center"
-                                        Text="Mapa" />
+                                    <HorizontalStackLayout HorizontalOptions="Center">
 
-                                </HorizontalStackLayout>
+                                        <Button
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=NavigationToListOfPointsCommand}"
+                                            CommandParameter="{Binding .}"
+                                            HorizontalOptions="Center"
+                                            Text="Lista" />
 
-                            </VerticalStackLayout>
+                                        <Button
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=NavigationToMapsSelectedCommand}"
+                                            CommandParameter="{Binding .}"
+                                            HorizontalOptions="Center"
+                                            Text="Mapa" />
 
-                        </DataTemplate>
+                                    </HorizontalStackLayout>
 
-                    </CollectionView.ItemTemplate>
+                                </VerticalStackLayout>
 
-                </CollectionView>
+                            </DataTemplate>
 
-            </Grid>
-        </Border>
+                        </CollectionView.ItemTemplate>
 
-        <Button
-            Margin="5"
-            Padding="15"
-            Command="{Binding NavigationToMapsCommand}"
-            HorizontalOptions="Center"
-            Text="Czysta mapa" />
+                    </CollectionView>
 
-    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Button
+                Margin="5"
+                Padding="15"
+                Command="{Binding NavigationToMapsCommand}"
+                HorizontalOptions="Center"
+                Text="Czysta mapa" />
+
+        </VerticalStackLayout>
+    </ScrollView>
 
 
 

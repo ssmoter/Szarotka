@@ -8,7 +8,7 @@ using Microsoft.Maui.Controls.Maps;
 
 using SQLite;
 
-namespace DriversRoutes.Pages.Maps
+namespace DriversRoutes.Pages.Maps.MapAndPoints
 {
     public partial class MapsM : ObservableObject
     {

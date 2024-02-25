@@ -1,6 +1,5 @@
 ﻿using DriversRoutes.Helper;
 using DriversRoutes.Model;
-using DriversRoutes.Service;
 
 using FluentAssertions;
 
@@ -18,14 +17,17 @@ namespace DriversRoutesUnitTest
                 var lon = longitude.ToString().Replace(',', '.');
 
                 var uri = new Uri($"https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lon}&key=AIzaSyDMfTC47bnsNBAK8S4xKk7Mhb_aiSqnCYU");
-                HttpClient _client=new HttpClient();
+                HttpClient _client = new HttpClient();
                 _client.BaseAddress = uri;
 
                 var result = await _client.GetFromJsonAsync<GoogleApiAddress>(uri);
 
-                if (result.Status == "OK")
+                if (result is not null)
                 {
-                    return result;
+                    if (result.Status == "OK")
+                    {
+                        return result;
+                    }
                 }
                 throw new Exception("Nie znaleziono adresu");
             }
@@ -36,9 +38,9 @@ namespace DriversRoutesUnitTest
         }
 
         [Xunit.Fact]
-        public void TestParsingDecimal()
+        public async void TestParsingDecimal()
         {
-            var req = FindAddressFromCoordinates(49.74942715620574, 20.40880945691556).Result;
+            var req =await FindAddressFromCoordinates(49.74942715620574, 20.40880945691556);
 
             List<ResidentialAddress> obj = new();
 

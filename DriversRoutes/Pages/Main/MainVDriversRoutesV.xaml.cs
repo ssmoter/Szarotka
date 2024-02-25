@@ -7,4 +7,15 @@ public partial class MainVDriversRoutesV : ContentPage
         InitializeComponent();
         BindingContext = vm;
     }
+
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+
+        if (BindingContext is MainVDriversRoutesVM vm)
+        {
+            vm.Routes = await vm.GetRoutes();
+        }
+
+    }
 }

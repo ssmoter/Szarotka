@@ -4,9 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
 
-using DriversRoutes.Helper;
 using DriversRoutes.Model;
-using DriversRoutes.Pages.Maps;
 
 using System.Collections.ObjectModel;
 
@@ -19,7 +17,16 @@ namespace DriversRoutes.Pages.ListOfPoints
         Routes route;
 
         [ObservableProperty]
-        ObservableCollection<MapsM> customerRoutes;
+        ObservableCollection<CustomerRoutes> customerRoutes;
+
+        [ObservableProperty]
+        CustomerRoutes locationThisCustomer;
+
+        [ObservableProperty]
+        bool showLocationThisCustomer;
+
+        [ObservableProperty]
+        bool customerListRefresh;
 
         readonly AccessDataBase _db;
         readonly Service.ISelectRoutes _selectRoutes;
@@ -28,38 +35,46 @@ namespace DriversRoutes.Pages.ListOfPoints
         {
             _db = db;
             _selectRoutes = selectRoutes;
-            CustomerRoutes ??= new();
+            CustomerRoutes ??= [];
         }
 
         #region Method
-        public ObservableCollection<MapsM> GetPoints(Routes routes, SelectedDayOfWeekRoutes week)
+        public ObservableCollection<CustomerRoutes> GetPoints(Routes routes, SelectedDayOfWeekRoutes week)
         {
             try
             {
+                CustomerListRefresh = true;
                 var result = _selectRoutes.GetCustomerRoutesQuery(routes, week);
-                var points = new ObservableCollection<MapsM>();
-                for (int i = 0; i < result.Length; i++)
-                {
-                    points.Add(result[i].ParseAsCustomerM());
-                }
-                return points;
+                return new ObservableCollection<CustomerRoutes>(result);
             }
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
                 throw;
             }
+            finally
+            {
+                CustomerListRefresh = false;
+            }
 
         }
-        public async Task<ObservableCollection<MapsM>> GetPointsAsync(Routes routes, SelectedDayOfWeekRoutes week)
+        public async Task<ObservableCollection<CustomerRoutes>> GetPointsAsync(Routes routes, SelectedDayOfWeekRoutes week)
         {
-            var result = await _selectRoutes.GetCustomerRoutesQueryAsync(routes, week);
-            var points = new ObservableCollection<MapsM>();
-            for (int i = 0; i < result.Length; i++)
+            try
             {
-                points.Add(result[i].ParseAsCustomerM());
+                CustomerListRefresh = true;
+                var result = await _selectRoutes.GetCustomerRoutesQueryAsync(routes, week);
+                return new ObservableCollection<CustomerRoutes>(result);
             }
-            return points;
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+                throw;
+            }
+            finally
+            {
+                CustomerListRefresh = false;
+            }
         }
 
         #endregion
@@ -67,7 +82,7 @@ namespace DriversRoutes.Pages.ListOfPoints
         #region Command
 
         [RelayCommand]
-        async Task DeletePoint(MapsM point)
+        void LocationOfPin(CustomerRoutes point)
         {
             try
             {
@@ -75,14 +90,8 @@ namespace DriversRoutes.Pages.ListOfPoints
                 {
                     return;
                 }
-
-                var id = point.Id.ToString();
-                await _db.DataBaseAsync.ExecuteScalarAsync<bool>($"DELETE FROM Routes WHERE Id ='{id}'");
-
-                var dayId = point.SelectedDayOfWeek.Id.ToString();
-                await _db.DataBaseAsync.ExecuteScalarAsync<bool>($"DELETE FROM SelectedDayOfWeekRoutes WHERE Id ='{dayId}'");
-
-                CustomerRoutes.Remove(point);
+                ShowLocationThisCustomer = true;
+                LocationThisCustomer = point;
             }
             catch (Exception ex)
             {
@@ -91,7 +100,7 @@ namespace DriversRoutes.Pages.ListOfPoints
         }
 
         [RelayCommand]
-        async Task EditPin(MapsM point)
+        async Task DisplayPin(CustomerRoutes point)
         {
             try
             {
@@ -100,45 +109,25 @@ namespace DriversRoutes.Pages.ListOfPoints
                     return;
                 }
 
-                //var popup = new Popups.AddCustomer.AddCustomerV(new Model.CustomerRoutes()
-                //{
-                //    Id = new Guid(point.Id.ToByteArray()),
-                //    RoutesId = new Guid(point.RoutesId.ToByteArray()),
-                //    QueueNumber = point.Index,
-                //    Name = point.Name,
-                //    Description = point.Description,
-                //    PhoneNumber = point.PhoneNumber,
-                //    CreatedDate = point.Created,
-                //    DayOfWeek = point.SelectedDayOfWeek,
-                //    Longitude = point.Longitude,
-                //    Latitude = point.Latitude,
-                //});
+                await Shell.Current.GoToAsync($"{nameof(Pages.Customer.DisplayCustomer.DisplayCustomerV)}?",
+                    new Dictionary<string, object>()
+                    {
+                        [nameof(Model.CustomerRoutes)] = new Model.CustomerRoutes()
+                        {
+                            Id = new Guid(point.Id.ToByteArray()),
+                            RoutesId = new Guid(point.RoutesId.ToByteArray()),
+                            QueueNumber = point.QueueNumber,
+                            Name = point.Name,
+                            Description = point.Description,
+                            PhoneNumber = point.PhoneNumber,
+                            CreatedDate = point.CreatedDate,
+                            DayOfWeek = point.DayOfWeek,
+                            ResidentialAddress = point.ResidentialAddress,
+                            Longitude = point.Longitude,
+                            Latitude = point.Latitude,
+                        },
+                    });
 
-               // var update = await Shell.Current.ShowPopupAsync(popup);
-               // if (update is null)
-               // {
-               //     return;
-               // }
-               // int index = CustomerRoutes.IndexOf(point);
-               //
-               // if (update is CustomerRoutes customerUpdate)
-               // {
-               //     CustomerRoutes[index].Id = new Guid(customerUpdate.Id.ToByteArray());
-               //     CustomerRoutes[index].RoutesId = new Guid(customerUpdate.RoutesId.ToByteArray());
-               //     CustomerRoutes[index].Index = customerUpdate.QueueNumber;
-               //     CustomerRoutes[index].Name = customerUpdate.Name;
-               //     CustomerRoutes[index].Description = customerUpdate.Description;
-               //     CustomerRoutes[index].PhoneNumber = customerUpdate.PhoneNumber;
-               //     CustomerRoutes[index].Created = customerUpdate.CreatedDate;
-               //     CustomerRoutes[index].SelectedDayOfWeek = customerUpdate.DayOfWeek;
-               //     CustomerRoutes[index].SelectedDayOfWeek.Id = new Guid(customerUpdate.DayOfWeek.Id.ToByteArray());
-               //     CustomerRoutes[index].SelectedDayOfWeek.CustomerId = new Guid(customerUpdate.DayOfWeek.CustomerId.ToByteArray());
-               //     CustomerRoutes[index].Longitude = customerUpdate.Longitude;
-               //     CustomerRoutes[index].Latitude = customerUpdate.Latitude;
-               //
-               //     await _db.DataBaseAsync.UpdateAsync(customerUpdate);
-               //     await _db.DataBaseAsync.UpdateAsync(customerUpdate.DayOfWeek);
-               // }
             }
             catch (Exception ex)
             {
@@ -160,6 +149,12 @@ namespace DriversRoutes.Pages.ListOfPoints
                 CustomerRoutes.Clear();
                 CustomerRoutes = await GetPointsAsync(Route, day);
             }
+        }
+
+        [RelayCommand]
+        void Refresh()
+        {
+            CustomerListRefresh = false;
         }
 
         #endregion

@@ -2,7 +2,7 @@ using CommunityToolkit.Maui.Views;
 
 using DriversRoutes.Model;
 
-namespace DriversRoutes.Pages.AddCustomer.ProbableAddresses;
+namespace DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses;
 
 public partial class ProbableAddressesV : Popup
 {

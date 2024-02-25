@@ -14,29 +14,29 @@ namespace DriversRoutes.Data
             _db = db;
         }
 
-        public async Task<CustomerRoutes[]> GetCustomerRoutes(Routes routes, SelectedDayOfWeekRoutes dayOf)
-        {
-            var customers = await _db.DataBaseAsync.Table<CustomerRoutes>()
-                .Where(x => x.RoutesId == routes.Id).ToArrayAsync();
+        //public async Task<CustomerRoutes[]> GetCustomerRoutes(Routes routes, SelectedDayOfWeekRoutes dayOf)
+        //{
+        //    var customers = await _db.DataBaseAsync.Table<CustomerRoutes>()
+        //        .Where(x => x.RoutesId == routes.Id).ToArrayAsync();
 
-            for (int i = 0; i < customers.Length; i++)
-            {
-                customers[i].DayOfWeek = await GetDayOfWeek(customers[i], dayOf);
-            }
+        //    for (int i = 0; i < customers.Length; i++)
+        //    {
+        //        customers[i].DayOfWeek = await GetDayOfWeek(customers[i], dayOf);
+        //    }
 
 
-            var result = customers.Where(x => x.DayOfWeek is not null);
+        //    var result = customers.Where(x => x.DayOfWeek is not null);
 
-            return result.ToArray();
-        }
+        //    return result.ToArray();
+        //}
 
-        async Task<SelectedDayOfWeekRoutes> GetDayOfWeek(CustomerRoutes customer, SelectedDayOfWeekRoutes dayOf)
-        {
-            var week = await _db.DataBaseAsync.Table<SelectedDayOfWeekRoutes>()
-                .FirstOrDefaultAsync(x => x.CustomerId == customer.Id && x.ValuesAsString.Contains(dayOf.ValuesAsString));
+        //async Task<SelectedDayOfWeekRoutes> GetDayOfWeek(CustomerRoutes customer, SelectedDayOfWeekRoutes dayOf)
+        //{
+        //    var week = await _db.DataBaseAsync.Table<SelectedDayOfWeekRoutes>()
+        //        .FirstOrDefaultAsync(x => x.CustomerId == customer.Id && x.ValuesAsString.Contains(dayOf.ValuesAsString));
 
-            return week;
-        }
+        //    return week;
+        //}
 
         public async Task<CustomerRoutes[]> GetCustomerRoutesQueryAsync(Routes routes, SelectedDayOfWeekRoutes dayOf)
         {
@@ -50,12 +50,12 @@ namespace DriversRoutes.Data
                 {
                     Id = queryResult[i].Id,
                     RoutesId = queryResult[i].RoutesId,
-                    QueueNumber = queryResult[i].QueueNumber,
+                    QueueNumber = i + 1,
                     Name = queryResult[i].Name,
                     Description = queryResult[i].Description,
                     PhoneNumber = queryResult[i].PhoneNumber,
                     CreatedDate = queryResult[i].CreatedDate,
-                    Longitude = queryResult[i].Longitude,                    
+                    Longitude = queryResult[i].Longitude,
                     Latitude = queryResult[i].Latitude,
                     DayOfWeek = Newtonsoft.Json.JsonConvert.DeserializeObject<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek),
                     ResidentialAddress = Newtonsoft.Json.JsonConvert.DeserializeObject<ResidentialAddress>(queryResult[i].JsonAddress)
@@ -78,7 +78,7 @@ namespace DriversRoutes.Data
                 {
                     Id = queryResult[i].Id,
                     RoutesId = queryResult[i].RoutesId,
-                    QueueNumber = queryResult[i].QueueNumber,
+                    QueueNumber = i + 1,
                     Name = queryResult[i].Name,
                     Description = queryResult[i].Description,
                     PhoneNumber = queryResult[i].PhoneNumber,

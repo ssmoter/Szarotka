@@ -13,7 +13,6 @@ namespace DriversRoutes.Helper
 SELECT 
 CustomerRoutes.Id,
 CustomerRoutes.RoutesId,
-CustomerRoutes.QueueNumber,
 CustomerRoutes.Name,
 CustomerRoutes.Description,
 CustomerRoutes.PhoneNumber,
@@ -45,7 +44,6 @@ json_object(
 	'Saturday',SelectedDayOfWeekRoutes.Saturday,
     'SaturdayTicks',SelectedDayOfWeekRoutes.SaturdayTicks,
 
-	'ValuesAsString',SelectedDayOfWeekRoutes.ValuesAsString,
 	'Optional',SelectedDayOfWeekRoutes.Optional
 
 ) as 'JsonDayOfWeek',

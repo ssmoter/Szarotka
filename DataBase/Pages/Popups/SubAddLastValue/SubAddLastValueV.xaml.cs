@@ -10,7 +10,7 @@ public partial class SubAddLastValueV : Popup
         var vm = new SubAddLastValueVM();
         vm.SubAddLastValueM.OldValue = oldValue;
         vm.SubAddLastValueM.Title = title;
-        vm.Close += CloseAsync;
+        vm.Close += CloseAsync;        
         BindingContext = vm;
     }
 

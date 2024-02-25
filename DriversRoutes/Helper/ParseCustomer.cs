@@ -1,5 +1,5 @@
 ﻿using DriversRoutes.Model;
-using DriversRoutes.Pages.Maps;
+using DriversRoutes.Pages.Maps.MapAndPoints;
 
 namespace DriversRoutes.Helper
 {
@@ -23,6 +23,7 @@ namespace DriversRoutes.Helper
             to.Longitude = from.Longitude;
             to.Latitude = from.Latitude;
             to.SelectedDayOfWeek = from.DayOfWeek;
+            to.ResidentialAddress = from.ResidentialAddress;
             to.SetPin();
             from.Dispose();
         }
@@ -44,6 +45,7 @@ namespace DriversRoutes.Helper
             to.Longitude = from.Longitude;
             to.Latitude = from.Latitude;
             to.DayOfWeek = from.SelectedDayOfWeek;
+            to.ResidentialAddress = from.ResidentialAddress;
         }
 
 
@@ -65,6 +67,7 @@ namespace DriversRoutes.Helper
             to.Longitude = from.Longitude;
             to.Latitude = from.Latitude;
             to.SelectedDayOfWeek = from.DayOfWeek;
+            to.ResidentialAddress = from.ResidentialAddress;
             to.SetPin();
             from.Dispose();
             return to;
@@ -87,6 +90,7 @@ namespace DriversRoutes.Helper
             to.Longitude = from.Longitude;
             to.Latitude = from.Latitude;
             to.DayOfWeek = from.SelectedDayOfWeek;
+            to.ResidentialAddress= from.ResidentialAddress;
             return to;
         }
 

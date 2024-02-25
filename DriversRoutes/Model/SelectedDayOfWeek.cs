@@ -2,15 +2,16 @@
 
 using SQLite;
 
+using System.ComponentModel;
 using System.Text;
 
 namespace DriversRoutes.Model
 {
     public partial class SelectedDayOfWeekRoutes : ObservableObject
     {
+        [PrimaryKey]
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
-
 
         [ObservableProperty]
         bool sunday;
@@ -245,45 +246,45 @@ namespace DriversRoutes.Model
         [ObservableProperty]
         bool optional;
 
-        string valuesAsString;
-        public string ValuesAsString
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(valuesAsString))
-                {
-                    return this.ToString();
-                }
-                return valuesAsString;
-            }
-            set
-            {
-                if (SetProperty(ref valuesAsString, value))
-                {
-                    OnPropertyChanged(nameof(ValuesAsString));
-                }
-            }
-        }
-        string valuesAsStringWithTheTime;
-        [Ignore]
-        public string ValuesAsStringWithTheTime
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(valuesAsStringWithTheTime))
-                {
-                    return this.ToStringWithTheTime();
-                }
-                return valuesAsStringWithTheTime;
-            }
-            set
-            {
-                if (SetProperty(ref valuesAsStringWithTheTime, value))
-                {
-                    OnPropertyChanged(nameof(ValuesAsStringWithTheTime));
-                }
-            }
-        }
+        //string valuesAsString;
+        //public string ValuesAsString
+        //{
+        //    get
+        //    {
+        //        if (string.IsNullOrWhiteSpace(valuesAsString))
+        //        {
+        //            return this.ToString();
+        //        }
+        //        return valuesAsString;
+        //    }
+        //    set
+        //    {
+        //        if (SetProperty(ref valuesAsString, value))
+        //        {
+        //            OnPropertyChanged(nameof(ValuesAsString));
+        //        }
+        //    }
+        //}
+        //string valuesAsStringWithTheTime;
+        //[Ignore]
+        //public string ValuesAsStringWithTheTime
+        //{
+        //    get
+        //    {
+        //        if (string.IsNullOrWhiteSpace(valuesAsStringWithTheTime))
+        //        {
+        //            return this.ToStringWithTheTime();
+        //        }
+        //        return valuesAsStringWithTheTime;
+        //    }
+        //    set
+        //    {
+        //        if (SetProperty(ref valuesAsStringWithTheTime, value))
+        //        {
+        //            OnPropertyChanged(nameof(ValuesAsStringWithTheTime));
+        //        }
+        //    }
+        //}
 
 
         public override string ToString()
@@ -327,38 +328,68 @@ namespace DriversRoutes.Model
             if (Sunday)
             {
                 sb.Append("Niedziela-");
-                sb.AppendLine(SundayTimeSpan.ToString("hh\\:mm"));
+                sb.Append(SundayTimeSpan.ToString("hh\\:mm"));
             }
             if (Monday)
             {
+                if (Sunday)
+                    sb.AppendLine();
+
                 sb.Append("Poniedziałek-");
-                sb.AppendLine(MondayTimeSpan.ToString("hh\\:mm"));
+                sb.Append(MondayTimeSpan.ToString("hh\\:mm"));
+
             }
             if (Tuesday)
             {
+                if (Sunday || Monday)
+                    sb.AppendLine();
+
                 sb.Append("Wtorek-");
-                sb.AppendLine(TuesdayTimeSpan.ToString("hh\\:mm"));
+                sb.Append(TuesdayTimeSpan.ToString("hh\\:mm"));
+
             }
             if (Wednesday)
             {
+                if (Sunday || Monday || Tuesday)
+                    sb.AppendLine();
+
                 sb.Append("Środa-");
-                sb.AppendLine(WednesdayTimeSpan.ToString("hh\\:mm"));
+                sb.Append(WednesdayTimeSpan.ToString("hh\\:mm"));
+
             }
             if (Thursday)
             {
+                if (Sunday || Monday || Tuesday || Thursday)
+                    sb.AppendLine();
+
                 sb.Append("Czwartek-");
-                sb.AppendLine(ThursdayTimeSpan.ToString("hh\\:mm"));
+                sb.Append(ThursdayTimeSpan.ToString("hh\\:mm"));
+
             }
             if (Friday)
             {
+                if (Sunday || Monday || Tuesday || Thursday || Friday)
+                    sb.AppendLine();
+
                 sb.Append("Piątek-");
-                sb.AppendLine(FridayTimeSpan.ToString("hh\\:mm"));
+                sb.Append(FridayTimeSpan.ToString("hh\\:mm"));
             }
             if (Saturday)
             {
+                if (Sunday || Monday || Tuesday || Thursday || Friday || Saturday)
+                    sb.AppendLine();
+
                 sb.Append("Sobota-");
-                sb.AppendLine(SaturdayTimeSpan.ToString("hh\\:mm"));
+                sb.Append(SaturdayTimeSpan.ToString("hh\\:mm"));
             }
+            if (Optional)
+            {
+                if (Sunday || Monday || Tuesday || Thursday || Friday || Saturday || Optional)
+                    sb.AppendLine();
+
+                sb.Append("Klient Okazjonalny");
+            }
+
             return sb.ToString();
         }
 

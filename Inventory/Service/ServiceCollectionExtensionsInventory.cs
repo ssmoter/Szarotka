@@ -1,4 +1,5 @@
-﻿using Inventory.Pages.Options.CreateTable;
+﻿using Inventory.Data;
+using Inventory.Pages.Options.CreateTable;
 
 namespace Inventory.Service
 {

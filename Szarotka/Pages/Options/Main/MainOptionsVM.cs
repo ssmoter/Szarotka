@@ -12,8 +12,8 @@ namespace Szarotka.Pages.Options.Main
         [ObservableProperty]
         ObservableCollection<string> themes;
 
-        string isSelectedTheme;
-        public string IsSelectedTheme
+        string? isSelectedTheme;
+        public string? IsSelectedTheme
         {
             get => isSelectedTheme;
             set
@@ -21,25 +21,30 @@ namespace Szarotka.Pages.Options.Main
                 if (SetProperty(ref isSelectedTheme, value))
                 {
                     OnPropertyChanged(nameof(IsSelectedTheme));
-                    ChangeThema(IsSelectedTheme);
+                    if (IsSelectedTheme is not null)
+                        ChangeThema(IsSelectedTheme);
                 }
             }
         }
 
         [ObservableProperty]
-        string appVersion;
+        string? appVersion;
 
         public MainOptionsVM()
         {
-            AppVersion = Assembly.GetExecutingAssembly()
-                                 .GetName().Version
-                                 .ToString();
-            Themes = new ObservableCollection<string>()
-                {
+            var version = Assembly.GetExecutingAssembly()
+                                .GetName().Version;
+            if (version is not null)
+                AppVersion = version.ToString();
+
+            Themes =
+                [
                     nameof(AppTheme.Unspecified)
-                    ,nameof(AppTheme.Light)
-                    ,nameof(AppTheme.Dark)
-                };
+                    ,
+                    nameof(AppTheme.Light)
+                    ,
+                    nameof(AppTheme.Dark)
+                ];
 
             _appThemes = new Dictionary<string, int>()
             {
@@ -56,7 +61,9 @@ namespace Szarotka.Pages.Options.Main
         {
             var result = _appThemes[value];
 
-            App.Current.UserAppTheme = (AppTheme)result;
+            if (App.Current is not null)
+                App.Current.UserAppTheme = (AppTheme)result;
+
             Preferences.Set("Theme", result);
         }
 

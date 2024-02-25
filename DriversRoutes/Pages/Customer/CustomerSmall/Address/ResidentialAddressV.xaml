@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="DriversRoutes.Pages.Customer.CustomerSmall.Address.ResidentialAddressV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Name="this">
+
+    <VerticalStackLayout BindingContext="{x:Reference this}">
+
+
+        <Border
+            Padding="5"
+            IsVisible="{Binding AddressIsVisible}"
+            Stroke="Transparent">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10" />
+            </Border.StrokeShape>
+            <VerticalStackLayout>
+
+                <VerticalStackLayout.GestureRecognizers>
+                    <TapGestureRecognizer
+                        Buttons="Primary"
+                        NumberOfTapsRequired="2"
+                        Tapped="TapGestureRecognizer_Tapped_CopyAddress" />
+                </VerticalStackLayout.GestureRecognizers>
+
+                <Label HorizontalOptions="Center" Text="Adres" />
+
+                <HorizontalStackLayout>
+                    <Label IsVisible="{Binding ResidentialAddressM.Name}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding ResidentialAddress.Name}" />
+                                <Span Text=" " />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Label IsVisible="{Binding ResidentialAddressM.Surname}" Text="{Binding ResidentialAddress.Surname}" />
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout>
+
+                    <Label IsVisible="{Binding ResidentialAddressM.Street}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding ResidentialAddress.Street}" />
+                                <Span Text=" " />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Label IsVisible="{Binding ResidentialAddressM.HouseNumber}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding ResidentialAddress.HouseNumber}" />
+                                <Span Text=" " />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                    <Label IsVisible="{Binding ResidentialAddressM.ApartmentNumber}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="/" />
+                                <Span Text="{Binding ResidentialAddress.ApartmentNumber}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout>
+                    <Label IsVisible="{Binding ResidentialAddressM.PostalCode}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="{Binding ResidentialAddress.PostalCode}" />
+                                <Span Text=" " />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Label IsVisible="{Binding ResidentialAddressM.City}" Text="{Binding ResidentialAddress.City}" />
+                </HorizontalStackLayout>
+                <Label IsVisible="{Binding ResidentialAddressM.Country}" Text="{Binding ResidentialAddress.Country}" />
+
+            </VerticalStackLayout>
+        </Border>
+
+
+
+
+    </VerticalStackLayout>
+
+
+</ContentView>

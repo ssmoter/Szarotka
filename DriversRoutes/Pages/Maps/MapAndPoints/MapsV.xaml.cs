@@ -1,9 +1,8 @@
 ﻿using Microsoft.Maui.Controls.Maps;
-using Microsoft.Maui.Maps;
 
-namespace DriversRoutes.Pages.Maps;
+namespace DriversRoutes.Pages.Maps.MapAndPoints;
 
-public partial class MapsV : ContentPage
+public partial class MapsV : ContentPage, IDisposable
 {
     public MapsV(MapsVM vm)
     {
@@ -11,7 +10,7 @@ public partial class MapsV : ContentPage
         vm.GoToLocation += Map.MoveToRegion;
         BindingContext = vm;
 
-        Task.Run(async() =>
+        Task.Run(async () =>
         {
             await vm.StartListeningLocation(this.Map);
         });
@@ -25,6 +24,24 @@ public partial class MapsV : ContentPage
         //    this.Map.MoveToRegion(mapSpan);
     }
 
+    public void Dispose()
+    {
+        if (BindingContext is MapsVM vm)
+            vm.GoToLocation -= Map.MoveToRegion;
+    }
+
+    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
+    {
+        base.OnNavigatedFrom(args);
+        if (BindingContext is MapsVM vm)
+        {
+            if (vm.LastSelectedDayOfWeek is not null)
+            {
+                vm.LastSelectedDayOfWeekWhenNavigation = vm.LastSelectedDayOfWeek;
+            }
+        }
+    }
+
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
@@ -35,9 +52,16 @@ public partial class MapsV : ContentPage
                 return;
             if (vm.DriversRoutesName.Length <= 16)
                 vm.DriversRoutesName += vm.Routes.Name;
-            if (vm.LastSeectedDayOfWeek is not null)
+
+            if (vm.LastSelectedDayOfWeekWhenNavigation is not null)
             {
-                vm.AllPoints = await vm.GetSelectedDays(vm.LastSeectedDayOfWeek);
+                vm.AllPoints.Clear();
+                vm.AllPoints = await vm.GetSelectedDays(vm.LastSelectedDayOfWeekWhenNavigation);
+            }
+            else if (vm.LastSelectedDayOfWeek is not null)
+            {
+                vm.AllPoints.Clear();
+                vm.AllPoints = await vm.GetSelectedDays(vm.LastSelectedDayOfWeek);
             }
         }
     }
@@ -64,7 +88,7 @@ public partial class MapsV : ContentPage
                 RoutesId = vm.Routes.Id,
             };
 
-            await Shell.Current.GoToAsync($"{nameof(Pages.AddCustomer.AddCustomerV)}"
+            await Shell.Current.GoToAsync($"{nameof(Pages.Customer.AddCustomer.AddCustomerV)}"
                 , new Dictionary<string, object>
                 {
                     [nameof(Model.CustomerRoutes)] = customer,
