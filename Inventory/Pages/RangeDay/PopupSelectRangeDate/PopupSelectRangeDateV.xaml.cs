@@ -1,6 +1,6 @@
 using CommunityToolkit.Maui.Views;
 
-using Inventory.Model;
+using DataBase.Model.EntitiesInventory;
 
 namespace Inventory.Pages.RangeDay.PopupSelectRangeDate;
 

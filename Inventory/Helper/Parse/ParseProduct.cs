@@ -1,4 +1,5 @@
-﻿using Inventory.Model;
+﻿using DataBase.Model.EntitiesInventory;
+
 using Inventory.Model.MVVM;
 
 namespace Inventory.Helper.Parse
@@ -124,7 +125,7 @@ namespace Inventory.Helper.Parse
                 to.Name = from.Name;
                 to.Description = from.Description;
                 to.Img = from.Img;
-                to.Arrangement =  from.Arrangement;
+                to.Arrangement = from.Arrangement;
             }
         }
 

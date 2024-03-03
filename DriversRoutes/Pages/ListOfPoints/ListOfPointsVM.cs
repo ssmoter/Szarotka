@@ -3,14 +3,17 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
-
-using DriversRoutes.Model;
+using DataBase.Data.File;
+using DataBase.Model.EntitiesRoutes;
+using DataBase.Pages.ExistingFiles;
+using DataBase.Service;
 
 using System.Collections.ObjectModel;
 
 namespace DriversRoutes.Pages.ListOfPoints
 {
-    [QueryProperty(nameof(Route), nameof(Model.Routes))]
+    [QueryProperty(nameof(Route), nameof(Routes))]
+    [QueryProperty(nameof(FilesPath), nameof(FilesPath))]
     public partial class ListOfPointsVM : ObservableObject
     {
         [ObservableProperty]
@@ -28,14 +31,71 @@ namespace DriversRoutes.Pages.ListOfPoints
         [ObservableProperty]
         bool customerListRefresh;
 
+        bool saveData;
+
+        public bool SaveIsVisible
+        {
+            get => saveData;
+        }
+        public bool RangeIsVisible
+        {
+            get => !saveData;
+        }
+
+        string filesPath;
+        public string FilesPath
+        {
+            set
+            {
+                if (value is not null)
+                {
+                    filesPath = value;
+
+                    saveData = true;
+                    OnPropertyChanged(nameof(SaveIsVisible));
+                    OnPropertyChanged(nameof(RangeIsVisible));
+
+                    var extension = Path.GetExtension(filesPath);
+                    if (extension == FileHelper.jsonTyp)
+                    {
+                        Task.Run(async () => { await GetCustomerPointsFromFile(); });
+                    }
+                }
+            }
+        }
+
+        private async Task GetCustomerPointsFromFile()
+        {
+            try
+            {
+                CustomerListRefresh = true;
+
+                var result = await JsonFile.GetFileJson<CustomerRoutes[]>(filesPath);
+
+                CustomerRoutes?.Clear();
+                CustomerRoutes = new ObservableCollection<CustomerRoutes>(result);
+
+                await GetRouteFromPoints();
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+            finally
+            {
+                CustomerListRefresh = false;
+            }
+        }
+
         readonly AccessDataBase _db;
         readonly Service.ISelectRoutes _selectRoutes;
-
-        public ListOfPointsVM(AccessDataBase db, Service.ISelectRoutes selectRoutes)
+        readonly Service.ISaveRoutes _saveRoutes;
+        public ListOfPointsVM(AccessDataBase db, Service.ISelectRoutes selectRoutes, Service.ISaveRoutes saveRoutes)
         {
             _db = db;
             _selectRoutes = selectRoutes;
             CustomerRoutes ??= [];
+            _saveRoutes = saveRoutes;
         }
 
         #region Method
@@ -77,6 +137,34 @@ namespace DriversRoutes.Pages.ListOfPoints
             }
         }
 
+        async Task GetRouteFromPoints()
+        {
+            if (Route is not null)
+            {
+                return;
+            }
+            if (CustomerRoutes is null)
+            {
+                return;
+            }
+
+            if (CustomerRoutes.Count < 1)
+            {
+                return;
+            }
+
+            var routes = await _db.DataBaseAsync.Table<Routes>().ToArrayAsync();
+
+            for (int i = 0; i < routes.Length; i++)
+            {
+                if (CustomerRoutes.FirstOrDefault().RoutesId == routes[i].Id)
+                {
+                    Route = routes[i];
+                    break;
+                }
+            }
+        }
+
         #endregion
 
         #region Command
@@ -112,7 +200,7 @@ namespace DriversRoutes.Pages.ListOfPoints
                 await Shell.Current.GoToAsync($"{nameof(Pages.Customer.DisplayCustomer.DisplayCustomerV)}?",
                     new Dictionary<string, object>()
                     {
-                        [nameof(Model.CustomerRoutes)] = new Model.CustomerRoutes()
+                        [nameof(CustomerRoutes)] = new CustomerRoutes()
                         {
                             Id = new Guid(point.Id.ToByteArray()),
                             RoutesId = new Guid(point.RoutesId.ToByteArray()),
@@ -138,16 +226,23 @@ namespace DriversRoutes.Pages.ListOfPoints
         [RelayCommand]
         async Task SelectDaysOfWeek()
         {
-            var popup = new Popups.SelectDay.SelectDayV();
-            var response = await Shell.Current.ShowPopupAsync(popup);
-            if (response is null)
+            try
             {
-                return;
+                var popup = new Popups.SelectDay.SelectDayV();
+                var response = await Shell.Current.ShowPopupAsync(popup);
+                if (response is null)
+                {
+                    return;
+                }
+                if (response is SelectedDayOfWeekRoutes day)
+                {
+                    //CustomerRoutes.Clear();
+                    CustomerRoutes = await GetPointsAsync(Route, day);
+                }
             }
-            if (response is SelectedDayOfWeekRoutes day)
+            catch (Exception ex)
             {
-                CustomerRoutes.Clear();
-                CustomerRoutes = await GetPointsAsync(Route, day);
+                _db.SaveLog(ex);
             }
         }
 
@@ -155,6 +250,80 @@ namespace DriversRoutes.Pages.ListOfPoints
         void Refresh()
         {
             CustomerListRefresh = false;
+        }
+
+        [RelayCommand]
+        async Task SaveFromFile()
+        {
+            try
+            {
+                var result = await Shell.Current.DisplayAlert("Zapisywanie", "Czy chcesz zapisać lub zaktualizować wczytane punkty", "Tak", "Nie");
+                if (!result)
+                    return;
+
+                for (int i = 0; i < CustomerRoutes.Count; i++)
+                {
+                    await _saveRoutes.SaveCustomer(CustomerRoutes[i], CustomerRoutes[i].RoutesId.ToByteArray());
+                }
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
+
+        [RelayCommand]
+        async Task GenerateJsonFile()
+        {
+            try
+            {
+#if ANDROID
+                if (!await AndroidPermissionService.CheckAllPermissionsAboutStorage())
+                {
+                    return;
+                }
+#endif
+                var allCustomers = await GetPointsAsync(Route, new SelectedDayOfWeekRoutes());
+
+                var name = $"{Route.Name}_{DateTime.Today.ToShortDateString()}";
+                var response = await JsonFile.SaveFileJson(allCustomers.ToArray(), name, FileHelper.DriversRoutes);
+                await Share.Default.RequestAsync(new ShareFileRequest
+                {
+                    Title = name,
+                    File = new ShareFile(response)
+                });
+
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
+
+        [RelayCommand]
+        async Task GetFiles()
+        {
+            try
+            {
+#if ANDROID
+            if (!await AndroidPermissionService.CheckAllPermissionsAboutStorage())
+            {
+                return;
+            }
+#endif
+                var files = FileHelper.GetFilesPaths(FileHelper.DriversRoutes);
+                await Shell.Current.GoToAsync($"{nameof(ExistingFilesV)}?GetTyp={FileHelper.DriversRoutes}",
+                    new Dictionary<string, object>
+                    {
+                        [nameof(ExistingFilesM)] = ExistingFilesVM.GetExistingFiles(files)
+                        ,
+                        ["ReturnPage"] = nameof(ListOfPointsV)
+                    }); ;
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
         }
 
         #endregion

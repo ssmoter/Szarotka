@@ -2,12 +2,13 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Model.EntitiesRoutes;
+
 using DriversRoutes.Helper;
-using DriversRoutes.Model;
 
 namespace DriversRoutes.Pages.Customer.AddCustomer
 {
-    [QueryProperty(nameof(Customer), nameof(Model.CustomerRoutes))]
+    [QueryProperty(nameof(Customer), nameof(CustomerRoutes))]
     [QueryProperty(nameof(RouteId), nameof(Routes))]
     public partial class AddCustomerVM : ObservableObject
     {
@@ -19,12 +20,12 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         public Routes RouteId { get; set; }
 
         [ObservableProperty]
-        Model.CustomerRoutes customer;
+        CustomerRoutes customer;
 
         readonly Service.ISaveRoutes _saveRoutes;
         readonly Service.IDownloadAddress _downloadAddress;
         readonly DataBase.Data.AccessDataBase _db;
-        DriversRoutes.Model.ResidentialAddress[] _address = Array.Empty<DriversRoutes.Model.ResidentialAddress>();
+        ResidentialAddress[] _address = Array.Empty<ResidentialAddress>();
         #endregion
 
         public AddCustomerVM(Service.ISaveRoutes saveRoutes, DataBase.Data.AccessDataBase db, Service.IDownloadAddress downloadAddress)
@@ -96,7 +97,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
                 if (_address.Length < 1)
                 {
                     var response = await _downloadAddress.FindAddressFromCoordinates(Customer.Latitude, Customer.Longitude);
-                    _address = new Model.ResidentialAddress[response.Results.Count];
+                    _address = new ResidentialAddress[response.Results.Count];
 
                     for (int i = 0; i < response.Results.Count; i++)
                     {
@@ -108,7 +109,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
 
                 var result = await Shell.Current.ShowPopupAsync(popup);
 
-                if (result is DriversRoutes.Model.ResidentialAddress address)
+                if (result is ResidentialAddress address)
                 {
                     Customer.ResidentialAddress = address;
                 }

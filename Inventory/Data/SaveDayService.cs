@@ -1,8 +1,8 @@
 ﻿using DataBase.Data;
+using DataBase.Model.EntitiesInventory;
 
 using Inventory.Helper;
 using Inventory.Helper.Parse;
-using Inventory.Model;
 using Inventory.Model.MVVM;
 using Inventory.Service;
 

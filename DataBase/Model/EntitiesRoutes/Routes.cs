@@ -1,6 +1,6 @@
 ﻿using SQLite;
 
-namespace DriversRoutes.Model
+namespace DataBase.Model.EntitiesRoutes
 {
     public class Routes
     {

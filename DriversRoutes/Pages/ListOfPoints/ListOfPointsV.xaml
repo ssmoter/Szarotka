@@ -4,7 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:Customer="clr-namespace:DriversRoutes.Pages.Customer.CustomerSmall"
-    xmlns:CustomeroModel="clr-namespace:DriversRoutes.Model"
+    xmlns:CustomeroModel="clr-namespace:DataBase.Model.EntitiesRoutes;assembly=DataBase"
     xmlns:MapSmall="clr-namespace:DriversRoutes.Pages.Maps.MapSmall"
     xmlns:VM="clr-namespace:DriversRoutes.Pages.ListOfPoints"
     Title="{Binding Route.Name}"
@@ -22,11 +22,20 @@
                 HorizontalOptions="Center"
                 Spacing="5">
 
-                <Button Text="Eksportuj" />
+                <HorizontalStackLayout IsVisible="{Binding RangeIsVisible}">
 
-                <Button Command="{Binding SelectDaysOfWeekCommand}" Text="Wybierz Zakres Dni" />
+                    <Button Command="{Binding GenerateJsonFileCommand}" Text="Eksportuj" />
 
-                <Button Text="Importuj" />
+                    <Button Command="{Binding SelectDaysOfWeekCommand}" Text="Wybierz Zakres Dni" />
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout IsVisible="{Binding SaveIsVisible}">
+                    
+                    <Button Text="Zapisz plik" />
+                    
+                </HorizontalStackLayout>
+
+                <Button Command="{Binding GetFilesCommand}" Text="Pliki" />
 
             </HorizontalStackLayout>
 

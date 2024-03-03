@@ -3,7 +3,7 @@
     x:Class="DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses.ProbableAddressesV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:Model="clr-namespace:DriversRoutes.Model"
+    xmlns:Model="clr-namespace:DataBase.Model.EntitiesRoutes;assembly=DataBase"
     xmlns:VM="clr-namespace:DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:DataType="VM:ProbableAddressesVM"

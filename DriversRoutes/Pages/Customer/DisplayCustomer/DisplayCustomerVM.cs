@@ -2,8 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
-
-using DriversRoutes.Model;
+using DataBase.Model.EntitiesRoutes;
 
 namespace DriversRoutes.Pages.Customer.DisplayCustomer
 {
@@ -20,12 +19,14 @@ namespace DriversRoutes.Pages.Customer.DisplayCustomer
         DisplayCustomerM displayCustomerM;
 
         readonly AccessDataBase _db;
+        readonly Service.ISaveRoutes _saveRoutes;
         public SelectedDayOfWeekRoutes LastSelectedDayOfWeek { get; set; }
 
-        public DisplayCustomerVM(AccessDataBase db)
+        public DisplayCustomerVM(AccessDataBase db, Service.ISaveRoutes saveRoutes)
         {
             _db = db;
             DisplayCustomerM ??= new();
+            _saveRoutes = saveRoutes;
         }
 
 
@@ -39,13 +40,26 @@ namespace DriversRoutes.Pages.Customer.DisplayCustomer
                 if (point is null)
                     return;
 
-                var result = await Shell.Current.DisplayAlert("Usuń", $"Czy na pewno chcesz usunąć {point.QueueNumber}:{point.Name}", "Tak", "Anuluj");
+                var result = await Shell.Current.DisplayAlert("Czy usunąć", $"Czy na pewno chcesz usunąć {point.QueueNumber}:{point.Name}", "Tak", "Anuluj");
 
                 if (!result)
                     return;
 
 
-                await Task.Delay(1000);
+                var taskDay = _db.DataBaseAsync.DeleteAsync(Customer.DayOfWeek);
+                var taskAddress = _db.DataBaseAsync.DeleteAsync(Customer.ResidentialAddress);
+                var taskCustomer = _db.DataBaseAsync.DeleteAsync(Customer);
+
+                var taskReady = await Task.WhenAll(taskDay, taskAddress, taskCustomer);
+
+                result = await Shell.Current.DisplayAlert("Usunięto", "Obiekt został usunięty. Czy chesz przywrócić", "Przywróć", "Nie");
+
+                if (!result)
+                    await Shell.Current.GoToAsync("..");
+                if (!result)
+                {
+                    await _saveRoutes.SaveCustomer(Customer, Customer.RoutesId.ToByteArray());
+                }
             }
             catch (Exception ex)
             {
@@ -79,7 +93,7 @@ namespace DriversRoutes.Pages.Customer.DisplayCustomer
                 await Shell.Current.GoToAsync($"{nameof(Pages.Customer.AddCustomer.AddCustomerV)}?",
                     new Dictionary<string, object>()
                     {
-                        [nameof(Model.CustomerRoutes)] = new Model.CustomerRoutes()
+                        [nameof(CustomerRoutes)] = new CustomerRoutes()
                         {
                             Id = new Guid(point.Id.ToByteArray()),
                             RoutesId = new Guid(point.RoutesId.ToByteArray()),
@@ -93,7 +107,7 @@ namespace DriversRoutes.Pages.Customer.DisplayCustomer
                             Longitude = point.Longitude,
                             Latitude = point.Latitude,
                         },
-                        [nameof(Routes)] = new Model.Routes() { Id = new Guid(point.RoutesId.ToByteArray()), }
+                        [nameof(Routes)] = new Routes() { Id = new Guid(point.RoutesId.ToByteArray()), }
                     });
 
             }

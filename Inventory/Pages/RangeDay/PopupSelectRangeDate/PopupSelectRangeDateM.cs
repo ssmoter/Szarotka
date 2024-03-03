@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-using Inventory.Model;
+using DataBase.Model.EntitiesInventory;
 
 namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
 {

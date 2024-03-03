@@ -8,43 +8,38 @@ namespace Inventory.Service
         public static IServiceCollection AddMyServiceInventory(this IServiceCollection services)
         {
 
-            services.AddSingleton<CreateTableVM>();
-            services.AddSingleton<CreateTableV>();
+            services.AddScoped<CreateTableVM>();
+            services.AddScoped<CreateTableV>();
             services.AddSingleton<Pages.Main.MainVM>();
             services.AddSingleton<Pages.Main.MainV>();
 
             services.AddSingleton<Pages.SingleDay.SingleDayVM>();
 
-            services.AddSingleton<Pages.Products.ListProduct.ListProductVM>();
-            services.AddSingleton<Pages.Products.ListProduct.AddEdit.AddEditProductVM>();
-            services.AddSingleton<Pages.Products.ListProduct.AddEdit.AddEditProductV>();
-            services.AddSingleton<Pages.RangeDay.RangeDayVM>();
+            services.AddScoped<Pages.Products.ListProduct.ListProductVM>();
+            services.AddTransient<Pages.Products.ListProduct.AddEdit.AddEditProductVM>();
+            services.AddTransient<Pages.Products.ListProduct.AddEdit.AddEditProductV>();
+            services.AddScoped<Pages.RangeDay.RangeDayVM>();
 
-            services.AddSingleton<Pages.RangeDay.PopupSelectRangeDate.PopupSelectRangeDateV>();
+            services.AddTransient<Pages.RangeDay.PopupSelectRangeDate.PopupSelectRangeDateV>();
 
-            services.AddSingleton<Pages.Options.EditDriver.EditDriverVM>();
-            services.AddSingleton<Pages.Options.EditDriver.EditDriverV>();
+            services.AddTransient<Pages.Options.EditDriver.EditDriverVM>();
+            services.AddTransient<Pages.Options.EditDriver.EditDriverV>();
 
             services.AddScoped<Pages.RangeDay.Graph.GraphV>();
             services.AddScoped<Pages.RangeDay.Graph.GraphVM>();
 
-            services.AddSingleton<ISaveDayService, SaveDayService>();
-            services.AddSingleton<ISelectDayService, SelectDayService>();
+            services.AddScoped<ISaveDayService, SaveDayService>();
+            services.AddScoped<ISelectDayService, SelectDayService>();
 
 #if WINDOWS
             services.AddSingleton<Pages.SingleDay.SingleDayVWindows>();
-            services.AddSingleton<Pages.Products.ListProduct.ListProductVWindows>();
-            services.AddSingleton<Pages.RangeDay.RangeDayVWindows>();
-
+            services.AddScoped<Pages.Products.ListProduct.ListProductVWindows>();
+            services.AddScoped<Pages.RangeDay.RangeDayVWindows>();
 #else
-            services.AddSingleton<Pages.RangeDay.ExistingFiles.ExistingFilesV>();
-            services.AddSingleton<Pages.RangeDay.ExistingFiles.ExistingFilesVM>();
-
-            services.AddSingleton<Pages.RangeDay.RangeDayV>();
+            services.AddScoped<Pages.RangeDay.RangeDayV>();
             services.AddSingleton<Pages.SingleDay.SingleDayV>();
-            services.AddSingleton<Pages.Products.ListProduct.ListProductV>();
+            services.AddScoped<Pages.Products.ListProduct.ListProductV>();
 #endif
-
 
             return services;
         }

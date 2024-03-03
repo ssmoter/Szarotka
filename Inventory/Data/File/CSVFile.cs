@@ -1,20 +1,15 @@
 ﻿using CsvHelper;
 
-using Inventory.Pages.RangeDay;
+using DataBase.Data.File;
 
-using Newtonsoft.Json;
+using Inventory.Pages.RangeDay;
 
 using System.Text;
 
 namespace Inventory.Data.File
 {
-    public static class FileManagerCSVJson
+    public static class CSVFile
     {
-        public const string jsonTyp = ".json";
-        public const string JsonFolder = "Json";
-        public const string csvTyp = ".csv";
-        public const string CsvFolder = "CSV";
-
         public static RangeDayM[] GetFileCSV(string path)
         {
             try
@@ -148,11 +143,11 @@ namespace Inventory.Data.File
         {
             try
             {
-                var path = Path.Combine(DataBase.Helper.Constants.GetPathFolder, CsvFolder);
+                var path = Path.Combine(DataBase.Helper.Constants.GetPathFolder, FileHelper.CsvFolder);
 
-                CreateFolder(path);
+                FileHelper.CreateFolder(path);
 
-                path = FileIsExist(path, name, csvTyp);
+                path = FileHelper.FileIsExist(path, name, FileHelper.csvTyp);
 
                 using (var writer = new StreamWriter(path, false, Encoding.UTF8))
                 {
@@ -251,97 +246,6 @@ namespace Inventory.Data.File
             catch (Exception)
             {
                 throw;
-            }
-        }
-
-        public static async Task<T> GetFileJson<T>(string path)
-        {
-            try
-            {
-                using var sourceStream = new FileStream(path,
-                      FileMode.Open, FileAccess.Read, FileShare.Read,
-                      bufferSize: 4096, useAsync: true);
-
-                StringBuilder sb = new();
-
-                byte[] buffer = new byte[0x1000];
-                int numRead;
-                while ((numRead = await sourceStream.ReadAsync(buffer)) != 0)
-                {
-                    string text = Encoding.Unicode.GetString(buffer, 0, numRead);
-                    sb.Append(text);
-                }
-
-                var model = JsonConvert.DeserializeObject<T>(sb.ToString());
-                return model;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public static async Task<string> SaveFileJson(object model, string name)
-        {
-            try
-            {
-                var json = JsonConvert.SerializeObject(model);
-                byte[] encodedtext = Encoding.Unicode.GetBytes(json);
-
-                var path = Path.Combine(DataBase.Helper.Constants.GetPathFolder, JsonFolder);
-
-                CreateFolder(path);
-
-                path = FileIsExist(path, name, jsonTyp);
-
-                using var stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true);
-                await stream.WriteAsync(encodedtext);
-
-                return path;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public static IList<string> GetFilesPaths(string typ)
-        {
-            var path = Path.Combine(DataBase.Helper.Constants.GetPathFolder, typ);
-
-            if (!System.IO.Directory.Exists(path))
-            {
-                return null;
-            }
-
-            var list = Directory.GetFiles(path);
-
-            return list;
-        }
-
-
-        static string FileIsExist(string path, string name, string typ)
-        {
-            int? number = 0;
-            var privatePath = Path.Combine(path, name + typ);
-            for (int i = 0; ; i++)
-            {
-                if (!System.IO.File.Exists(privatePath))
-                {
-                    break;
-                }
-                number++;
-                privatePath = Path.Combine(path, name + "_" + number + typ);
-            }
-
-            return privatePath;
-        }
-
-        static void CreateFolder(string path)
-        {
-            if (!System.IO.Directory.Exists(path))
-            {
-                System.IO.Directory.CreateDirectory(path);
             }
         }
 

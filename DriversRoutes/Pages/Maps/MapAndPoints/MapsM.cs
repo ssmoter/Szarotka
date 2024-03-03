@@ -1,5 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
+using DataBase.Model.EntitiesRoutes;
+
+
 #if ANDROID
 using DriversRoutes.Platforms.Android;
 #endif
@@ -60,9 +63,9 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
         double latitude;
 
         [ObservableProperty]
-        Model.SelectedDayOfWeekRoutes selectedDayOfWeek;
+        SelectedDayOfWeekRoutes selectedDayOfWeek;
         [ObservableProperty]
-        Model.ResidentialAddress residentialAddress;
+        ResidentialAddress residentialAddress;
 
         [ObservableProperty]
         ImageSource imageSource;
@@ -75,7 +78,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             //#endif
             Pin = new Pin();
 
-            SelectedDayOfWeek ??= new Model.SelectedDayOfWeekRoutes();
+            SelectedDayOfWeek ??= new SelectedDayOfWeekRoutes();
         }
 
         public void SetPin()
@@ -136,9 +139,9 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
 
-        static Model.SelectedDayOfWeekRoutes RandomDay(int length)
+        static SelectedDayOfWeekRoutes RandomDay(int length)
         {
-            var day = new Model.SelectedDayOfWeekRoutes();
+            var day = new SelectedDayOfWeekRoutes();
 
             if (length % 2 == 0)
                 day.Sunday = true;

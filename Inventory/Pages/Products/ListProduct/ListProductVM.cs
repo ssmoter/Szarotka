@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using DataBase.Helper.Img;
 
 using Inventory.Helper.Parse;
-using Inventory.Model;
+using DataBase.Model.EntitiesInventory;
 
 using System.Collections.ObjectModel;
 

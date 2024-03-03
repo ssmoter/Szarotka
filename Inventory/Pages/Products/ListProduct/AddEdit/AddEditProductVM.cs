@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 
 using Inventory.Helper.Parse;
-using Inventory.Model;
+using DataBase.Model.EntitiesInventory;
 
 using System.Collections.ObjectModel;
 
@@ -60,7 +60,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
 
         public async Task GetPrices(Guid id)
         {
-            var priceM = await _db.DataBaseAsync.Table<Model.ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(x => x.Id).ToArrayAsync();
+            var priceM = await _db.DataBaseAsync.Table<ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(x => x.Id).ToArrayAsync();
             Product.Prices.Clear();
             for (int i = 0; i < priceM.Length; i++)
             {
@@ -92,7 +92,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
         {
             try
             {
-                var productName = new Model.ProductName()
+                var productName = new ProductName()
                 {
                     Id = new Guid(Product.Name.Id.ToByteArray()),
                     Name = Product.Name.Name,
@@ -117,7 +117,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             try
             {
 
-                var productName = new Model.ProductName()
+                var productName = new ProductName()
                 {
                     Id = Guid.NewGuid(),
                     Name = Product.Name.Name,
@@ -166,7 +166,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                 result = result.Replace('.', ',');
                 if (decimal.TryParse(result, out decimal price))
                 {
-                    Model.ProductPrice newPrice = new()
+                    ProductPrice newPrice = new()
                     {
                         Id = Guid.NewGuid(),
                         CreatedDateTime = DateTime.Now,

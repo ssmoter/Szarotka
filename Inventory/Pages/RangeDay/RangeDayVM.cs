@@ -2,6 +2,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Data.File;
+using DataBase.Model.EntitiesInventory;
+using DataBase.Pages.ExistingFiles;
 using DataBase.Service;
 
 using Inventory.Data.File;
@@ -10,8 +13,6 @@ using Inventory.Model;
 using Inventory.Model.MVVM;
 using Inventory.Service;
 
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Text;
 
 namespace Inventory.Pages.RangeDay
@@ -39,17 +40,17 @@ namespace Inventory.Pages.RangeDay
                 {
                     filesPath = value;
                     var extension = Path.GetExtension(filesPath);
-                    if (extension == FileManagerCSVJson.jsonTyp)
+                    if (extension == FileHelper.jsonTyp)
                     {
                         Task.Run(async () =>
                         {
-                            RangeDays = await FileManagerCSVJson.GetFileJson<RangeDayM[]>(filesPath);
+                            RangeDays = await JsonFile.GetFileJson<RangeDayM[]>(filesPath);
                             TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
                         });
                     }
-                    if (extension == FileManagerCSVJson.csvTyp)
+                    if (extension == FileHelper.csvTyp)
                     {
-                        RangeDays = FileManagerCSVJson.GetFileCSV(filesPath);
+                        RangeDays = CSVFile.GetFileCSV(filesPath);
                         TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
                     }
 
@@ -90,7 +91,7 @@ namespace Inventory.Pages.RangeDay
             Day[] days = Array.Empty<Day>();
             if (selectedDriverName is null || selectedDriverName.Length == 0)
             {
-                days = await _db.DataBaseAsync.Table<Inventory.Model.Day>().
+                days = await _db.DataBaseAsync.Table<Day>().
                     Where(x => x.CreatedTicks >= from && x.CreatedTicks <= to).
                     OrderByDescending(x => x.CreatedTicks).ToArrayAsync();
             }
@@ -188,33 +189,6 @@ namespace Inventory.Pages.RangeDay
             return result;
         }
 
-        static PickOptions FileTypCSV()
-        {
-            var pOptions = new PickOptions();
-            var dictionaryTyp = new Dictionary<DevicePlatform, IEnumerable<string>>
-            {
-                { DevicePlatform.WinUI, new[] { "csv" } },
-                { DevicePlatform.Android, new[] { "csv" } }
-            };
-
-            pOptions.FileTypes = new FilePickerFileType(dictionaryTyp);
-
-            return pOptions;
-        }
-        static PickOptions FileTypJson()
-        {
-            var pOptions = new PickOptions();
-            var dictionaryTyp = new Dictionary<DevicePlatform, IEnumerable<string>>
-            {
-                { DevicePlatform.WinUI, new[] { "json", "txt" } },
-                { DevicePlatform.Android, new[] { "json", "txt" } }
-            };
-
-            pOptions.FileTypes = new FilePickerFileType(dictionaryTyp);
-
-            return pOptions;
-        }
-
         string CreateFileName()
         {
             if (RangeDays.Length == 1)
@@ -224,21 +198,6 @@ namespace Inventory.Pages.RangeDay
             var from = RangeDays.FirstOrDefault().DayM.Created.ToString("dd.MM.yyyy");
             var to = RangeDays.LastOrDefault().DayM.Created.ToString("dd.MM.yyyy");
             return string.Join('_', "Szarotka", from, to);
-        }
-
-        static ObservableCollection<ExistingFiles.ExistingFilesM> GetExistingFiles(IList<string> values)
-        {
-            var response = new ObservableCollection<ExistingFiles.ExistingFilesM>();
-            for (int i = 0; i < values.Count; i++)
-            {
-                response.Add(new ExistingFiles.ExistingFilesM()
-                {
-                    Path = values[i],
-                    Name = Path.GetFileName(values[i])
-                });
-
-            }
-            return response;
         }
 
         #endregion
@@ -288,10 +247,10 @@ namespace Inventory.Pages.RangeDay
                 }
                 if (result == "Import")
                 {
-                    var response = await FilePicker.PickAsync(FileTypJson());
+                    var response = await FilePicker.PickAsync(ExistingFilesVM.FileTypJson());
                     if (response == null)
                         return;
-                    var file = await FileManagerCSVJson.GetFileJson<RangeDayM[]>(response.FullPath);
+                    var file = await JsonFile.GetFileJson<RangeDayM[]>(response.FullPath);
                     RangeDays = file;
                     TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
                     EnableSave = true;
@@ -304,7 +263,7 @@ namespace Inventory.Pages.RangeDay
                             RangeDays[i].DayM = await _selectDayService.GetDay(RangeDays[i].DayM.Id);
                     }
                     var name = CreateFileName();
-                    var response = await FileManagerCSVJson.SaveFileJson(RangeDays, name);
+                    var response = await JsonFile.SaveFileJson(RangeDays, name);
                     await Share.Default.RequestAsync(new ShareFileRequest
                     {
                         Title = name,
@@ -313,11 +272,13 @@ namespace Inventory.Pages.RangeDay
                 }
                 if (result == "Pliki")
                 {
-                    var files = FileManagerCSVJson.GetFilesPaths(FileManagerCSVJson.JsonFolder);
-                    await Shell.Current.GoToAsync($"{nameof(ExistingFiles.ExistingFilesV)}?GetTyp={FileManagerCSVJson.JsonFolder}",
+                    var files = FileHelper.GetFilesPaths(FileHelper.JsonFolder);
+                    await Shell.Current.GoToAsync($"{nameof(ExistingFilesV)}?GetTyp={FileHelper.JsonFolder}",
                         new Dictionary<string, object>
                         {
-                            [nameof(ExistingFiles.ExistingFilesM)] = RangeDayVM.GetExistingFiles(files)
+                            [nameof(ExistingFilesM)] = ExistingFilesVM.GetExistingFiles(files)
+                            ,
+                            ["ReturnPage"] = nameof(RangeDayV)
                         }); ;
                 }
 
@@ -351,10 +312,10 @@ namespace Inventory.Pages.RangeDay
                 }
                 if (result == "Import")
                 {
-                    var response = await FilePicker.PickAsync(FileTypCSV());
+                    var response = await FilePicker.PickAsync(ExistingFilesVM.FileTypCSV());
                     if (response == null)
                         return;
-                    var file = FileManagerCSVJson.GetFileCSV(response.FullPath);
+                    var file = CSVFile.GetFileCSV(response.FullPath);
                     RangeDays = file;
                     TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
                     EnableSave = true;
@@ -367,7 +328,7 @@ namespace Inventory.Pages.RangeDay
                             RangeDays[i].DayM = await _selectDayService.GetDay(RangeDays[i].DayM.Id);
                     }
                     var name = CreateFileName();
-                    var response = FileManagerCSVJson.SaveFileCSV(RangeDays, name);
+                    var response = CSVFile.SaveFileCSV(RangeDays, name);
                     await Share.Default.RequestAsync(new ShareFileRequest
                     {
                         Title = name,
@@ -376,11 +337,13 @@ namespace Inventory.Pages.RangeDay
                 }
                 if (result == "Pliki")
                 {
-                    var files = FileManagerCSVJson.GetFilesPaths(FileManagerCSVJson.CsvFolder);
-                    await Shell.Current.GoToAsync($"{nameof(ExistingFiles.ExistingFilesV)}?GetTyp={FileManagerCSVJson.CsvFolder}",
+                    var files = FileHelper.GetFilesPaths(FileHelper.CsvFolder);
+                    await Shell.Current.GoToAsync($"{nameof(ExistingFilesV)}?GetTyp={FileHelper.CsvFolder}",
                         new Dictionary<string, object>
                         {
-                            [nameof(ExistingFiles.ExistingFilesM)] = RangeDayVM.GetExistingFiles(files)
+                            [nameof(ExistingFilesM)] = ExistingFilesVM.GetExistingFiles(files)
+                            ,
+                            ["ReturnPage"] = nameof(RangeDayV)
                         }); ;
                 }
 

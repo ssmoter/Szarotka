@@ -1,6 +1,6 @@
 ﻿using DataBase.Data;
+using DataBase.Model.EntitiesRoutes;
 
-using DriversRoutes.Model;
 using DriversRoutes.Service;
 
 namespace DriversRoutes.Data
@@ -95,7 +95,7 @@ namespace DriversRoutes.Data
             return customers;
         }
 
-        class FullModelForQuery : Model.CustomerRoutes
+        class FullModelForQuery : CustomerRoutes
         {
             public string JsonDayOfWeek { get; set; }
             public string JsonAddress { get; set; }

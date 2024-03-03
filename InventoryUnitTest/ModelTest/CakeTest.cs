@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 
-using Inventory.Model;
+using DataBase.Model.EntitiesInventory;
 
 namespace InventoryUnitTest.ModelTest
 {

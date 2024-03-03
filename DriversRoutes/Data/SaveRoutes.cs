@@ -1,6 +1,6 @@
 ﻿using DataBase.Data;
 
-using DriversRoutes.Model;
+using DataBase.Model.EntitiesRoutes;
 using DriversRoutes.Service;
 
 namespace DriversRoutes.Data

@@ -6,6 +6,7 @@ using Inventory.Helper.Parse;
 using Inventory.Model;
 using Inventory.Model.MVVM;
 using Inventory.Pages.RangeDay.Graph.GraphOptions;
+using DataBase.Model.EntitiesInventory;
 
 using System.Collections.ObjectModel;
 using System.Text;
@@ -67,7 +68,7 @@ namespace Inventory.Pages.RangeDay.Graph
             Day[] days = Array.Empty<Day>();
             if (selectedDriverName is null || selectedDriverName.Length == 0)
             {
-                days = await _db.DataBaseAsync.Table<Inventory.Model.Day>().
+                days = await _db.DataBaseAsync.Table<Day>().
                     Where(x => x.CreatedTicks >= from && x.CreatedTicks <= to).
                     OrderByDescending(x => x.CreatedTicks).ToArrayAsync();
             }

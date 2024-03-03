@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using DriversRoutes.Model;
+using DataBase.Model.EntitiesRoutes;
 
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
@@ -98,7 +98,7 @@ public partial class MapSmallVM : ObservableObject
             MapSmallM.SaveLocation = false;
             MapSmallM.ChangeLocation = true;
             await _db.DataBaseAsync.UpdateAsync(customer);
-            
+
         }
         catch (Exception ex)
         {

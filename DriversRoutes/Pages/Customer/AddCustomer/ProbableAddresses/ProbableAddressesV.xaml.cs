@@ -1,6 +1,6 @@
 using CommunityToolkit.Maui.Views;
 
-using DriversRoutes.Model;
+using DataBase.Model.EntitiesRoutes;
 
 namespace DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses;
 

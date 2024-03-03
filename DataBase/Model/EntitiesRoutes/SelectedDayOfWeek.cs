@@ -2,10 +2,9 @@
 
 using SQLite;
 
-using System.ComponentModel;
 using System.Text;
 
-namespace DriversRoutes.Model
+namespace DataBase.Model.EntitiesRoutes
 {
     public partial class SelectedDayOfWeekRoutes : ObservableObject
     {

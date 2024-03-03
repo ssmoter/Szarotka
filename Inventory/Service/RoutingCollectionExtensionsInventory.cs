@@ -16,7 +16,6 @@
 
 #else
             Routing.RegisterRoute(nameof(Inventory.Pages.RangeDay.RangeDayV), typeof(Inventory.Pages.RangeDay.RangeDayV));
-            Routing.RegisterRoute(nameof(Inventory.Pages.RangeDay.ExistingFiles.ExistingFilesV), typeof(Inventory.Pages.RangeDay.ExistingFiles.ExistingFilesV));
             Routing.RegisterRoute(nameof(Inventory.Pages.SingleDay.SingleDayV), typeof(Inventory.Pages.SingleDay.SingleDayV));
             Routing.RegisterRoute(nameof(Inventory.Pages.Products.ListProduct.ListProductV), typeof(Inventory.Pages.Products.ListProduct.ListProductV));
 #endif

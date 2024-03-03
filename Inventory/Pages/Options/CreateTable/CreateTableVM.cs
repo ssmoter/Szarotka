@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using DataBase.Data;
 
 using Inventory.Helper.Parse;
-using Inventory.Model;
+using DataBase.Model.EntitiesInventory;
 using Inventory.Model.MVVM;
 using Inventory.Pages.Options.EditDriver;
 
@@ -67,23 +67,23 @@ namespace Inventory.Pages.Options.CreateTable
                     return;
                 }
 
-                await _db.DataBaseAsync.DropTableAsync<Inventory.Model.Driver>();
-                await _db.DataBaseAsync.DropTableAsync<Inventory.Model.SelectedDriver>();
-                await _db.DataBaseAsync.DropTableAsync<Inventory.Model.ProductName>();
-                await _db.DataBaseAsync.DropTableAsync<Inventory.Model.ProductPrice>();
-                await _db.DataBaseAsync.DropTableAsync<Inventory.Model.Product>();
-                await _db.DataBaseAsync.DropTableAsync<Inventory.Model.Cake>();
-                await _db.DataBaseAsync.DropTableAsync<Inventory.Model.Day>();
+                await _db.DataBaseAsync.DropTableAsync<Driver>();
+                await _db.DataBaseAsync.DropTableAsync<SelectedDriver>();
+                await _db.DataBaseAsync.DropTableAsync<ProductName>();
+                await _db.DataBaseAsync.DropTableAsync<ProductPrice>();
+                await _db.DataBaseAsync.DropTableAsync<Product>();
+                await _db.DataBaseAsync.DropTableAsync<Cake>();
+                await _db.DataBaseAsync.DropTableAsync<Day>();
 
                 await CheckTables();
 
-                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Driver>();
-                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.SelectedDriver>();
-                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.ProductName>();
-                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.ProductPrice>();
-                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Product>();
-                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Cake>();
-                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Day>();
+                await _db.DataBaseAsync.CreateTableAsync<Driver>();
+                await _db.DataBaseAsync.CreateTableAsync<SelectedDriver>();
+                await _db.DataBaseAsync.CreateTableAsync<ProductName>();
+                await _db.DataBaseAsync.CreateTableAsync<ProductPrice>();
+                await _db.DataBaseAsync.CreateTableAsync<Product>();
+                await _db.DataBaseAsync.CreateTableAsync<Cake>();
+                await _db.DataBaseAsync.CreateTableAsync<Day>();
 
 
                 await CheckTables();
@@ -111,13 +111,13 @@ namespace Inventory.Pages.Options.CreateTable
                 }
                 await CheckTables();
 
-                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Driver>();
-                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.SelectedDriver>();
-                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.ProductName>();
-                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.ProductPrice>();
-                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Product>();
-                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Cake>();
-                await _db.DataBaseAsync.CreateTableAsync<Inventory.Model.Day>();
+                await _db.DataBaseAsync.CreateTableAsync<Driver>();
+                await _db.DataBaseAsync.CreateTableAsync<SelectedDriver>();
+                await _db.DataBaseAsync.CreateTableAsync<ProductName>();
+                await _db.DataBaseAsync.CreateTableAsync<ProductPrice>();
+                await _db.DataBaseAsync.CreateTableAsync<Product>();
+                await _db.DataBaseAsync.CreateTableAsync<Cake>();
+                await _db.DataBaseAsync.CreateTableAsync<Day>();
 
                 await CheckTables();
 
@@ -190,7 +190,7 @@ namespace Inventory.Pages.Options.CreateTable
                         Helper.SelectedDriver.Id = selectedDriver.Id.ToString();
                         Helper.SelectedDriver.Name = selectedDriver.Name;
                         Helper.SelectedDriver.Description = selectedDriver.Description;
-                        await _db.DataBaseAsync.InsertOrReplaceAsync(new Model.SelectedDriver() { Id = 1, SelectedGuid = selectedDriver.Id });
+                        await _db.DataBaseAsync.InsertOrReplaceAsync(new SelectedDriver() { Id = 1, SelectedGuid = selectedDriver.Id });
                         Service.DriverNameUpdateService.OnUpdate();
                     }
 

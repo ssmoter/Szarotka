@@ -2,8 +2,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Model.EntitiesRoutes;
+
 using DriversRoutes.Helper;
-using DriversRoutes.Model;
 
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
@@ -14,7 +15,7 @@ using Location = Microsoft.Maui.Devices.Sensors.Location;
 
 namespace DriversRoutes.Pages.Maps.MapAndPoints
 {
-    [QueryProperty(nameof(Routes), nameof(Model.Routes))]
+    [QueryProperty(nameof(Routes), nameof(DataBase.Model.EntitiesRoutes.Routes))]
     [QueryProperty(nameof(AllPoints), nameof(MapsM))]
     [QueryProperty(nameof(LastSelectedDayOfWeek), nameof(SelectedDayOfWeekRoutes))]
 
@@ -173,7 +174,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
 
             MapsPoint = AllPoints.Where(x => x.Index == index).ToArray();
         }
-        public async Task AddNewPoint(Model.CustomerRoutes customer)
+        public async Task AddNewPoint(CustomerRoutes customer)
         {
             try
             {
@@ -244,7 +245,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             }
         }
 
-        public async Task<ObservableCollection<MapsM>> GetSelectedDays(Model.SelectedDayOfWeekRoutes week)
+        public async Task<ObservableCollection<MapsM>> GetSelectedDays(SelectedDayOfWeekRoutes week)
         {
             var result = await _selectRoutes.GetCustomerRoutesQueryAsync(Routes, week);
             var points = new ObservableCollection<MapsM>();
@@ -346,7 +347,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 await Shell.Current.GoToAsync($"{nameof(Pages.Customer.DisplayCustomer.DisplayCustomerV)}?",
                     new Dictionary<string, object>()
                     {
-                        [nameof(Model.CustomerRoutes)] = new Model.CustomerRoutes()
+                        [nameof(CustomerRoutes)] = new CustomerRoutes()
                         {
                             Id = new Guid(point.Id.ToByteArray()),
                             RoutesId = new Guid(point.RoutesId.ToByteArray()),
@@ -384,7 +385,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 if (mapSpan is null) { return; }
                 OnGoToLocation(mapSpan);
 
-                var customer = new Model.CustomerRoutes()
+                var customer = new CustomerRoutes()
                 {
                     CreatedDate = DateTime.Now,
                     Longitude = mapSpan.Center.Longitude,
@@ -395,7 +396,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 await Shell.Current.GoToAsync($"{nameof(Pages.Customer.AddCustomer.AddCustomerV)}"
                     , new Dictionary<string, object>
                     {
-                        [nameof(Model.CustomerRoutes)] = customer,
+                        [nameof(CustomerRoutes)] = customer,
                         [nameof(Routes)] = Routes,
                     });
 

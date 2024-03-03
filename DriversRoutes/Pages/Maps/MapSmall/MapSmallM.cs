@@ -1,9 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-using Microsoft.Maui.Controls.Maps;
-
-using System.Collections.ObjectModel;
-
 namespace DriversRoutes.Pages.Maps.MapSmall
 {
     public partial class MapSmallM : ObservableObject

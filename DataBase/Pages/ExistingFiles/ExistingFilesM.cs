@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Inventory.Pages.RangeDay.ExistingFiles
+namespace DataBase.Pages.ExistingFiles
 {
     public partial class ExistingFilesM : ObservableObject
     {

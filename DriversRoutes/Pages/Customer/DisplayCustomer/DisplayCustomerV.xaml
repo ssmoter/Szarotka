@@ -4,7 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:Customer="clr-namespace:DriversRoutes.Pages.Customer.CustomerSmall"
-    xmlns:CustomerData="clr-namespace:DriversRoutes.Model"
+    xmlns:CustomerData="clr-namespace:DataBase.Model.EntitiesRoutes;assembly=DataBase"
     xmlns:MapSmall="clr-namespace:DriversRoutes.Pages.Maps.MapSmall"
     xmlns:Vm="clr-namespace:DriversRoutes.Pages.Customer.DisplayCustomer"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"

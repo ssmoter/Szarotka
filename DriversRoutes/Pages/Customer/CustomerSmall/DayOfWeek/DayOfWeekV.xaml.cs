@@ -1,6 +1,4 @@
-using DriversRoutes.Model;
-
-using System.Text;
+using DataBase.Model.EntitiesRoutes;
 
 namespace DriversRoutes.Pages.Customer.CustomerSmall.DayOfWeek;
 
@@ -20,9 +18,9 @@ public partial class DayOfWeekV : ContentView
 
 
     public DayOfWeekV()
-	{
-		InitializeComponent();
-	}
+    {
+        InitializeComponent();
+    }
 
 
     private async void TapGestureRecognizer_Tapped_CopyDayOfWeek(object sender, TappedEventArgs e)
@@ -30,7 +28,7 @@ public partial class DayOfWeekV : ContentView
         await CopyDayOfWeek();
     }
     private async Task CopyDayOfWeek()
-    {        
+    {
         await Clipboard.SetTextAsync(DayOfWeek.ToStringWithTheTime());
         await DataBase.ToastNotifications.ToastNotification.MakeToast("Skopiowano dni przyjazdu");
     }

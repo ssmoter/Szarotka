@@ -1,7 +1,7 @@
 ﻿using SQLite;
 
-namespace Inventory.Model
-{
+namespace DataBase.Model.EntitiesInventory;
+
     public class Driver
     {
         [PrimaryKey]
@@ -17,4 +17,4 @@ namespace Inventory.Model
         public Guid SelectedGuid { get; set; }
 
     }
-}
+

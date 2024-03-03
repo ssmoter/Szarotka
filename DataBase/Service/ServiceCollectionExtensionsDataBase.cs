@@ -12,6 +12,8 @@ namespace DataBase.Service
             services.AddTransient<Pages.Log.LogData.LogDataV>();
 
             services.AddTransient<Pages.Log.LogVM>();
+            services.AddScoped<Pages.ExistingFiles.ExistingFilesV>();
+            services.AddScoped<Pages.ExistingFiles.ExistingFilesVM>();
 #if WINDOWS
             services.AddTransient<Pages.Log.LogVWindows>();
 #else

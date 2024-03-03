@@ -2,7 +2,7 @@
 
 using SQLite;
 
-namespace DriversRoutes.Model
+namespace DataBase.Model.EntitiesRoutes
 {
     public partial class CustomerRoutes : ObservableObject, IDisposable
     {

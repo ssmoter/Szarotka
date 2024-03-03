@@ -2,10 +2,10 @@
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
+using DataBase.Model.EntitiesRoutes;
 using DataBase.Service;
 
 using DriversRoutes.Helper;
-using DriversRoutes.Model;
 
 using System.Collections.ObjectModel;
 
@@ -72,7 +72,7 @@ namespace DriversRoutes.Pages.Main
                     new Dictionary<string, object>
                     {
                         // [nameof(MapsM)] = points,
-                        [nameof(Model.Routes)] = routes,
+                        [nameof(Routes)] = routes,
                         [nameof(SelectedDayOfWeekRoutes)] = week,
                     });
             }

@@ -1,4 +1,5 @@
-﻿using Inventory.Model;
+﻿using DataBase.Model.EntitiesInventory;
+
 using Inventory.Model.MVVM;
 
 namespace Inventory.Helper.Parse
@@ -16,7 +17,7 @@ namespace Inventory.Helper.Parse
             }
             return p;
         }
-        public static void PareseAsDriver(this DriverM from,Driver to)
+        public static void PareseAsDriver(this DriverM from, Driver to)
         {
             if (from is not null)
             {

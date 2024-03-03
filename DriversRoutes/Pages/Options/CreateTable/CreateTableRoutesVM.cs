@@ -2,8 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
-
-using DriversRoutes.Model;
+using DataBase.Model.EntitiesRoutes;
 
 using System.Collections.ObjectModel;
 

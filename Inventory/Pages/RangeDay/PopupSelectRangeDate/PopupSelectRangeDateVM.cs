@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 
 using Inventory.Model;
+using DataBase.Model.EntitiesInventory;
 
 using System.Collections.ObjectModel;
 
@@ -92,7 +93,7 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             return Close?.Invoke(result, token);
         }
 
-        public PopupSelectRangeDateVM(Model.Driver[] drivers)
+        public PopupSelectRangeDateVM(Driver[] drivers)
         {
             RangeFast ??= new ObservableCollection<string>
             {

@@ -2,6 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 
 using Inventory.Service;
+using DataBase.Model.EntitiesInventory;
+
 
 namespace Inventory.Pages.Main
 {
@@ -33,14 +35,14 @@ namespace Inventory.Pages.Main
 
         public void LookingForSelectedDriver()
         {
-            var tableInfo = _db.DataBase.GetTableInfo(nameof(Model.SelectedDriver));
+            var tableInfo = _db.DataBase.GetTableInfo(nameof(SelectedDriver));
             bool exist = tableInfo.Count > 0;
             if (exist)
             {
-                var selectedDriver = _db.DataBase.Table<Model.SelectedDriver>().FirstOrDefault();
+                var selectedDriver = _db.DataBase.Table<SelectedDriver>().FirstOrDefault();
                 if (selectedDriver is not null)
                 {
-                    var driver = _db.DataBase.Table<Model.Driver>().FirstOrDefault(x => x.Id == selectedDriver.SelectedGuid);
+                    var driver = _db.DataBase.Table<Driver>().FirstOrDefault(x => x.Id == selectedDriver.SelectedGuid);
                     Helper.SelectedDriver.Id = driver.Id.ToString();
                     Helper.SelectedDriver.Name = driver.Name;
                     Helper.SelectedDriver.Description = driver.Description;

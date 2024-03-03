@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Inventory
+namespace Inventory.Platforms.Tizen
 {
     // All the code in this file is only included on Tizen.
     public class PlatformClass1

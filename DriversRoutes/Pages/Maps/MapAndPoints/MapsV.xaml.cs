@@ -1,4 +1,6 @@
-﻿using Microsoft.Maui.Controls.Maps;
+﻿using DataBase.Model.EntitiesRoutes;
+
+using Microsoft.Maui.Controls.Maps;
 
 namespace DriversRoutes.Pages.Maps.MapAndPoints;
 
@@ -80,7 +82,7 @@ public partial class MapsV : ContentPage, IDisposable
                 return;
             }
 
-            var customer = new Model.CustomerRoutes()
+            var customer = new CustomerRoutes()
             {
                 CreatedDate = DateTime.Now,
                 Longitude = e.Location.Longitude,
@@ -91,8 +93,8 @@ public partial class MapsV : ContentPage, IDisposable
             await Shell.Current.GoToAsync($"{nameof(Pages.Customer.AddCustomer.AddCustomerV)}"
                 , new Dictionary<string, object>
                 {
-                    [nameof(Model.CustomerRoutes)] = customer,
-                    [nameof(Model.Routes)] = vm.Routes,
+                    [nameof(CustomerRoutes)] = customer,
+                    [nameof(Routes)] = vm.Routes,
                 });
         }
     }

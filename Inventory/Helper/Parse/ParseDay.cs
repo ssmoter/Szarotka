@@ -1,4 +1,5 @@
-﻿using Inventory.Model;
+﻿using DataBase.Model.EntitiesInventory;
+
 using Inventory.Model.MVVM;
 
 namespace Inventory.Helper.Parse
