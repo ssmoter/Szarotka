@@ -1,6 +1,7 @@
 ﻿using DataBase.Data;
 
 using DataBase.Model.EntitiesRoutes;
+
 using DriversRoutes.Service;
 
 namespace DriversRoutes.Data
@@ -25,7 +26,7 @@ namespace DriversRoutes.Data
             }
             else
             {
-                await _db.DataBaseAsync.UpdateAsync(customer);
+                await _db.DataBaseAsync.InsertOrReplaceAsync(customer);
             }
 
             if (customer.DayOfWeek.Id == Guid.Empty)
@@ -36,7 +37,7 @@ namespace DriversRoutes.Data
             }
             else
             {
-                await _db.DataBaseAsync.UpdateAsync(customer.DayOfWeek);
+                await _db.DataBaseAsync.InsertOrReplaceAsync(customer.DayOfWeek);
             }
 
             if (customer.ResidentialAddress.Id == Guid.Empty)
@@ -47,10 +48,8 @@ namespace DriversRoutes.Data
             }
             else
             {
-                await _db.DataBaseAsync.UpdateAsync(customer.ResidentialAddress);
+                await _db.DataBaseAsync.InsertOrReplaceAsync(customer.ResidentialAddress);
             }
-
-
         }
 
 
