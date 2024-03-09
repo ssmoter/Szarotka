@@ -1,4 +1,7 @@
-﻿using DataBase.Model.EntitiesRoutes;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+
+using DataBase.Model.EntitiesRoutes;
 
 using System.Windows.Input;
 
@@ -269,7 +272,9 @@ public partial class CustomerSmallV : ContentView
     {
         string location = $"{Latitude.ToString().Replace(',', '.')} , {Longitude.ToString().Replace(',', '.')}";
         await Clipboard.SetTextAsync(location);
-        await DataBase.ToastNotifications.ToastNotification.MakeToast("Skopiowano współrzędne geograficzne");
+
+        var toast = Toast.Make("Skopiowano współrzędne geograficzne", ToastDuration.Short);
+        await toast.Show();
     }
 
 }

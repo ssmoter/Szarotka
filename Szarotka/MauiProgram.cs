@@ -32,7 +32,6 @@ namespace Szarotka
                 handlers.AddHandler<Microsoft.Maui.Controls.Maps.Map, CustomMapHandler>();
             });
 #endif
-            builder.Services.AddMyServiceDataBase();
             builder.Services.AddMyService();
 
 

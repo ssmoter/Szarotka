@@ -1,4 +1,6 @@
-﻿using DataBase.Data;
+﻿using CommunityToolkit.Maui.Alerts;
+
+using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 
 using Inventory.Helper;
@@ -25,7 +27,7 @@ namespace Inventory.Data
         {
             try
             {
-                await SnackbarAsToats.OnShow("Pobieranie danego dnia ");
+                await CommunityToolkit.Maui.Alerts.Toast.Make("Pobieranie danego dnia", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
                 var DayM = new DayM
                 {
                     CanUpadte = false
@@ -58,7 +60,8 @@ namespace Inventory.Data
         {
             try
             {
-                await SnackbarAsToats.OnShow("Pobieranie danego dnia ");
+                await CommunityToolkit.Maui.Alerts.Toast.Make("Pobieranie danego dnia", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
+
                 var DayM = new DayM
                 {
                     CanUpadte = false
@@ -90,7 +93,8 @@ namespace Inventory.Data
         {
             try
             {
-                await SnackbarAsToats.OnShow("Pobieranie danego dnia ");
+                await CommunityToolkit.Maui.Alerts.Toast.Make("Pobieranie danego dnia", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
+
                 var DayM = new DayM
                 {
                     CanUpadte = false
@@ -120,7 +124,8 @@ namespace Inventory.Data
         {
             try
             {
-                await SnackbarAsToats.OnShow("Pobieranie danego dnia ");
+                await CommunityToolkit.Maui.Alerts.Toast.Make("Pobieranie danego dnia", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
+
                 var DayM = new DayM
                 {
                     CanUpadte = false

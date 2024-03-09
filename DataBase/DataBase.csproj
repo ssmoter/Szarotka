@@ -63,6 +63,9 @@
 	  <MauiXaml Update="Pages\Popups\SubAddLastValue\SubAddLastValueV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\UpdateDataBase\UpdateDataBaseV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	</ItemGroup>
 
 </Project>

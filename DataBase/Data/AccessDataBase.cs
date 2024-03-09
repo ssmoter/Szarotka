@@ -11,34 +11,8 @@ namespace DataBase.Data
 
         public AccessDataBase()
         {
-
-            if (DataBaseAsync is null)
-            {
-                DataBaseAsync = new SQLiteAsyncConnection(Constants.DatabasePath, Constants.Flags);
-                DataBase = new SQLiteConnection(Constants.DatabasePath, Constants.Flags);
-            }
-            Task.Run(async () =>
-            {
-                try
-                {
-                    if (!System.IO.Directory.Exists(Constants.GetPathFolder))
-                    {
-                        System.IO.Directory.CreateDirectory(Constants.GetPathFolder);
-                    }
-
-                    var tableInfo = await DataBaseAsync.GetTableInfoAsync(nameof(Model.LogsModel));
-                    bool exist = tableInfo.Count > 0;
-                    if (!exist)
-                    {
-                        await DataBaseAsync.CreateTableAsync<Model.LogsModel>();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    await Shell.Current.CurrentPage.DisplayAlert("Error", ex.Message, "Ok");
-                }
-
-            });
+            DataBaseAsync ??= new SQLiteAsyncConnection(Constants.DatabasePath, Constants.Flags);
+            DataBase ??= new SQLiteConnection(Constants.DatabasePath, Constants.Flags);
         }
 
         public void SaveLog(Exception ex)

@@ -1,3 +1,6 @@
+using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+
 using DataBase.Model.EntitiesRoutes;
 
 namespace DriversRoutes.Pages.Customer.CustomerSmall.DayOfWeek;
@@ -30,7 +33,8 @@ public partial class DayOfWeekV : ContentView
     private async Task CopyDayOfWeek()
     {
         await Clipboard.SetTextAsync(DayOfWeek.ToStringWithTheTime());
-        await DataBase.ToastNotifications.ToastNotification.MakeToast("Skopiowano dni przyjazdu");
+        var toast = Toast.Make("Skopiowano dni przyjazdu", ToastDuration.Short);
+        await toast.Show();
     }
 
 }

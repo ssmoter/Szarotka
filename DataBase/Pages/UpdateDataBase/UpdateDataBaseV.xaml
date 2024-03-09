@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="DataBase.Pages.UpdateDataBase.UpdateDataBaseV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:VM="clr-namespace:DataBase.Pages.UpdateDataBase"
+    x:DataType="VM:UpdateDataBaseVM"
+    Shell.PresentationMode="Modal">
+
+
+    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
+        <VerticalStackLayout IsVisible="{Binding UpdateDataBaseM.DataBaseIsVisible}">
+
+            <Label HorizontalOptions="Center">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Aktualizacja bazy danych ogólnej z wersji " />
+                        <Span Text="{Binding UpdateDataBaseM.FromVersion.DataBase}" />
+                        <Span Text=" do wersji: " />
+                        <Span Text="{Binding UpdateDataBaseM.ToVersion.DataBase}" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+            <ProgressBar Progress="{Binding UpdateDataBaseM.DataBaseProgresBar}" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout IsVisible="{Binding UpdateDataBaseM.InventioryIsVisible}">
+
+            <Label HorizontalOptions="Center">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Aktualizacja bazy danych Inventaryzacji z wersji " />
+                        <Span Text="{Binding UpdateDataBaseM.FromVersion.Inventory}" />
+                        <Span Text=" do wersji: " />
+                        <Span Text="{Binding UpdateDataBaseM.ToVersion.Inventory}" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+            <ProgressBar Progress="{Binding UpdateDataBaseM.InventioryProgresBar}" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout IsVisible="{Binding UpdateDataBaseM.DriverRoutesIsVisible}">
+
+            <Label HorizontalOptions="Center" IsVisible="{OnPlatform Android=true, Default=false}">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Aktualizacja bazy danych Map z wersji " />
+                        <Span Text="{Binding UpdateDataBaseM.FromVersion.DriversRoutes}" />
+                        <Span Text=" do wersji: " />
+                        <Span Text="{Binding UpdateDataBaseM.ToVersion.DriversRoutes}" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+            <ProgressBar IsVisible="{OnPlatform Android=true, Default=false}" Progress="{Binding UpdateDataBaseM.DriverRoutesProgresBar}" />
+        </VerticalStackLayout>
+
+
+        <Button
+            Command="{Binding BackCommand}"
+            HorizontalOptions="Center"
+            IsVisible="{Binding UpdateDataBaseM.BackIsVisible}"
+            Text="Ok" />
+
+    </VerticalStackLayout>
+
+</ContentPage>

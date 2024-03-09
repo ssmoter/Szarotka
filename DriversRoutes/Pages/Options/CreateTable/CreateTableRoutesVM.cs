@@ -136,24 +136,24 @@ namespace DriversRoutes.Pages.Options.CreateTable
         readonly Random random = new(1337);
         void CreateDefoutlRoutes()
         {
-            var routes = new List<Routes>
+            var routes = new Routes[]
             {
-                new Routes()
+                new()
                 {
                     Id = GetGuidSed(),
                     Name = "Szyk"
                 },
-                new Routes()
+                new()
                 {
                     Id = GetGuidSed(),
                     Name = "Pasierbiec"
                 },
-                new Routes()
+                new()
                 {
                     Id = GetGuidSed(),
                     Name = "Słopnice"
                 },
-                 new Routes()
+                new()
                 {
                     Id = GetGuidSed(),
                     Name = "Sowliny"

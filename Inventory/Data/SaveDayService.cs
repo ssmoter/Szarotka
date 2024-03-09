@@ -1,4 +1,7 @@
-﻿using DataBase.Data;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+
+using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 
 using Inventory.Helper;
@@ -52,7 +55,7 @@ namespace Inventory.Data
                     day.ParseAsDayM(dayM);
 
                     day = null;
-                    await SnackbarAsToats.OnShow("Zapisano");
+                    await Toast.Make("Zapisano", ToastDuration.Short).Show();
                     dayM.CanUpadte = true;
 
                     for (int i = 0; i < dayM.Products.Count; i++)

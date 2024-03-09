@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Inventory.Helper;
 using Inventory.Helper.Parse;
 using Inventory.Model.MVVM;
 using Inventory.Service;
@@ -35,7 +34,7 @@ namespace Inventory.Pages.SingleDay
         #region Method
         public async Task ShowCurrentDay()
         {
-            await SnackbarAsToats.OnShow($"Wczytano dzień {DayM.Created.ToShortDateString()}");
+            await CommunityToolkit.Maui.Alerts.Toast.Make($"Wczytano dzień {DayM.Created.ToShortDateString()}", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
         }
 
         void Initialize()
@@ -203,7 +202,7 @@ namespace Inventory.Pages.SingleDay
 
                     DayM.Cakes.LastOrDefault().IsSell = true;
 
-                    await Helper.SnackbarAsToats.OnShow("Dodano ciasto");
+                    await CommunityToolkit.Maui.Alerts.Toast.Make("Dodano ciasto", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
                 }
             }
             catch (Exception ex)

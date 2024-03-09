@@ -1,3 +1,6 @@
+using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+
 using DataBase.Model.EntitiesRoutes;
 
 using System.Text;
@@ -95,6 +98,8 @@ public partial class ResidentialAddressV : ContentView
         sb.Append(ResidentialAddress.Country);
 
         await Clipboard.SetTextAsync(sb.ToString());
-        await DataBase.ToastNotifications.ToastNotification.MakeToast("Skopiowano adres");
+
+        var toast = Toast.Make("Skopiowano adres", ToastDuration.Short);
+        await toast.Show();
     }
 }

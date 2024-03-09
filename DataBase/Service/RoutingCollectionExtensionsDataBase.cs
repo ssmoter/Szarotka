@@ -11,6 +11,7 @@
             Routing.RegisterRoute(nameof(Pages.Log.LogV), typeof(Pages.Log.LogV));
 #endif
             Routing.RegisterRoute(nameof(Pages.ExistingFiles.ExistingFilesV), typeof(Pages.ExistingFiles.ExistingFilesV));
+            Routing.RegisterRoute(nameof(Pages.UpdateDataBase.UpdateDataBaseV), typeof(Pages.UpdateDataBase.UpdateDataBaseV));
 
         }
     }

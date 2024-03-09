@@ -8,16 +8,22 @@ namespace DataBase.Service
         {
             services.AddTransient<AccessDataBase>();
 
-            services.AddTransient<Pages.Log.LogData.LogDataVM>();
-            services.AddTransient<Pages.Log.LogData.LogDataV>();
+            services.AddScoped<ICreatedDataBase, CreatedDataBase>();
 
-            services.AddTransient<Pages.Log.LogVM>();
+            services.AddScoped<Pages.Log.LogData.LogDataVM>();
+            services.AddScoped<Pages.Log.LogData.LogDataV>();
+
+            services.AddScoped<Pages.Log.LogVM>();
             services.AddScoped<Pages.ExistingFiles.ExistingFilesV>();
             services.AddScoped<Pages.ExistingFiles.ExistingFilesVM>();
+
+            services.AddScoped<Pages.UpdateDataBase.UpdateDataBaseV>();
+            services.AddScoped<Pages.UpdateDataBase.UpdateDataBaseVM>();
+
 #if WINDOWS
-            services.AddTransient<Pages.Log.LogVWindows>();
+            services.AddScoped<Pages.Log.LogVWindows>();
 #else
-            services.AddTransient<Pages.Log.LogV>();
+            services.AddScoped<Pages.Log.LogV>();
 #endif
 
             return services;

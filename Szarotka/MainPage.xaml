@@ -6,11 +6,11 @@
     xmlns:Img="clr-namespace:DataBase.Helper.Img;assembly=DataBase">
 
     <ScrollView>
+
         <VerticalStackLayout
             Padding="30,0"
             Spacing="25"
             VerticalOptions="Center">
-
 
             <Image
                 HeightRequest="100"
