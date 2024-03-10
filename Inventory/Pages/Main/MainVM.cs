@@ -51,7 +51,7 @@ namespace Inventory.Pages.Main
             }
             if (CheckDriver())
             {
-                Shell.Current.GoToAsync("..");
+                Shell.Current.GoToAsync("../MainOptionsV");
             }
         }
         bool CheckDriver()

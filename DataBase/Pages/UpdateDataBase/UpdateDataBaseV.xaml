@@ -9,7 +9,7 @@
 
 
     <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
-        <VerticalStackLayout IsVisible="{Binding UpdateDataBaseM.DataBaseIsVisible}">
+        <VerticalStackLayout Padding="5" IsVisible="{Binding UpdateDataBaseM.DataBaseIsVisible}">
 
             <Label HorizontalOptions="Center">
                 <Label.FormattedText>
@@ -25,7 +25,7 @@
             <ProgressBar Progress="{Binding UpdateDataBaseM.DataBaseProgresBar}" />
         </VerticalStackLayout>
 
-        <VerticalStackLayout IsVisible="{Binding UpdateDataBaseM.InventioryIsVisible}">
+        <VerticalStackLayout Padding="5" IsVisible="{Binding UpdateDataBaseM.InventioryIsVisible}">
 
             <Label HorizontalOptions="Center">
                 <Label.FormattedText>
@@ -41,9 +41,9 @@
             <ProgressBar Progress="{Binding UpdateDataBaseM.InventioryProgresBar}" />
         </VerticalStackLayout>
 
-        <VerticalStackLayout IsVisible="{Binding UpdateDataBaseM.DriverRoutesIsVisible}">
+        <VerticalStackLayout Padding="5" IsVisible="{Binding UpdateDataBaseM.DriverRoutesIsVisible}">
 
-            <Label HorizontalOptions="Center" IsVisible="{OnPlatform Android=true, Default=false}">
+            <Label HorizontalOptions="Center">
                 <Label.FormattedText>
                     <FormattedString>
                         <Span Text="Aktualizacja bazy danych Map z wersji " />
@@ -54,7 +54,7 @@
                 </Label.FormattedText>
             </Label>
 
-            <ProgressBar IsVisible="{OnPlatform Android=true, Default=false}" Progress="{Binding UpdateDataBaseM.DriverRoutesProgresBar}" />
+            <ProgressBar Progress="{Binding UpdateDataBaseM.DriverRoutesProgresBar}" />
         </VerticalStackLayout>
 
 

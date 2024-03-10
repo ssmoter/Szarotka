@@ -8,20 +8,31 @@ namespace Szarotka
     public partial class MainPage : ContentPage
     {
         readonly ICreatedDataBase _createdDataBase;
+        readonly DataBase.Data.AccessDataBase _db;
         public MainPage()
         {
             InitializeComponent();
-            _createdDataBase = new DataBase.Data.CreatedDataBase(new DataBase.Data.AccessDataBase());
+            _db = new();
+            _createdDataBase = new DataBase.Data.CreatedDataBase(_db);
         }
 
 
         protected override async void OnNavigatedTo(NavigatedToEventArgs args)
         {
             base.OnNavigatedTo(args);
-            var old = _createdDataBase.GetCurrentVersion();
-            if (!old.Equals(new DataBaseVersion()))
+
+            try
             {
-                await Shell.Current.GoToAsync(nameof(DataBase.Pages.UpdateDataBase.UpdateDataBaseV));
+                var old = _createdDataBase.GetCurrentVersion();
+                if (!old.Equals(new DataBaseVersion()))
+                {
+                    await Shell.Current.GoToAsync(nameof(DataBase.Pages.UpdateDataBase.UpdateDataBaseV));
+                }
+                await _createdDataBase.CreateBackUp();
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
             }
         }
 

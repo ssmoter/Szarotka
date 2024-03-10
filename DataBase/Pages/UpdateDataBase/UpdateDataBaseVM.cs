@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Data;
 using DataBase.Service;
 
 namespace DataBase.Pages.UpdateDataBase
@@ -13,20 +14,29 @@ namespace DataBase.Pages.UpdateDataBase
 
 
         readonly ICreatedDataBase _createdDataBase;
-        public UpdateDataBaseVM(ICreatedDataBase createdDataBase)
+        readonly AccessDataBase _db;
+        public UpdateDataBaseVM(ICreatedDataBase createdDataBase, AccessDataBase db)
         {
             _createdDataBase = createdDataBase;
             UpdateDataBaseM ??= new();
+            _db = db;
         }
 
         public async Task Update()
         {
-            UpdateDataBaseM.FromVersion = _createdDataBase.GetCurrentVersion();
-            var resutl = await _createdDataBase.UpdateDataBase(UppdateDataBase, UppdateInventory, UppdateDriverRoutes);
-
-            if (resutl)
+            try
             {
-                UpdateDataBaseM.BackIsVisible= true;
+                UpdateDataBaseM.FromVersion = _createdDataBase.GetCurrentVersion();
+                var resutl = await _createdDataBase.UpdateDataBase(UppdateDataBase, UppdateInventory, UppdateDriverRoutes);
+
+                if (resutl)
+                {
+                    UpdateDataBaseM.BackIsVisible = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
             }
         }
 

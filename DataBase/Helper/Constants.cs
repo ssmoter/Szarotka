@@ -15,7 +15,17 @@ namespace DataBase.Helper
 #endif
             }
         }
-
+        public static string BackupName
+        {
+            get
+            {
+#if WINDOWS
+                return @"Szarotka\BackupDataBaseSzarotkaSQLite.db3";
+#else
+                return "BackupDataBaseSzarotkaSQLite.db3";
+#endif
+            }
+        }
         public const SQLite.SQLiteOpenFlags Flags =
         // open the database in read/write mode
             SQLite.SQLiteOpenFlags.ReadWrite |
@@ -29,7 +39,7 @@ namespace DataBase.Helper
             get
             {
 #if WINDOWS
-                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),"Szarotka");
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Szarotka");
 #elif ANDROID
                 var doc = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDocuments);
                 return Path.Combine(doc.Path);
@@ -51,6 +61,20 @@ return "";
 return "";
 #endif
 
+            }
+        }
+        public static string BackupPath
+        {
+            get
+            {
+#if WINDOWS
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), BackupName);
+#elif ANDROID
+                var doc = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDocuments);
+                return Path.Combine(doc.Path,BackupName);
+#else
+                return "";
+#endif
             }
         }
 

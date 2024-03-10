@@ -15,6 +15,8 @@ namespace DataBase.Model
         int inventory;
         [ObservableProperty]
         int driversRoutes;
+        [ObservableProperty]
+        long lastBackup = DateTime.Today.Ticks;
         public DataBaseVersion()
         {
             DataBase = 1;
