@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:CustomControls="clr-namespace:DataBase.CustomControls;assembly=DataBase"
+    xmlns:ImgPath="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
     xmlns:Product="clr-namespace:Inventory.Model.MVVM"
     xmlns:VM="clr-namespace:Inventory.Pages.SingleDay"
     Title="{Binding DayM.Created}"
@@ -177,9 +178,10 @@
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
 
-                <RefreshView Command="{Binding RefreshListOfProductCommand}" IsRefreshing="{Binding SingleDayM.ProductIsRefreshing}">
-
-                    <CollectionView ItemsSource="{Binding DayM.Products}">
+                    <!--<RefreshView Command="{Binding RefreshListOfProductCommand}" IsRefreshing="{Binding SingleDayM.ProductIsRefreshing}" />-->
+                    <CollectionView
+                        x:Name="CVProducts"
+                        ItemsSource="{Binding DayM.Products}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <SwipeView>
@@ -188,12 +190,37 @@
 
                                             <SwipeItemView>
 
+                                                <VerticalStackLayout HorizontalOptions="End" VerticalOptions="End">
 
-                                                <Grid
+                                                    <HorizontalStackLayout>
+                                                        <ImageButton Clicked="Button_Clicked_FastMinusProductNumber" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
+                                                        <ImageButton Clicked="Button_Clicked_FastAddProductNumber" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
+                                                    </HorizontalStackLayout>
+
+
+                                                    <HorizontalStackLayout>
+                                                        <ImageButton Clicked="Button_Clicked_FastMinusProductEdit" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
+                                                        <ImageButton Clicked="Button_Clicked_FastAddProductEdit" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
+                                                    </HorizontalStackLayout>
+
+
+
+                                                    <HorizontalStackLayout>
+                                                        <ImageButton Clicked="Button_Clicked_FastMinusProductReturn" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
+                                                        <ImageButton Clicked="Button_Clicked_FastAddProductReturn" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
+                                                    </HorizontalStackLayout>
+
+
+                                                </VerticalStackLayout>
+
+
+                                                <!--<Grid
                                                     ColumnDefinitions="*,*"
                                                     HorizontalOptions="Fill"
                                                     RowDefinitions="*,*,*"
                                                     VerticalOptions="Fill">
+
+
 
                                                     <Button
                                                         Grid.Row="0"
@@ -203,10 +230,13 @@
                                                         HorizontalOptions="Center"
                                                         Text="-"
                                                         VerticalOptions="Center" />
-                                                    <!--
-                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductNumberCommand}"
-                                                        CommandParameter="{Binding .}"
-                                                    -->
+                                                -->
+                                                <!--
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductNumberCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                -->
+                                                <!--
+
                                                     <Button
                                                         Grid.Row="0"
                                                         Grid.Column="1"
@@ -215,10 +245,12 @@
                                                         HorizontalOptions="Center"
                                                         Text="+"
                                                         VerticalOptions="Center" />
-                                                    <!--
-                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductNumberCommand}"
-                                                        CommandParameter="{Binding .}"
-                                                    -->
+                                                -->
+                                                <!--
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductNumberCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                -->
+                                                <!--
 
                                                     <Button
                                                         Grid.Row="1"
@@ -228,10 +260,12 @@
                                                         HorizontalOptions="Center"
                                                         Text="-"
                                                         VerticalOptions="Center" />
-                                                    <!--
-                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductEditCommand}"
-                                                        CommandParameter="{Binding .}"
-                                                    -->
+                                                -->
+                                                <!--
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductEditCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                -->
+                                                <!--
                                                     <Button
                                                         Grid.Row="1"
                                                         Grid.Column="1"
@@ -240,10 +274,12 @@
                                                         HorizontalOptions="Center"
                                                         Text="+"
                                                         VerticalOptions="Center" />
-                                                    <!--
-                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductEditCommand}"
-                                                        CommandParameter="{Binding .}"
-                                                    -->
+                                                -->
+                                                <!--
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductEditCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                -->
+                                                <!--
 
                                                     <Button
                                                         Grid.Row="2"
@@ -253,10 +289,12 @@
                                                         HorizontalOptions="Center"
                                                         Text="-"
                                                         VerticalOptions="Center" />
-                                                    <!--
-                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductReturnCommand}"
-                                                        CommandParameter="{Binding .}"
-                                                    -->
+                                                -->
+                                                <!--
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductReturnCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                -->
+                                                <!--
                                                     <Button
                                                         Grid.Row="2"
                                                         Grid.Column="1"
@@ -265,12 +303,14 @@
                                                         HorizontalOptions="Center"
                                                         Text="+"
                                                         VerticalOptions="Center" />
-                                                    <!--
-                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductReturnCommand}"
-                                                        CommandParameter="{Binding .}"
-                                                    -->
+                                                -->
+                                                <!--
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductReturnCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                -->
+                                                <!--
 
-                                                </Grid>
+                                                </Grid>-->
 
                                             </SwipeItemView>
 
@@ -282,6 +322,7 @@
                                         <Border.StrokeShape>
                                             <RoundRectangle CornerRadius="10" />
                                         </Border.StrokeShape>
+
                                         <Grid
                                             Padding="5"
                                             x:DataType="Product:ProductM"
@@ -307,14 +348,6 @@
                                                 String64Base="{Binding Name.Img}"
                                                 WidthRequestCustom="70" />
 
-                                            <!--<Image
-                                    Grid.Row="1"
-                                    Grid.RowSpan="3"
-                                    Grid.Column="0"
-                                    HeightRequest="100"
-                                    Source="{Binding Name.Img}"
-                                    WidthRequest="100" />-->
-
                                             <HorizontalStackLayout
                                                 Grid.Row="1"
                                                 Grid.Column="1"
@@ -326,6 +359,7 @@
                                                     VerticalOptions="Center" />
                                                 <Entry
                                                     Keyboard="Numeric"
+                                                    ReturnType="Next"                                                    
                                                     Text="{Binding Number}"
                                                     TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
                                             </HorizontalStackLayout>
@@ -350,6 +384,7 @@
                                                 </Label>
                                                 <Entry
                                                     Keyboard="Numeric"
+                                                    ReturnType="Next"
                                                     Text="{Binding NumberEdit}"
                                                     TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
                                             </HorizontalStackLayout>
@@ -365,6 +400,7 @@
                                                     VerticalOptions="Center" />
                                                 <Entry
                                                     Keyboard="Numeric"
+                                                    ReturnType="Next"
                                                     Text="{Binding NumberReturn}"
                                                     TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
                                             </HorizontalStackLayout>
@@ -419,8 +455,6 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
-
-                </RefreshView>
 
             </Border>
 

@@ -150,6 +150,6 @@ public partial class MapSmallVM : ObservableObject
     void CloseMap(CustomerRoutes customer)
     {
         MapSmallM.SaveLocation = false;
-        MapSmallM.ChangeLocation = false;
+        MapSmallM.ChangeLocation = true;
     }
 }

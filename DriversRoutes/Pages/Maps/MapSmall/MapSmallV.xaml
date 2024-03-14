@@ -21,23 +21,43 @@
             HorizontalOptions="Fill"
             RowDefinitions="auto,*"
             VerticalOptions="Fill">
-            <VerticalStackLayout Grid.Row="1" ZIndex="111">
+            <VerticalStackLayout
+                Grid.Row="1"
+                BackgroundColor="AliceBlue"
+                HorizontalOptions="StartAndExpand"
+                Opacity="0.8"
+                Scale="0.75"
+                VerticalOptions="StartAndExpand"
+                ZIndex="111">
 
-                <Button
+
+                <ImageButton
                     Clicked="Button_Clicked_Close"
                     Command="{Binding MapSmallVM.CloseMapCommand}"
                     CommandParameter="{Binding Customer}"
                     CornerRadius="10"
                     HorizontalOptions="StartAndExpand"
-                    Text="X"
+                    Opacity="1"
+                    Source="{AppThemeBinding Light={Static Symbols:ImgMapsSymbols.CloseBlack},
+                                             Dark={Static Symbols:ImgMapsSymbols.CloseBlack}}"
                     VerticalOptions="StartAndExpand" />
-                <Button
+
+
+                <ImageButton
+                    Command="{Binding MapSmallVM.CenterOldLocationCommand}"
+                    CommandParameter="{Binding Customer}"
+                    CornerRadius="10"
+                    HorizontalOptions="StartAndExpand"
+                    Source="{AppThemeBinding Light={Static Symbols:ImgMapsSymbols.SavedSearchBlack},
+                                             Dark={Static Symbols:ImgMapsSymbols.SavedSearchBlack}}"
+                    VerticalOptions="StartAndExpand" />
+                <!--<Button
                     Command="{Binding MapSmallVM.CenterOldLocationCommand}"
                     CommandParameter="{Binding Customer}"
                     CornerRadius="10"
                     HorizontalOptions="StartAndExpand"
                     Text="O"
-                    VerticalOptions="StartAndExpand" />
+                    VerticalOptions="StartAndExpand" />-->
 
             </VerticalStackLayout>
 

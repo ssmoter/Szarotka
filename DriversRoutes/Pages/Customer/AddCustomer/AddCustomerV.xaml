@@ -291,23 +291,23 @@
                                 Text="{Binding Customer.ResidentialAddress.Street}" />
 
                             <Label
-                                Grid.Row="4"
+                                Grid.Row="3"
                                 Grid.Column="0"
                                 Text="Numer domu"
                                 VerticalOptions="Center" />
                             <Entry
-                                Grid.Row="4"
+                                Grid.Row="3"
                                 Grid.Column="1"
                                 Placeholder="Numer domu"
                                 Text="{Binding Customer.ResidentialAddress.HouseNumber}" />
 
                             <Label
-                                Grid.Row="3"
+                                Grid.Row="4"
                                 Grid.Column="0"
                                 Text="Numer mieszkania"
                                 VerticalOptions="Center" />
                             <Entry
-                                Grid.Row="3"
+                                Grid.Row="4"
                                 Grid.Column="1"
                                 HorizontalOptions="FillAndExpand"
                                 Placeholder="Numer mieszkania"

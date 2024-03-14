@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
+using DataBase.Model;
 using DataBase.Model.EntitiesRoutes;
 
 using System.Collections.ObjectModel;
@@ -12,6 +13,9 @@ namespace DriversRoutes.Pages.Options.CreateTable
     {
         [ObservableProperty]
         ObservableCollection<CreateTableRoutesM> tableMs;
+
+        [ObservableProperty]
+        DataBaseVersion version;
 
         readonly AccessDataBase _db;
 
@@ -33,6 +37,8 @@ namespace DriversRoutes.Pages.Options.CreateTable
                 try
                 {
                     await CheckTables();
+                    Version = await _db.DataBaseAsync.Table<DataBaseVersion>().FirstOrDefaultAsync();
+
                 }
                 catch (Exception ex)
                 {

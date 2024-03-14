@@ -62,12 +62,12 @@ namespace DataBase.Data
                     new()
                     {
                       Name = new ProductName(){ Name ="Chleb",Img=ImgBread.chleb,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=5.5m,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=6m,Id = GetGuidSed()},
                     },
                     new()
                     {
                       Name = new ProductName(){ Name ="Duży chleb",Img="chleb.png", Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=11m,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=12m,Id = GetGuidSed()},
                     },
                     new()
                     {
@@ -132,7 +132,7 @@ namespace DataBase.Data
                     new()
                     {
                       Name = new ProductName(){ Name ="Wafle (opak. 400g)",Img=ImgCookies.Andrut,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=10m,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=12m,Id = GetGuidSed()},
                     },
 
                     new()
@@ -148,7 +148,7 @@ namespace DataBase.Data
                     new()
                     {
                       Name = new ProductName(){ Name ="Chleb suchy",Img="chleb.png", Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=2m,Id = GetGuidSed()},
+                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=2.5m,Id = GetGuidSed()},
                     },
             };
             var taskTableName = new Task[products.Length];

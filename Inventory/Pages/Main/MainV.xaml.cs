@@ -7,12 +7,12 @@ public partial class MainV : ContentPage
         InitializeComponent();
         BindingContext = vm;
     }
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
         if (BindingContext is MainVM vm)
         {
-            vm.LookingForSelectedDriver();
+           await vm.LookingForSelectedDriver();
         }
 
     }

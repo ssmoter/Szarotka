@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-using CsvHelper.Configuration.Attributes;
-
 using DataBase.Model;
 
 namespace DataBase.Pages.UpdateDataBase
@@ -10,6 +8,8 @@ namespace DataBase.Pages.UpdateDataBase
     {
         [ObservableProperty]
         DataBaseVersion fromVersion;
+        [ObservableProperty]
+        DataBaseVersion uppdateVersion;
         [ObservableProperty]
         DataBaseVersion toVersion;
 

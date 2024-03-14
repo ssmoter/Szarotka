@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -18,7 +19,9 @@ namespace Inventory.Pages.SingleDay
         [ObservableProperty]
         SingleDayM singleDayM;
 
-
+        static (string name, int value, char sign) lastFastValue = new("", 0, ' ');
+        const char signPlus = '+';
+        const char signMinus = '-';
         readonly DataBase.Data.AccessDataBase _db;
         readonly Service.ISaveDayService _saveDay;
 
@@ -61,6 +64,7 @@ namespace Inventory.Pages.SingleDay
             return false;
         }
 
+
         static void FastChangeProductNumber(ProductM product, int value)
         {
             if (product is not null)
@@ -70,6 +74,8 @@ namespace Inventory.Pages.SingleDay
                     SetCanUpdate(product);
                 }
                 product.Number += value;
+
+                ToastMakeFastChange(product, value, "ilość");
             }
         }
 
@@ -82,6 +88,8 @@ namespace Inventory.Pages.SingleDay
                     SetCanUpdate(product);
                 }
                 product.NumberEdit += value;
+
+                ToastMakeFastChange(product, value, "edycja");
             }
         }
 
@@ -94,9 +102,27 @@ namespace Inventory.Pages.SingleDay
                     SetCanUpdate(product);
                 }
                 product.NumberReturn += value;
+
+                ToastMakeFastChange(product, value, "zwrot");
             }
         }
+        private static void ToastMakeFastChange(ProductM product, int value, string message)
+        {
+            if (Math.Sign(lastFastValue.value) != Math.Sign(value))
+            {
+                lastFastValue.value = 0;
+            }
 
+            if (lastFastValue.name == product.Name.Name)
+                lastFastValue.value += value;
+            else
+            {
+                lastFastValue.value = 1;
+                lastFastValue.name = product.Name.Name;
+            }
+            char sign = value > 0 ? signPlus : ' ' ;
+            Toast.Make($"{product.Name.Name} {message} {sign} {lastFastValue.value}", duration: CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
+        }
         static void SetCanUpdate(ProductM productM)
         {
             productM.CanUpadte = true;

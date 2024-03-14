@@ -12,6 +12,34 @@
         </Border.StrokeShape>
 
         <VerticalStackLayout Padding="5">
+
+            <Label HorizontalOptions="End" VerticalOptions="Start">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span FontSize="Micro" Text="Wersja: " />
+                        <Span FontSize="Micro" Text="{Binding Version.DriversRoutes}" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+            <HorizontalStackLayout HorizontalOptions="Center">
+
+                <Button
+                    Command="{Binding CreateTablesCommand}"
+                    HorizontalOptions="Center"
+                    Text="Wygeneruj Tabele" />
+                <Button
+                    Command="{Binding CreateNewTablesCommand}"
+                    HorizontalOptions="Center"
+                    Text="Wygeneruj brakujące Tabele" />
+            </HorizontalStackLayout>
+
+
+
+
+
+
+
             <Label
                 HorizontalOptions="Center"
                 Text="Stworzone tabele:"
@@ -41,17 +69,6 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <HorizontalStackLayout HorizontalOptions="Center">
-
-                <Button
-                    Command="{Binding CreateTablesCommand}"
-                    HorizontalOptions="Center"
-                    Text="Wygeneruj Tabele" />
-                <Button
-                    Command="{Binding CreateNewTablesCommand}"
-                    HorizontalOptions="Center"
-                    Text="Wygeneruj brakujące Tabele" />
-            </HorizontalStackLayout>
 
         </VerticalStackLayout>
     </Border>

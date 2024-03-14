@@ -154,7 +154,10 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="10" />
             </Border.StrokeShape>
-            <CollectionView ItemsSource="{Binding DayM.Products}">
+            <CollectionView
+                x:Name="CVProducts"
+                ItemsSource="{Binding DayM.Products}"
+                Scrolled="CollectionView_Scrolled">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Border Margin="2">
@@ -204,7 +207,10 @@
                                         HorizontalOptions="Center"
                                         Text="Ilość"
                                         VerticalOptions="Center" />
-                                    <Entry Keyboard="Numeric" Text="{Binding Number}" />
+                                    <Entry
+                                        Keyboard="Numeric"
+                                        ReturnType="Next"
+                                        Text="{Binding Number}" />
                                 </HorizontalStackLayout>
 
                                 <HorizontalStackLayout
@@ -225,7 +231,10 @@
                                                 NumberOfTapsRequired="2" />
                                         </Label.GestureRecognizers>
                                     </Label>
-                                    <Entry Keyboard="Numeric" Text="{Binding NumberEdit}" />
+                                    <Entry
+                                        Keyboard="Numeric"
+                                        ReturnType="Next"
+                                        Text="{Binding NumberEdit}" />
                                 </HorizontalStackLayout>
 
                                 <HorizontalStackLayout
@@ -237,7 +246,11 @@
                                         HorizontalOptions="Center"
                                         Text="Zwrot"
                                         VerticalOptions="Center" />
-                                    <Entry Keyboard="Numeric" Text="{Binding NumberReturn}" />
+                                    <Entry
+                                        Keyboard="Numeric"
+                                        ReturnCommandParameter="{Binding .}"
+                                        ReturnType="Next"
+                                        Text="{Binding NumberReturn}" />
                                 </HorizontalStackLayout>
 
                                 <Label

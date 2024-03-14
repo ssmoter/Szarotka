@@ -128,7 +128,7 @@ public partial class MapSmallV : ContentView, IDisposable
 
     private void Button_Clicked_Close(object sender, EventArgs e)
     {
-        MapSmallVIsVisible = false;
+        MapSmallVIsVisible = !MapSmallVIsVisible;
     }
 
 }

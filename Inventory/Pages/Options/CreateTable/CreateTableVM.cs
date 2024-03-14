@@ -2,9 +2,10 @@
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
+using DataBase.Model;
+using DataBase.Model.EntitiesInventory;
 
 using Inventory.Helper.Parse;
-using DataBase.Model.EntitiesInventory;
 using Inventory.Model.MVVM;
 using Inventory.Pages.Options.EditDriver;
 
@@ -18,8 +19,10 @@ namespace Inventory.Pages.Options.CreateTable
         [ObservableProperty]
         ObservableCollection<CreateTableM> tableMs;
 
-        readonly AccessDataBase _db;
+        [ObservableProperty]
+        DataBaseVersion version;
 
+        readonly AccessDataBase _db;
         public CreateTableVM(AccessDataBase dataBase)
         {
             TableMs = new ObservableCollection<CreateTableM>
@@ -39,6 +42,7 @@ namespace Inventory.Pages.Options.CreateTable
                 try
                 {
                     await CheckTables();
+                    Version = await _db.DataBaseAsync.Table<DataBaseVersion>().FirstOrDefaultAsync();
                 }
                 catch (Exception ex)
                 {
@@ -139,7 +143,7 @@ namespace Inventory.Pages.Options.CreateTable
                 {
                     return;
                 }
-                var response = await Shell.Current.DisplayPromptAsync("Dodawanie kierowcy", "Zdefiniu nazwę kierowcy");
+                var response = await Shell.Current.DisplayPromptAsync("Dodawanie kierowcy", "Ustaw nazwę kierowcy");
                 if (!string.IsNullOrWhiteSpace(response))
                 {
                     var driver = new Driver()

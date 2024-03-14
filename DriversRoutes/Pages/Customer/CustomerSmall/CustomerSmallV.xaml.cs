@@ -75,7 +75,7 @@ public partial class CustomerSmallV : ContentView
         var control = (CustomerSmallV)bindable;
         if (newValue is double value)
         {
-            control.CustomerSmallM.Coordinates = value > 0;
+            control.CustomerSmallM.Coordinates = value != 0;
         }
 
     });
@@ -92,7 +92,7 @@ public partial class CustomerSmallV : ContentView
 
         if (newValue is double value)
         {
-            control.CustomerSmallM.Coordinates = value > 0;
+            control.CustomerSmallM.Coordinates = value != 0;
         }
     });
     public double? Latitude
@@ -277,4 +277,10 @@ public partial class CustomerSmallV : ContentView
         await toast.Show();
     }
 
+    private void Button_Clicked_Call(object sender, EventArgs e)
+    {
+        if (!string.IsNullOrWhiteSpace(PhoneNumber))
+            if (PhoneDialer.Default.IsSupported)
+                PhoneDialer.Default.Open(PhoneNumber);
+    }
 }

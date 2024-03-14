@@ -46,6 +46,7 @@
                         Grid.Column="1"
                         HorizontalOptions="Center"
                         Text="Zadzwoń"
+                        Clicked="Button_Clicked_Call"
                         VerticalOptions="Center" />
                 </Grid>
 
@@ -59,73 +60,6 @@
                 <Border IsVisible="{Binding CustomerSmallM.Address}" />
 
                 <ResidentialAddressCotrol:ResidentialAddressV AddressIsVisible="{Binding CustomerSmallM.Address}" ResidentialAddress="{Binding ResidentialAddress}" />
-
-                <!--<Border
-                    Padding="5"
-                    IsVisible="{Binding CustomerSmallM.Address}"
-                    Stroke="Transparent">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="10" />
-                    </Border.StrokeShape>
-                    <VerticalStackLayout>
-
-                        <VerticalStackLayout.GestureRecognizers>
-                            <TapGestureRecognizer
-                                Buttons="Primary"
-                                NumberOfTapsRequired="2"
-                                Tapped="TapGestureRecognizer_Tapped_CopyAddress" />
-                        </VerticalStackLayout.GestureRecognizers>
-
-                        <Label HorizontalOptions="Center" Text="Adres" />
-
-                        <HorizontalStackLayout>
-                            <Label IsVisible="{Binding CustomerSmallM.Name}">
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="{Binding ResidentialAddress.Name}" />
-                                        <Span Text=" " />
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
-                            <Label IsVisible="{Binding CustomerSmallM.Surname}" Text="{Binding ResidentialAddress.Surname}" />
-                        </HorizontalStackLayout>
-
-                        <HorizontalStackLayout>
-
-                            <Label IsVisible="{Binding CustomerSmallM.Street}">
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="{Binding ResidentialAddress.Street}" />
-                                        <Span Text=" " />
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
-                            <Label IsVisible="{Binding CustomerSmallM.HouseNumber}">
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="{Binding ResidentialAddress.HouseNumber}" />
-                                        <Span Text=" " />
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
-                            <Label IsVisible="{Binding CustomerSmallM.ApartmentNumber}" Text="{Binding ResidentialAddress.ApartmentNumber}" />
-                        </HorizontalStackLayout>
-
-                        <HorizontalStackLayout>
-                            <Label IsVisible="{Binding CustomerSmallM.PostalCode}">
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="{Binding ResidentialAddress.PostalCode}" />
-                                        <Span Text=" " />
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
-                            <Label IsVisible="{Binding CustomerSmallM.City}" Text="{Binding ResidentialAddress.City}" />
-                        </HorizontalStackLayout>
-                        <Label IsVisible="{Binding CustomerSmallM.Country}" Text="{Binding ResidentialAddress.Country}" />
-
-                    </VerticalStackLayout>
-                </Border>-->
 
                 <Border />
 

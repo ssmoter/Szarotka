@@ -9,19 +9,19 @@
 
 
     <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
+        <Label HorizontalOptions="Center" Text="Aktualizacja baz danych" />
         <VerticalStackLayout Padding="5" IsVisible="{Binding UpdateDataBaseM.DataBaseIsVisible}">
 
             <Label HorizontalOptions="Center">
                 <Label.FormattedText>
                     <FormattedString>
-                        <Span Text="Aktualizacja bazy danych ogólnej z wersji " />
+                        <Span Text="Ogólna " />
                         <Span Text="{Binding UpdateDataBaseM.FromVersion.DataBase}" />
                         <Span Text=" do wersji: " />
                         <Span Text="{Binding UpdateDataBaseM.ToVersion.DataBase}" />
                     </FormattedString>
                 </Label.FormattedText>
             </Label>
-
             <ProgressBar Progress="{Binding UpdateDataBaseM.DataBaseProgresBar}" />
         </VerticalStackLayout>
 
@@ -30,14 +30,13 @@
             <Label HorizontalOptions="Center">
                 <Label.FormattedText>
                     <FormattedString>
-                        <Span Text="Aktualizacja bazy danych Inventaryzacji z wersji " />
+                        <Span Text="Inventaryzacja " />
                         <Span Text="{Binding UpdateDataBaseM.FromVersion.Inventory}" />
                         <Span Text=" do wersji: " />
                         <Span Text="{Binding UpdateDataBaseM.ToVersion.Inventory}" />
                     </FormattedString>
                 </Label.FormattedText>
             </Label>
-
             <ProgressBar Progress="{Binding UpdateDataBaseM.InventioryProgresBar}" />
         </VerticalStackLayout>
 
@@ -46,14 +45,13 @@
             <Label HorizontalOptions="Center">
                 <Label.FormattedText>
                     <FormattedString>
-                        <Span Text="Aktualizacja bazy danych Map z wersji " />
+                        <Span Text="Mapy " />
                         <Span Text="{Binding UpdateDataBaseM.FromVersion.DriversRoutes}" />
                         <Span Text=" do wersji: " />
                         <Span Text="{Binding UpdateDataBaseM.ToVersion.DriversRoutes}" />
                     </FormattedString>
                 </Label.FormattedText>
             </Label>
-
             <ProgressBar Progress="{Binding UpdateDataBaseM.DriverRoutesProgresBar}" />
         </VerticalStackLayout>
 

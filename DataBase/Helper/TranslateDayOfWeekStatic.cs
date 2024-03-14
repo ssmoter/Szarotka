@@ -55,6 +55,21 @@ namespace DataBase.Helper
             return value;
         }
     }
+    public class TicksToDatetime : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is long day)
+            {
+                return new DateTime(day).ToShortDateString();
+            }
+            return value;
+        }
 
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
 
 }

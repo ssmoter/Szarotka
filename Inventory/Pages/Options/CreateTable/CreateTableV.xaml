@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:VM="clr-namespace:Inventory.Pages.Options.CreateTable"
+    x:Name="View"
     x:DataType="VM:CreateTableVM">
 
 
@@ -16,6 +17,62 @@
         </Border.StrokeShape>
 
         <VerticalStackLayout Padding="5">
+
+            <Label HorizontalOptions="End" VerticalOptions="Start">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span FontSize="Micro" Text="Wersja: " />
+                        <Span FontSize="Micro" Text="{Binding Version.Inventory}" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+
+
+            <Border>
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout>
+                    <Label HorizontalOptions="Center" Text="Kierowcy:" />
+                    <HorizontalStackLayout HorizontalOptions="Center">
+
+                        <Button
+                            Command="{Binding CreateDriverCommand}"
+                            HorizontalOptions="Center"
+                            Text="Dodaj" />
+                        <Button
+                            Command="{Binding SelectDriverCommand}"
+                            HorizontalOptions="Center"
+                            Text="Wybierz" />
+                        <Button
+                            Command="{Binding EditDriverCommand}"
+                            HorizontalOptions="Center"
+                            Text="Edytuj" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+
+
+            <HorizontalStackLayout HorizontalOptions="Center">
+
+                <Button
+                    Command="{Binding CreateTablesCommand}"
+                    HorizontalOptions="Center"
+                    Text="Wygeneruj Tabele" />
+                <Button
+                    Command="{Binding CreateNewTablesCommand}"
+                    HorizontalOptions="Center"
+                    Text="Wygeneruj brakujące Tabele" />
+            </HorizontalStackLayout>
+
+
+
+
+
+
+
             <Label
                 HorizontalOptions="Center"
                 Text="Stworzone tabele:"
@@ -45,40 +102,8 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <HorizontalStackLayout HorizontalOptions="Center">
 
-                <Button
-                    Command="{Binding CreateTablesCommand}"
-                    HorizontalOptions="Center"
-                    Text="Wygeneruj Tabele" />
-                <Button
-                    Command="{Binding CreateNewTablesCommand}"
-                    HorizontalOptions="Center"
-                    Text="Wygeneruj brakujące Tabele" />
-            </HorizontalStackLayout>
-            <Border>
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                <VerticalStackLayout>
-                    <Label HorizontalOptions="Center" Text="Kierowcy:" />
-                    <HorizontalStackLayout HorizontalOptions="Center">
 
-                        <Button
-                            Command="{Binding CreateDriverCommand}"
-                            HorizontalOptions="Center"
-                            Text="Dodaj" />
-                        <Button
-                            Command="{Binding SelectDriverCommand}"
-                            HorizontalOptions="Center"
-                            Text="Wybierz" />
-                        <Button
-                            Command="{Binding EditDriverCommand}"
-                            HorizontalOptions="Center"
-                            Text="Edytuj" />
-                    </HorizontalStackLayout>
-                </VerticalStackLayout>
-            </Border>
 
         </VerticalStackLayout>
     </Border>

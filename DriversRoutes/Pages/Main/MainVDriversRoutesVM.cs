@@ -93,5 +93,24 @@ namespace DriversRoutes.Pages.Main
                 });
         }
 
+        [RelayCommand]
+        async Task ChangeName(Routes routes)
+        {
+            try
+            {
+                var result = await Shell.Current.DisplayPromptAsync(routes.Name, "Zmień nazwę", "Tak", "Nie", routes.Name, initialValue: routes.Name);
+
+                if (!string.IsNullOrWhiteSpace(result))
+                {
+                    routes.Name = result;
+                    await _db.DataBaseAsync.UpdateAsync(routes);
+                    Routes = await GetRoutes();
+                }
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
     }
 }

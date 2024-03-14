@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Inventory.Service;
+using DataBase.Helper;
 using DataBase.Model.EntitiesInventory;
+
+using Inventory.Service;
 
 
 namespace Inventory.Pages.Main
@@ -33,7 +35,7 @@ namespace Inventory.Pages.Main
 
         #region Method
 
-        public void LookingForSelectedDriver()
+        public async Task LookingForSelectedDriver()
         {
             var tableInfo = _db.DataBase.GetTableInfo(nameof(SelectedDriver));
             bool exist = tableInfo.Count > 0;
@@ -51,7 +53,11 @@ namespace Inventory.Pages.Main
             }
             if (CheckDriver())
             {
-                Shell.Current.GoToAsync("../MainOptionsV");
+                await Shell.Current.GoToAsync("../MainOptionsV?",
+                    new Dictionary<string, object>()
+                    {
+                        [nameof(ListOfEnums.TypOfOptions)] = ListOfEnums.TypOfOptions.Inventory,
+                    });
             }
         }
         bool CheckDriver()

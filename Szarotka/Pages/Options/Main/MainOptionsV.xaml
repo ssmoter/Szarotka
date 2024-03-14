@@ -4,31 +4,83 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:DriversRoutesCreateTableV="clr-namespace:DriversRoutes.Pages.Options.CreateTable;assembly=DriversRoutes"
+    xmlns:Enums="clr-namespace:DataBase.Helper;assembly=DataBase"
     xmlns:InventoryCreateTableView="clr-namespace:Inventory.Pages.Options.CreateTable;assembly=Inventory"
     xmlns:VM="clr-namespace:Szarotka.Pages.Options.Main"
     Title="Opcje"
     x:DataType="VM:MainOptionsVM">
+
+    <ContentPage.Resources>
+        <Enums:TicksToDatetime x:Key="TicksToDatetime" />
+    </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding GoToLogsCommand}" Text="Logi" />
         <ToolbarItem IsEnabled="False" Text="{Binding AppVersion}" />
     </ContentPage.ToolbarItems>
 
-
-
     <ScrollView>
+        <VerticalStackLayout>
+            <ScrollView HorizontalOptions="Center" Orientation="Horizontal">
 
-        <Grid RowDefinitions="auto,*,*,*">
+                <HorizontalStackLayout HorizontalOptions="Center">
 
-            <Border Grid.Row="0">
+                    <Button
+                        Command="{Binding ChangeDisplayOptionsCommand}"
+                        CommandParameter="{x:Static Enums:ListOfEnums+TypOfOptions.Main}"
+                        Text="Ogólne" />
+                    <Button
+                        Command="{Binding ChangeDisplayOptionsCommand}"
+                        CommandParameter="{x:Static Enums:ListOfEnums+TypOfOptions.Inventory}"
+                        Text="Inventaryzacja" />
+                    <Button
+                        Command="{Binding ChangeDisplayOptionsCommand}"
+                        CommandParameter="{x:Static Enums:ListOfEnums+TypOfOptions.DriversRoutes}"
+                        IsVisible="{OnPlatform Android=true,
+                                               Default=false}"
+                        Text="Mapy" />
+
+                </HorizontalStackLayout>
+            </ScrollView>
+
+            <Border IsVisible="{Binding MainOptionsM.Main}">
                 <VerticalStackLayout>
+                    <Grid ColumnDefinitions="*,auto" RowDefinitions="auto,auto,*">
 
-                    <Label
-                        FontSize="Large"
-                        HorizontalOptions="Center"
-                        Text="Ogólne"
-                        VerticalOptions="Center" />
+                        <Label
+                            Grid.Column="1"
+                            HorizontalOptions="End"
+                            VerticalOptions="Start">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span FontSize="Micro" Text="Wersja: " />
+                                    <Span FontSize="Micro" Text="{Binding MainOptionsM.Version.DataBase}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            FlowDirection="RightToLeft"
+                            FontSize="Micro"
+                            HorizontalOptions="End"
+                            VerticalOptions="Start">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span FontSize="Micro" Text="Backup:&#10;" />
+                                    <Span FontSize="Micro" Text="{Binding MainOptionsM.Version.LastBackup, Converter={StaticResource Key=TicksToDatetime}}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
 
+                        <Label
+                            Grid.RowSpan="3"
+                            Grid.ColumnSpan="2"
+                            FontSize="Large"
+                            HorizontalOptions="Center"
+                            Text="Ogólne"
+                            VerticalOptions="Center" />
+                    </Grid>
 
 
                     <VerticalStackLayout HorizontalOptions="Center">
@@ -45,7 +97,7 @@
                 </VerticalStackLayout>
             </Border>
 
-            <Border Grid.Row="1">
+            <Border IsVisible="{Binding MainOptionsM.Inventory}">
                 <ScrollView>
 
                     <VerticalStackLayout>
@@ -60,23 +112,28 @@
                 </ScrollView>
             </Border>
 
-            <Border Grid.Row="2" IsVisible="{OnPlatform Android=true, Default=false}">
-                <ScrollView>
+            <VerticalStackLayout IsVisible="{Binding MainOptionsM.DriversRoutes}">
+                <Border Grid.Row="2" IsVisible="{OnPlatform Android=true, Default=false}">
+                    <ScrollView>
 
-                    <VerticalStackLayout>
-                        <Label
-                            FontSize="Large"
-                            HorizontalOptions="Center"
-                            Text="Mapy"
-                            VerticalOptions="Center" />
+                        <VerticalStackLayout>
+                            <Label
+                                FontSize="Large"
+                                HorizontalOptions="Center"
+                                Text="Mapy"
+                                VerticalOptions="Center" />
 
-                        <DriversRoutesCreateTableV:CreateTableRoutesV />
-                    </VerticalStackLayout>
-                </ScrollView>
-            </Border>
+                            <DriversRoutesCreateTableV:CreateTableRoutesV DataBaseVersion="{Binding MainOptionsM.Version}" />
+                        </VerticalStackLayout>
+                    </ScrollView>
+                </Border>
+            </VerticalStackLayout>
 
 
-        </Grid>
+
+        </VerticalStackLayout>
     </ScrollView>
+
+
 
 </ContentPage>
