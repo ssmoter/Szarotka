@@ -15,8 +15,14 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding GoToLogsCommand}" Text="Logi" />
-        <ToolbarItem IsEnabled="False" Text="{Binding AppVersion}" />
+        <ToolbarItem
+            x:DataType="VM:MainOptionsVM"
+            Command="{Binding GoToLogsCommand}"
+            Text="Logi" />
+        <ToolbarItem
+            x:DataType="VM:MainOptionsVM"
+            IsEnabled="False"
+            Text="{Binding AppVersion}" />
     </ContentPage.ToolbarItems>
 
     <ScrollView>
@@ -32,7 +38,7 @@
                     <Button
                         Command="{Binding ChangeDisplayOptionsCommand}"
                         CommandParameter="{x:Static Enums:ListOfEnums+TypOfOptions.Inventory}"
-                        Text="Inventaryzacja" />
+                        Text="Inwentaryzacja" />
                     <Button
                         Command="{Binding ChangeDisplayOptionsCommand}"
                         CommandParameter="{x:Static Enums:ListOfEnums+TypOfOptions.DriversRoutes}"
@@ -104,7 +110,7 @@
                         <Label
                             FontSize="Large"
                             HorizontalOptions="Center"
-                            Text="Inventory"
+                            Text="Inwentory"
                             VerticalOptions="Center" />
 
                         <InventoryCreateTableView:CreateTableV />

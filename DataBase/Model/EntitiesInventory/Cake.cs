@@ -1,24 +1,45 @@
-﻿using SQLite;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+using SQLite;
 
 namespace DataBase.Model.EntitiesInventory;
 
-public class Cake
+public partial class Cake : BaseEntities<Guid>
 {
-    [PrimaryKey]
-    public Guid Id { get; set; }
-    public Guid DayId { get; set; }
-    public bool IsSell { get; set; }
-    public int Price { get; set; }
+    [ObservableProperty]
+    private Guid dayId;
+    [ObservableProperty]
+    private bool isSell;
+
+
+    private int price;
+    public int Price
+    {
+        get => price;
+        set
+        {
+            if (SetProperty(ref price, value))
+            {
+                OnPropertyChanged(nameof(Price));
+                OnPropertyChanged(nameof(PriceDecimal));
+            }
+        }
+    }
+
     [Ignore]
     public decimal PriceDecimal
     {
         get
         {
-            return (decimal)Price / 100m;
+            return (decimal)price / 100m;
         }
         set
         {
-            Price = (int)(value * 100);
+            if (SetProperty(ref price, (int)(value * 100)))
+            {
+                OnPropertyChanged(nameof(Price));
+                OnPropertyChanged(nameof(PriceDecimal));
+            }
         }
     }
 }

@@ -1,20 +1,17 @@
-﻿using SQLite;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DataBase.Model.EntitiesInventory;
 
-    public class Driver
-    {
-        [PrimaryKey]
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-    }
-    public class SelectedDriver
-    {
-        [PrimaryKey]
-        [AutoIncrement]
-        public int Id { get; set; }
-        public Guid SelectedGuid { get; set; }
-
-    }
+public partial class Driver : BaseEntities<Guid>
+{
+    [ObservableProperty]
+    private string name;
+    [ObservableProperty]
+    private string description;
+}
+public partial class SelectedDriver : BaseEntities<int>
+{
+    [ObservableProperty]
+    private Guid selectedGuid;
+}
 

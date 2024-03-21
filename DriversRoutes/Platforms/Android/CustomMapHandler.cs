@@ -26,7 +26,7 @@ namespace DriversRoutes.Platforms.Android
         {
         }
 
-        public List<Marker> Markers { get; } = new();
+        public List<Marker> Markers { get; } = [];
 
         protected override void ConnectHandler(MapView platformView)
         {

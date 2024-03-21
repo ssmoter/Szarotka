@@ -1,4 +1,4 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using DataBase.Model.EntitiesInventory;
 
 namespace Inventory.Helper
 {
@@ -20,13 +20,14 @@ SELECT *
 'Number',Product.Number,
 'NumberEdit',Product.NumberEdit,
 'NumberReturn',Product.NumberReturn
-	
+
 	,'Price',(SELECT json_object(
 	'Id',Id,	
-								'DayId',DayId,
+	'DayId',DayId,
 	'ProductNameId',ProductNameId,
 	'Price',Price,
-	'Created',Created
+	'CreatedTicks',CreatedTicks,
+	'UpdatedTicks',UpdatedTicks
 	)
 	FROM ProductPrice WHERE ProductPrice.ProductNameId == Product.ProductNameId AND ProductPrice.Id == Product.ProductPriceId) 
 	
@@ -35,25 +36,29 @@ SELECT *
 	'Name',Name,
 	'Description',Description,
 	'Img',Img,
-	'Arrangement',Arrangement
+	'Arrangement',Arrangement,
+	'CreatedTicks',CreatedTicks,
+	'UpdatedTicks',UpdatedTicks
 	)
 	FROM ProductName WHERE ProductName.Id == Product.ProductNameId)
 )) 
 FROM Product 
 	LEFT JOIN ProductName 
 	ON Product.ProductNameId == ProductName.Id
-WHERE Product.DayId == Day.Id ORDER BY ProductName.Arrangement ) as ""ProductsJson""
+WHERE Product.DayId == Day.Id ORDER BY ProductName.Arrangement ) as 'ProductsJson'
 
 ,(SELECT json_group_array(json_object(
 'Id',Id,
 'DayId',DayId,
 'IsSell',IsSell,
-'Price',Price))
+'Price',Price,
+'CreatedTicks',CreatedTicks,
+'UpdatedTicks',UpdatedTicks))
 FROM Cake WHERE Cake.DayId == Day.Id
 ) as 'CakesJson'
 
 FROM Day 
-WHERE CreatedDate == '{date}' 
+WHERE SelectedDateString == '{date}' 
 AND DriverGuid == '{driverId}' ";
 
             return sql;
@@ -73,13 +78,17 @@ SELECT *
 'PriceTotalAfterCorrect',Product.PriceTotalAfterCorrect,
 'Number',Product.Number,
 'NumberEdit',Product.NumberEdit,
-'NumberReturn',Product.NumberReturn
-	
+'NumberReturn',Product.NumberReturn,
+'CreatedTicks',Product.CreatedTicks,
+'UpdatedTicks',Product.UpdatedTicks
+
 	,'Price',(SELECT json_object(
 	'Id',Id,	
+	'DayId',DayId,
 	'ProductNameId',ProductNameId,
 	'Price',Price,
-	'Created',Created
+	'CreatedTicks',CreatedTicks,
+	'UpdatedTicks',UpdatedTicks
 	)
 	FROM ProductPrice WHERE ProductPrice.ProductNameId == Product.ProductNameId AND ProductPrice.Id == Product.ProductPriceId) 
 	
@@ -88,25 +97,29 @@ SELECT *
 	'Name',Name,
 	'Description',Description,
 	'Img',Img,
-	'Arrangement',Arrangement
+	'Arrangement',Arrangement,
+	'CreatedTicks',CreatedTicks,
+	'UpdatedTicks',UpdatedTicks
 	)
 	FROM ProductName WHERE ProductName.Id == Product.ProductNameId)
 )) 
 FROM Product 
 	LEFT JOIN ProductName 
 	ON Product.ProductNameId == ProductName.Id
-WHERE Product.DayId == Day.Id ORDER BY ProductName.Arrangement ) as ""ProductsJson""
+WHERE Product.DayId == Day.Id ORDER BY ProductName.Arrangement ) as 'ProductsJson'
 
 ,(SELECT json_group_array(json_object(
 'Id',Id,
 'DayId',DayId,
 'IsSell',IsSell,
-'Price',Price))
+'Price',Price,
+'CreatedTicks',CreatedTicks,
+'UpdatedTicks',UpdatedTicks))
 FROM Cake WHERE Cake.DayId == Day.Id
 ) as 'CakesJson'
 
 FROM Day 
-WHERE CreatedDate == '{date}' 
+WHERE SelectedDateString == '{date}' 
 AND DriverGuid == '{driverId}' ";
 
             return sql;
@@ -126,14 +139,17 @@ SELECT *
 'PriceTotalAfterCorrect',Product.PriceTotalAfterCorrect,
 'Number',Product.Number,
 'NumberEdit',Product.NumberEdit,
-'NumberReturn',Product.NumberReturn
-	
+'NumberReturn',Product.NumberReturn,
+'CreatedTicks',Product.CreatedTicks,
+'UpdatedTicks',Product.UpdatedTicks
+
 	,'Price',(SELECT json_object(
 	'Id',Id,	
-								'DayId',DayId,
+	'DayId',DayId,
 	'ProductNameId',ProductNameId,
 	'Price',Price,
-	'Created',Created
+	'CreatedTicks',CreatedTicks,
+	'UpdatedTicks',UpdatedTicks
 	)
 	FROM ProductPrice WHERE ProductPrice.ProductNameId == Product.ProductNameId AND ProductPrice.Id == Product.ProductPriceId) 
 	
@@ -142,25 +158,30 @@ SELECT *
 	'Name',Name,
 	'Description',Description,
 	'Img',Img,
-	'Arrangement',Arrangement
+	'Arrangement',Arrangement,
+	'CreatedTicks',CreatedTicks,
+	'UpdatedTicks',UpdatedTicks
 	)
 	FROM ProductName WHERE ProductName.Id == Product.ProductNameId)
 )) 
 FROM Product 
 	LEFT JOIN ProductName 
 	ON Product.ProductNameId == ProductName.Id
-WHERE Product.DayId == Day.Id ORDER BY ProductName.Arrangement ) as ""ProductsJson""
+WHERE Product.DayId == Day.Id ORDER BY ProductName.Arrangement ) as 'ProductsJson'
 
 ,(SELECT json_group_array(json_object(
 'Id',Id,
 'DayId',DayId,
 'IsSell',IsSell,
-'Price',Price))
+'Price',Price,
+'CreatedTicks',CreatedTicks,
+'UpdatedTicks',UpdatedTicks))
 FROM Cake WHERE Cake.DayId == Day.Id
 ) as 'CakesJson'
 
 FROM Day 
-WHERE Id == ""{Id}"" ";
+WHERE Id == '{Id}' 
+";
 
             return sql;
         }
@@ -169,17 +190,21 @@ WHERE Id == ""{Id}"" ";
 
         public static string GetAllProductsNameAndPrice()
         {
-			string sql = $@"
+            string sql = $@"
 SELECT * 
 ,(SELECT json_object(
 'Id',Id,
 'ProductNameId',ProductNameId,
 'Price',Price,
-'Created',Created
+'CreatedTicks',CreatedTicks,
+'UpdatedTicks',UpdatedTicks
 )
-FROM ProductPrice WHERE ProductPrice.ProductNameId == ProductName.Id ORDER BY Created DESC LIMIT 1) as 'JsonPrice'
+FROM ProductPrice WHERE ProductPrice.ProductNameId == ProductName.Id ORDER BY CreatedTicks DESC LIMIT 1) as 'JsonPrice'
 
-FROM ProductName ORDER BY Arrangement";
+FROM ProductName 
+WHERE ProductName.IsVisible == true
+ORDER BY Arrangement
+";
 
             return sql;
         }

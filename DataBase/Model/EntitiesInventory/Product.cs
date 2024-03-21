@@ -1,60 +1,140 @@
-﻿using SQLite;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+using SQLite;
 
 namespace DataBase.Model.EntitiesInventory;
 
-public class Product
+public partial class Product : BaseEntities<Guid>
 {
-    [PrimaryKey]
-    public Guid Id { get; set; }
-    public Guid DayId { get; set; }
-    public Guid ProductNameId {  get; set; }
-    public Guid ProductPriceId { get; set; }
+    [ObservableProperty]
+    private Guid dayId;
+    [ObservableProperty]
+    private Guid productNameId;
+    [ObservableProperty]
+    private Guid productPriceId;
+    private ProductName name;
+    [Ignore]
+    public ProductName Name
+    {
+        get => name;
+        set
+        {
+            if (SetProperty(ref name, value))
+            {
+                OnPropertyChanged(nameof(Name));
+            }
+        }
+    }
+    [ObservableProperty]
+    private string description;
 
+    private ProductPrice price;
     [Ignore]
-    public ProductName Name { get; set; }
-    public string Description { get; set; } = "";
-    [Ignore]
-    public ProductPrice Price { get; set; }
-    public int PriceTotal { get; set; }
+    public ProductPrice Price
+    {
+        get => price;
+        set
+        {
+            if (SetProperty(ref price, value))
+            {
+                OnPropertyChanged(nameof(Price));
+            }
+        }
+    }
+    private int priceTotal;
+    public int PriceTotal
+    {
+        get => priceTotal;
+        set
+        {
+            if (SetProperty(ref priceTotal, value))
+            {
+                OnPropertyChanged(nameof(PriceTotal));
+                OnPropertyChanged(nameof(PriceTotalDecimal));
+            }
+        }
+    }
+
+
     [Ignore]
     public decimal PriceTotalDecimal
     {
         get
         {
-            return (decimal)PriceTotal / 100m;
+            return (decimal)priceTotal / 100m;
         }
         set
         {
-            PriceTotal = (int)(value * 100);
+            if (SetProperty(ref priceTotal, (int)(value * 100)))
+            {
+                OnPropertyChanged(nameof(PriceTotal));
+                OnPropertyChanged(nameof(PriceTotalDecimal));
+            }
         }
     }
-    public int PriceTotalCorrect { get; set; }
+    private int priceTotalCorrect;
+    public int PriceTotalCorrect
+    {
+        get => priceTotalAfterCorrect;
+        set
+        {
+            if (SetProperty(ref priceTotalCorrect, value))
+            {
+                OnPropertyChanged(nameof(PriceTotalCorrect));
+                OnPropertyChanged(nameof(PriceTotalCorrectDecimal));
+            }
+        }
+    }
+
     [Ignore]
     public decimal PriceTotalCorrectDecimal
     {
         get
         {
-            return (decimal)PriceTotalCorrect / 100m;
+            return (decimal)priceTotalCorrect / 100m;
         }
         set
         {
-            PriceTotalCorrect = (int)(value * 100);
+            if (SetProperty(ref priceTotalCorrect, (int)(value * 100)))
+            {
+                OnPropertyChanged(nameof(PriceTotalCorrect));
+                OnPropertyChanged(nameof(PriceTotalCorrectDecimal));
+            }
         }
     }
-    public int PriceTotalAfterCorrect { get; set; }
+    private int priceTotalAfterCorrect;
+    public int PriceTotalAfterCorrect
+    {
+        get => priceTotalAfterCorrect;
+        set
+        {
+            if (SetProperty(ref priceTotalAfterCorrect, (int)(value * 100)))
+            {
+                OnPropertyChanged(nameof(PriceTotalAfterCorrect));
+                OnPropertyChanged(nameof(PriceTotalAfterCorrectDecimal));
+            }
+        }
+    }
     [Ignore]
     public decimal PriceTotalAfterCorrectDecimal
     {
         get
         {
-            return (decimal)PriceTotalAfterCorrect / 100m;
+            return (decimal)priceTotalAfterCorrect / 100m;
         }
         set
         {
-            PriceTotalAfterCorrect = (int)(value * 100);
+            if (SetProperty(ref priceTotalAfterCorrect, (int)(value * 100)))
+            {
+                OnPropertyChanged(nameof(PriceTotalAfterCorrect));
+                OnPropertyChanged(nameof(PriceTotalAfterCorrectDecimal));
+            }
         }
     }
-    public int Number { get; set; }
-    public int NumberEdit { get; set; }
-    public int NumberReturn { get; set; }
+    [ObservableProperty]
+    private int number;
+    [ObservableProperty]
+    private int numberEdit;
+    [ObservableProperty]
+    private int numberReturn;
 }

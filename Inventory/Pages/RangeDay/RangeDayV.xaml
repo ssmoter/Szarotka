@@ -44,7 +44,8 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="10" />
             </Border.StrokeShape>
-            <Grid ColumnDefinitions="*,*,*" RowDefinitions="*,*">
+
+            <VerticalStackLayout>
                 <Label
                     Grid.Row="0"
                     Grid.Column="0"
@@ -52,35 +53,34 @@
                     HorizontalOptions="Center"
                     Text="Suma utargów z danego zakresu" />
 
-                <HorizontalStackLayout
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    HorizontalOptions="Center">
-                    <Label Text="Zapłacono = " />
-                    <Label Text="{Binding TotalPriceOfRange.TotalPriceMoney}" />
-                    <Label Text="zł" />
-
-                </HorizontalStackLayout>
-                <HorizontalStackLayout
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    HorizontalOptions="Center">
-                    <Label Text="Utarg = " />
-                    <Label Text="{Binding TotalPriceOfRange.TotalPriceAfterCorrect}" />
-                    <Label Text="zł" />
-                </HorizontalStackLayout>
-
-                <HorizontalStackLayout
-                    Grid.Row="1"
-                    Grid.Column="2"
-                    HorizontalOptions="Center">
-                    <Label Text="Różnica = " />
-                    <Label Text="{Binding TotalPriceOfRange.TotalPriceDifference}" />
-                    <Label Text="zł" />
-                </HorizontalStackLayout>
-
-            </Grid>
-
+                <Label>
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text=" Zapłacono = " />
+                            <Span Text="{Binding TotalPriceOfRange.TotalPriceMoney}" />
+                            <Span Text="zł" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Label>
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text=" Utarg = " />
+                            <Span Text="{Binding TotalPriceOfRange.TotalPriceAfterCorrect}" />
+                            <Span Text="zł" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Label>
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text=" Różnica = " />
+                            <Span Text="{Binding TotalPriceOfRange.TotalPriceDifference}" />
+                            <Span Text="zł" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </VerticalStackLayout>
         </Border>
 
         <Border Grid.Row="2">

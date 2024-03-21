@@ -34,7 +34,7 @@ namespace Inventory.Data
                 };
                 var guid = new Guid(Helper.SelectedDriver.Id);
                 var createdString = createdDate.ToString("dd.MM.yyyy");
-                var today = await _db.DataBaseAsync.Table<Day>().Where(x => x.CreatedDate == createdString && x.DriverGuid == guid).FirstOrDefaultAsync();
+                var today = await _db.DataBaseAsync.Table<Day>().Where(x => x.SelectedDateString == createdString && x.DriverGuid == guid).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
                 DayM.Products = await GetProductTable(DayM);
                 DayM.Cakes = await GetCakeTable(DayM);
@@ -67,7 +67,7 @@ namespace Inventory.Data
                     CanUpadte = false
                 };
                 var guid = new Guid(Helper.SelectedDriver.Id);
-                var today = await _db.DataBaseAsync.Table<Day>().Where(x => x.CreatedDate == createdDate && x.DriverGuid == guid).FirstOrDefaultAsync();
+                var today = await _db.DataBaseAsync.Table<Day>().Where(x => x.SelectedDateString == createdDate && x.DriverGuid == guid).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
                 DayM.Products = await GetProductTable(DayM);
                 DayM.Cakes = await GetCakeTable(DayM);
@@ -132,7 +132,7 @@ namespace Inventory.Data
                 };
                 var time = DateTime.Now.ToString("dd.MM.yyyy");
                 var guid = new Guid(Helper.SelectedDriver.Id);
-                var today = await _db.DataBaseAsync.Table<Day>().Where(x => x.CreatedDate == time && x.DriverGuid == guid).FirstOrDefaultAsync();
+                var today = await _db.DataBaseAsync.Table<Day>().Where(x => x.SelectedDateString == time && x.DriverGuid == guid).FirstOrDefaultAsync();
                 DayM = today.ParseAsDayM();
                 DayM.Products = await GetProductTable(DayM);
                 DayM.Cakes = await GetCakeTable(DayM);
@@ -258,10 +258,9 @@ namespace Inventory.Data
             {
                 day.Id = new();
                 day.Created = createdDate;
-                if (day.Created.Hour == 0)
-                {
+                if (day.Created.Hour == 0)                
                     day.Created = new DateTime(createdDate.Year, createdDate.Month, createdDate.Day, 12, 0, 0);
-                }
+                                
             }
             return day;
         }
@@ -343,7 +342,7 @@ namespace Inventory.Data
         {
             var guid = new Guid(Helper.SelectedDriver.Id);
             var createdString = createdDate.ToString("dd.MM.yyyy");
-            var id = await _db.DataBaseAsync.Table<Day>().FirstOrDefaultAsync(x => x.CreatedDate == createdString && x.DriverGuid == guid);
+            var id = await _db.DataBaseAsync.Table<Day>().FirstOrDefaultAsync(x => x.SelectedDateString == createdString && x.DriverGuid == guid);
             if (id != null)
                 return id.Id;
             return Guid.Empty;

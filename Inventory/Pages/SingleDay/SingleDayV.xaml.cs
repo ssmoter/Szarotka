@@ -77,100 +77,61 @@ public partial class SingleDayV : ContentPage
 
     private void Button_Clicked_FastMinusProductNumber(object sender, EventArgs e)
     {
-        var item = sender as ImageButton;
-        if (item is null) { return; }
+        if (sender is not ImageButton item) { return; }
 
-        var product = item.BindingContext as ProductM;
-        if (product == null) { return; }
+        if (item.BindingContext is not ProductM product) { return; }
 
         _vm.FastMinusProductNumberCommand.Execute(product);
     }
     private void Button_Clicked_FastAddProductNumber(object sender, EventArgs e)
     {
-        var item = sender as ImageButton;
-        if (item is null) { return; }
+        if (sender is not ImageButton item) { return; }
 
-        var product = item.BindingContext as ProductM;
-        if (product == null) { return; }
+        if (item.BindingContext is not ProductM product) { return; }
 
         _vm.FastAddProductNumberCommand.Execute(product);
     }
     private void Button_Clicked_FastMinusProductEdit(object sender, EventArgs e)
     {
-        var item = sender as ImageButton;
-        if (item is null) { return; }
+        if (sender is not ImageButton item) { return; }
 
-        var product = item.BindingContext as ProductM;
-        if (product == null) { return; }
+        if (item.BindingContext is not ProductM product) { return; }
 
         _vm.FastMinusProductEditCommand.Execute(product);
     }
     private void Button_Clicked_FastAddProductEdit(object sender, EventArgs e)
     {
-        var item = sender as ImageButton;
-        if (item is null) { return; }
+        if (sender is not ImageButton item) { return; }
 
-        var product = item.BindingContext as ProductM;
-        if (product == null) { return; }
+        if (item.BindingContext is not ProductM product) { return; }
 
         _vm.FastAddProductEditCommand.Execute(product);
     }
     private void Button_Clicked_FastMinusProductReturn(object sender, EventArgs e)
     {
-        var item = sender as ImageButton;
-        if (item is null) { return; }
+        if (sender is not ImageButton item) { return; }
 
-        var product = item.BindingContext as ProductM;
-        if (product == null) { return; }
+        if (item.BindingContext is not ProductM product) { return; }
 
         _vm.FastMinusProductReturnCommand.Execute(product);
     }
     private void Button_Clicked_FastAddProductReturn(object sender, EventArgs e)
     {
-        var item = sender as ImageButton;
-        if (item is null) { return; }
+        if (sender is not ImageButton item) { return; }
 
-        var product = item.BindingContext as ProductM;
-        if (product == null) { return; }
+        if (item.BindingContext is not ProductM product) { return; }
 
         _vm.FastAddProductReturnCommand.Execute(product);
     }
 
 
     #endregion
-    IVisualTreeElement[] entrys;
-    //int lastIndex = 0;
     private void SwipeItem_Invoked_DeleteCake(object sender, EventArgs e)
     {
-        var item = sender as SwipeItem;
-        if (item is null) { return; }
+        if (sender is not SwipeItem item) { return; }
 
-        var product = item.BindingContext as CakeM;
-        if (product == null) { return; }
+        if (item.BindingContext is not CakeM product) { return; }
 
         _vm.DeleteCakeCommand.Execute(product);
     }
-    //private void CollectionView_Scrolled(object sender, ItemsViewScrolledEventArgs e)
-    //{
-    //    entrys = ((CollectionView)sender).GetVisualTreeDescendants().Where(x => x is Entry).ToArray();
-
-    //    int index = -1;
-    //    for (int i = 0; i < entrys?.Length; i++)
-    //    {
-    //        if (((Entry)entrys[i]).IsFocused)
-    //        {
-    //            if (lastIndex >= i)
-    //                index = i + 1;
-    //            else
-    //                index = i - 1;
-
-    //            lastIndex = index;
-    //            break;
-    //        }
-    //    }
-    //    if (index >= 0 && index < entrys.Length)
-    //    {
-    //        ((Entry)entrys[index])?.Focus();
-    //    }
-    //}
 }

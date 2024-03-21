@@ -1,4 +1,5 @@
-﻿using DataBase.Model;
+﻿using DataBase.Data;
+using DataBase.Model;
 using DataBase.Service;
 
 using Szarotka.Pages.Options.Main;
@@ -7,13 +8,13 @@ namespace Szarotka
 {
     public partial class MainPage : ContentPage
     {
-        readonly ICreatedDataBase _createdDataBase;
-        readonly DataBase.Data.AccessDataBase _db;
+        private readonly CreatedDataBase _createdDataBase;
+        private readonly AccessDataBase _db;
         public MainPage()
         {
             InitializeComponent();
             _db = new();
-            _createdDataBase = new DataBase.Data.CreatedDataBase(_db);
+            _createdDataBase = new CreatedDataBase(_db);
         }
 
 
@@ -37,7 +38,7 @@ namespace Szarotka
         }
 
 
-        private async void DataBase_Clicked(object sender, EventArgs e)
+        private async void Options_Clicked(object sender, EventArgs e)
         {
             await Shell.Current.GoToAsync(nameof(MainOptionsV));
         }

@@ -44,7 +44,7 @@ namespace DataBase.Helper
                 var doc = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDocuments);
                 return Path.Combine(doc.Path);
 #else
-return "";
+                return "";
 #endif
             }
         }
@@ -58,7 +58,7 @@ return "";
                 var doc = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDocuments);
                 return Path.Combine(doc.Path,DatabaseName);
 #else
-return "";
+                return "";
 #endif
 
             }
@@ -78,7 +78,6 @@ return "";
             }
         }
 
-        public static CultureInfo CultureInfo = new CultureInfo("pl");
-
+        public static CultureInfo CultureInfo => new("pl");
     }
 }

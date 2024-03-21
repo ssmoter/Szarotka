@@ -1,4 +1,4 @@
-using System.Reflection;
+using Inventory.Pages.Options.CreateTable;
 
 namespace Szarotka.Pages.Options.Main;
 
@@ -9,4 +9,16 @@ public partial class MainOptionsV : ContentPage
         InitializeComponent();
         BindingContext = vm;
     }
+
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+
+        if (BindingContext is MainOptionsVM vm)
+        {
+            await CreateTableVM.OnNavigation(vm._db);
+        }
+
+    }
+
 }

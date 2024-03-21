@@ -6,10 +6,8 @@ using System.Text;
 
 namespace DataBase.Model.EntitiesRoutes
 {
-    public partial class SelectedDayOfWeekRoutes : ObservableObject
+    public partial class SelectedDayOfWeekRoutes : BaseEntities<Guid>
     {
-        [PrimaryKey]
-        public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
 
         [ObservableProperty]

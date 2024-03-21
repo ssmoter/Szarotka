@@ -5,38 +5,9 @@ using DriversRoutes.Service;
 
 namespace DriversRoutes.Data
 {
-    public class SelectRoutes : ISelectRoutes
+    public class SelectRoutes(AccessDataBase db) : ISelectRoutes
     {
-        readonly DataBase.Data.AccessDataBase _db;
-
-        public SelectRoutes(AccessDataBase db)
-        {
-            _db = db;
-        }
-
-        //public async Task<CustomerRoutes[]> GetCustomerRoutes(Routes routes, SelectedDayOfWeekRoutes dayOf)
-        //{
-        //    var customers = await _db.DataBaseAsync.Table<CustomerRoutes>()
-        //        .Where(x => x.RoutesId == routes.Id).ToArrayAsync();
-
-        //    for (int i = 0; i < customers.Length; i++)
-        //    {
-        //        customers[i].DayOfWeek = await GetDayOfWeek(customers[i], dayOf);
-        //    }
-
-
-        //    var result = customers.Where(x => x.DayOfWeek is not null);
-
-        //    return result.ToArray();
-        //}
-
-        //async Task<SelectedDayOfWeekRoutes> GetDayOfWeek(CustomerRoutes customer, SelectedDayOfWeekRoutes dayOf)
-        //{
-        //    var week = await _db.DataBaseAsync.Table<SelectedDayOfWeekRoutes>()
-        //        .FirstOrDefaultAsync(x => x.CustomerId == customer.Id && x.ValuesAsString.Contains(dayOf.ValuesAsString));
-
-        //    return week;
-        //}
+        readonly AccessDataBase _db = db;
 
         public async Task<CustomerRoutes[]> GetCustomerRoutesQueryAsync(Routes routes, SelectedDayOfWeekRoutes dayOf)
         {
@@ -54,7 +25,7 @@ namespace DriversRoutes.Data
                     Name = queryResult[i].Name,
                     Description = queryResult[i].Description,
                     PhoneNumber = queryResult[i].PhoneNumber,
-                    CreatedDate = queryResult[i].CreatedDate,
+                    Created = queryResult[i].Created,
                     Longitude = queryResult[i].Longitude,
                     Latitude = queryResult[i].Latitude,
                     DayOfWeek = Newtonsoft.Json.JsonConvert.DeserializeObject<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek),
@@ -82,7 +53,7 @@ namespace DriversRoutes.Data
                     Name = queryResult[i].Name,
                     Description = queryResult[i].Description,
                     PhoneNumber = queryResult[i].PhoneNumber,
-                    CreatedDate = queryResult[i].CreatedDate,
+                    Created = queryResult[i].Created,
                     Longitude = queryResult[i].Longitude,
                     Latitude = queryResult[i].Latitude,
                     DayOfWeek = Newtonsoft.Json.JsonConvert.DeserializeObject<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek),

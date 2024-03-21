@@ -208,7 +208,7 @@ namespace DriversRoutes.Pages.ListOfPoints
                             Name = point.Name,
                             Description = point.Description,
                             PhoneNumber = point.PhoneNumber,
-                            CreatedDate = point.CreatedDate,
+                            Created = point.Created,
                             DayOfWeek = point.DayOfWeek,
                             ResidentialAddress = point.ResidentialAddress,
                             Longitude = point.Longitude,

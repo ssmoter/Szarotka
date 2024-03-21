@@ -1,10 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using DataBase.Helper.Img;
+using DataBase.Model.EntitiesInventory;
 
 using Inventory.Helper.Parse;
-using DataBase.Model.EntitiesInventory;
 
 using System.Collections.ObjectModel;
 
@@ -27,7 +26,7 @@ namespace Inventory.Pages.Products.ListProduct
         public Action<int, int, ScrollToPosition, bool> ScrollTo;
         public ListProductVM(DataBase.Data.AccessDataBase db)
         {
-            ProductMs = new ObservableCollection<ListProductM>();
+            ProductMs = [];
             this._db = db;
 
             SelectAllProducts();
@@ -107,7 +106,7 @@ namespace Inventory.Pages.Products.ListProduct
         ObservableCollection<Inventory.Model.MVVM.ProductPriceM> SelectPrices(Guid id)
         {
             var price = new ObservableCollection<Model.MVVM.ProductPriceM>();
-            var priceM = _db.DataBase.Table<ProductPrice>().LastOrDefault(x=>x.ProductNameId == id);
+            var priceM = _db.DataBase.Table<ProductPrice>().LastOrDefault(x => x.ProductNameId == id);
             //var priceM = _db.DataBase.Table<ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(z => z.Id).FirstOrDefault();
             price.Add(priceM.PareseAsProductPriceM());
             return price;
@@ -130,7 +129,10 @@ namespace Inventory.Pages.Products.ListProduct
             {
                 int arrangement = i + 1;
                 ProductMs[i].Name.Arrangement = arrangement;
-                _db.DataBase.Update(ProductMs[i].Name.PareseAsProductName());
+
+                var entities = ProductMs[i].Name.PareseAsProductName();
+                entities.Updated = DateTime.Now;
+                _db.DataBase.Update(entities);
             }
             OnScrollTo(index, position: ScrollToPosition.Center, animate: false);
         }
@@ -223,101 +225,7 @@ namespace Inventory.Pages.Products.ListProduct
         {
             try
             {
-                var products = new Product[]
-                {
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Chleb",Img=ImgBread.chleb,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=5.5m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Duży chleb",Img="chleb.png", Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=11m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Bułka",Img=ImgBread.Bulka,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=1.5m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Mała bułka",Img=ImgBread.Bulka,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=0.7m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Bułka z serem",Img=ImgBread.Bulka,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=2.5m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Drożdżówka",Img=ImgBuns.Ser,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=2.5m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Bułka maślana",Img=ImgPath.Logo,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=1.5m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Drożdżówki na wagę (opak.)",Img=ImgBuns.Ser,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=9m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Kołacz",Img=ImgBuns.Ser,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=5m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Chałka",Img=ImgPath.Logo,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=5m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Ciastka francuskie",Img=ImgOther.KrucheZSerem,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=3m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Ciastka (opak. 400g)",Img=ImgCookies.Czekolada,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=10m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Piernik/Babka",Img=ImgPath.Logo,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=12m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Makowiec",Img=ImgPath.Logo,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=14m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Wafle (opak. 400g)",Img=ImgCookies.Andrut,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=10m,Id = GetGuidSed()},
-                    },
-
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Bułka tarta",Img=ImgPath.Logo,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=3.5m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Parówka w cieście",Img=ImgPath.Logo,Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=3.5m,Id = GetGuidSed()},
-                    },
-                    new Product()
-                    {
-                      Name = new ProductName(){ Name ="Chleb suchy",Img="chleb.png", Id = GetGuidSed()},
-                      Price = new ProductPrice(){CreatedDateTime=DateTime.Now,PriceDecimal=2m,Id = GetGuidSed()},
-                    },
-                };
-
+                var products = DataBase.Data.InventoryTables.DefoultProducts;
                 for (int i = 0; i < products.Length; i++)
                 {
                     products[i].Name.Arrangement = i;

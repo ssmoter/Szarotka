@@ -4,21 +4,16 @@ using CommunityToolkit.Maui.Core;
 using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 
-using Inventory.Helper;
 using Inventory.Helper.Parse;
 using Inventory.Model.MVVM;
 using Inventory.Service;
 
 namespace Inventory.Data
 {
-    public class SaveDayService : ISaveDayService
+    public class SaveDayService(AccessDataBase db) : ISaveDayService
     {
-        readonly AccessDataBase _db;
+        readonly AccessDataBase _db = db;
 
-        public SaveDayService(AccessDataBase db)
-        {
-            _db = db;
-        }
         public async Task<DayM> SaveDayMAsync(DayM dayM)
         {
             try
@@ -40,11 +35,15 @@ namespace Inventory.Data
 
                     if (day.Id != Guid.Empty)
                     {
+                        day.Updated = DateTime.Now;
                         await _db.DataBaseAsync.UpdateAsync(day);
                     }
                     else
                     {
                         day.Id = Guid.NewGuid();
+                        day.SelectedDate = day.Created;
+                        day.Created = DateTime.Now;
+                        day.Updated = DateTime.Now;
                         await _db.DataBaseAsync.InsertAsync(day);
                     }
 
@@ -93,11 +92,15 @@ namespace Inventory.Data
                 day.Products[i].DayId = day.Id;
                 if (day.Products[i].Id != Guid.Empty)
                 {
+                    day.Products[i].Updated = DateTime.Now;
                     await _db.DataBaseAsync.UpdateAsync(day.Products[i]);
                 }
                 else
                 {
                     day.Products[i].Id = Guid.NewGuid();
+                    day.Products[i].Created = DateTime.Now;
+                    day.Products[i].Updated = DateTime.Now;
+
                     await _db.DataBaseAsync.InsertAsync(day.Products[i]);
                 }
             }
@@ -111,11 +114,14 @@ namespace Inventory.Data
                 day.Cakes[i].DayId = day.Id;
                 if (day.Cakes[i].Id != Guid.Empty)
                 {
+                    day.Cakes[i].Updated = DateTime.Now;
                     await _db.DataBaseAsync.UpdateAsync(day.Cakes[i]);
                 }
                 else
                 {
                     day.Cakes[i].Id = Guid.NewGuid();
+                    day.Cakes[i].Created = DateTime.Now;
+                    day.Cakes[i].Updated = DateTime.Now;
                     await _db.DataBaseAsync.InsertAsync(day.Cakes[i]);
                 }
             }

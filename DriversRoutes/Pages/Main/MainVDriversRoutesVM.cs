@@ -103,8 +103,8 @@ namespace DriversRoutes.Pages.Main
                 if (!string.IsNullOrWhiteSpace(result))
                 {
                     routes.Name = result;
+                    routes.Updated = DateTime.Now;
                     await _db.DataBaseAsync.UpdateAsync(routes);
-                    Routes = await GetRoutes();
                 }
             }
             catch (Exception ex)

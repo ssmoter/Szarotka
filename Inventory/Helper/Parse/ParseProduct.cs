@@ -169,7 +169,7 @@ namespace Inventory.Helper.Parse
                 p.Id = m.Id;
                 p.ProductNameId = m.ProductNameId;
                 p.PriceDecimal = m.Price;
-                p.CreatedDateTime = m.Created;
+                p.Created = m.Created;
             }
             return p;
         }
@@ -181,7 +181,7 @@ namespace Inventory.Helper.Parse
                 to.Id = from.Id;
                 to.ProductNameId = from.ProductNameId;
                 to.PriceDecimal = from.Price;
-                to.CreatedDateTime = from.Created;
+                to.Created = from.Created;
             }
         }
         public static ProductPriceM PareseAsProductPriceM(this ProductPrice p)
@@ -192,7 +192,7 @@ namespace Inventory.Helper.Parse
                 m.Id = p.Id;
                 m.ProductNameId = p.ProductNameId;
                 m.Price = p.PriceDecimal;
-                m.Created = p.CreatedDateTime;
+                m.Created = p.Created;
             }
             return m;
         }
@@ -205,7 +205,7 @@ namespace Inventory.Helper.Parse
                 to.Id = from.Id;
                 to.ProductNameId = from.ProductNameId;
                 to.Price = from.PriceDecimal;
-                to.Created = from.CreatedDateTime;
+                to.Created = from.Created;
             }
         }
 

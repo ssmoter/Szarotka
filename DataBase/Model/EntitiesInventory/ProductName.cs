@@ -1,14 +1,18 @@
-﻿using SQLite;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DataBase.Model.EntitiesInventory;
 
-public class ProductName
+public partial class ProductName : BaseEntities<Guid>
 {
-    [PrimaryKey]
-    public Guid Id { get; set; }
-    public int Arrangement { get; set; }
-    public string Name { get; set; } = "";
-    public string Description { get; set; } = "";
-    public string Img { get; set; }
+    [ObservableProperty]
+    private int arrangement;
+    [ObservableProperty]
+    private string name;
+    [ObservableProperty]
+    private string description;
+    [ObservableProperty]
+    private string img;
+    [ObservableProperty]
+    private bool isVisible = true;
 
 }

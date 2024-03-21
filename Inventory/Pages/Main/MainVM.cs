@@ -37,34 +37,44 @@ namespace Inventory.Pages.Main
 
         public async Task LookingForSelectedDriver()
         {
-            var tableInfo = _db.DataBase.GetTableInfo(nameof(SelectedDriver));
-            bool exist = tableInfo.Count > 0;
-            if (exist)
+            try
             {
-                var selectedDriver = _db.DataBase.Table<SelectedDriver>().FirstOrDefault();
-                if (selectedDriver is not null)
+
+
+                var tableInfo = _db.DataBase.GetTableInfo(nameof(SelectedDriver));
+                bool exist = tableInfo.Count > 0;
+                if (exist)
                 {
-                    var driver = _db.DataBase.Table<Driver>().FirstOrDefault(x => x.Id == selectedDriver.SelectedGuid);
-                    Helper.SelectedDriver.Id = driver.Id.ToString();
-                    Helper.SelectedDriver.Name = driver.Name;
-                    Helper.SelectedDriver.Description = driver.Description;
-                    SetName();
+                    var selectedDriver = _db.DataBase.Table<SelectedDriver>().FirstOrDefault();
+                    if (selectedDriver is not null)
+                    {
+                        var driver = _db.DataBase.Table<Driver>().FirstOrDefault(x => x.Id == selectedDriver.SelectedGuid);
+                        Helper.SelectedDriver.Id = driver.Id.ToString();
+                        Helper.SelectedDriver.Name = driver.Name;
+                        Helper.SelectedDriver.Description = driver.Description;
+                        SetName();
+                    }
+                }
+                if (await MainVM.CheckDriver())
+                {
+                    await Shell.Current.GoToAsync("../MainOptionsV?",
+                        new Dictionary<string, object>()
+                        {
+                            [nameof(ListOfEnums.TypOfOptions)] = ListOfEnums.TypOfOptions.Inventory,
+                        });
                 }
             }
-            if (CheckDriver())
+            catch (Exception ex)
             {
-                await Shell.Current.GoToAsync("../MainOptionsV?",
-                    new Dictionary<string, object>()
-                    {
-                        [nameof(ListOfEnums.TypOfOptions)] = ListOfEnums.TypOfOptions.Inventory,
-                    });
+                _db.SaveLog(ex);
             }
         }
-        bool CheckDriver()
+
+        static async Task<bool> CheckDriver()
         {
             if (string.IsNullOrWhiteSpace(Helper.SelectedDriver.Id))
             {
-                Shell.Current.DisplayAlert("Kierowca", $"Kierowca nie został wybrany{Environment.NewLine}Wybierz kierowcę w celu wczytania", "Ok");
+                await Shell.Current.DisplayAlert("Kierowca", $"Kierowca nie został wybrany{Environment.NewLine}Wybierz kierowcę w celu wczytania", "Ok");
                 return true;
             }
             return false;
@@ -86,7 +96,7 @@ namespace Inventory.Pages.Main
         {
             try
             {
-                if (CheckDriver())
+                if (await MainVM.CheckDriver())
                     return;
 
                 if (dayM is null)
@@ -137,7 +147,7 @@ namespace Inventory.Pages.Main
         {
             try
             {
-                if (CheckDriver())
+                if (await MainVM.CheckDriver())
                     return;
                 if (string.IsNullOrWhiteSpace(MainM.DisplyDate))
                 {

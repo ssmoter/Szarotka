@@ -14,7 +14,7 @@ namespace Inventory.Helper.Parse
                 d.Id = m.Id;
                 d.Description = m.Description;
                 d.DriverGuid = m.DriverGuid;
-                d.CreatedDateTime = m.Created;
+                d.Created = m.Created;
 
 
                 for (int i = 0; i < m.Products.Count; i++)
@@ -48,7 +48,7 @@ namespace Inventory.Helper.Parse
                 to.Id = from.Id;
                 to.Description = from.Description;
                 to.DriverGuid = from.DriverGuid;
-                to.CreatedDateTime = from.Created;
+                to.Created = from.Created;
 
 
                 to.Products ??= new List<Product>();
@@ -86,7 +86,7 @@ namespace Inventory.Helper.Parse
                 to.Id = from.Id;
                 to.Description = from.Description;
                 to.DriverGuid = from.DriverGuid;
-                to.Created = from.CreatedDateTime;
+                to.Created = from.Created;
 
 
                 for (int i = 0; i < from.Products.Count; i++)
@@ -119,7 +119,7 @@ namespace Inventory.Helper.Parse
                 to.Id = from.Id;
                 to.Description = from.Description;
                 to.DriverGuid = from.DriverGuid;
-                to.Created = from.CreatedDateTime;
+                to.Created = from.Created;
 
 
                 to.Products ??= new System.Collections.ObjectModel.ObservableCollection<ProductM>();

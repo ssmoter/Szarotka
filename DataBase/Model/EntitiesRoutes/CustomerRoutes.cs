@@ -4,25 +4,8 @@ using SQLite;
 
 namespace DataBase.Model.EntitiesRoutes
 {
-    public partial class CustomerRoutes : ObservableObject, IDisposable
+    public partial class CustomerRoutes : BaseEntities<Guid>, IDisposable
     {
-
-        /// <summary>
-        /// Id
-        /// </summary>
-        Guid id;
-        [PrimaryKey]
-        public Guid Id
-        {
-            get => id;
-            set
-            {
-                if (SetProperty(ref id, value))
-                    OnPropertyChanged(nameof(Id));
-            }
-        }
-
-
         /// <summary>
         /// Id trasy
         /// </summary>
@@ -57,26 +40,6 @@ namespace DataBase.Model.EntitiesRoutes
         /// </summary>
         [ObservableProperty]
         string phoneNumber;
-        /// <summary>
-        /// Czas w Datetime
-        /// </summary>
-        [Ignore]
-        public DateTime CreatedDate
-        {           
-            get
-            { 
-                return new DateTime(Created).ToLocalTime();
-            }
-            set
-            {
-                Created = value.ToUniversalTime().Ticks;
-                OnPropertyChanged(nameof(CreatedDate));
-            }
-        }
-        /// <summary>
-        /// Czas w Tick
-        /// </summary>
-        public long Created { get; set; }
 
         SelectedDayOfWeekRoutes dayOfWeek;
         [Ignore]
@@ -128,7 +91,6 @@ namespace DataBase.Model.EntitiesRoutes
             PhoneNumber = string.Empty;
             Longitude = 0;
             Latitude = 0;
-            Created = 0;
         }
     }
 }

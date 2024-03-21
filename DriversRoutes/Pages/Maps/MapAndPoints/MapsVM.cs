@@ -67,7 +67,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             _db = db;
             SelectedDayName = DisplaySelectedDayName(DateTime.Today.DayOfWeek);
             MapType = MapType.Street;
-            AllPoints ??= new();
+            AllPoints ??= [];
             _selectRoutes = selectRoutes;
             //for (int i = 0; i < 200; i++)
             //{
@@ -196,9 +196,9 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 {
                     customer.RoutesId = new Guid(Routes.Id.ToByteArray());
                 }
-                if (customer.Created == 0)
+                if (customer.CreatedTicks == 0)
                 {
-                    customer.CreatedDate = DateTime.Now;
+                    customer.Created = DateTime.Now;
                 }
 
                 customer.QueueNumber = _db.DataBase.Table<CustomerRoutes>().Count();
@@ -211,7 +211,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                     Name = customer.Name,
                     Description = customer.Description,
                     PhoneNumber = customer.PhoneNumber,
-                    Created = customer.CreatedDate,
+                    Created = customer.Created,
                     SelectedDayOfWeek = customer.DayOfWeek,
                     Longitude = customer.Longitude,
                     Latitude = customer.Latitude,
@@ -355,7 +355,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                             Name = point.Name,
                             Description = point.Description,
                             PhoneNumber = point.PhoneNumber,
-                            CreatedDate = point.Created,
+                            Created = point.Created,
                             DayOfWeek = point.SelectedDayOfWeek,
                             ResidentialAddress = point.ResidentialAddress,
                             Longitude = point.Longitude,
@@ -387,7 +387,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
 
                 var customer = new CustomerRoutes()
                 {
-                    CreatedDate = DateTime.Now,
+                    Created = DateTime.Now,
                     Longitude = mapSpan.Center.Longitude,
                     Latitude = mapSpan.Center.Latitude,
                     RoutesId = Routes.Id,

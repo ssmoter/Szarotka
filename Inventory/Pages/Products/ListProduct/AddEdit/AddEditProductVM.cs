@@ -35,10 +35,10 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                 Product = new ListProductM()
                 {
                     Name = new Model.MVVM.ProductNameM() { Name = "" },
-                    Prices = new ObservableCollection<Model.MVVM.ProductPriceM>(),
+                    Prices = [],
                 };
             }
-            ImgList ??= new();
+            ImgList ??= [];
             _db = db;
         }
 
@@ -98,6 +98,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                     Name = Product.Name.Name,
                     Description = Product.Name.Description,
                     Img = Product.Name.Img,
+                    Updated=DateTime.Now
                 };
 
                 await _db.DataBaseAsync.UpdateAsync(productName);
@@ -123,12 +124,16 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                     Name = Product.Name.Name,
                     Description = Product.Name.Description,
                     Img = Product.Name.Img,
+                    Updated = DateTime.Now,
+                    Created = DateTime.Now,
                 };
                 productName.Img = DataBase.Helper.Img.ImgPath.Logo;
                 await _db.DataBaseAsync.InsertAsync(productName);
+
                 var id = await _db.DataBaseAsync.Table<ProductName>().Where(x => x.Name == productName.Name).FirstOrDefaultAsync();
                 Product.Name = id.PareseAsProductNameM();
                 await Shell.Current.DisplayAlert("Dodany", $"Produkt {Product.Name.Name} został dodany", "Ok");
+
                 AddEdit.AddP = false;
                 AddEdit.UpdateP = true;
             }
@@ -169,7 +174,8 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                     ProductPrice newPrice = new()
                     {
                         Id = Guid.NewGuid(),
-                        CreatedDateTime = DateTime.Now,
+                        Created = DateTime.Now,
+                        Updated = DateTime.Now,
                         PriceDecimal = price,
                         ProductNameId = Product.Name.Id
                     };

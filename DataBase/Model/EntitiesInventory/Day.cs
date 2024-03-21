@@ -1,150 +1,289 @@
-﻿using SQLite;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+using SQLite;
 
 namespace DataBase.Model.EntitiesInventory;
 
-public class Day
+public partial class Day : BaseEntities<Guid>
 {
-    [PrimaryKey]
-    public Guid Id { get; set; }
-    public string Description { get; set; } = "";
-    public Guid DriverGuid { get; set; }
-
-    public string CreatedDate { get; set; }
-    public long CreatedTicks { get; set; }
-
-    [Ignore]
-    public DateTime CreatedDateTime
+    [ObservableProperty]
+    private string description;
+    [ObservableProperty]
+    private Guid driverGuid;
+    private string selectedDateString;
+    public string SelectedDateString
     {
-        get
-        {
-            return new DateTime(CreatedTicks).ToLocalTime();
-        }
+        get => selectedDateString;
         set
         {
-            CreatedDate = value.ToString("dd.MM.yyyy");
-            CreatedTicks = value.ToUniversalTime().Ticks;
+            if (SetProperty(ref selectedDateString, value))
+            {
+                OnPropertyChanged(nameof(SelectedDateString));
+            }
         }
     }
-    public int TotalPriceProducts { get; set; }
+
+    [Ignore]
+    public DateTime SelectedDate
+    {
+        get => new(selectedDateTicks);
+        set
+        {
+            if (SetProperty(ref selectedDateString, value.ToString("dd.MM.yyyy")))
+                OnPropertyChanged(nameof(SelectedDateString));
+            if (SetProperty(ref selectedDateTicks, value.Ticks))
+                OnPropertyChanged(nameof(SelectedDateTicks));
+        }
+    }
+
+    private long selectedDateTicks;
+    public long SelectedDateTicks
+    {
+        get => selectedDateTicks;
+        set
+        {
+            if (SetProperty(ref selectedDateTicks, value))
+            {
+                OnPropertyChanged(nameof(SelectedDateTicks));
+            }
+        }
+    }
+    private int totalPriceProducts;
+    public int TotalPriceProducts
+    {
+        get => totalPriceProducts;
+        set
+        {
+            if (SetProperty(ref totalPriceProducts, value))
+            {
+                OnPropertyChanged(nameof(TotalPriceProducts));
+                OnPropertyChanged(nameof(TotalPriceProductsDecimal));
+            }
+        }
+    }
     [Ignore]
     public decimal TotalPriceProductsDecimal
     {
         get
         {
-            return (decimal)TotalPriceProducts / 100m;
+            return (decimal)totalPriceProducts / 100m;
         }
         set
         {
-            TotalPriceProducts = (int)(value * 100);
+            if (SetProperty(ref totalPriceProducts, (int)(value * 100)))
+                OnPropertyChanged(nameof(TotalPriceProductsDecimal));
         }
     }
-    public int TotalPriceCake { get; set; }
+    private int totalPriceCake;
+    public int TotalPriceCake
+    {
+        get => totalPriceCake;
+        set
+        {
+            if (SetProperty(ref totalPriceCake, value))
+            {
+                OnPropertyChanged(nameof(TotalPriceCake));
+                OnPropertyChanged(nameof(TotalPriceCakeDecimal));
+            }
+        }
+    }
     [Ignore]
     public decimal TotalPriceCakeDecimal
     {
         get
         {
-            return (decimal)TotalPriceCake / 100m;
+            return (decimal)totalPriceCake / 100m;
         }
         set
         {
-            TotalPriceCake = (int)(value * 100);
+            if (SetProperty(ref totalPriceCake, (int)(value * 100)))
+            {
+                OnPropertyChanged(nameof(TotalPriceCake));
+                OnPropertyChanged(nameof(TotalPriceCakeDecimal));
+            }
         }
     }
-    public int TotalPrice { get; set; }
+    private int totalPrice;
+    public int TotalPrice
+    {
+        get => totalPrice;
+        set
+        {
+            if (SetProperty(ref totalPrice, value))
+            {
+                OnPropertyChanged(nameof(TotalPrice));
+                OnPropertyChanged(nameof(TotalPriceDecimal));
+            }
+        }
+    }
+
     [Ignore]
     public decimal TotalPriceDecimal
     {
         get
         {
-            return (decimal)TotalPrice / 100m;
+            return (decimal)totalPrice / 100m;
         }
         set
         {
-            TotalPrice = (int)(value * 100);
+            if (SetProperty(ref totalPrice, (int)(value * 100)))
+            {
+                OnPropertyChanged(nameof(TotalPrice));
+                OnPropertyChanged(nameof(TotalPriceDecimal));
+            }
         }
     }
-    public int TotalPriceCorrect { get; set; }
+    private int totalPriceCorrect;
+    public int TotalPriceCorrect
+    {
+        get => totalPriceCorrect;
+        set
+        {
+            if (SetProperty(ref totalPriceCorrect, value))
+            {
+                OnPropertyChanged(nameof(TotalPriceCorrect));
+                OnPropertyChanged(nameof(TotalPriceCorrectDecimal));
+            }
+        }
+    }
+
     [Ignore]
     public decimal TotalPriceCorrectDecimal
     {
         get
         {
-            return (decimal)TotalPriceCorrect / 100m;
+            return (decimal)totalPriceCorrect / 100m;
         }
         set
         {
-            TotalPriceCorrect = (int)(value * 100);
+            if (SetProperty(ref totalPriceCorrect, (int)(value * 100)))
+            {
+                OnPropertyChanged(nameof(TotalPriceCorrect));
+                OnPropertyChanged(nameof(TotalPriceCorrectDecimal));
+            }
         }
     }
-    public int TotalPriceAfterCorrect { get; set; }
+    private int totalPriceAfterCorrect;
+    public int TotalPriceAfterCorrect
+    {
+        get => totalPriceAfterCorrect;
+        set
+        {
+            if (SetProperty(ref totalPriceAfterCorrect, value))
+            {
+                OnPropertyChanged(nameof(TotalPriceAfterCorrect));
+                OnPropertyChanged(nameof(TotalPriceAfterCorrectDecimal));
+            }
+        }
+    }
+
     [Ignore]
     public decimal TotalPriceAfterCorrectDecimal
     {
         get
         {
-            return (decimal)TotalPriceAfterCorrect / 100m;
+            return (decimal)totalPriceAfterCorrect / 100m;
         }
         set
         {
-            TotalPriceAfterCorrect = (int)(value * 100);
+            if (SetProperty(ref totalPriceAfterCorrect, (int)(value * 100)))
+            {
+                OnPropertyChanged(nameof(TotalPriceAfterCorrect));
+                OnPropertyChanged(nameof(TotalPriceAfterCorrectDecimal));
+            }
         }
     }
-    public int TotalPriceMoney { get; set; }
+    private int totalPriceMoney;
+    public int TotalPriceMoney
+    {
+        get => totalPriceMoney;
+        set
+        {
+            if (SetProperty(ref totalPriceMoney, value))
+            {
+                OnPropertyChanged(nameof(TotalPriceMoney));
+                OnPropertyChanged(nameof(TotalPriceMoneyDecimal));
+            }
+        }
+    }
+
     [Ignore]
     public decimal TotalPriceMoneyDecimal
     {
         get
         {
-            return (decimal)TotalPriceMoney / 100m;
+            return (decimal)totalPriceMoney / 100m;
         }
         set
         {
-            TotalPriceMoney = (int)(value * 100);
+            if (SetProperty(ref totalPriceMoney, (int)(value * 100)))
+            {
+                OnPropertyChanged(nameof(TotalPriceMoney));
+                OnPropertyChanged(nameof(TotalPriceMoneyDecimal));
+            }
         }
     }
-    public int TotalPriceDifference { get; set; }
+    private int totalPriceDifference;
+    public int TotalPriceDifference
+    {
+        get => totalPriceDifference;
+        set
+        {
+            if (SetProperty(ref totalPriceDifference, value))
+            {
+                OnPropertyChanged(nameof(TotalPriceDifference));
+                OnPropertyChanged(nameof(TotalPriceDifferenceDecimal));
+            }
+        }
+    }
+
     [Ignore]
     public decimal TotalPriceDifferenceDecimal
     {
         get
         {
-            return (decimal)TotalPriceDifference / 100m;
+            return (decimal)totalPriceDifference / 100m;
         }
         set
         {
-            TotalPriceDifference = (int)(value * 100);
+            if (SetProperty(ref totalPriceDifference, (int)(value * 100)))
+            {
+                OnPropertyChanged(nameof(TotalPriceDifference));
+                OnPropertyChanged(nameof(TotalPriceDifferenceDecimal));
+            }
         }
     }
+
+    private List<Product> products;
     [Ignore]
-    public List<Product> Products { get; set; }
-    [Ignore]
-    public List<Cake> Cakes { get; set; }
-    public Day()
+    public List<Product> Products
     {
-        Products = new List<Product>();
-        Cakes = new List<Cake>();
+        get => products;
+        set
+        {
+            if (SetProperty(ref products, value))
+            {
+                OnPropertyChanged(nameof(Products));
+            }
+        }
+    }
+    private List<Cake> cakes;
+    [Ignore]
+    public List<Cake> Cakes
+    {
+        get => cakes;
+        set
+        {
+            if (SetProperty(ref cakes, value))
+            {
+                OnPropertyChanged(nameof(Cakes));
+            }
+        }
     }
 
-    //static (int, int, int) parseDate(ReadOnlySpan<char> value)
-    //{
-
-    //    int day = int.Parse(value[..2]);
-    //    int month = int.Parse(value.Slice(3, 2));
-    //    int year = int.Parse(value.Slice(6, 4));
-
-    //    return (day, month, year);
-
-    //}
-
-    //static (int, int, int) parseTime(ReadOnlySpan<char> value)
-    //{
-
-    //    int hh = int.Parse(value[..2]);
-    //    int mm = int.Parse(value.Slice(3, 2));
-    //    int ss = int.Parse(value.Slice(6, 2));
-
-    //    return (hh, mm, ss);
-
-    //}
+    public Day()
+    {
+        Products = [];
+        Cakes = [];
+    }
 }

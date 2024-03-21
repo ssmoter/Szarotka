@@ -1,11 +1,10 @@
-﻿using SQLite;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DataBase.Model.EntitiesRoutes
 {
-    public class Routes
+    public partial class Routes : BaseEntities<Guid>
     {
-        [PrimaryKey]
-        public Guid Id { get; set; }
-        public string Name { get; set; }
+        [ObservableProperty]
+        string name;
     }
 }

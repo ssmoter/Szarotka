@@ -25,7 +25,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         readonly Service.ISaveRoutes _saveRoutes;
         readonly Service.IDownloadAddress _downloadAddress;
         readonly DataBase.Data.AccessDataBase _db;
-        ResidentialAddress[] _address = Array.Empty<ResidentialAddress>();
+        ResidentialAddress[] _address = [];
         #endregion
 
         public AddCustomerVM(Service.ISaveRoutes saveRoutes, DataBase.Data.AccessDataBase db, Service.IDownloadAddress downloadAddress)

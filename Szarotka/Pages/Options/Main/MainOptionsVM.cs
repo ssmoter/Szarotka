@@ -51,7 +51,7 @@ namespace Szarotka.Pages.Options.Main
         [ObservableProperty]
         string? appVersion;
 
-        DataBase.Data.AccessDataBase _db;
+        public DataBase.Data.AccessDataBase _db { get; private set; }
         public MainOptionsVM(DataBase.Data.AccessDataBase db)
         {
             MainOptionsM ??= new();

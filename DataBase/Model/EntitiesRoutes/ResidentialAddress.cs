@@ -1,14 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-using SQLite;
-
 namespace DataBase.Model.EntitiesRoutes
 {
-    public partial class ResidentialAddress : ObservableObject, IDisposable
+    public partial class ResidentialAddress : BaseEntities<Guid>, IDisposable
     {
-        [PrimaryKey]
-        public Guid Id { get; set; }
-        public Guid CustomerId { get; set; }
+        [ObservableProperty]
+        public Guid customerId;
 
         [ObservableProperty]
         string name;
@@ -28,7 +25,7 @@ namespace DataBase.Model.EntitiesRoutes
         string country;
 
         public ResidentialAddress()
-        {   }
+        { }
 
         public void Dispose()
         {

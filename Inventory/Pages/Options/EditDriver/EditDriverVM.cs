@@ -3,6 +3,8 @@ using CommunityToolkit.Mvvm.Input;
 
 using Inventory.Helper.Parse;
 
+using Microsoft.Maui.Platform;
+
 namespace Inventory.Pages.Options.EditDriver
 {
     [QueryProperty(nameof(Driver), nameof(Model.MVVM.DriverM))]
@@ -32,7 +34,10 @@ namespace Inventory.Pages.Options.EditDriver
                     return;
                 }
 
-                await _db.DataBaseAsync.UpdateAsync(Driver.PareseAsDriver());
+                var entities = Driver.PareseAsDriver();
+                entities.Updated = DateTime.Now;
+
+                await _db.DataBaseAsync.UpdateAsync(entities);
             }
             catch (Exception ex)
             {
