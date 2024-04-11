@@ -4,9 +4,9 @@ using CommunityToolkit.Maui.Core;
 using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 
-using Inventory.Helper.Parse;
-using Inventory.Model.MVVM;
 using Inventory.Service;
+
+using System.Collections.ObjectModel;
 
 namespace Inventory.Data
 {
@@ -14,69 +14,72 @@ namespace Inventory.Data
     {
         readonly AccessDataBase _db = db;
 
-        public async Task<DayM> SaveDayMAsync(DayM dayM)
+        public async Task<Day> SaveDayAsync(Day value)
         {
             try
             {
-                if (dayM is not null)
+                if (value is null)
                 {
-                    dayM.CanUpadte = false;
-
-                    if (await CheckDriver(dayM))
-                    {
-                        return dayM;
-                    }
-
-                    if (dayM.DriverGuid == Guid.Empty)
-                    {
-                        dayM.DriverGuid = new Guid(Helper.SelectedDriver.Id);
-                    }
-                    var day = dayM.ParseAsDay();
-
-                    if (day.Id != Guid.Empty)
-                    {
-                        day.Updated = DateTime.Now;
-                        await _db.DataBaseAsync.UpdateAsync(day);
-                    }
-                    else
-                    {
-                        day.Id = Guid.NewGuid();
-                        day.SelectedDate = day.Created;
-                        day.Created = DateTime.Now;
-                        day.Updated = DateTime.Now;
-                        await _db.DataBaseAsync.InsertAsync(day);
-                    }
-
-                    day = await SaveProductsAsync(day);
-
-                    day = await SaveCakesAsync(day);
-
-                    day.ParseAsDayM(dayM);
-
-                    day = null;
-                    await Toast.Make("Zapisano", ToastDuration.Short).Show();
-                    dayM.CanUpadte = true;
-
-                    for (int i = 0; i < dayM.Products.Count; i++)
-                    {
-                        dayM.Products[i].CanUpadte = true;
-                    }
+                    return value;
                 }
+
+
+                value.CanUpadte = false;
+                if (await CheckDriver(value))
+                {
+                    return value;
+                }
+
+                if (value.DriverGuid == Guid.Empty)
+                {
+                    value.DriverGuid = new Guid(Helper.SelectedDriver.Id);
+                }
+
+                if (value.Id != Guid.Empty)
+                {
+                    value.Updated = DateTime.Now;
+                    await _db.DataBaseAsync.UpdateAsync(value);
+                }
+                else
+                {
+                    value.Id = Guid.NewGuid();
+                    value.Created = DateTime.Now;
+                    value.Updated = DateTime.Now;
+                    await _db.DataBaseAsync.InsertAsync(value);
+                }
+
+
+                var product = SaveProductsAsync(value.Products, value.Id.ToByteArray());
+                var cake = SaveCakesAsync(value.Cakes, value.Id.ToByteArray());
+
+                await Task.WhenAll(product, cake);
+
+                value.Products = product.Result;
+                value.Cakes = cake.Result;
+
+                await Toast.Make("Zapisano", ToastDuration.Short).Show();
+                value.CanUpadte = true;
+
+                for (int i = 0; i < value.Products.Count; i++)
+                {
+                    value.Products[i].CanUpadte = true;
+                }
+
             }
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
             }
-            return dayM;
+            return value;
         }
 
-        static async Task<bool> CheckDriver(DayM dayM)
+        static async Task<bool> CheckDriver(Day day)
         {
-            if (dayM.DriverGuid == Guid.Empty)
+            if (day.DriverGuid == Guid.Empty)
             {
-                dayM.DriverGuid = new Guid(Helper.SelectedDriver.Id);
+                day.DriverGuid = new Guid(Helper.SelectedDriver.Id);
             }
-            if (dayM.DriverGuid == Guid.Empty)
+            if (day.DriverGuid == Guid.Empty)
             {
                 await Shell.Current.DisplayAlert("Kierowca", $"Kierowca nie został wybrany{Environment.NewLine}Wybierz kierowcę w celu zapisania", "Ok");
                 return true;
@@ -85,47 +88,58 @@ namespace Inventory.Data
         }
 
 
-        private async Task<Day> SaveProductsAsync(Day day)
+        private async Task<ObservableCollection<Product>> SaveProductsAsync(ObservableCollection<Product> product, byte[] id)
         {
-            for (int i = 0; i < day.Products.Count; i++)
+            var tasks = new Task[product.Count];
+
+            for (int i = 0; i < product.Count; i++)
             {
-                day.Products[i].DayId = day.Id;
-                if (day.Products[i].Id != Guid.Empty)
+                product[i].DayId = new(id);
+                product[i].Updated = DateTime.Now;
+
+                if (product[i].Id != Guid.Empty)
                 {
-                    day.Products[i].Updated = DateTime.Now;
-                    await _db.DataBaseAsync.UpdateAsync(day.Products[i]);
+                    tasks[i] = _db.DataBaseAsync.UpdateAsync(product[i]);
                 }
                 else
                 {
-                    day.Products[i].Id = Guid.NewGuid();
-                    day.Products[i].Created = DateTime.Now;
-                    day.Products[i].Updated = DateTime.Now;
+                    product[i].Id = Guid.NewGuid();
+                    product[i].Created = DateTime.Now;
 
-                    await _db.DataBaseAsync.InsertAsync(day.Products[i]);
+                    tasks[i] = _db.DataBaseAsync.InsertAsync(product[i]);
                 }
             }
-            return day;
+            await Task.WhenAll(tasks);
+
+            return product;
         }
 
-        private async Task<Day> SaveCakesAsync(Day day)
+        private async Task<ObservableCollection<Cake>> SaveCakesAsync(ObservableCollection<Cake> cake, byte[] id)
         {
-            for (int i = 0; i < day.Cakes.Count; i++)
+            var tasks = new Task[cake.Count];
+
+            for (int i = 0; i < cake.Count; i++)
             {
-                day.Cakes[i].DayId = day.Id;
-                if (day.Cakes[i].Id != Guid.Empty)
+                cake[i].DayId = new(id);
+                if (cake[i].Id != Guid.Empty)
                 {
-                    day.Cakes[i].Updated = DateTime.Now;
-                    await _db.DataBaseAsync.UpdateAsync(day.Cakes[i]);
+                    cake[i].Updated = DateTime.Now;
+                    tasks[i] = _db.DataBaseAsync.UpdateAsync(cake[i]);
                 }
                 else
                 {
-                    day.Cakes[i].Id = Guid.NewGuid();
-                    day.Cakes[i].Created = DateTime.Now;
-                    day.Cakes[i].Updated = DateTime.Now;
-                    await _db.DataBaseAsync.InsertAsync(day.Cakes[i]);
+                    cake[i].Id = Guid.NewGuid();
+                    if (cake[i].Created == DateTime.UnixEpoch)
+                    {
+                        cake[i].Created = DateTime.Now;
+                    }
+                    cake[i].Updated = DateTime.Now;
+                    tasks[i] = _db.DataBaseAsync.InsertAsync(cake[i]);
                 }
             }
-            return day;
+            await Task.WhenAll(tasks);
+
+            return cake;
         }
     }
 }

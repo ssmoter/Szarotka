@@ -53,7 +53,7 @@ namespace DataBase.Data
 
         private async Task CreateDefaultProduct()
         {
-            var products = DefoultProducts;
+            var products = DefaultProducts;
             var taskTableName = new Task[products.Length];
             var taskTablePrice = new Task[products.Length];
 
@@ -92,7 +92,7 @@ namespace DataBase.Data
 
         #region Products
 
-        public static Product[] DefoultProducts { get => defoultProducts; }
+        public static Product[] DefaultProducts { get => defoultProducts; }
         private static readonly Product[] defoultProducts =
             [
                     new()

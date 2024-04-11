@@ -5,8 +5,7 @@ using DataBase.Data;
 using DataBase.Model;
 using DataBase.Model.EntitiesInventory;
 
-using Inventory.Helper.Parse;
-using Inventory.Model.MVVM;
+
 using Inventory.Pages.Options.EditDriver;
 
 using System.Collections.ObjectModel;
@@ -49,8 +48,23 @@ namespace Inventory.Pages.Options.CreateTable
             {
                 if (string.IsNullOrWhiteSpace(Inventory.Helper.SelectedDriver.Id))
                 {
-                    await CreatedNewDriverMethod(db);
+                    var tableInfo = db.DataBase.GetTableInfo(nameof(SelectedDriver));
+                    bool exist = tableInfo.Count > 0;
+                    if (exist)
+                    {
+                        var selectedDriver = db.DataBase.Table<SelectedDriver>().FirstOrDefault();
+                        if (selectedDriver is not null)
+                        {
+                            var driver = db.DataBase.Table<Driver>().FirstOrDefault(x => x.Id == selectedDriver.SelectedGuid);
+                            Helper.SelectedDriver.Id = driver.Id.ToString();
+                            Helper.SelectedDriver.Name = driver.Name;
+                            Helper.SelectedDriver.Description = driver.Description;
+                        }
+                    }
                 }
+
+                if (string.IsNullOrWhiteSpace(Inventory.Helper.SelectedDriver.Id))
+                    await CreatedNewDriverMethod(db);
             }
             catch (Exception ex)
             {
@@ -197,7 +211,7 @@ namespace Inventory.Pages.Options.CreateTable
                         await Shell.Current.GoToAsync($"{nameof(EditDriverV)}?",
                             new Dictionary<string, object>
                             {
-                                [nameof(DriverM)] = selectedDriver.PareseAsDriverM(),
+                                [nameof(Driver)] = selectedDriver,
                             });
                     }
 
@@ -274,7 +288,7 @@ namespace Inventory.Pages.Options.CreateTable
             if (db is null)
             {
                 return;
-            }            
+            }
             var response = await Shell.Current.DisplayPromptAsync("Dodawanie kierowcy", "Ustaw nazwę kierowcy");
             if (!string.IsNullOrWhiteSpace(response))
             {

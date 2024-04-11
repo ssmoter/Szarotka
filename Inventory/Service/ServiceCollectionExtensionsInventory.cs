@@ -31,7 +31,7 @@ namespace Inventory.Service
             services.AddScoped<ISaveDayService, SaveDayService>();
             services.AddScoped<ISelectDayService, SelectDayService>();
 
-#if WINDOWS
+#if false
             services.AddSingleton<Pages.SingleDay.SingleDayVWindows>();
             services.AddScoped<Pages.Products.ListProduct.ListProductVWindows>();
             services.AddScoped<Pages.RangeDay.RangeDayVWindows>();

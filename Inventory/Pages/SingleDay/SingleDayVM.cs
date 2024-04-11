@@ -3,33 +3,35 @@ using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Inventory.Helper.Parse;
-using Inventory.Model.MVVM;
+using DataBase.Model.EntitiesInventory;
+
 using Inventory.Service;
 
 namespace Inventory.Pages.SingleDay
 {
-
-    [QueryProperty(nameof(DayM), nameof(Model.MVVM.DayM))]
+    [QueryProperty(nameof(Day), nameof(Day))]
     public partial class SingleDayVM : ObservableObject
     {
         [ObservableProperty]
-        DayM dayM;
+        Day day;
 
         [ObservableProperty]
         SingleDayM singleDayM;
 
         static (string name, int value, char sign) lastFastValue = new("", 0, ' ');
         const char signPlus = '+';
-        const char signMinus = '-';
+        //const char signMinus = '-';
         readonly DataBase.Data.AccessDataBase _db;
-        readonly Service.ISaveDayService _saveDay;
+        readonly ISaveDayService _saveDay;
+        readonly ISelectDayService _selectDay;
 
-        public SingleDayVM(DataBase.Data.AccessDataBase db, ISaveDayService saveDay)
+        public SingleDayVM(DataBase.Data.AccessDataBase db, ISaveDayService saveDay, ISelectDayService selectDay)
         {
-            Initialize();
             _db = db;
             _saveDay = saveDay;
+            Day ??= new();
+            SingleDayM ??= new();
+            _selectDay = selectDay;
         }
 
 
@@ -37,35 +39,10 @@ namespace Inventory.Pages.SingleDay
         #region Method
         public async Task ShowCurrentDay()
         {
-            await CommunityToolkit.Maui.Alerts.Toast.Make($"Wczytano dzień {DayM.Created.ToShortDateString()}", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
+            await CommunityToolkit.Maui.Alerts.Toast.Make($"Wczytano dzień {Day.SelectedDate.ToShortDateString()}", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
         }
 
-        void Initialize()
-        {
-            DayM = new DayM();
-            SingleDayM = new SingleDayM();
-        }
-
-        /// <summary>
-        /// return true when is no guid
-        /// </summary>
-        /// <returns></returns>
-        async Task<bool> CheckDriver()
-        {
-            if (DayM.DriverGuid == Guid.Empty)
-            {
-                DayM.DriverGuid = new Guid(Helper.SelectedDriver.Id);
-            }
-            if (DayM.DriverGuid == Guid.Empty)
-            {
-                await Shell.Current.DisplayAlert("Kierowca", $"Kierowca nie został wybrany{Environment.NewLine}Wybierz kierowcę w celu zapisania", "Ok");
-                return true;
-            }
-            return false;
-        }
-
-
-        static void FastChangeProductNumber(ProductM product, int value)
+        static void FastChangeProductNumber(Product product, int value)
         {
             if (product is not null)
             {
@@ -79,7 +56,7 @@ namespace Inventory.Pages.SingleDay
             }
         }
 
-        static void FastChangeProductEdit(ProductM product, int value)
+        static void FastChangeProductEdit(Product product, int value)
         {
             if (product is not null)
             {
@@ -93,7 +70,7 @@ namespace Inventory.Pages.SingleDay
             }
         }
 
-        static void FastChangeProductReturn(ProductM product, int value)
+        static void FastChangeProductReturn(Product product, int value)
         {
             if (product is not null)
             {
@@ -106,7 +83,7 @@ namespace Inventory.Pages.SingleDay
                 ToastMakeFastChange(product, value, "zwrot");
             }
         }
-        private static void ToastMakeFastChange(ProductM product, int value, string message)
+        private static void ToastMakeFastChange(Product product, int value, string message)
         {
             if (Math.Sign(lastFastValue.value) != Math.Sign(value))
             {
@@ -120,13 +97,13 @@ namespace Inventory.Pages.SingleDay
                 lastFastValue.value = 1;
                 lastFastValue.name = product.Name.Name;
             }
-            char sign = value > 0 ? signPlus : ' ' ;
+            char sign = value > 0 ? signPlus : ' ';
             Toast.Make($"{product.Name.Name} {message} {sign} {lastFastValue.value}", duration: CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
         }
-        static void SetCanUpdate(ProductM productM)
+        static void SetCanUpdate(Product product)
         {
-            productM.CanUpadte = true;
-            productM.CalculatePrice();
+            product.CanUpadte = true;
+            product.CalculatePrice();
         }
 
         #endregion
@@ -150,44 +127,43 @@ namespace Inventory.Pages.SingleDay
 
 
 
+        [RelayCommand]
+        static void FastAddProductNumber(Product product)
+        {
+            SingleDayVM.FastChangeProductNumber(product, 1);
+        }
+        [RelayCommand]
+        static void FastMinusProductNumber(Product product)
+        {
+            SingleDayVM.FastChangeProductNumber(product, -1);
+        }
+        [RelayCommand]
+        static void FastAddProductEdit(Product product)
+        {
+            SingleDayVM.FastChangeProductEdit(product, 1);
+        }
+        [RelayCommand]
+        static void FastMinusProductEdit(Product product)
+        {
+            SingleDayVM.FastChangeProductEdit(product, -1);
+        }
 
         [RelayCommand]
-        static void FastAddProductNumber(ProductM productM)
+        static void FastAddProductReturn(Product product)
         {
-            SingleDayVM.FastChangeProductNumber(productM, 1);
+            SingleDayVM.FastChangeProductReturn(product, 1);
         }
         [RelayCommand]
-        static void FastMinusProductNumber(ProductM productM)
+        static void FastMinusProductReturn(Product product)
         {
-            SingleDayVM.FastChangeProductNumber(productM, -1);
-        }
-        [RelayCommand]
-        static void FastAddProductEdit(ProductM productM)
-        {
-            SingleDayVM.FastChangeProductEdit(productM, 1);
-        }
-        [RelayCommand]
-        static void FastMinusProductEdit(ProductM productM)
-        {
-            SingleDayVM.FastChangeProductEdit(productM, -1);
-        }
-
-        [RelayCommand]
-        static void FastAddProductReturn(ProductM productM)
-        {
-            SingleDayVM.FastChangeProductReturn(productM, 1);
-        }
-        [RelayCommand]
-        static void FastMinusProductReturn(ProductM productM)
-        {
-            SingleDayVM.FastChangeProductReturn(productM, -1);
+            SingleDayVM.FastChangeProductReturn(product, -1);
         }
 
 
         [RelayCommand]
         async Task SaveDay()
         {
-            await _saveDay.SaveDayMAsync(DayM);
+            await _saveDay.SaveDayAsync(Day);
         }
 
         [RelayCommand]
@@ -195,13 +171,13 @@ namespace Inventory.Pages.SingleDay
         {
             try
             {
-                if (DayM is null)
+                if (Day is null)
                 {
                     return;
                 }
-                if (DayM.Cakes is null)
+                if (Day.Cakes is null)
                 {
-                    return;
+                    Day.Cakes = [];
                 }
 
                 var response = await Shell.Current.DisplayPromptAsync("Ciasto", "Podaj cene ciasta", "Tak", "Anuluj", keyboard: Keyboard.Numeric);
@@ -217,18 +193,20 @@ namespace Inventory.Pages.SingleDay
                 response = response.Replace('.', ',');
                 if (decimal.TryParse(response, DataBase.Helper.Constants.CultureInfo, out decimal value))
                 {
-                    var cake = new CakeM
+                    var cake = new Cake
                     {
-                        Price = value,
-                        DayId = DayM.Id,
-                        Index = DayM.Cakes.Count + 1,
+                        PriceDecimal = value,
+                        DayId = Day.Id,
+                        Index = Day.Cakes.Count + 1,
+                        Created = DateTime.Now,
+                        Updated=DateTime.Now,
                     };
 
-                    DayM.Cakes.Add(cake);
+                    Day.Cakes.Add(cake);
+                    Day.Cakes.LastOrDefault().IsSell = true;
+                    DataBase.Model.EntitiesInventory.ProductUpdatePriceService.OnUpdate();
 
-                    DayM.Cakes.LastOrDefault().IsSell = true;
-
-                    await CommunityToolkit.Maui.Alerts.Toast.Make("Dodano ciasto", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
+                    await CommunityToolkit.Maui.Alerts.Toast.Make($"Dodano ciasto z ceną {value}", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
                 }
             }
             catch (Exception ex)
@@ -238,22 +216,21 @@ namespace Inventory.Pages.SingleDay
         }
 
         [RelayCommand]
-        async Task DeleteCake(CakeM cake)
+        void DeleteCake(Cake cake)
         {
             try
             {
-                if (DayM is null)
+                if (Day is null)
                 {
                     return;
                 }
-                if (DayM.Cakes is null)
+                if (Day.Cakes is null)
                 {
                     return;
                 }
 
-                await _db.DataBaseAsync.DeleteAsync(cake.PareseAsCake());
-                DayM.Cakes.Remove(cake);
-                Inventory.Service.ProductUpdatePriceService.OnUpdate();
+                Day.Cakes.Remove(cake);
+                DataBase.Model.EntitiesInventory.ProductUpdatePriceService.OnUpdate();
             }
             catch (Exception ex)
             {
@@ -265,13 +242,13 @@ namespace Inventory.Pages.SingleDay
         {
             try
             {
-                await SaveDay();
-                //await Shell.Current.GoToAsync("..");
-
+                var result = await Shell.Current.DisplayAlert("Zapisać", "Czy zapisać przy cofaniu", "Tak", "Nie");
+                if (result)
+                    await SaveDay();
                 await Shell.Current.GoToAsync("..?",
                     new Dictionary<string, object>()
                     {
-                        [nameof(Model.MVVM.DayM)] = DayM
+                        [nameof(Day)] = Day
                     });
             }
             catch (Exception ex)
@@ -284,7 +261,11 @@ namespace Inventory.Pages.SingleDay
         {
             try
             {
-                await Shell.Current.GoToAsync("..");
+                await Shell.Current.GoToAsync("..?",
+                        new Dictionary<string, object>()
+                        {
+                            [nameof(Day)] = Day
+                        });
             }
             catch (Exception ex)
             {
@@ -301,7 +282,7 @@ namespace Inventory.Pages.SingleDay
 
                 if (decimal.TryParse(paste, out decimal result))
                 {
-                    DayM.TotalPriceMoney = result;
+                    Day.TotalPriceMoneyDecimal = result;
                 }
             }
         }
@@ -311,31 +292,179 @@ namespace Inventory.Pages.SingleDay
         {
             try
             {
-                for (int i = 0; i < DayM.Products.Count; i++)
+                Day.CanUpadte = true;
+                for (int i = 0; i < Day.Products.Count; i++)
                 {
-                    SetCanUpdate(DayM.Products[i]);
+                    SetCanUpdate(Day.Products[i]);
                 }
-                DayM.CanUpadte = true;
-                DayM.UpdateTotalPrice();
+                Day.UpdateTotalPrice();
             }
             catch (Exception ex) { _db.SaveLog(ex); }
             finally { SingleDayM.ProductIsRefreshing = false; }
         }
 
         [RelayCommand]
-        static async Task PopupToAddValueFromList(ProductM productM)
+        static async Task PopupToAddValueFromList(Product product)
         {
-            var popup = new DataBase.Pages.Popups.SubAddLastValue.SubAddLastValueV(productM.NumberEdit, productM.Name.Name);
+            var popup = new DataBase.Pages.Popups.SubAddLastValue.SubAddLastValueV(product.NumberEdit, product.Name.Name);
 
             var result = await Shell.Current.ShowPopupAsync(popup);
 
             if (result is not null)
             {
-                productM.NumberEdit = (int)result;
+                product.NumberEdit = (int)result;
             }
         }
 
+        [RelayCommand]
+        async Task ChangeProductPrice(Product product)
+        {
+            try
+            {
+                var oldPrice = await _db.DataBaseAsync.Table<ProductPrice>().Where(x => x.ProductNameId == product.ProductNameId).ToArrayAsync();
+                var priceArrya = oldPrice.Select(x => x.PriceDecimal).Select(x => x.ToString()).ToList();
+                priceArrya.Add("Nowa");
 
+                var result = await Shell.Current.DisplayActionSheet("Zmiana ceny",
+                                                                    "Anuluj",
+                                                                    null, [.. priceArrya]);
+                if (result == "Anuluj")
+                {
+                    return;
+                }
+                if (result == "Nowa")
+                {
+                    var listProduct = new Pages.Products.ListProduct.ListProductM()
+                    {
+                        Name = product.Name,
+                        Prices = new(await _db.DataBaseAsync.Table<ProductPrice>().Where(x => x.ProductNameId == product.ProductNameId).ToArrayAsync())
+                    };
+                    listProduct.SetActualPrice();
+
+                    await Shell.Current.GoToAsync($"{nameof(Pages.Products.ListProduct.AddEdit.AddEditProductV)}?",
+                        new Dictionary<string, object>()
+                        {
+                            [nameof(Pages.Products.ListProduct.ListProductM)] = listProduct
+                        });
+                    return;
+                }
+
+                if (decimal.TryParse(result, out decimal selectedPrice))
+                {
+                    var price = oldPrice.FirstOrDefault(x => x.PriceDecimal == selectedPrice);
+                    if (price is not null)
+                    {
+                        product.Price = price;
+                    }
+                }
+                RefreshListOfProduct();
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
+
+        [RelayCommand]
+        async Task DeleteSelectedProduct(Product product)
+        {
+            try
+            {
+                var result = await Shell.Current.DisplayAlert("Usuwanie", $"Czy chcesz usunąć produkt : {product.Name.Name}", "Tak", "nie");
+                if (!result)
+                    return;
+
+                Day.Products.Remove(product);
+                await Shell.Current.DisplayAlert("Usuwanie", $"Produkt {product.Name.Name} został usunięty", "Ok");
+
+                RefreshListOfProduct();
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+
+        }
+
+        [RelayCommand]
+        async Task AddProduct()
+        {
+            try
+            {
+                var allProducts = await _db.DataBaseAsync.Table<ProductName>().OrderBy(x => x.Arrangement).ToArrayAsync();
+                var names = Day.Products.Select(x => x.Name);
+                var a = allProducts.Except(names);
+                var products = a.Select(x => x.Name).ToList();
+                //var products = allProducts.Where(x => Day.Products.All(z => z.ProductNameId != x.Id)).Select(x => x.Name).ToList();
+                products.Add("Dodaj nowy");
+
+                var result = await Shell.Current.DisplayActionSheet("Dodaj produkt z list", "Anuluj", null, [.. products]);
+
+                if (result == " Anuluj")
+                    return;
+
+                if (result == "Dodaj nowy")
+                {
+                    await Shell.Current.GoToAsync($"{nameof(Pages.Products.ListProduct.AddEdit.AddEditProductV)}?",
+                        new Dictionary<string, object>()
+                        {
+                            [nameof(Pages.Products.ListProduct.ListProductM)] = new Pages.Products.ListProduct.ListProductM()
+                        });
+                    return;
+                }
+
+                var selectedProduct = allProducts.FirstOrDefault(x => x.Name == result);
+
+                if (selectedProduct is not null)
+                {
+                    var newProduct = new Product()
+                    {
+                        Name = selectedProduct,
+                        Price = await _db.DataBaseAsync.Table<ProductPrice>().FirstOrDefaultAsync(x => x.ProductNameId == selectedProduct.Id),
+                    };
+                    newProduct.ProductNameId = newProduct.Name.Id;
+                    newProduct.ProductPriceId = newProduct.Price.Id;
+                    Day.Products.Add(newProduct);
+                    RefreshListOfProduct();
+                }
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+
+        }
+
+
+        [RelayCommand]
+        void SortCakesAfterPrice()
+        {
+            if (SingleDayM.CakeSortPriceRotateX == 0)
+            {
+                SingleDayM.CakeSortPriceRotateX = 180;
+                Day.Cakes = new(Day.Cakes.OrderBy(x => x.Price));
+            }
+            else
+            {
+                SingleDayM.CakeSortPriceRotateX = 0;
+                Day.Cakes = new(Day.Cakes.OrderByDescending(x => x.Price));
+            }
+        }
+
+        [RelayCommand]
+        void SortCakesAfterDate()
+        {
+            if (SingleDayM.CakeSortDateRotateX == 0)
+            {
+                SingleDayM.CakeSortDateRotateX = 180;
+                Day.Cakes = new(Day.Cakes.OrderBy(x => x.CreatedTicks));
+            }
+            else
+            {
+                SingleDayM.CakeSortDateRotateX = 0;
+                Day.Cakes = new(Day.Cakes.OrderByDescending(x => x.CreatedTicks));
+            }
+        }
         #endregion
 
     }

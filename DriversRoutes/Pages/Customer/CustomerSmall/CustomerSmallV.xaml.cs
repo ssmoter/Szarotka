@@ -283,4 +283,19 @@ public partial class CustomerSmallV : ContentView
             if (PhoneDialer.Default.IsSupported)
                 PhoneDialer.Default.Open(PhoneNumber);
     }
+
+
+    private async void TapGestureRecognizer_Tapped_CopyAll(object sender, TappedEventArgs e)
+    {
+        string location = $"{Name}{Environment.NewLine}" +
+            $"{Description}{Environment.NewLine}" +
+            $"+48 {PhoneNumber}{Environment.NewLine}" +
+            $"{DayOfWeek.ToStringWithTheTime()}{Environment.NewLine}" +
+            $"{ResidentialAddress}{Environment.NewLine}";
+
+        await Clipboard.SetTextAsync(location);
+
+        var toast = Toast.Make("Skopiowano dane klienta", ToastDuration.Short);
+        await toast.Show();
+    }
 }

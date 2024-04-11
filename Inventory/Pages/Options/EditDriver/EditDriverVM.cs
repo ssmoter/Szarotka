@@ -1,22 +1,20 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Inventory.Helper.Parse;
-
-using Microsoft.Maui.Platform;
+using DataBase.Model.EntitiesInventory;
 
 namespace Inventory.Pages.Options.EditDriver
 {
-    [QueryProperty(nameof(Driver), nameof(Model.MVVM.DriverM))]
+    [QueryProperty(nameof(Driver), nameof(Driver))]
     public partial class EditDriverVM : ObservableObject
     {
         [ObservableProperty]
-        Inventory.Model.MVVM.DriverM driver;
+        Driver driver;
 
         readonly DataBase.Data.AccessDataBase _db;
         public EditDriverVM(DataBase.Data.AccessDataBase db)
         {
-            Driver = new Model.MVVM.DriverM();
+            Driver = new();
             _db = db;
         }
 
@@ -34,7 +32,7 @@ namespace Inventory.Pages.Options.EditDriver
                     return;
                 }
 
-                var entities = Driver.PareseAsDriver();
+                var entities = Driver;
                 entities.Updated = DateTime.Now;
 
                 await _db.DataBaseAsync.UpdateAsync(entities);

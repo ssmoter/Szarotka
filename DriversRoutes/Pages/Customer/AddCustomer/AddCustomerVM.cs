@@ -50,7 +50,8 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
 
                 await Shell.Current.GoToAsync($"..?", new Dictionary<string, object>()
                 {
-                    [nameof(CustomerRoutes)] = Customer
+                    [nameof(CustomerRoutes)] = Customer,
+                    [nameof(Routes)] = RouteId
                 });
             }
             catch (Exception ex)
@@ -64,7 +65,10 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         {
             try
             {
-                await Shell.Current.GoToAsync("..");
+                await Shell.Current.GoToAsync($"..?", new Dictionary<string, object>()
+                {
+                    [nameof(Routes)] = RouteId
+                });
             }
             catch (Exception ex)
             {

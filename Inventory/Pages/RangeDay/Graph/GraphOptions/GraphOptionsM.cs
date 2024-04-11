@@ -24,7 +24,7 @@ namespace Inventory.Pages.RangeDay.Graph.GraphOptions
         GraphOptionsProductM[] productMs;
         public GraphOptionsM()
         {
-            ProductMs = Array.Empty<GraphOptionsProductM>();
+            ProductMs = [];
         }
 
         public void Dispose()

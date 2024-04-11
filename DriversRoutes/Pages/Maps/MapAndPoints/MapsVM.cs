@@ -247,11 +247,18 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
 
         public async Task<ObservableCollection<MapsM>> GetSelectedDays(SelectedDayOfWeekRoutes week)
         {
-            var result = await _selectRoutes.GetCustomerRoutesQueryAsync(Routes, week);
             var points = new ObservableCollection<MapsM>();
-            for (int i = 0; i < result.Length; i++)
+            try
             {
-                points.Add(result[i].ParseAsCustomerM());
+                var result = await _selectRoutes.GetCustomerRoutesQueryAsync(Routes, week);
+                for (int i = 0; i < result.Length; i++)
+                {
+                    points.Add(result[i].ParseAsCustomerM());
+                }
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
             }
             return points;
         }
@@ -264,22 +271,29 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
         [RelayCommand]
         async Task ChangeDay()
         {
-            if (Routes is null)
+            try
             {
-                await Shell.Current.DisplayAlert("Brak trasy", "Zapisywanie jest dostępne tylko po wybraniu trasy konkretnego kierowcy", "Ok");
-                return;
+                if (Routes is null)
+                {
+                    await Shell.Current.DisplayAlert("Brak trasy", "Zapisywanie jest dostępne tylko po wybraniu trasy konkretnego kierowcy", "Ok");
+                    return;
+                }
+                var popup = new Popups.SelectDay.SelectDayV();
+                var response = await Shell.Current.ShowPopupAsync(popup);
+                if (response is null)
+                {
+                    return;
+                }
+                if (response is SelectedDayOfWeekRoutes day)
+                {
+                    LastSelectedDayOfWeek = day;
+                    SelectedDayName = day.ToString();
+                    AllPoints = await GetSelectedDays(LastSelectedDayOfWeek);
+                }
             }
-            var popup = new Popups.SelectDay.SelectDayV();
-            var response = await Shell.Current.ShowPopupAsync(popup);
-            if (response is null)
+            catch (Exception ex)
             {
-                return;
-            }
-            if (response is SelectedDayOfWeekRoutes day)
-            {
-                LastSelectedDayOfWeek = day;
-                SelectedDayName = day.ToString();
-                AllPoints = await GetSelectedDays(LastSelectedDayOfWeek);
+                _db.SaveLog(ex);
             }
         }
 

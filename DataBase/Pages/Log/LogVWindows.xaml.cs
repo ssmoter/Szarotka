@@ -8,16 +8,13 @@ public partial class LogVWindows : ContentPage
         BindingContext = vm;
     }
 
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
 
         if (BindingContext is LogVM vm)
         {
-            Task.Run(async () =>
-            {
-                await vm.GetLogs();
-            });
+            await vm.GetLogs();
         }
     }
 }

@@ -3,8 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Model.EntitiesInventory;
 
-using Inventory.Helper.Parse;
-
 using System.Collections.ObjectModel;
 
 namespace Inventory.Pages.Products.ListProduct
@@ -28,10 +26,6 @@ namespace Inventory.Pages.Products.ListProduct
         {
             ProductMs = [];
             this._db = db;
-
-            SelectAllProducts();
-
-            Inventory.Service.ProductsUpdateService.Update += SelectAllProductsAsync;
         }
         #region Method
 
@@ -45,14 +39,13 @@ namespace Inventory.Pages.Products.ListProduct
                 ProductMs.Clear();
                 var names = await _db.DataBaseAsync.Table<ProductName>().OrderBy(x => x.Arrangement).ToArrayAsync();
 
-
                 for (int i = 0; i < names.Length; i++)
                 {
                     ProductMs.Add(new ListProductM()
                     {
-                        Name = names[i].PareseAsProductNameM(),
+                        Name = names[i],
                     });
-                    ProductMs[i].Prices = await SelectPricesAsync(names[i].Id);
+                    ProductMs[i].Prices = new(await SelectPricesAsync(names[i].Id));
                     ProductMs[i].SetActualPrice();
                 }
                 IsGenerateDefoultEnable = ProductMs.Count <= 0;
@@ -62,16 +55,9 @@ namespace Inventory.Pages.Products.ListProduct
                 _db.SaveLog(ex);
             }
         }
-        async Task<ObservableCollection<Inventory.Model.MVVM.ProductPriceM>> SelectPricesAsync(Guid id)
+        async Task<ProductPrice[]> SelectPricesAsync(Guid id)
         {
-            var price = new ObservableCollection<Inventory.Model.MVVM.ProductPriceM>();
-
-            var priceM = await _db.DataBaseAsync.Table<ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(z => z.Id).ToArrayAsync();
-            for (int i = 0; i < priceM.Length; i++)
-            {
-                price.Add(priceM[i].PareseAsProductPriceM());
-            }
-
+            var price = await _db.DataBaseAsync.Table<ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(z => z.CreatedTicks).ToArrayAsync();
             return price;
         }
 
@@ -90,25 +76,21 @@ namespace Inventory.Pages.Products.ListProduct
                 {
                     ProductMs.Add(new ListProductM()
                     {
-                        Name = names[i].PareseAsProductNameM(),
+                        Name = names[i],
                     });
-                    ProductMs[i].Prices = SelectPrices(names[i].Id);
+                    ProductMs[i].Prices = new(SelectPrices(names[i].Id));
                     ProductMs[i].SetActualPrice();
                 }
                 IsGenerateDefoultEnable = ProductMs.Count <= 0;
-
             }
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
             }
         }
-        ObservableCollection<Inventory.Model.MVVM.ProductPriceM> SelectPrices(Guid id)
+        ProductPrice[] SelectPrices(Guid id)
         {
-            var price = new ObservableCollection<Model.MVVM.ProductPriceM>();
-            var priceM = _db.DataBase.Table<ProductPrice>().LastOrDefault(x => x.ProductNameId == id);
-            //var priceM = _db.DataBase.Table<ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(z => z.Id).FirstOrDefault();
-            price.Add(priceM.PareseAsProductPriceM());
+            var price = _db.DataBase.Table<ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(z => z.CreatedTicks).ToArray();
             return price;
         }
         void OnScrollTo(int index, int groupIndex = -1, ScrollToPosition position = ScrollToPosition.MakeVisible, bool animate = true)
@@ -130,7 +112,7 @@ namespace Inventory.Pages.Products.ListProduct
                 int arrangement = i + 1;
                 ProductMs[i].Name.Arrangement = arrangement;
 
-                var entities = ProductMs[i].Name.PareseAsProductName();
+                var entities = ProductMs[i].Name;
                 entities.Updated = DateTime.Now;
                 _db.DataBase.Update(entities);
             }
@@ -138,14 +120,6 @@ namespace Inventory.Pages.Products.ListProduct
         }
 
         #endregion
-
-
-        Guid GetGuidSed()
-        {
-            byte[] guidBytes = new byte[16];
-            random.NextBytes(guidBytes);
-            return new Guid(guidBytes);
-        }
 
         #endregion
 
@@ -161,13 +135,13 @@ namespace Inventory.Pages.Products.ListProduct
                 {
                     try
                     {
-                        await _db.DataBaseAsync.DeleteAsync(value.Name.PareseAsProductName());
+                        await _db.DataBaseAsync.DeleteAsync(value.Name);
                         for (int i = 0; i < value.Prices.Count; i++)
                         {
-                            await _db.DataBaseAsync.DeleteAsync(value.Prices[i].PareseAsProductPrice());
+                            await _db.DataBaseAsync.DeleteAsync(value.Prices[i]);
                         }
-                        await Shell.Current.DisplayAlert(value.Name.Name, "Obiekt został usunięty", "Ok");
                         ProductMs.Remove(value);
+                        await Shell.Current.DisplayAlert(value.Name.Name, "Obiekt został usunięty", "Ok");
                     }
                     catch (Exception ex)
                     {
@@ -225,7 +199,7 @@ namespace Inventory.Pages.Products.ListProduct
         {
             try
             {
-                var products = DataBase.Data.InventoryTables.DefoultProducts;
+                var products = DataBase.Data.InventoryTables.DefaultProducts;
                 for (int i = 0; i < products.Length; i++)
                 {
                     products[i].Name.Arrangement = i;
@@ -275,7 +249,6 @@ namespace Inventory.Pages.Products.ListProduct
                 return;
 
             DragAndDropProduct = value;
-            ProductMs.Remove(value);
         }
 
         [RelayCommand]
@@ -284,13 +257,20 @@ namespace Inventory.Pages.Products.ListProduct
             if (DragAndDropProduct is null)
                 return;
 
-            ProductMs.Clear();
-            SelectAllProducts();
+            if (ProductMs.Count != _db.DataBase.Table<ProductName>().Count())
+            {
+                ProductMs.Clear();
+                SelectAllProducts();
+            }
         }
 
         [RelayCommand]
         void OnDrop(ListProductM value)
         {
+            if (value is null)           
+                return;
+            
+
             var index = ProductMs.IndexOf(value);
 
             SetPositions(index, DragAndDropProduct);

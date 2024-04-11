@@ -2,14 +2,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Inventory.Helper.Parse;
-using Inventory.Model;
-using Inventory.Model.MVVM;
-using Inventory.Pages.RangeDay.Graph.GraphOptions;
 using DataBase.Model.EntitiesInventory;
 
+using Inventory.Model;
+using Inventory.Pages.RangeDay.Graph.GraphOptions;
+
 using System.Collections.ObjectModel;
-using System.Text;
 
 namespace Inventory.Pages.RangeDay.Graph
 {
@@ -43,9 +41,9 @@ namespace Inventory.Pages.RangeDay.Graph
         readonly Service.ISelectDayService _selectDayService;
         public GraphVM(DataBase.Data.AccessDataBase db, Service.ISelectDayService selectDayService)
         {
-            RangeDayMs ??= Array.Empty<RangeDayM>();
-            Legend ??= new ObservableCollection<GraphM>();
-            TypeOfGraphM ??= new TypeOfGraphM();
+            RangeDayMs ??= [];
+            Legend ??= [];
+            TypeOfGraphM ??= new();
             TypeOfGraphM.Column = true;
             TypeOfGraphM.ChangeGraphType += OnReDrawTypeOfGraph;
 
@@ -65,78 +63,17 @@ namespace Inventory.Pages.RangeDay.Graph
 
         async Task<RangeDayM[]> SelectDays(long from, long to, Guid[] selectedDriverName, bool moreData)
         {
-            Day[] days = Array.Empty<Day>();
-            if (selectedDriverName is null || selectedDriverName.Length == 0)
+            var (drivers, days) = await _selectDayService.GetDaysAndDrivers(from, to, selectedDriverName, moreData);
+
+            var range = new RangeDayM[days.Length];
+
+            for (int i = 0; i < range.Length; i++)
             {
-                days = await _db.DataBaseAsync.Table<Day>().
-                    Where(x => x.CreatedTicks >= from && x.CreatedTicks <= to).
-                    OrderByDescending(x => x.CreatedTicks).ToArrayAsync();
-            }
-            else
-            {
-                var sb = new StringBuilder();
-
-                sb.Append("SELECT * FROM Day ");
-                sb.Append("WHERE CreatedTicks >= ");
-                sb.Append(from);
-                sb.Append(" AND CreatedTicks <= ");
-                sb.Append(to);
-
-                if (selectedDriverName.Length > 0)
-                {
-                    sb.Append(" AND (");
-                }
-
-                for (int i = 0; i < selectedDriverName.Length; i++)
-                {
-                    if (i == 0)
-                        sb.Append(" DriverGuid == '");
-                    else if (i < selectedDriverName.Length)
-                        sb.Append(" OR DriverGuid == '");
-
-                    sb.Append(selectedDriverName[i]);
-                    sb.Append('\'');
-                }
-
-                if (selectedDriverName.Length > 0)
-                {
-                    sb.Append(" ) ");
-                }
-
-                sb.Append(" ORDER BY CreatedTicks DESC");
-
-                var result = await _db.DataBaseAsync.QueryAsync<Day>(sb.ToString());
-                days = result.ToArray();
-                result.Clear();
-
-                //days = await _db.DataBaseAsync.Table<Inventory.Model.Day>().
-                //    Where(x => x.CreatedTicks >= from && x.CreatedTicks <= to && x.DriverGuid == selectedDriverName).
-                //    OrderByDescending(x => x.CreatedTicks).ToArrayAsync();
-
+                range[i].Day = days[i];
+                range[i].Driver = drivers[i];
             }
 
-            RangeDayM[] dayM = new RangeDayM[days.Length];
-            for (int i = 0; i < days.Length; i++)
-            {
-                dayM[i] = new RangeDayM();
-                dayM[i].DayM = days[i].ParseAsDayM();
-                var guid = days[i].DriverGuid;
-                var driver = await _db.DataBaseAsync.Table<Driver>().FirstOrDefaultAsync(x => x.Id == guid);
-                if (driver is not null)
-                {
-                    dayM[i].Driver = driver.PareseAsDriverM();
-                }
-            }
-
-            if (moreData)
-            {
-                for (int i = 0; i < dayM.Length; i++)
-                {
-                    dayM[i].DayM = await _selectDayService.GetDayProcedure(dayM[i].DayM.Id);
-                }
-            }
-
-            return dayM.Reverse().ToArray();
+            return range.Reverse().ToArray();
         }
 
         public void OnReDraw(IDrawable drawable)
@@ -218,9 +155,9 @@ namespace Inventory.Pages.RangeDay.Graph
                     int x = 0;
                     for (int i = 0; i < RangeDayMs.Length; i++)
                     {
-                        if (RangeDayMs[i].DayM.DriverGuid == drivers[d].Id)
+                        if (RangeDayMs[i].Day.DriverGuid == drivers[d].Id)
                         {
-                            var point = new PointF(x, -(float)RangeDayMs[i].DayM.TotalPriceProduct);
+                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceProductsDecimal);
                             DrawGraph.GraphValues[current].Path.LineTo(point);
                             x++;
                         }
@@ -234,9 +171,9 @@ namespace Inventory.Pages.RangeDay.Graph
                     int x = 0;
                     for (int i = 0; i < RangeDayMs.Length; i++)
                     {
-                        if (RangeDayMs[i].DayM.DriverGuid == drivers[d].Id)
+                        if (RangeDayMs[i].Day.DriverGuid == drivers[d].Id)
                         {
-                            var point = new PointF(x, -(float)RangeDayMs[i].DayM.TotalPriceCake);
+                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceCake);
                             DrawGraph.GraphValues[current].Path.LineTo(point);
                             x++;
                         }
@@ -251,9 +188,9 @@ namespace Inventory.Pages.RangeDay.Graph
                     int x = 0;
                     for (int i = 0; i < RangeDayMs.Length; i++)
                     {
-                        if (RangeDayMs[i].DayM.DriverGuid == drivers[d].Id)
+                        if (RangeDayMs[i].Day.DriverGuid == drivers[d].Id)
                         {
-                            var point = new PointF(x, -(float)RangeDayMs[i].DayM.TotalPrice);
+                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPrice);
                             DrawGraph.GraphValues[current].Path.LineTo(point);
                             x++;
                         }
@@ -268,9 +205,9 @@ namespace Inventory.Pages.RangeDay.Graph
                     int x = 0;
                     for (int i = 0; i < RangeDayMs.Length; i++)
                     {
-                        if (RangeDayMs[i].DayM.DriverGuid == drivers[d].Id)
+                        if (RangeDayMs[i].Day.DriverGuid == drivers[d].Id)
                         {
-                            var point = new PointF(x, -(float)RangeDayMs[i].DayM.TotalPriceCorrect);
+                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceCorrect);
                             DrawGraph.GraphValues[current].Path.LineTo(point);
                             x++;
                         }
@@ -285,9 +222,9 @@ namespace Inventory.Pages.RangeDay.Graph
                     int x = 0;
                     for (int i = 0; i < RangeDayMs.Length; i++)
                     {
-                        if (RangeDayMs[i].DayM.DriverGuid == drivers[d].Id)
+                        if (RangeDayMs[i].Day.DriverGuid == drivers[d].Id)
                         {
-                            var point = new PointF(x, -(float)RangeDayMs[i].DayM.TotalPriceAfterCorrect);
+                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceAfterCorrect);
                             DrawGraph.GraphValues[current].Path.LineTo(point);
                             x++;
                         }
@@ -302,9 +239,9 @@ namespace Inventory.Pages.RangeDay.Graph
                     int x = 0;
                     for (int i = 0; i < RangeDayMs.Length; i++)
                     {
-                        if (RangeDayMs[i].DayM.DriverGuid == drivers[d].Id)
+                        if (RangeDayMs[i].Day.DriverGuid == drivers[d].Id)
                         {
-                            var point = new PointF(x, -(float)RangeDayMs[i].DayM.TotalPriceMoney);
+                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceMoney);
                             DrawGraph.GraphValues[current].Path.LineTo(point);
                             x++;
                         }
@@ -319,9 +256,9 @@ namespace Inventory.Pages.RangeDay.Graph
                     int x = 0;
                     for (int i = 0; i < RangeDayMs.Length; i++)
                     {
-                        if (RangeDayMs[i].DayM.DriverGuid == drivers[d].Id)
+                        if (RangeDayMs[i].Day.DriverGuid == drivers[d].Id)
                         {
-                            var point = new PointF(x, -(float)RangeDayMs[i].DayM.TotalPriceDifference);
+                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceDifference);
                             DrawGraph.GraphValues[current].Path.LineTo(point);
                             x++;
                         }
@@ -336,9 +273,9 @@ namespace Inventory.Pages.RangeDay.Graph
                     int x = 0;
                     for (int i = 0; i < RangeDayMs.Length; i++)
                     {
-                        if (RangeDayMs[i].DayM.DriverGuid == drivers[d].Id)
+                        if (RangeDayMs[i].Day.DriverGuid == drivers[d].Id)
                         {
-                            var point = new PointF(x, -(float)RangeDayMs[i].DayM.Cakes.Count(x => x.IsSell));
+                            var point = new PointF(x, -(float)RangeDayMs[i].Day.Cakes.Count(x => x.IsSell));
                             DrawGraph.GraphValues[current].Path.LineTo(point);
                             x++;
                         }
@@ -358,15 +295,15 @@ namespace Inventory.Pages.RangeDay.Graph
                             int x = 0;
                             for (int i = 0; i < RangeDayMs.Length; i++)
                             {
-                                if (RangeDayMs[i].DayM.DriverGuid == drivers[d].Id)
+                                if (RangeDayMs[i].Day.DriverGuid == drivers[d].Id)
                                 {
-                                    for (int k = 0; k < RangeDayMs[i].DayM.Products.Count; k++)
+                                    for (int k = 0; k < RangeDayMs[i].Day.Products.Count; k++)
                                     {
-                                        if (RangeDayMs[i].DayM.Products[k].Name.Name == optionsM.ProductMs[j].Name)
+                                        if (RangeDayMs[i].Day.Products[k].Name.Name == optionsM.ProductMs[j].Name)
                                         {
-                                            var point = new PointF(x, -(float)(RangeDayMs[i].DayM.Products[k].Number
-                                                + RangeDayMs[i].DayM.Products[k].NumberEdit
-                                                - RangeDayMs[i].DayM.Products[k].NumberReturn));
+                                            var point = new PointF(x, -(float)(RangeDayMs[i].Day.Products[k].Number
+                                                + RangeDayMs[i].Day.Products[k].NumberEdit
+                                                - RangeDayMs[i].Day.Products[k].NumberReturn));
                                             DrawGraph.GraphValues[current].Path.LineTo(point);
                                             x++;
                                             break;
@@ -388,13 +325,13 @@ namespace Inventory.Pages.RangeDay.Graph
                             int x = 0;
                             for (int i = 0; i < RangeDayMs.Length; i++)
                             {
-                                if (RangeDayMs[i].DayM.DriverGuid == drivers[d].Id)
+                                if (RangeDayMs[i].Day.DriverGuid == drivers[d].Id)
                                 {
-                                    for (int k = 0; k < RangeDayMs[i].DayM.Products.Count; k++)
+                                    for (int k = 0; k < RangeDayMs[i].Day.Products.Count; k++)
                                     {
-                                        if (RangeDayMs[i].DayM.Products[k].Name.Name == optionsM.ProductMs[j].Name)
+                                        if (RangeDayMs[i].Day.Products[k].Name.Name == optionsM.ProductMs[j].Name)
                                         {
-                                            var point = new PointF(x, -(float)(RangeDayMs[i].DayM.Products[k].PriceTotalAfterCorrect));
+                                            var point = new PointF(x, -(float)(RangeDayMs[i].Day.Products[k].PriceTotalAfterCorrect));
                                             DrawGraph.GraphValues[current].Path.LineTo(point);
                                             x++;
                                             break;
@@ -415,9 +352,9 @@ namespace Inventory.Pages.RangeDay.Graph
 
             for (int i = 0; i < DrawGraph.XValues.Length; i++)
             {
-                if (RangeDayMs[i].DayM.DriverGuid == drivers[0].Id)
+                if (RangeDayMs[i].Day.DriverGuid == drivers[0].Id)
                 {
-                    DrawGraph.XValues[i] = RangeDayMs[i].DayM.Created;
+                    DrawGraph.XValues[i] = RangeDayMs[i].Day.Created;
                 }
             }
 
@@ -449,27 +386,27 @@ namespace Inventory.Pages.RangeDay.Graph
         static string[] GetProductNames(RangeDayM[] rangeDayMs)
         {
             if (rangeDayMs is null)
-                return Array.Empty<string>();
+                return [];
             if (rangeDayMs.Length == 0)
-                return Array.Empty<string>();
+                return [];
 
 
             var first = rangeDayMs.FirstOrDefault();
             if (first is null)
-                return Array.Empty<string>();
+                return [];
 
-            var names = new string[first.DayM.Products.Count];
+            var names = new string[first.Day.Products.Count];
 
             for (int i = 0; i < names.Length; i++)
             {
-                names[i] = first.DayM.Products[i].Name.Name;
+                names[i] = first.Day.Products[i].Name.Name;
             }
             return names;
         }
 
-        static DriverM[] GetInvidualsDrivers(RangeDayM[] rangeDayMs)
+        static Driver[] GetInvidualsDrivers(RangeDayM[] rangeDayMs)
         {
-            var drivers = new List<DriverM>();
+            var drivers = new List<Driver>();
 
             for (int i = 0; i < rangeDayMs.Length; i++)
             {
@@ -479,7 +416,7 @@ namespace Inventory.Pages.RangeDay.Graph
                 }
             }
 
-            return drivers.ToArray();
+            return [.. drivers];
         }
 
         void OnMainDisplayInfoChanged(object sender, DisplayInfoChangedEventArgs e)
@@ -497,7 +434,7 @@ namespace Inventory.Pages.RangeDay.Graph
             {
                 for (int i = 0; i < RangeDayMs.Length; i++)
                 {
-                    RangeDayMs[i].DayM.Dispose();
+                    RangeDayMs[i].Day.Dispose();
                 }
             }
             RangeDayMs = null;

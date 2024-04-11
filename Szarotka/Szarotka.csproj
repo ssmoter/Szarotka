@@ -111,8 +111,16 @@
 	<ItemGroup>
 	  <None Remove="Resources\Images\Icon\outline_close_black_24dp.png" />
 	  <None Remove="Resources\Images\Icon\outline_close_white_24dp.png" />
+	  <None Remove="Resources\Images\Icon\outline_delete_black_24dp.png" />
+	  <None Remove="Resources\Images\Icon\outline_delete_white_24dp.png" />
+	  <None Remove="Resources\Images\Icon\outline_filter_list_black_24dp.png" />
+	  <None Remove="Resources\Images\Icon\outline_filter_list_white_24dp.png" />
+	  <None Remove="Resources\Images\Icon\outline_price_change_black_24dp.png" />
+	  <None Remove="Resources\Images\Icon\outline_price_change_white_24dp.png" />
 	  <None Remove="Resources\Images\Icon\outline_saved_search_black_24dp.png" />
 	  <None Remove="Resources\Images\Icon\outline_saved_search_white_24dp.png" />
+	  <None Remove="Resources\Images\Icon\outline_sort_black_24dp.png" />
+	  <None Remove="Resources\Images\Icon\outline_sort_white_24dp.png" />
 	  <None Remove="Resources\Images\logo2.png" />
 	</ItemGroup>
 

@@ -16,7 +16,8 @@ CustomerRoutes.RoutesId,
 CustomerRoutes.Name,
 CustomerRoutes.Description,
 CustomerRoutes.PhoneNumber,
-CustomerRoutes.Created,
+CustomerRoutes.CreatedTicks,
+CustomerRoutes.UpdatedTicks,
 CustomerRoutes.Longitude,
 CustomerRoutes.Latitude,
 json_object(
@@ -44,7 +45,11 @@ json_object(
 	'Saturday',SelectedDayOfWeekRoutes.Saturday,
     'SaturdayTicks',SelectedDayOfWeekRoutes.SaturdayTicks,
 
-	'Optional',SelectedDayOfWeekRoutes.Optional
+	'Optional',SelectedDayOfWeekRoutes.Optional,
+	
+	'CreatedTicks',CustomerRoutes.CreatedTicks,
+	'UpdatedTicks',CustomerRoutes.UpdatedTicks
+	
 
 ) as 'JsonDayOfWeek',
 
@@ -59,7 +64,10 @@ json_object(
 	'ApartmentNumber',ResidentialAddress.ApartmentNumber,
 	'PostalCode',ResidentialAddress.PostalCode,
 	'City',ResidentialAddress.City,
-	'Country',ResidentialAddress.Country
+	'Country',ResidentialAddress.Country,
+	
+	'CreatedTicks',CustomerRoutes.CreatedTicks,
+	'UpdatedTicks',CustomerRoutes.UpdatedTicks
 
 ) as 'JsonAddress'
 

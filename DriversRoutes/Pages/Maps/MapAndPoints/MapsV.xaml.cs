@@ -30,7 +30,6 @@ public partial class MapsV : ContentPage, IDisposable
     {
         if (BindingContext is MapsVM vm)
             vm.GoToLocation -= Map.MoveToRegion;
-        GC.SuppressFinalize(this);
     }
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)

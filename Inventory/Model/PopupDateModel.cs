@@ -1,8 +1,7 @@
-﻿using Inventory.Model.MVVM;
-
+﻿
 namespace Inventory.Model
 {
-    public record class PopupDateModel(long From, long To,bool MoreData , Guid[] DriverId)
+    public record class PopupDateModel(long From, long To, bool MoreData, Guid[] DriverId)
     {
     }
 }

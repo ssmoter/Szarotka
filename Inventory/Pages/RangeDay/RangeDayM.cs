@@ -1,20 +1,20 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-using Inventory.Model.MVVM;
+using DataBase.Model.EntitiesInventory;
 
 namespace Inventory.Pages.RangeDay
 {
     public partial class RangeDayM : ObservableObject
     {
         [ObservableProperty]
-        DayM dayM;
+        Day day;
         [ObservableProperty]
-        DriverM driver;
+        Driver driver;
 
         public RangeDayM()
         {
-            DayM = new DayM();
-            Driver = new DriverM();
+            Day = new();
+            Driver = new();
         }
     }
 

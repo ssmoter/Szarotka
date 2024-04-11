@@ -22,7 +22,7 @@
                 </Label.FormattedText>
             </Label>
 
-            <HorizontalStackLayout HorizontalOptions="Center">
+            <!--<HorizontalStackLayout HorizontalOptions="Center">
 
                 <Button
                     Command="{Binding CreateTablesCommand}"
@@ -32,7 +32,7 @@
                     Command="{Binding CreateNewTablesCommand}"
                     HorizontalOptions="Center"
                     Text="Wygeneruj brakujące Tabele" />
-            </HorizontalStackLayout>
+            </HorizontalStackLayout>-->
 
 
 

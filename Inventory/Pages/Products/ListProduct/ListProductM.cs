@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
+using DataBase.Model.EntitiesInventory;
+
 using System.Collections.ObjectModel;
 
 namespace Inventory.Pages.Products.ListProduct
@@ -7,7 +9,7 @@ namespace Inventory.Pages.Products.ListProduct
     public partial class ListProductM : ObservableObject
     {
         [ObservableProperty]
-        Inventory.Model.MVVM.ProductNameM name;
+        ProductName name;
 
         [ObservableProperty]
         decimal actualPrice;
@@ -16,12 +18,12 @@ namespace Inventory.Pages.Products.ListProduct
         string actualCreated;
 
         [ObservableProperty]
-        ObservableCollection<Inventory.Model.MVVM.ProductPriceM> prices;
+        ObservableCollection<ProductPrice> prices;
 
         public ListProductM()
         {
-            Name = new Model.MVVM.ProductNameM();
-            Prices = new ObservableCollection<Model.MVVM.ProductPriceM>();
+            Name = new();
+            Prices = [];
         }
 
         public void SetActualPrice()
@@ -30,7 +32,7 @@ namespace Inventory.Pages.Products.ListProduct
             {
                 if (Prices.Count > 0)
                 {
-                    ActualPrice = Prices.FirstOrDefault().Price;
+                    ActualPrice = Prices.FirstOrDefault().PriceDecimal;
                     ActualCreated = Prices.FirstOrDefault().Created.ToShortDateString();
                 }
             }

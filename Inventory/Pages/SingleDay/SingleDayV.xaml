@@ -5,17 +5,34 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:CustomControls="clr-namespace:DataBase.CustomControls;assembly=DataBase"
     xmlns:ImgPath="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
-    xmlns:Product="clr-namespace:Inventory.Model.MVVM"
+    xmlns:Product="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
     xmlns:VM="clr-namespace:Inventory.Pages.SingleDay"
-    Title="{Binding DayM.Created}"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    Title="{Binding Day.SelectedDate}"
     x:DataType="VM:SingleDayVM">
+
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:MultiMathExpressionConverter x:Key="MultiMathExpressionConverter" />
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <Shell.BackButtonBehavior>
         <BackButtonBehavior Command="{Binding BackCommand}" />
     </Shell.BackButtonBehavior>
+
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding SaveDayCommand}" Text="Zapisz" />
-        <ToolbarItem Command="{Binding BackWithoutSaveCommand}" Text="Anuluj" />
+        <ToolbarItem
+            x:DataType="VM:SingleDayVM"
+            Command="{Binding SaveDayCommand}"
+            Text="Zapisz" />
+        <ToolbarItem
+            x:DataType="VM:SingleDayVM"
+            Command="{Binding BackWithoutSaveCommand}"
+            Text="Anuluj" />
     </ContentPage.ToolbarItems>
 
 
@@ -56,7 +73,7 @@
                             <Label.FormattedText>
                                 <FormattedString>
                                     <Span Text="Produkty = " />
-                                    <Span Text="{Binding DayM.TotalPriceProduct}" />
+                                    <Span Text="{Binding Day.TotalPriceProductsDecimal}" />
                                     <Span Text=" zł" />
                                 </FormattedString>
                             </Label.FormattedText>
@@ -69,7 +86,7 @@
                             <Label.FormattedText>
                                 <FormattedString>
                                     <Span Text="Ciasto = " />
-                                    <Span Text="{Binding DayM.TotalPriceCake}" />
+                                    <Span Text="{Binding Day.TotalPriceCakeDecimal}" />
                                     <Span Text=" zł" />
                                 </FormattedString>
                             </Label.FormattedText>
@@ -82,7 +99,7 @@
                             <Label.FormattedText>
                                 <FormattedString>
                                     <Span Text="Suma = " />
-                                    <Span Text="{Binding DayM.TotalPrice}" />
+                                    <Span Text="{Binding Day.TotalPriceDecimal}" />
                                     <Span Text=" zł" />
                                 </FormattedString>
                             </Label.FormattedText>
@@ -95,7 +112,7 @@
                             <Label Text="Korekta = " VerticalOptions="Center" />
                             <Entry
                                 Keyboard="Numeric"
-                                Text="{Binding DayM.TotalPriceCorrect}"
+                                Text="{Binding Day.TotalPriceCorrectDecimal}"
                                 TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
                             <Label Text=" zł" VerticalOptions="Center" />
                         </HorizontalStackLayout>
@@ -107,7 +124,7 @@
                             <Label.FormattedText>
                                 <FormattedString>
                                     <Span Text="Po korekcie = " />
-                                    <Span Text="{Binding DayM.TotalPriceAfterCorrect}" />
+                                    <Span Text="{Binding Day.TotalPriceAfterCorrectDecimal}" />
                                     <Span Text=" zł" />
                                 </FormattedString>
                             </Label.FormattedText>
@@ -119,7 +136,7 @@
                                 <Label Text="Zapłacono = " VerticalOptions="Center" />
                                 <Entry
                                     Keyboard="Numeric"
-                                    Text="{Binding DayM.TotalPriceMoney}"
+                                    Text="{Binding Day.TotalPriceMoneyDecimal}"
                                     TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
                                 <Label Text=" zł" VerticalOptions="Center" />
 
@@ -138,7 +155,7 @@
                             <Label.FormattedText>
                                 <FormattedString>
                                     <Span Text="Różnica = " />
-                                    <Span Text="{Binding DayM.TotalPriceDifference}" />
+                                    <Span Text="{Binding Day.TotalPriceDifferenceDecimal}" />
                                     <Span Text=" zł" />
                                 </FormattedString>
                             </Label.FormattedText>
@@ -178,283 +195,213 @@
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
 
-                    <!--<RefreshView Command="{Binding RefreshListOfProductCommand}" IsRefreshing="{Binding SingleDayM.ProductIsRefreshing}" />-->
-                    <CollectionView
-                        x:Name="CVProducts"
-                        ItemsSource="{Binding DayM.Products}">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <SwipeView>
-                                    <SwipeView.RightItems>
-                                        <SwipeItems SwipeBehaviorOnInvoked="RemainOpen">
+                <!--<RefreshView Command="{Binding RefreshListOfProductCommand}" IsRefreshing="{Binding SingleDay.ProductIsRefreshing}" />-->
+                <CollectionView x:Name="CVProducts" ItemsSource="{Binding Day.Products}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <SwipeView>
+                                <SwipeView.RightItems>
+                                    <SwipeItems SwipeBehaviorOnInvoked="RemainOpen">
 
-                                            <SwipeItemView>
+                                        <SwipeItemView>
 
-                                                <VerticalStackLayout HorizontalOptions="End" VerticalOptions="End">
+                                            <VerticalStackLayout HorizontalOptions="End" VerticalOptions="End">
 
-                                                    <HorizontalStackLayout>
-                                                        <ImageButton Clicked="Button_Clicked_FastMinusProductNumber" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
-                                                        <ImageButton Clicked="Button_Clicked_FastAddProductNumber" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
-                                                    </HorizontalStackLayout>
+                                                <HorizontalStackLayout>
+                                                    <ImageButton Clicked="Button_Clicked_FastMinusProductNumber" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
+                                                    <ImageButton Clicked="Button_Clicked_FastAddProductNumber" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
+                                                </HorizontalStackLayout>
 
 
-                                                    <HorizontalStackLayout>
-                                                        <ImageButton Clicked="Button_Clicked_FastMinusProductEdit" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
-                                                        <ImageButton Clicked="Button_Clicked_FastAddProductEdit" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
-                                                    </HorizontalStackLayout>
+                                                <HorizontalStackLayout>
+                                                    <ImageButton Clicked="Button_Clicked_FastMinusProductEdit" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
+                                                    <ImageButton Clicked="Button_Clicked_FastAddProductEdit" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
+                                                </HorizontalStackLayout>
 
 
 
-                                                    <HorizontalStackLayout>
-                                                        <ImageButton Clicked="Button_Clicked_FastMinusProductReturn" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
-                                                        <ImageButton Clicked="Button_Clicked_FastAddProductReturn" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
-                                                    </HorizontalStackLayout>
+                                                <HorizontalStackLayout>
+                                                    <ImageButton Clicked="Button_Clicked_FastMinusProductReturn" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
+                                                    <ImageButton Clicked="Button_Clicked_FastAddProductReturn" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
+                                                </HorizontalStackLayout>
 
 
-                                                </VerticalStackLayout>
+                                            </VerticalStackLayout>
+
+                                        </SwipeItemView>
 
 
-                                                <!--<Grid
-                                                    ColumnDefinitions="*,*"
-                                                    HorizontalOptions="Fill"
-                                                    RowDefinitions="*,*,*"
-                                                    VerticalOptions="Fill">
+                                    </SwipeItems>
+                                </SwipeView.RightItems>
 
+                                <SwipeView.LeftItems>
+                                    <SwipeItems SwipeBehaviorOnInvoked="Auto">
+                                        <SwipeItemView>
+                                            <VerticalStackLayout VerticalOptions="Center">
 
-
-                                                    <Button
-                                                        Grid.Row="0"
-                                                        Grid.Column="0"
-                                                        Clicked="Button_Clicked_FastMinusProductNumber"
-                                                        FontSize="Medium"
-                                                        HorizontalOptions="Center"
-                                                        Text="-"
-                                                        VerticalOptions="Center" />
-                                                -->
-                                                <!--
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductNumberCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                -->
-                                                <!--
-
-                                                    <Button
-                                                        Grid.Row="0"
-                                                        Grid.Column="1"
-                                                        Clicked="Button_Clicked_FastAddProductNumber"
-                                                        FontSize="Medium"
-                                                        HorizontalOptions="Center"
-                                                        Text="+"
-                                                        VerticalOptions="Center" />
-                                                -->
-                                                <!--
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductNumberCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                -->
-                                                <!--
-
-                                                    <Button
-                                                        Grid.Row="1"
-                                                        Grid.Column="0"
-                                                        Clicked="Button_Clicked_FastMinusProductEdit"
-                                                        FontSize="Medium"
-                                                        HorizontalOptions="Center"
-                                                        Text="-"
-                                                        VerticalOptions="Center" />
-                                                -->
-                                                <!--
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductEditCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                -->
-                                                <!--
-                                                    <Button
-                                                        Grid.Row="1"
-                                                        Grid.Column="1"
-                                                        Clicked="Button_Clicked_FastAddProductEdit"
-                                                        FontSize="Medium"
-                                                        HorizontalOptions="Center"
-                                                        Text="+"
-                                                        VerticalOptions="Center" />
-                                                -->
-                                                <!--
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductEditCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                -->
-                                                <!--
-
-                                                    <Button
-                                                        Grid.Row="2"
-                                                        Grid.Column="0"
-                                                        Clicked="Button_Clicked_FastMinusProductReturn"
-                                                        FontSize="Medium"
-                                                        HorizontalOptions="Center"
-                                                        Text="-"
-                                                        VerticalOptions="Center" />
-                                                -->
-                                                <!--
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastMinusProductReturnCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                -->
-                                                <!--
-                                                    <Button
-                                                        Grid.Row="2"
-                                                        Grid.Column="1"
-                                                        Clicked="Button_Clicked_FastAddProductReturn"
-                                                        FontSize="Medium"
-                                                        HorizontalOptions="Center"
-                                                        Text="+"
-                                                        VerticalOptions="Center" />
-                                                -->
-                                                <!--
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=FastAddProductReturnCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                -->
-                                                <!--
-
-                                                </Grid>-->
-
-                                            </SwipeItemView>
-
-
-                                        </SwipeItems>
-                                    </SwipeView.RightItems>
-
-                                    <Border Margin="2">
-                                        <Border.StrokeShape>
-                                            <RoundRectangle CornerRadius="10" />
-                                        </Border.StrokeShape>
-
-                                        <Grid
-                                            Padding="5"
-                                            x:DataType="Product:ProductM"
-                                            ColumnDefinitions="70,*,*"
-                                            ColumnSpacing="5"
-                                            RowDefinitions="*,*,*,*">
-
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="0"
-                                                Grid.ColumnSpan="3"
-                                                Margin="0,0,0,5"
-                                                FontAttributes="Bold"
-                                                FontSize="Medium"
-                                                HorizontalOptions="Center"
-                                                Text="{Binding Name.Name}"
-                                                VerticalOptions="Center" />
-
-                                            <CustomControls:StringImage
-                                                Grid.Row="1"
-                                                Grid.RowSpan="3"
-                                                Grid.Column="0"
-                                                String64Base="{Binding Name.Img}"
-                                                WidthRequestCustom="70" />
-
-                                            <HorizontalStackLayout
-                                                Grid.Row="1"
-                                                Grid.Column="1"
-                                                HorizontalOptions="Center"
-                                                VerticalOptions="Center">
-                                                <Label
-                                                    HorizontalOptions="Center"
-                                                    Text="Ilość"
-                                                    VerticalOptions="Center" />
-                                                <Entry
-                                                    Keyboard="Numeric"
-                                                    ReturnType="Next"                                                    
-                                                    Text="{Binding Number}"
-                                                    TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
-                                            </HorizontalStackLayout>
-
-                                            <HorizontalStackLayout
-                                                Grid.Row="2"
-                                                Grid.Column="1"
-                                                HorizontalOptions="Center"
-                                                VerticalOptions="Center">
-
-                                                <Label
-                                                    HorizontalOptions="Center"
-                                                    Text="Edycja"
-                                                    VerticalOptions="Center">
-                                                    <!--<Label.GestureRecognizers>
-                                                        <TapGestureRecognizer
-                                                            x:DataType="VM:SingleDayVM"
-                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=PopupToAddValueFromListCommand}"
-                                                            CommandParameter="{Binding .}"
-                                                            NumberOfTapsRequired="2" />
-                                                    </Label.GestureRecognizers>-->
+                                                <Label HorizontalTextAlignment="Center">
+                                                    <Label.FormattedText>
+                                                        <FormattedString x:DataType="Product:Product">
+                                                            <Span Text="cena: " />
+                                                            <Span Text="&#10;" />
+                                                            <Span Text="{Binding Price.PriceDecimal}" />
+                                                            <Span Text="zł" />
+                                                        </FormattedString>
+                                                    </Label.FormattedText>
                                                 </Label>
-                                                <Entry
-                                                    Keyboard="Numeric"
-                                                    ReturnType="Next"
-                                                    Text="{Binding NumberEdit}"
-                                                    TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
-                                            </HorizontalStackLayout>
 
-                                            <HorizontalStackLayout
-                                                Grid.Row="3"
-                                                Grid.Column="1"
+                                                <Label Text="Sprzedanych:" />
+                                                <HorizontalStackLayout HorizontalOptions="Center">
+                                                    <Label x:DataType="Product:Product">
+                                                        <Label.Text>
+                                                            <MultiBinding Converter="{StaticResource MultiMathExpressionConverter}" ConverterParameter="x0 + x1 - x2">
+                                                                <Binding Path="Number" />
+                                                                <Binding Path="NumberEdit" />
+                                                                <Binding Path="NumberReturn" />
+                                                            </MultiBinding>
+                                                        </Label.Text>
+                                                    </Label>
+                                                    <Label Text="szt." />
+                                                </HorizontalStackLayout>
+
+                                                <ImageButton Clicked="Button_Clicked_ChangeProductPrice" Source="{AppThemeBinding Light={Static ImgPath:ImgMoney.PriceChangBlack}, Dark={Static ImgPath:ImgMoney.PriceChangWhite}}" />
+                                                <ImageButton Clicked="Button_Clicked_DeleteSelectedProduct" Source="{AppThemeBinding Light={Static ImgPath:ImgMoney.OutlineDeleteBlack}, Dark={Static ImgPath:ImgMoney.OutlineDeleteWhite}}" />
+
+                                                <Border VerticalOptions="End" />
+                                            </VerticalStackLayout>
+                                        </SwipeItemView>
+                                    </SwipeItems>
+                                </SwipeView.LeftItems>
+
+                                <Border Padding="2">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10" />
+                                    </Border.StrokeShape>
+
+                                    <Grid
+                                        x:DataType="Product:Product"
+                                        ColumnDefinitions="70,*,*"
+                                        ColumnSpacing="1"
+                                        RowDefinitions="*,*,*,*">
+
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="3"
+                                            FontAttributes="Bold"
+                                            FontSize="Medium"
+                                            HorizontalOptions="Center"
+                                            Text="{Binding Name.Name}"
+                                            VerticalOptions="Center" />
+
+                                        <StackLayout
+                                            Grid.Row="1"
+                                            Grid.RowSpan="3"
+                                            Grid.Column="0"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center">
+                                            <CustomControls:StringImage String64Base="{Binding Name.Img}" WidthRequest="70" />
+                                        </StackLayout>
+
+                                        <HorizontalStackLayout
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            HorizontalOptions="Start"
+                                            VerticalOptions="Center">
+                                            <Label
                                                 HorizontalOptions="Center"
-                                                VerticalOptions="Center">
-                                                <Label
-                                                    HorizontalOptions="Center"
-                                                    Text="Zwrot"
-                                                    VerticalOptions="Center" />
-                                                <Entry
-                                                    Keyboard="Numeric"
-                                                    ReturnType="Next"
-                                                    Text="{Binding NumberReturn}"
-                                                    TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
-                                            </HorizontalStackLayout>
+                                                Text="Ilość"
+                                                VerticalOptions="Center" />
+                                            <Entry
+                                                Keyboard="Numeric"
+                                                Text="{Binding Number}"
+                                                TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                        </HorizontalStackLayout>
+
+                                        <HorizontalStackLayout
+                                            Grid.Row="2"
+                                            Grid.Column="1"
+                                            HorizontalOptions="Start"
+                                            VerticalOptions="Center">
 
                                             <Label
-                                                Grid.Row="1"
-                                                Grid.Column="2"
                                                 HorizontalOptions="Center"
-                                                VerticalOptions="Center">
-                                                <Label.FormattedText>
-                                                    <FormattedString>
-                                                        <Span Text="Suma = " />
-                                                        <Span Text="{Binding PriceTotal}" />
-                                                        <Span Text=" zł" />
-                                                    </FormattedString>
-                                                </Label.FormattedText>
-                                            </Label>
+                                                Text="Edycja"
+                                                VerticalOptions="Center" />
+                                            <Entry
+                                                Keyboard="Numeric"
+                                                Text="{Binding NumberEdit}"
+                                                TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                        </HorizontalStackLayout>
 
-                                            <HorizontalStackLayout
-                                                Grid.Row="2"
-                                                Grid.Column="2"
-                                                HorizontalOptions="Center"
-                                                VerticalOptions="Center">
-                                                <Label
-                                                    HorizontalOptions="Center"
-                                                    Text="Korekta"
-                                                    VerticalOptions="Center" />
-                                                <Entry
-                                                    Keyboard="Numeric"
-                                                    Text="{Binding PriceTotalCorrect}"
-                                                    TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
-                                            </HorizontalStackLayout>
-
+                                        <HorizontalStackLayout
+                                            Grid.Row="3"
+                                            Grid.Column="1"
+                                            HorizontalOptions="Start"
+                                            VerticalOptions="Center">
                                             <Label
-                                                Grid.Row="3"
-                                                Grid.Column="2"
                                                 HorizontalOptions="Center"
-                                                VerticalOptions="Center">
-                                                <Label.FormattedText>
-                                                    <FormattedString>
-                                                        <Span Text="Po korekcie = " />
-                                                        <Span Text="{Binding PriceTotalAfterCorrect}" />
-                                                        <Span Text=" zł" />
-                                                    </FormattedString>
-                                                </Label.FormattedText>
-                                            </Label>
+                                                Text="Zwrot"
+                                                VerticalOptions="Center" />
+                                            <Entry
+                                                Keyboard="Numeric"
+                                                Text="{Binding NumberReturn}"
+                                                TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                        </HorizontalStackLayout>
 
-                                        </Grid>
-                                    </Border>
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="2"
+                                            HorizontalOptions="Start"
+                                            VerticalOptions="Center">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Suma = " />
+                                                    <Span Text="{Binding PriceTotalDecimal}" />
+                                                    <Span Text=" zł" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
 
-                                </SwipeView>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                                        <HorizontalStackLayout
+                                            Grid.Row="2"
+                                            Grid.Column="2"
+                                            HorizontalOptions="Start"
+                                            VerticalOptions="Center">
+                                            <Label
+                                                HorizontalOptions="Center"
+                                                Text="Korekta"
+                                                VerticalOptions="Center" />
+                                            <Entry
+                                                Keyboard="Numeric"
+                                                Text="{Binding PriceTotalCorrectDecimal}"
+                                                TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                        </HorizontalStackLayout>
+
+                                        <Label
+                                            Grid.Row="3"
+                                            Grid.Column="2"
+                                            HorizontalOptions="Start"
+                                            VerticalOptions="Center">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="Po korekcie = " />
+                                                    <Span Text="{Binding PriceTotalAfterCorrectDecimal}" />
+                                                    <Span Text=" zł" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+
+                                    </Grid>
+                                </Border>
+
+                            </SwipeView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.Footer>
+                        <ImageButton Clicked="Button_Clicked_AddProduct" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
+                    </CollectionView.Footer>
+                </CollectionView>
 
             </Border>
 
@@ -468,18 +415,58 @@
                 </Border.StrokeShape>
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="{OnPlatform Android=44, Default=auto}" />
+                        <RowDefinition Height="auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Button
+                    <Grid
                         Grid.Row="0"
-                        Command="{Binding AddCakeCommand}"
-                        Text="Dodaj ciasto" />
+                        ColumnDefinitions="*,auto"
+                        RowDefinitions="auto,*">
 
-                    <CollectionView Grid.Row="1" ItemsSource="{Binding DayM.Cakes}">
+                        <Button
+                            Grid.Column="0"
+                            Command="{Binding AddCakeCommand}"
+                            HorizontalOptions="Fill"
+                            Text="Dodaj ciasto" />
+
+                        <toolkit:Expander Grid.RowSpan="2" Grid.Column="1">
+                            <toolkit:Expander.Header>
+                                <ImageButton Source="{AppThemeBinding Light={Static ImgPath:ImgFilte.OutlineFilterListBlack}, Dark={Static ImgPath:ImgFilte.OutlineFilterListWhite}}" />
+                            </toolkit:Expander.Header>
+
+                            <VerticalStackLayout>
+
+                                <!--<HorizontalStackLayout>
+                                    <Label Text="Tylko sprzedane" VerticalOptions="Center" />
+                                    <Switch IsToggled="{Binding SingleDayM.CakeAllIsVisible}" />
+                                </HorizontalStackLayout>-->
+
+                                <HorizontalStackLayout>
+                                    <Label Text="Po cenie " VerticalOptions="Center" />
+                                    <ImageButton
+                                        Command="{Binding SortCakesAfterPriceCommand}"
+                                        RotationX="{Binding SingleDayM.CakeSortPriceRotateX}"
+                                        Source="{AppThemeBinding Light={Static ImgPath:ImgFilte.OutlineSortBlack},
+                                                                 Dark={Static ImgPath:ImgFilte.OutlineSortWhite}}" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout>
+                                    <Label Text="Po dacie " VerticalOptions="Center" />
+                                    <ImageButton
+                                        Command="{Binding SortCakesAfterDateCommand}"
+                                        RotationX="{Binding SingleDayM.CakeSortDateRotateX}"
+                                        Source="{AppThemeBinding Light={Static ImgPath:ImgFilte.OutlineSortBlack},
+                                                                 Dark={Static ImgPath:ImgFilte.OutlineSortWhite}}" />
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+
+                        </toolkit:Expander>
+
+                    </Grid>
+                    <CollectionView Grid.Row="1" ItemsSource="{Binding Day.Cakes}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
+
                                 <Border Margin="2">
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="10" />
@@ -491,10 +478,7 @@
                                                     BackgroundColor="red"
                                                     Invoked="SwipeItem_Invoked_DeleteCake"
                                                     Text="Usuń" />
-                                                <!--
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=DeleteCakeCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                -->
+
                                             </SwipeItems>
                                         </SwipeView.LeftItems>
                                         <SwipeView.RightItems>
@@ -503,19 +487,16 @@
                                                     BackgroundColor="red"
                                                     Invoked="SwipeItem_Invoked_DeleteCake"
                                                     Text="Usuń" />
-                                                <!--
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=DeleteCakeCommand}"
-                                                    CommandParameter="{Binding .}"
-                                                -->
+
                                             </SwipeItems>
                                         </SwipeView.RightItems>
 
                                         <Grid
-                                            Padding="10"
-                                            x:DataType="Product:CakeM"
+                                            x:Name="CVGCakes"
+                                            Padding="5,0,5,0"
+                                            x:DataType="Product:Cake"
                                             ColumnDefinitions="30,*,auto"
-                                            ColumnSpacing="5">
-
+                                            ColumnSpacing="0">
                                             <Label
                                                 Grid.Column="0"
                                                 Text="{Binding Index}"
@@ -525,7 +506,7 @@
                                                 <Label.FormattedText>
                                                     <FormattedString>
                                                         <Span Text="Cena = " />
-                                                        <Span Text="{Binding Price}" />
+                                                        <Span Text="{Binding PriceDecimal}" />
                                                         <Span Text=" zł" />
                                                     </FormattedString>
                                                 </Label.FormattedText>
@@ -540,6 +521,7 @@
                                             </HorizontalStackLayout>
 
                                         </Grid>
+
                                     </SwipeView>
                                 </Border>
 

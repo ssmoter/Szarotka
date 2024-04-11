@@ -4,7 +4,7 @@ using DataBase.Model.EntitiesInventory;
 
 namespace Inventory.Pages.RangeDay.PopupSelectRangeDate;
 
-public partial class PopupSelectRangeDateV : Popup
+public partial class PopupSelectRangeDateV : Popup, IDisposable
 {
     public PopupSelectRangeDateV(Driver[] drivers)
     {
@@ -13,5 +13,14 @@ public partial class PopupSelectRangeDateV : Popup
         vm.Close += CloseAsync;
 
         BindingContext = vm;
+    }
+
+    public void Dispose()
+    {
+        if (BindingContext is PopupSelectRangeDateVM vm)
+        {
+            vm.Close -= CloseAsync;
+        }
+        GC.SuppressFinalize(this);
     }
 }

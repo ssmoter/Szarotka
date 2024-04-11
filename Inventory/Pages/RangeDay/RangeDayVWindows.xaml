@@ -3,24 +3,24 @@
     x:Class="Inventory.Pages.RangeDay.RangeDayVWindows"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:VM="clr-namespace:Inventory.Pages.RangeDay"
-    xmlns:VMD="clr-namespace:Inventory.Model.MVVM"
     xmlns:Convert="clr-namespace:DataBase.Helper;assembly=DataBase"
+    xmlns:VM="clr-namespace:Inventory.Pages.RangeDay"
+    xmlns:VMD="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
     Title="Zakres dat"
     x:DataType="VM:RangeDayVM">
 
     <ContentPage.Resources>
-        <Convert:TranslateDayOfWeek x:Key="ANGToPL"/>
+        <Convert:TranslateDayOfWeek x:Key="ANGToPL" />
     </ContentPage.Resources>
-    
+
     <Shell.BackButtonBehavior>
         <BackButtonBehavior Command="{Binding BackCommand}" />
     </Shell.BackButtonBehavior>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding GoToGraphCommand}" Text="Wykres" />
-        <ToolbarItem Command="{Binding GenerateCSVFileCommand}" Text="CSV" />
-        <ToolbarItem Command="{Binding GenerateJsonFileCommand}" Text="JSON" />
+        <ToolbarItem x:DataType="VM:RangeDayVM" Command="{Binding GoToGraphCommand}" Text="Wykres" />
+        <ToolbarItem x:DataType="VM:RangeDayVM" Command="{Binding GenerateCSVFileCommand}" Text="CSV" />
+        <ToolbarItem x:DataType="VM:RangeDayVM" Command="{Binding GenerateJsonFileCommand}" Text="JSON" />
     </ContentPage.ToolbarItems>
 
 
@@ -42,46 +42,62 @@
 
 
 
-        <Border Grid.Row="1">
+        <Border Grid.Row="1" Padding="5">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="10" />
             </Border.StrokeShape>
-            <Grid ColumnDefinitions="*,*,*" RowDefinitions="*,*">
-                <Label
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="3"
-                    HorizontalOptions="Center"
-                    Text="Suma utargów z danego zakresu" />
 
-                <HorizontalStackLayout
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    HorizontalOptions="Center">
-                    <Label Text="Zapłacono = " />
-                    <Label Text="{Binding TotalPriceOfRange.TotalPriceMoney}" />
-                    <Label Text="zł" />
+            <CollectionView ItemsSource="{Binding TotalPriceOfRange}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="VM:RangeDayM">
 
-                </HorizontalStackLayout>
-                <HorizontalStackLayout
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    HorizontalOptions="Center">
-                    <Label Text="Utarg = " />
-                    <Label Text="{Binding TotalPriceOfRange.TotalPriceAfterCorrect}" />
-                    <Label Text="zł" />
-                </HorizontalStackLayout>
+                        <VerticalStackLayout>
 
-                <HorizontalStackLayout
-                    Grid.Row="1"
-                    Grid.Column="2"
-                    HorizontalOptions="Center">
-                    <Label Text="Różnica = " />
-                    <Label Text="{Binding TotalPriceOfRange.TotalPriceDifference}" />
-                    <Label Text="zł" />
-                </HorizontalStackLayout>
+                            <Label>
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Suma utargu kierowcy: " />
+                                        <Span Text="{Binding Driver.Name}" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
 
-            </Grid>
+                            <Label>
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Zapłacono = " />
+                                        <Span Text="{Binding Day.TotalPriceMoneyDecimal}" />
+                                        <Span Text=" zł" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+                            <Label>
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Utarg = " />
+                                        <Span Text="{Binding Day.TotalPriceAfterCorrectDecimal}" />
+                                        <Span Text=" zł" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+
+                            <Label>
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Różnica = " />
+                                        <Span Text="{Binding Day.TotalPriceDifferenceDecimal}" />
+                                        <Span Text=" zł" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+                        </VerticalStackLayout>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
         </Border>
 
@@ -114,23 +130,23 @@
                                 <Grid x:DataType="VM:RangeDayM" ColumnDefinitions="*,*,*,*,*,*">
 
                                     <VerticalStackLayout Grid.Column="0">
-                                        <Label Text="{Binding Path=DayM.Created.DayOfWeek,Converter={StaticResource ANGToPL}}" VerticalOptions="Center" />
-                                        <Label Text="{Binding DayM.Created}" VerticalOptions="Center" />
+                                        <Label Text="{Binding Path=Day.SelectedDate.DayOfWeek, Converter={StaticResource ANGToPL}}" VerticalOptions="Center" />
+                                        <Label Text="{Binding Day.SelectedDateString}" VerticalOptions="Center" />
                                     </VerticalStackLayout>
                                     <Label
                                         Grid.Column="1"
                                         Text="{Binding Driver.Name}"
                                         VerticalOptions="Center" />
                                     <HorizontalStackLayout Grid.Column="2" VerticalOptions="Center">
-                                        <Label Text="{Binding DayM.TotalPriceMoney}" />
+                                        <Label Text="{Binding Day.TotalPriceMoneyDecimal}" />
                                         <Label Text="zł" />
                                     </HorizontalStackLayout>
                                     <HorizontalStackLayout Grid.Column="3" VerticalOptions="Center">
-                                        <Label Text="{Binding DayM.TotalPriceAfterCorrect}" />
+                                        <Label Text="{Binding Day.TotalPriceAfterCorrectDecimal}" />
                                         <Label Text="zł" />
                                     </HorizontalStackLayout>
                                     <HorizontalStackLayout Grid.Column="4" VerticalOptions="Center">
-                                        <Label Text="{Binding DayM.TotalPriceDifference}" />
+                                        <Label Text="{Binding Day.TotalPriceDifferenceDecimal}" />
                                         <Label Text="zł" />
                                     </HorizontalStackLayout>
                                     <HorizontalStackLayout
