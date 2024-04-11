@@ -1,4 +1,4 @@
-using Inventory.Model.MVVM;
+﻿using DataBase.Model.EntitiesInventory;
 
 namespace Inventory.Pages.SingleDay;
 
@@ -16,7 +16,6 @@ public partial class SingleDayV : ContentPage
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
-
         var context = BindingContext as SingleDayVM;
 
         if (context is not null)
@@ -72,6 +71,12 @@ public partial class SingleDayV : ContentPage
             }
         }
     }
+    private void Button_Clicked_AddProduct(object sender, EventArgs e)
+    {
+        if (sender is not ImageButton) { return; }
+
+        _vm.AddProductCommand.Execute(null);
+    }
 
     #region Product SwipeView RightItems 
 
@@ -79,7 +84,7 @@ public partial class SingleDayV : ContentPage
     {
         if (sender is not ImageButton item) { return; }
 
-        if (item.BindingContext is not ProductM product) { return; }
+        if (item.BindingContext is not Product product) { return; }
 
         _vm.FastMinusProductNumberCommand.Execute(product);
     }
@@ -87,7 +92,7 @@ public partial class SingleDayV : ContentPage
     {
         if (sender is not ImageButton item) { return; }
 
-        if (item.BindingContext is not ProductM product) { return; }
+        if (item.BindingContext is not Product product) { return; }
 
         _vm.FastAddProductNumberCommand.Execute(product);
     }
@@ -95,7 +100,7 @@ public partial class SingleDayV : ContentPage
     {
         if (sender is not ImageButton item) { return; }
 
-        if (item.BindingContext is not ProductM product) { return; }
+        if (item.BindingContext is not Product product) { return; }
 
         _vm.FastMinusProductEditCommand.Execute(product);
     }
@@ -103,7 +108,7 @@ public partial class SingleDayV : ContentPage
     {
         if (sender is not ImageButton item) { return; }
 
-        if (item.BindingContext is not ProductM product) { return; }
+        if (item.BindingContext is not Product product) { return; }
 
         _vm.FastAddProductEditCommand.Execute(product);
     }
@@ -111,7 +116,7 @@ public partial class SingleDayV : ContentPage
     {
         if (sender is not ImageButton item) { return; }
 
-        if (item.BindingContext is not ProductM product) { return; }
+        if (item.BindingContext is not Product product) { return; }
 
         _vm.FastMinusProductReturnCommand.Execute(product);
     }
@@ -119,19 +124,55 @@ public partial class SingleDayV : ContentPage
     {
         if (sender is not ImageButton item) { return; }
 
-        if (item.BindingContext is not ProductM product) { return; }
+        if (item.BindingContext is not Product product) { return; }
 
         _vm.FastAddProductReturnCommand.Execute(product);
     }
 
+    #region left
 
+    private void Button_Clicked_ChangeProductPrice(object sender, EventArgs e)
+    {
+        if (sender is not ImageButton item) { return; }
+
+        if (item.BindingContext is not Product product) { return; }
+
+        _vm.ChangeProductPriceCommand.Execute(product);
+    }
+    private void Button_Clicked_DeleteSelectedProduct(object sender, EventArgs e)
+    {
+        if (sender is not ImageButton item) { return; }
+
+        if (item.BindingContext is not Product product) { return; }
+
+        _vm.DeleteSelectedProductCommand.Execute(product);
+    }
+
+    #endregion
     #endregion
     private void SwipeItem_Invoked_DeleteCake(object sender, EventArgs e)
     {
         if (sender is not SwipeItem item) { return; }
 
-        if (item.BindingContext is not CakeM product) { return; }
+        if (item.BindingContext is not Cake product) { return; }
 
         _vm.DeleteCakeCommand.Execute(product);
+    }
+
+    private void Switch_Toggled(object sender, ToggledEventArgs e)
+    {
+        var myElement = this.FindByName<Label>("CVGCakes");
+        if (myElement != null)
+        {
+            // Wykonaj operacje na elemencie
+            if (e.Value) // Jeśli przełącznik jest włączony
+            {
+                VisualStateManager.GoToState(myElement, "Visible"); // Pokaż element
+            }
+            else // Jeśli przełącznik jest wyłączony
+            {
+                VisualStateManager.GoToState(myElement, "Hidden"); // Ukryj element
+            }
+        }
     }
 }

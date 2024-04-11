@@ -2,9 +2,11 @@
 
 using SQLite;
 
+using System.Collections.ObjectModel;
+
 namespace DataBase.Model.EntitiesInventory;
 
-public partial class Day : BaseEntities<Guid>
+public partial class Day : BaseEntities<Guid>, IDisposable
 {
     [ObservableProperty]
     private string description;
@@ -58,6 +60,7 @@ public partial class Day : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(TotalPriceProducts));
                 OnPropertyChanged(nameof(TotalPriceProductsDecimal));
+                UpdateTotalPrice();
             }
         }
     }
@@ -71,7 +74,11 @@ public partial class Day : BaseEntities<Guid>
         set
         {
             if (SetProperty(ref totalPriceProducts, (int)(value * 100)))
+            {
                 OnPropertyChanged(nameof(TotalPriceProductsDecimal));
+                UpdateTotalPrice();
+            }
+
         }
     }
     private int totalPriceCake;
@@ -84,6 +91,7 @@ public partial class Day : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(TotalPriceCake));
                 OnPropertyChanged(nameof(TotalPriceCakeDecimal));
+                UpdateTotalPrice();
             }
         }
     }
@@ -100,6 +108,7 @@ public partial class Day : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(TotalPriceCake));
                 OnPropertyChanged(nameof(TotalPriceCakeDecimal));
+                UpdateTotalPrice();
             }
         }
     }
@@ -113,6 +122,7 @@ public partial class Day : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(TotalPrice));
                 OnPropertyChanged(nameof(TotalPriceDecimal));
+                UpdateTotalPrice();
             }
         }
     }
@@ -130,6 +140,7 @@ public partial class Day : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(TotalPrice));
                 OnPropertyChanged(nameof(TotalPriceDecimal));
+                UpdateTotalPrice();
             }
         }
     }
@@ -143,6 +154,7 @@ public partial class Day : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(TotalPriceCorrect));
                 OnPropertyChanged(nameof(TotalPriceCorrectDecimal));
+                UpdateTotalPrice();
             }
         }
     }
@@ -160,6 +172,7 @@ public partial class Day : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(TotalPriceCorrect));
                 OnPropertyChanged(nameof(TotalPriceCorrectDecimal));
+                UpdateTotalPrice();
             }
         }
     }
@@ -173,6 +186,7 @@ public partial class Day : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(TotalPriceAfterCorrect));
                 OnPropertyChanged(nameof(TotalPriceAfterCorrectDecimal));
+                UpdateTotalPrice();
             }
         }
     }
@@ -190,6 +204,7 @@ public partial class Day : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(TotalPriceAfterCorrect));
                 OnPropertyChanged(nameof(TotalPriceAfterCorrectDecimal));
+                UpdateTotalPrice();
             }
         }
     }
@@ -203,6 +218,7 @@ public partial class Day : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(TotalPriceMoney));
                 OnPropertyChanged(nameof(TotalPriceMoneyDecimal));
+                UpdateTotalPrice();
             }
         }
     }
@@ -220,6 +236,7 @@ public partial class Day : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(TotalPriceMoney));
                 OnPropertyChanged(nameof(TotalPriceMoneyDecimal));
+                UpdateTotalPrice();
             }
         }
     }
@@ -233,6 +250,7 @@ public partial class Day : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(TotalPriceDifference));
                 OnPropertyChanged(nameof(TotalPriceDifferenceDecimal));
+                UpdateTotalPrice();
             }
         }
     }
@@ -250,13 +268,14 @@ public partial class Day : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(TotalPriceDifference));
                 OnPropertyChanged(nameof(TotalPriceDifferenceDecimal));
+                UpdateTotalPrice();
             }
         }
     }
 
-    private List<Product> products;
+    private ObservableCollection<Product> products;
     [Ignore]
-    public List<Product> Products
+    public ObservableCollection<Product> Products
     {
         get => products;
         set
@@ -264,12 +283,13 @@ public partial class Day : BaseEntities<Guid>
             if (SetProperty(ref products, value))
             {
                 OnPropertyChanged(nameof(Products));
+                UpdateTotalPrice();
             }
         }
     }
-    private List<Cake> cakes;
+    private ObservableCollection<Cake> cakes;
     [Ignore]
-    public List<Cake> Cakes
+    public ObservableCollection<Cake> Cakes
     {
         get => cakes;
         set
@@ -277,13 +297,68 @@ public partial class Day : BaseEntities<Guid>
             if (SetProperty(ref cakes, value))
             {
                 OnPropertyChanged(nameof(Cakes));
+                UpdateTotalPrice();
             }
         }
     }
+    [Ignore]
+    public bool CanUpadte { get; set; }
+    public void UpdateTotalPrice()
+    {
+        if (CanUpadte)
+        {
+            if (Products is not null)
+                TotalPriceProductsDecimal = Products.Sum(x => x.PriceTotalAfterCorrectDecimal);
+            if (Cakes is not null)
+                TotalPriceCakeDecimal = Cakes.Where(x => x.IsSell).Sum(x => x.PriceDecimal);
 
+            TotalPriceDecimal = TotalPriceProductsDecimal + TotalPriceCakeDecimal;
+            TotalPriceAfterCorrectDecimal = TotalPriceDecimal + TotalPriceCorrectDecimal;
+
+            TotalPriceDifferenceDecimal = TotalPriceMoneyDecimal - TotalPriceAfterCorrectDecimal;
+        }
+    }
     public Day()
     {
-        Products = [];
-        Cakes = [];
+        Products ??= [];
+        Cakes ??= [];
+        ProductUpdatePriceService.UpdatePrice += UpdateTotalPrice;
+    }
+    public Day(Day day)
+    {
+        this.Products = day.Products;
+        this.Cakes = day.Cakes;
+
+        this.Id = day.Id;
+        this.driverGuid = day.DriverGuid;
+        this.Created = day.Created;
+        this.Updated = day.Updated;
+        this.description = day.Description;
+        this.SelectedDateTicks = day.SelectedDateTicks;
+        this.TotalPriceProductsDecimal = day.TotalPriceProductsDecimal;
+        this.TotalPriceDecimal = day.TotalPriceDecimal;
+        this.TotalPriceCorrectDecimal = day.TotalPriceCorrectDecimal;
+        this.TotalPriceMoneyDecimal = day.TotalPriceMoneyDecimal;
+        this.TotalPriceDifferenceDecimal = day.TotalPriceDifferenceDecimal;
+
+        ProductUpdatePriceService.UpdatePrice += UpdateTotalPrice;
+    }
+    public void Dispose()
+    {
+        Products.Clear();
+        Cakes.Clear();
+        ProductUpdatePriceService.UpdatePrice -= UpdateTotalPrice;
+    }
+
+}
+public static class ProductUpdatePriceService
+{
+    public static event Action UpdatePrice;
+    /// <summary>
+    /// Aktualizowanie utargu
+    /// </summary>
+    public static void OnUpdate()
+    {
+        UpdatePrice?.Invoke();
     }
 }

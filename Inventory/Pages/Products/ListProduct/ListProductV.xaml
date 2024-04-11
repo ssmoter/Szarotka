@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:CustomControls="clr-namespace:DataBase.CustomControls;assembly=DataBase"
     xmlns:ImgPath="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
-    xmlns:MVVM="clr-namespace:Inventory.Model.MVVM"
+    xmlns:MVVM="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
     xmlns:VM="clr-namespace:Inventory.Pages.Products.ListProduct"
     Title="Lista produktów"
     x:DataType="VM:ListProductVM">
@@ -38,13 +38,6 @@
                             <RoundRectangle CornerRadius="10" />
                         </Border.StrokeShape>
 
-                        <Border.GestureRecognizers>
-                            <DragGestureRecognizer
-                                DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DragCommand}"
-                                DragStartingCommandParameter="{Binding .}"
-                                DropCompletedCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DropComplitedCommand}" />
-                            <DropGestureRecognizer DropCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DropCommand}" DropCommandParameter="{Binding .}" />
-                        </Border.GestureRecognizers>
 
                         <SwipeView>
 
@@ -59,19 +52,13 @@
                                                 Source="{AppThemeBinding Light={Static ImgPath:ImgArrow.ArrowUpwardBlack},
                                                                          Dark={Static ImgPath:ImgArrow.ArrowUpwardWhite}}"
                                                 VerticalOptions="Center" />
-                                            <!--
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=SetDownCommand}"
-                                                CommandParameter="{Binding .}"
-                                            -->
+
                                             <ImageButton
                                                 Clicked="ImageButton_Clicked_SetUp"
                                                 Source="{AppThemeBinding Light={Static ImgPath:ImgArrow.ArrowDownwardBlack},
                                                                          Dark={Static ImgPath:ImgArrow.ArrowDownwardWhite}}"
                                                 VerticalOptions="Center" />
-                                            <!--
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=SetUpCommand}"
-                                                CommandParameter="{Binding .}"
-                                            -->
+
                                         </VerticalStackLayout>
                                     </SwipeItemView>
 
@@ -84,24 +71,25 @@
                                         BackgroundColor="Green"
                                         Invoked="SwipeItem_Invoked"
                                         Text="Edytuj" />
-                                    <!--
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=EditProductCommand}"
-                                        CommandParameter="{Binding .}"
-                                    -->
-
-
-                                    <!--<SwipeItem
-                                        BackgroundColor="Red"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DeleteProductCommand}"
-                                        CommandParameter="{Binding .}"
-                                        Text="Usuń" />-->
                                 </SwipeItems>
                             </SwipeView.RightItems>
+
 
                             <Grid
                                 x:DataType="VM:ListProductM"
                                 ColumnDefinitions="*,*,*"
                                 RowDefinitions="*,*,*">
+                                <Grid.GestureRecognizers>
+                                    <DragGestureRecognizer
+                                        x:DataType="VM:ListProductVM"
+                                        DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DragCommand}"
+                                        DragStartingCommandParameter="{Binding .}"
+                                        DropCompletedCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DropComplitedCommand}" />
+                                    <DropGestureRecognizer
+                                        x:DataType="VM:ListProductVM"
+                                        DropCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DropCommand}"
+                                        DropCommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
 
 
                                 <CustomControls:StringImage
@@ -137,7 +125,6 @@
                                 </VerticalStackLayout>
 
                             </Grid>
-
 
                         </SwipeView>
 

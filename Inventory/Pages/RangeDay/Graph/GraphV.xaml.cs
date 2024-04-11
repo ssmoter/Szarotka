@@ -1,12 +1,21 @@
 namespace Inventory.Pages.RangeDay.Graph;
 
-public partial class GraphV : ContentPage
+public partial class GraphV : ContentPage, IDisposable
 {
     public GraphV(GraphVM vm)
     {
         InitializeComponent();
         vm.ReDraw += ReDrawGraph;
         BindingContext = vm;
+    }
+
+    public void Dispose()
+    {
+        if (BindingContext is GraphVM vm)
+        {
+            vm.ReDraw -= ReDrawGraph;
+        }
+        GC.SuppressFinalize(this);
     }
 
     protected override void OnNavigatedTo(NavigatedToEventArgs args)

@@ -16,7 +16,7 @@ namespace DataBase.Pages.Log
         readonly Data.AccessDataBase _db;
         public LogVM(Data.AccessDataBase db)
         {
-            Logs = new ObservableCollection<LogM>();
+            Logs = [];
             _db = db;
         }
         int take = 1;

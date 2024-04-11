@@ -9,7 +9,7 @@ namespace Inventory.Pages.RangeDay.Graph.GraphOptions
         GraphOptionsM graphOptionsMs;
 
         public Func<object, CancellationToken, Task> Close;
-        public Task OnClose(object result = null, CancellationToken token = default(CancellationToken))
+        public Task OnClose(object result = null, CancellationToken token = default)
         {
             return Close?.Invoke(result, token);
         }

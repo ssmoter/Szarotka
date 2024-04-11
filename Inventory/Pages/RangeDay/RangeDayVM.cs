@@ -8,12 +8,8 @@ using DataBase.Pages.ExistingFiles;
 using DataBase.Service;
 
 using Inventory.Data.File;
-using Inventory.Helper.Parse;
 using Inventory.Model;
-using Inventory.Model.MVVM;
 using Inventory.Service;
-
-using System.Text;
 
 namespace Inventory.Pages.RangeDay
 {
@@ -24,7 +20,7 @@ namespace Inventory.Pages.RangeDay
         RangeDayM[] rangeDays;
 
         [ObservableProperty]
-        DayM totalPriceOfRange;
+        RangeDayM[] totalPriceOfRange;
 
         readonly Driver[] _allDrivers;
 
@@ -66,7 +62,7 @@ namespace Inventory.Pages.RangeDay
         readonly ISaveDayService _dayService;
         public RangeDayVM(DataBase.Data.AccessDataBase db, ISelectDayService selectDay, ISaveDayService dayService)
         {
-            TotalPriceOfRange = new DayM();
+            TotalPriceOfRange = [];
             _db = db;
             _selectDayService = selectDay;
 
@@ -88,93 +84,60 @@ namespace Inventory.Pages.RangeDay
 
         async Task<RangeDayM[]> SelectDays(long from, long to, Guid[] selectedDriverName, bool moreData)
         {
-            Day[] days = Array.Empty<Day>();
-            if (selectedDriverName is null || selectedDriverName.Length == 0)
+            var (drivers, days) = await _selectDayService.GetDaysAndDrivers(from, to, selectedDriverName, moreData);
+
+            var range = new RangeDayM[days.Length];
+
+            for (int i = 0; i < range.Length; i++)
             {
-                days = await _db.DataBaseAsync.Table<Day>().
-                    Where(x => x.CreatedTicks >= from && x.CreatedTicks <= to).
-                    OrderByDescending(x => x.CreatedTicks).ToArrayAsync();
-            }
-            else
-            {
-                var sb = new StringBuilder();
-
-                sb.Append("SELECT * FROM Day ");
-                sb.Append("WHERE CreatedTicks >= ");
-                sb.Append(from);
-                sb.Append(" AND CreatedTicks <= ");
-                sb.Append(to);
-
-                if (selectedDriverName.Length > 0)
+                range[i] = new()
                 {
-                    sb.Append(" AND (");
-                }
-
-                for (int i = 0; i < selectedDriverName.Length; i++)
-                {
-                    if (i == 0)
-                        sb.Append(" DriverGuid == '");
-                    else if (i < selectedDriverName.Length)
-                        sb.Append(" OR DriverGuid == '");
-
-                    sb.Append(selectedDriverName[i]);
-                    sb.Append('\'');
-                }
-
-                if (selectedDriverName.Length > 0)
-                {
-                    sb.Append(" )");
-                }
-                sb.Append("ORDER BY CreatedTicks DESC");
-
-                var result = await _db.DataBaseAsync.QueryAsync<Day>(sb.ToString());
-                days = result.ToArray();
-                result.Clear();
-
-                //days = await _db.DataBaseAsync.Table<Inventory.Model.Day>().
-                //    Where(x => x.CreatedTicks >= from && x.CreatedTicks <= to && x.DriverGuid == selectedDriverName).
-                //    OrderByDescending(x => x.CreatedTicks).ToArrayAsync();
-
+                    Day = days[i],
+                    Driver = drivers[i]
+                };
             }
 
-            RangeDayM[] dayM = new RangeDayM[days.Length];
-            for (int i = 0; i < days.Length; i++)
-            {
-                dayM[i] = new RangeDayM();
-                dayM[i].DayM = days[i].ParseAsDayM();
-                var guid = days[i].DriverGuid;
-                var driver = await _db.DataBaseAsync.Table<Driver>().FirstOrDefaultAsync(x => x.Id == guid);
-                if (driver is not null)
-                {
-                    dayM[i].Driver = driver.PareseAsDriverM();
-                }
-            }
-
-            if (moreData)
-            {
-                for (int i = 0; i < dayM.Length; i++)
-                {
-                    dayM[i].DayM = await _selectDayService.GetDayProcedure(dayM[i].DayM.Id);
-                }
-            }
-
-            return dayM;
+            return range;
         }
 
-        static DayM SumTotalPriceOfRange(RangeDayM[] range)
+        static RangeDayM[] SumTotalPriceOfRange(RangeDayM[] range)
         {
-            var day = new DayM
+            List<Driver> driver = [];
+            for (int i = 0; i < range.Length; i++)
             {
-                TotalPriceProduct = range.Sum(x => x.DayM.TotalPriceProduct),
-                TotalPriceCake = range.Sum(x => x.DayM.TotalPriceCake),
-                TotalPrice = range.Sum(x => x.DayM.TotalPrice),
-                TotalPriceCorrect = range.Sum(x => x.DayM.TotalPriceCorrect),
-                TotalPriceMoney = range.Sum(x => x.DayM.TotalPriceMoney),
-                TotalPriceDifference = range.Sum(x => x.DayM.TotalPriceDifference),
-                TotalPriceAfterCorrect = range.Sum(x => x.DayM.TotalPriceAfterCorrect)
-            };
+                if (i == 0)
+                {
+                    driver.Add(range[i].Driver);
+                    continue;
+                }
 
-            return day;
+                if (driver.Any(x => x.Id != range[i].Driver.Id))
+                {
+                    driver.Add(range[i].Driver);
+                }
+            }
+
+            RangeDayM[] SumRange = new RangeDayM[driver.Count];
+            for (int i = 0; i < driver.Count; i++)
+            {
+                var day = new Day
+                {
+                    TotalPriceProducts = range.Where(z => z.Driver == driver[i]).Sum(x => x.Day.TotalPriceProducts),
+                    TotalPriceCake = range.Where(z => z.Driver == driver[i]).Sum(x => x.Day.TotalPriceCake),
+                    TotalPrice = range.Where(z => z.Driver == driver[i]).Sum(x => x.Day.TotalPrice),
+                    TotalPriceCorrect = range.Where(z => z.Driver == driver[i]).Sum(x => x.Day.TotalPriceCorrect),
+                    TotalPriceMoney = range.Where(z => z.Driver == driver[i]).Sum(x => x.Day.TotalPriceMoney),
+                    TotalPriceDifference = range.Where(z => z.Driver == driver[i]).Sum(x => x.Day.TotalPriceDifference),
+                    TotalPriceAfterCorrect = range.Where(z => z.Driver == driver[i]).Sum(x => x.Day.TotalPriceAfterCorrect)
+                };
+                SumRange[i] = new()
+                {
+                    Driver = driver[i],
+                    Day = day,
+                };
+            }
+
+            return SumRange;
         }
 
         async static Task<string> SelectImportExport(string type)
@@ -193,10 +156,10 @@ namespace Inventory.Pages.RangeDay
         {
             if (RangeDays.Length == 1)
             {
-                return string.Join('_', "Szarotka", RangeDays[0].DayM.Created.ToString("dd.MM.yyyy"));
+                return string.Join('_', "Szarotka", RangeDays[0].Day.Created.ToString("dd.MM.yyyy"));
             }
-            var from = RangeDays.FirstOrDefault().DayM.Created.ToString("dd.MM.yyyy");
-            var to = RangeDays.LastOrDefault().DayM.Created.ToString("dd.MM.yyyy");
+            var from = RangeDays.FirstOrDefault().Day.Created.ToString("dd.MM.yyyy");
+            var to = RangeDays.LastOrDefault().Day.Created.ToString("dd.MM.yyyy");
             return string.Join('_', "Szarotka", from, to);
         }
 
@@ -209,12 +172,12 @@ namespace Inventory.Pages.RangeDay
         {
             try
             {
-                rangeDay.DayM = await _selectDayService.GetDay(rangeDay.DayM.Id);
+                rangeDay.Day = await _selectDayService.GetDayProcedure(rangeDay.Day.Id);
 
                 await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
                     new Dictionary<string, object>()
                     {
-                        [nameof(Model.MVVM.DayM)] = rangeDay.DayM
+                        [nameof(Day)] = rangeDay.Day
                     });
             }
             catch (Exception ex)
@@ -259,8 +222,8 @@ namespace Inventory.Pages.RangeDay
                 {
                     for (int i = 0; i < RangeDays.Length; i++)
                     {
-                        if (RangeDays[i].DayM.Products.Count <= 0)
-                            RangeDays[i].DayM = await _selectDayService.GetDay(RangeDays[i].DayM.Id);
+                        if (RangeDays[i].Day.Products.Count <= 0)
+                            RangeDays[i].Day = await _selectDayService.GetDayProcedure(RangeDays[i].Day.Id);
                     }
                     var name = CreateFileName();
                     var response = await JsonFile.SaveFileJson(RangeDays, name);
@@ -324,8 +287,8 @@ namespace Inventory.Pages.RangeDay
                 {
                     for (int i = 0; i < RangeDays.Length; i++)
                     {
-                        if (RangeDays[i].DayM.Products.Count <= 0)
-                            RangeDays[i].DayM = await _selectDayService.GetDay(RangeDays[i].DayM.Id);
+                        if (RangeDays[i].Day.Products.Count <= 0)
+                            RangeDays[i].Day = await _selectDayService.GetDayProcedure(RangeDays[i].Day.Id);
                     }
                     var name = CreateFileName();
                     var response = CSVFile.SaveFileCSV(RangeDays, name);

@@ -2,7 +2,7 @@ using CommunityToolkit.Maui.Views;
 
 namespace Inventory.Pages.RangeDay.Graph.GraphOptions;
 
-public partial class GraphOptionsV : Popup
+public partial class GraphOptionsV : Popup, IDisposable
 {
     public GraphOptionsV(string[] productNames)
     {
@@ -13,4 +13,11 @@ public partial class GraphOptionsV : Popup
 
     }
 
+    public void Dispose()
+    {
+        if (BindingContext is GraphOptionsVM vm)
+        {
+            vm.Close -= CloseAsync;
+        }
+    }
 }

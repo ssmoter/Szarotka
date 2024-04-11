@@ -13,21 +13,6 @@
 
     <ScrollView VerticalOptions="FillAndExpand">
         <Grid RowDefinitions="auto,*,auto">
-            <Border
-                Grid.Row="0"
-                Margin="5"
-                Padding="5"
-                BackgroundColor="Grey">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                <Grid ColumnDefinitions="auto,*,*,auto" ColumnSpacing="10">
-                    <Label Grid.Column="0" Text="Id" />
-                    <Label Grid.Column="1" Text="Data" />
-                    <Label Grid.Column="2" Text="Wiadomość" />
-                    <Label Grid.Column="3" Text="Opcje" />
-                </Grid>
-            </Border>
             <CollectionView Grid.Row="1" ItemsSource="{Binding Logs}">
                 <CollectionView.Header>
                     <Border
@@ -101,11 +86,6 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-            <Button
-                Grid.Row="3"
-                Command="{Binding GetMoreLogsCommand}"
-                HorizontalOptions="Center"
-                Text="Doczytaj dane" />
         </Grid>
 
     </ScrollView>

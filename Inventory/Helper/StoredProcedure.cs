@@ -1,193 +1,51 @@
-﻿using DataBase.Model.EntitiesInventory;
-
-namespace Inventory.Helper
+﻿namespace Inventory.Helper
 {
     public static class StoredProcedure
     {
-        public static string GetSingleDay(string date, string driverId)
+        public static string GetProductWitchPriceAndName()
         {
-            var sql = $@"
-SELECT *
-,(SELECT json_group_array(json_object(
-'Id',Product.Id,
-'DayId',Product.DayId,
-'ProductNameId',Product.ProductNameId,
-'ProductPriceId',Product.ProductPriceId,
-'Description',Product.Description,
-'PriceTotal',Product.PriceTotal,
-'PriceTotalCorrect',Product.PriceTotalCorrect,
-'PriceTotalAfterCorrect',Product.PriceTotalAfterCorrect,
-'Number',Product.Number,
-'NumberEdit',Product.NumberEdit,
-'NumberReturn',Product.NumberReturn
-
-	,'Price',(SELECT json_object(
-	'Id',Id,	
-	'DayId',DayId,
-	'ProductNameId',ProductNameId,
-	'Price',Price,
-	'CreatedTicks',CreatedTicks,
-	'UpdatedTicks',UpdatedTicks
+            string sql = @"
+SELECT 
+Product.Id,
+Product.PriceTotal,
+Product.PriceTotalCorrect,
+Product.PriceTotalAfterCorrect,
+Product.DayId,
+Product.ProductNameId,
+Product.ProductPriceId,
+Product.Description,
+Product.Number,
+Product.NumberEdit,
+Product.NumberReturn,
+Product.CreatedTicks,
+Product.UpdatedTicks
+,
+	(SELECT json_object(
+	'Id',Id
+	,'Name',Name
+	,'Description',Description
+	,'Img',Img
+	,'Arrangement',Arrangement
+	,'CreatedTicks',CreatedTicks
+	,'UpdatedTicks',UpdatedTicks
 	)
-	FROM ProductPrice WHERE ProductPrice.ProductNameId == Product.ProductNameId AND ProductPrice.Id == Product.ProductPriceId) 
-	
-	,'Name',(SELECT json_object(
-	'Id',Id,
-	'Name',Name,
-	'Description',Description,
-	'Img',Img,
-	'Arrangement',Arrangement,
-	'CreatedTicks',CreatedTicks,
-	'UpdatedTicks',UpdatedTicks
+	FROM ProductName 
+	WHERE ProductName.Id == Product.ProductNameId) AS 'JsonName'
+	,(SELECT json_object(
+	'Id',Id
+	,'ProductNameId',ProductNameId
+	,'Price',Price
+	,'CreatedTicks',CreatedTicks
+	,'UpdatedTicks',UpdatedTicks
 	)
-	FROM ProductName WHERE ProductName.Id == Product.ProductNameId)
-)) 
+	FROM ProductPrice 
+WHERE ProductPrice.Id == Product.ProductPriceId) as 'JsonPrice'
 FROM Product 
-	LEFT JOIN ProductName 
-	ON Product.ProductNameId == ProductName.Id
-WHERE Product.DayId == Day.Id ORDER BY ProductName.Arrangement ) as 'ProductsJson'
-
-,(SELECT json_group_array(json_object(
-'Id',Id,
-'DayId',DayId,
-'IsSell',IsSell,
-'Price',Price,
-'CreatedTicks',CreatedTicks,
-'UpdatedTicks',UpdatedTicks))
-FROM Cake WHERE Cake.DayId == Day.Id
-) as 'CakesJson'
-
-FROM Day 
-WHERE SelectedDateString == '{date}' 
-AND DriverGuid == '{driverId}' ";
-
+LEFT JOIN ProductName ON ProductName.Id == Product.ProductNameId
+WHERE Product.DayId == ? 
+ORDER BY ProductName.Arrangement";
             return sql;
         }
-        public static string GetSingleDay(DateTime date, string driverId)
-        {
-            var sql = $@"
-SELECT *
-,(SELECT json_group_array(json_object(
-'Id',Product.Id,
-'DayId',Product.DayId,
-'ProductNameId',Product.ProductNameId,
-'ProductPriceId',Product.ProductPriceId,
-'Description',Product.Description,
-'PriceTotal',Product.PriceTotal,
-'PriceTotalCorrect',Product.PriceTotalCorrect,
-'PriceTotalAfterCorrect',Product.PriceTotalAfterCorrect,
-'Number',Product.Number,
-'NumberEdit',Product.NumberEdit,
-'NumberReturn',Product.NumberReturn,
-'CreatedTicks',Product.CreatedTicks,
-'UpdatedTicks',Product.UpdatedTicks
-
-	,'Price',(SELECT json_object(
-	'Id',Id,	
-	'DayId',DayId,
-	'ProductNameId',ProductNameId,
-	'Price',Price,
-	'CreatedTicks',CreatedTicks,
-	'UpdatedTicks',UpdatedTicks
-	)
-	FROM ProductPrice WHERE ProductPrice.ProductNameId == Product.ProductNameId AND ProductPrice.Id == Product.ProductPriceId) 
-	
-	,'Name',(SELECT json_object(
-	'Id',Id,
-	'Name',Name,
-	'Description',Description,
-	'Img',Img,
-	'Arrangement',Arrangement,
-	'CreatedTicks',CreatedTicks,
-	'UpdatedTicks',UpdatedTicks
-	)
-	FROM ProductName WHERE ProductName.Id == Product.ProductNameId)
-)) 
-FROM Product 
-	LEFT JOIN ProductName 
-	ON Product.ProductNameId == ProductName.Id
-WHERE Product.DayId == Day.Id ORDER BY ProductName.Arrangement ) as 'ProductsJson'
-
-,(SELECT json_group_array(json_object(
-'Id',Id,
-'DayId',DayId,
-'IsSell',IsSell,
-'Price',Price,
-'CreatedTicks',CreatedTicks,
-'UpdatedTicks',UpdatedTicks))
-FROM Cake WHERE Cake.DayId == Day.Id
-) as 'CakesJson'
-
-FROM Day 
-WHERE SelectedDateString == '{date}' 
-AND DriverGuid == '{driverId}' ";
-
-            return sql;
-        }
-        public static string GetSingleDay(Guid Id)
-        {
-            var sql = $@"
-SELECT *
-,(SELECT json_group_array(json_object(
-'Id',Product.Id,
-'DayId',Product.DayId,
-'ProductNameId',Product.ProductNameId,
-'ProductPriceId',Product.ProductPriceId,
-'Description',Product.Description,
-'PriceTotal',Product.PriceTotal,
-'PriceTotalCorrect',Product.PriceTotalCorrect,
-'PriceTotalAfterCorrect',Product.PriceTotalAfterCorrect,
-'Number',Product.Number,
-'NumberEdit',Product.NumberEdit,
-'NumberReturn',Product.NumberReturn,
-'CreatedTicks',Product.CreatedTicks,
-'UpdatedTicks',Product.UpdatedTicks
-
-	,'Price',(SELECT json_object(
-	'Id',Id,	
-	'DayId',DayId,
-	'ProductNameId',ProductNameId,
-	'Price',Price,
-	'CreatedTicks',CreatedTicks,
-	'UpdatedTicks',UpdatedTicks
-	)
-	FROM ProductPrice WHERE ProductPrice.ProductNameId == Product.ProductNameId AND ProductPrice.Id == Product.ProductPriceId) 
-	
-	,'Name',(SELECT json_object(
-	'Id',Id,
-	'Name',Name,
-	'Description',Description,
-	'Img',Img,
-	'Arrangement',Arrangement,
-	'CreatedTicks',CreatedTicks,
-	'UpdatedTicks',UpdatedTicks
-	)
-	FROM ProductName WHERE ProductName.Id == Product.ProductNameId)
-)) 
-FROM Product 
-	LEFT JOIN ProductName 
-	ON Product.ProductNameId == ProductName.Id
-WHERE Product.DayId == Day.Id ORDER BY ProductName.Arrangement ) as 'ProductsJson'
-
-,(SELECT json_group_array(json_object(
-'Id',Id,
-'DayId',DayId,
-'IsSell',IsSell,
-'Price',Price,
-'CreatedTicks',CreatedTicks,
-'UpdatedTicks',UpdatedTicks))
-FROM Cake WHERE Cake.DayId == Day.Id
-) as 'CakesJson'
-
-FROM Day 
-WHERE Id == '{Id}' 
-";
-
-            return sql;
-        }
-
-
-
         public static string GetAllProductsNameAndPrice()
         {
             string sql = $@"

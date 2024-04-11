@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:CustomControls="clr-namespace:DataBase.CustomControls;assembly=DataBase"
     xmlns:ImgPath="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
-    xmlns:MVVM="clr-namespace:Inventory.Model.MVVM"
+    xmlns:MVVM="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
     xmlns:VM="clr-namespace:Inventory.Pages.Products.ListProduct"
     Title="Lista produktów"
     x:DataType="VM:ListProductVM">
@@ -39,10 +39,14 @@
 
                         <Border.GestureRecognizers>
                             <DragGestureRecognizer
+                                x:DataType="VM:ListProductVM"
                                 DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DragCommand}"
                                 DragStartingCommandParameter="{Binding .}"
                                 DropCompletedCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DropComplitedCommand}" />
-                            <DropGestureRecognizer DropCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DropCommand}" DropCommandParameter="{Binding .}" />
+                            <DropGestureRecognizer
+                                x:DataType="VM:ListProductVM"
+                                DropCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DropCommand}"
+                                DropCommandParameter="{Binding .}" />
                         </Border.GestureRecognizers>
 
                         <Grid
@@ -118,11 +122,6 @@
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=EditProductCommand}"
                                     CommandParameter="{Binding .}"
                                     Text="Edytuj" />
-                                <!--<Button
-                                    BackgroundColor="Red"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DeleteProductCommand}"
-                                    CommandParameter="{Binding .}"
-                                    Text="Usuń" />-->
                             </HorizontalStackLayout>
 
                         </Grid>

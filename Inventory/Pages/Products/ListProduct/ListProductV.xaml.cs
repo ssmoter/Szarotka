@@ -11,36 +11,36 @@ public partial class ListProductV : ContentPage
         BindingContext = vm;
     }
 
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+
+        await vm.SelectAllProductsAsync();
+    }
 
     private void SwipeItem_Invoked(object sender, EventArgs e)
     {
-        var item = sender as SwipeItem;
-        if (item is null) { return; }
+        if (sender is not SwipeItem item) { return; }
 
-        var product = item.BindingContext as ListProductM;
-        if (product == null) { return; }
+        if (item.BindingContext is not ListProductM product) { return; }
 
         vm.EditProductCommand.Execute(product);
     }
 
     private void ImageButton_Clicked_SetDown(object sender, EventArgs e)
     {
-        var item = sender as ImageButton;
-        if (item is null) { return; }
+        if (sender is not ImageButton item) { return; }
 
-        var product = item.BindingContext as ListProductM;
-        if (product == null) { return; }
+        if (item.BindingContext is not ListProductM product) { return; }
 
         vm.SetDownCommand.Execute(product);
     }
 
     private void ImageButton_Clicked_SetUp(object sender, EventArgs e)
     {
-        var item = sender as ImageButton;
-        if (item is null) { return; }
+        if (sender is not ImageButton item) { return; }
 
-        var product = item.BindingContext as ListProductM;
-        if (product == null) { return; }
+        if (item.BindingContext is not ListProductM product) { return; }
 
         vm.SetUpCommand.Execute(product);
     }

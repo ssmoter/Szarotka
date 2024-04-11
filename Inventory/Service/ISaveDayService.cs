@@ -1,9 +1,9 @@
-﻿using Inventory.Model.MVVM;
+﻿using DataBase.Model.EntitiesInventory;
 
 namespace Inventory.Service
 {
     public interface ISaveDayService
     {
-        Task<DayM> SaveDayMAsync(DayM dayM);
+        Task<Day> SaveDayAsync(Day value);
     }
 }

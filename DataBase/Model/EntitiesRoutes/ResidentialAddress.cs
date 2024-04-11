@@ -27,6 +27,17 @@ namespace DataBase.Model.EntitiesRoutes
         public ResidentialAddress()
         { }
 
+        public override string ToString()
+        {
+            string to = $"{Name} {Surname}{Environment.NewLine}" +
+                $"{Street} {HouseNumber} {(string.IsNullOrWhiteSpace(ApartmentNumber) ? "" : "/")} {ApartmentNumber}{Environment.NewLine}" +
+                $"{PostalCode} {City}{Environment.NewLine}" +
+                $"{Country}";
+
+            return to;
+        }
+
+
         public void Dispose()
         {
             Name = "";

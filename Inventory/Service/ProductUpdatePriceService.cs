@@ -12,18 +12,6 @@
         }
     }
 
-    public static class ProductsUpdateService
-    {
-        public static event Func<Task> Update;
-        /// <summary>
-        /// Ponowne pobranie danych o produktach
-        /// </summary>
-        public static Task OnUpdate()
-        {
-            return Update?.Invoke();
-        }
-    }
-
     public static class DriverNameUpdateService
     {
         public static event Action Update;

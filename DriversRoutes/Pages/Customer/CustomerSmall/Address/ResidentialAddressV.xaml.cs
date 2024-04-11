@@ -82,22 +82,22 @@ public partial class ResidentialAddressV : ContentView
     }
     private async Task CopyAddress()
     {
-        StringBuilder sb = new();
-        sb.Append(ResidentialAddress.Street);
-        sb.Append(' ');
-        sb.Append(ResidentialAddress.HouseNumber);
-        if (!string.IsNullOrWhiteSpace(ResidentialAddress.ApartmentNumber))
-        {
-            sb.Append('/');
-            sb.Append(ResidentialAddress.ApartmentNumber);
-        }
-        sb.AppendLine();
-        sb.Append(ResidentialAddress.PostalCode);
-        sb.Append(' ');
-        sb.AppendLine(ResidentialAddress.City);
-        sb.Append(ResidentialAddress.Country);
+        //StringBuilder sb = new();
+        //sb.Append(ResidentialAddress.Street);
+        //sb.Append(' ');
+        //sb.Append(ResidentialAddress.HouseNumber);
+        //if (!string.IsNullOrWhiteSpace(ResidentialAddress.ApartmentNumber))
+        //{
+        //    sb.Append('/');
+        //    sb.Append(ResidentialAddress.ApartmentNumber);
+        //}
+        //sb.AppendLine();
+        //sb.Append(ResidentialAddress.PostalCode);
+        //sb.Append(' ');
+        //sb.AppendLine(ResidentialAddress.City);
+        //sb.Append(ResidentialAddress.Country);
 
-        await Clipboard.SetTextAsync(sb.ToString());
+        await Clipboard.SetTextAsync(ResidentialAddress.ToString());
 
         var toast = Toast.Make("Skopiowano adres", ToastDuration.Short);
         await toast.Show();

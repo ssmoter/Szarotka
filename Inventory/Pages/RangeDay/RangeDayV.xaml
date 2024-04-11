@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:Convert="clr-namespace:DataBase.Helper;assembly=DataBase"
     xmlns:VM="clr-namespace:Inventory.Pages.RangeDay"
-    xmlns:VMD="clr-namespace:Inventory.Model.MVVM"
+    xmlns:VMD="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
     Title="Zakres dat"
     x:DataType="VM:RangeDayVM">
 
@@ -18,153 +18,187 @@
     </Shell.BackButtonBehavior>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding GoToGraphCommand}" Text="Wykres" />
-        <ToolbarItem Command="{Binding GenerateCSVFileCommand}" Text="CSV" />
-        <ToolbarItem Command="{Binding GenerateJsonFileCommand}" Text="JSON" />
+        <ToolbarItem
+            x:DataType="VM:RangeDayVM"
+            Command="{Binding GoToGraphCommand}"
+            Text="Wykres" />
+        <ToolbarItem
+            x:DataType="VM:RangeDayVM"
+            Command="{Binding GenerateCSVFileCommand}"
+            Text="CSV" />
+        <ToolbarItem
+            x:DataType="VM:RangeDayVM"
+            Command="{Binding GenerateJsonFileCommand}"
+            Text="JSON" />
     </ContentPage.ToolbarItems>
 
-
-    <Grid RowDefinitions="auto,auto,*,0.001">
-        <HorizontalStackLayout HorizontalOptions="Center">
-            <Button
-                Command="{Binding SelectMoreDateCommand}"
-                HorizontalOptions="Center"
-                Text="Zakres dat"
-                VerticalOptions="Center" />
-
-            <Button
-                Margin="10"
-                Command="{Binding SaveAnotherDriverDataCommand}"
-                IsVisible="{Binding EnableSave}"
-                Text="Zapisz wczytany plik" />
-        </HorizontalStackLayout>
+    <ScrollView>
 
 
-        <Border Grid.Row="1">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10" />
-            </Border.StrokeShape>
 
-            <VerticalStackLayout>
-                <Label
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="3"
+        <Grid RowDefinitions="auto,auto,*,0.001">
+            <HorizontalStackLayout HorizontalOptions="Center">
+                <Button
+                    Command="{Binding SelectMoreDateCommand}"
                     HorizontalOptions="Center"
-                    Text="Suma utargów z danego zakresu" />
+                    Text="Zakres dat"
+                    VerticalOptions="Center" />
 
-                <Label>
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <Span Text=" Zapłacono = " />
-                            <Span Text="{Binding TotalPriceOfRange.TotalPriceMoney}" />
-                            <Span Text="zł" />
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-                <Label>
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <Span Text=" Utarg = " />
-                            <Span Text="{Binding TotalPriceOfRange.TotalPriceAfterCorrect}" />
-                            <Span Text="zł" />
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-                <Label>
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <Span Text=" Różnica = " />
-                            <Span Text="{Binding TotalPriceOfRange.TotalPriceDifference}" />
-                            <Span Text="zł" />
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-            </VerticalStackLayout>
-        </Border>
+                <Button
+                    Margin="10"
+                    Command="{Binding SaveAnotherDriverDataCommand}"
+                    IsVisible="{Binding EnableSave}"
+                    Text="Zapisz wczytany plik" />
+            </HorizontalStackLayout>
 
-        <Border Grid.Row="2">
 
-            <Grid RowDefinitions="auto,*">
-                <Border Padding="5,5,5,0">
-                    <Grid ColumnDefinitions="*,*,*,*,*">
+            <Border
+                Grid.Row="1"
+                Margin="2"
+                Padding="5">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
 
-                        <Label
-                            Grid.Column="0"
-                            HorizontalOptions="Center"
-                            Text="Data" />
-                        <Label
-                            Grid.Column="1"
-                            HorizontalOptions="Center"
-                            Text="Kierowca" />
-                        <Label
-                            Grid.Column="2"
-                            HorizontalOptions="Center"
-                            Text="Zapłacono" />
-                        <Label
-                            Grid.Column="3"
-                            HorizontalOptions="Center"
-                            Text="Utarg" />
-                        <Label
-                            Grid.Column="4"
-                            HorizontalOptions="Center"
-                            Text="Różnica" />
-
-                    </Grid>
-                </Border>
-
-                <CollectionView Grid.Row="1" ItemsSource="{Binding RangeDays}">
+                <CollectionView ItemsSource="{Binding TotalPriceOfRange}">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <SwipeView>
-                                <SwipeView.RightItems>
-                                    <SwipeItems>
-                                        <SwipeItem Invoked="SwipeItem_Invoked_OpenDay" Text="Wczytaj dzień" />
-                                        <!--
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type VM:RangeDayVM}}, Path=OpenDetailpageCommand}"
-                                            CommandParameter="{Binding .}"
-                                        -->
-                                    </SwipeItems>
-                                </SwipeView.RightItems>
-                                <Border>
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="10" />
-                                    </Border.StrokeShape>
-                                    <Grid
-                                        Padding="5,5,5,0"
-                                        x:DataType="VM:RangeDayM"
-                                        ColumnDefinitions="*,*,*,*,*">
+                        <DataTemplate x:DataType="VM:RangeDayM">
 
-                                        <VerticalStackLayout Grid.Column="0">
-                                            <Label Text="{Binding Path=DayM.Created.DayOfWeek, Converter={StaticResource ANGToPL}}" VerticalOptions="Center" />
-                                            <Label Text="{Binding DayM.Created}" VerticalOptions="Center" />
-                                        </VerticalStackLayout>
-                                        <Label
-                                            Grid.Column="1"
-                                            Text="{Binding Driver.Name}"
-                                            VerticalOptions="Center" />
-                                        <HorizontalStackLayout Grid.Column="2" VerticalOptions="Center">
-                                            <Label Text="{Binding DayM.TotalPriceMoney}" />
-                                            <Label Text="zł" />
-                                        </HorizontalStackLayout>
-                                        <HorizontalStackLayout Grid.Column="3" VerticalOptions="Center">
-                                            <Label Text="{Binding DayM.TotalPriceAfterCorrect}" />
-                                            <Label Text="zł" />
-                                        </HorizontalStackLayout>
-                                        <HorizontalStackLayout Grid.Column="4" VerticalOptions="Center">
-                                            <Label Text="{Binding DayM.TotalPriceDifference}" />
-                                            <Label Text="zł" />
-                                        </HorizontalStackLayout>
-                                    </Grid>
-                                </Border>
-                            </SwipeView>
+                            <VerticalStackLayout>
+
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Suma utargu kierowcy: " />
+                                            <Span Text="{Binding Driver.Name}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Zapłacono = " />
+                                            <Span Text="{Binding Day.TotalPriceMoneyDecimal}" />
+                                            <Span Text=" zł" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Utarg = " />
+                                            <Span Text="{Binding Day.TotalPriceAfterCorrectDecimal}" />
+                                            <Span Text=" zł" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+
+
+                                <Label>
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="Różnica = " />
+                                            <Span Text="{Binding Day.TotalPriceDifferenceDecimal}" />
+                                            <Span Text=" zł" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+
+                                <Border />
+
+                            </VerticalStackLayout>
+
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
-
                 </CollectionView>
 
-            </Grid>
-        </Border>
 
-    </Grid>
+            </Border>
+
+            <Border Grid.Row="2">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Grid RowDefinitions="auto,*">
+                    <Border Padding="5,5,5,0">
+                        <Grid ColumnDefinitions="*,*,*,*,*">
+
+                            <Label
+                                Grid.Column="0"
+                                HorizontalOptions="Center"
+                                Text="Data" />
+                            <Label
+                                Grid.Column="1"
+                                HorizontalOptions="Center"
+                                Text="Kierowca" />
+                            <Label
+                                Grid.Column="2"
+                                HorizontalOptions="Center"
+                                Text="Zapłacono" />
+                            <Label
+                                Grid.Column="3"
+                                HorizontalOptions="Center"
+                                Text="Utarg" />
+                            <Label
+                                Grid.Column="4"
+                                HorizontalOptions="Center"
+                                Text="Różnica" />
+
+                        </Grid>
+                    </Border>
+
+                    <CollectionView Grid.Row="1" ItemsSource="{Binding RangeDays}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <SwipeView>
+                                    <SwipeView.RightItems>
+                                        <SwipeItems>
+                                            <SwipeItem Invoked="SwipeItem_Invoked_OpenDay" Text="Wczytaj dzień" />
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
+                                    <Border>
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10" />
+                                        </Border.StrokeShape>
+                                        <Grid
+                                            Padding="5,5,5,0"
+                                            x:DataType="VM:RangeDayM"
+                                            ColumnDefinitions="*,*,*,*,*">
+
+                                            <VerticalStackLayout Grid.Column="0">
+                                                <Label Text="{Binding Path=Day.SelectedDate.DayOfWeek, Converter={StaticResource ANGToPL}}" VerticalOptions="Center" />
+                                                <Label Text="{Binding Day.SelectedDateString}" VerticalOptions="Center" />
+                                            </VerticalStackLayout>
+                                            <Label
+                                                Grid.Column="1"
+                                                Text="{Binding Driver.Name}"
+                                                VerticalOptions="Center" />
+                                            <HorizontalStackLayout Grid.Column="2" VerticalOptions="Center">
+                                                <Label Text="{Binding Day.TotalPriceMoneyDecimal}" />
+                                                <Label Text="zł" />
+                                            </HorizontalStackLayout>
+                                            <HorizontalStackLayout Grid.Column="3" VerticalOptions="Center">
+                                                <Label Text="{Binding Day.TotalPriceAfterCorrectDecimal}" />
+                                                <Label Text="zł" />
+                                            </HorizontalStackLayout>
+                                            <HorizontalStackLayout Grid.Column="4" VerticalOptions="Center">
+                                                <Label Text="{Binding Day.TotalPriceDifferenceDecimal}" />
+                                                <Label Text="zł" />
+                                            </HorizontalStackLayout>
+                                        </Grid>
+                                    </Border>
+                                </SwipeView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                    </CollectionView>
+
+                </Grid>
+            </Border>
+
+        </Grid>
+
+    </ScrollView>
 </ContentPage>

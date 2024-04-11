@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Inventory.Helper.Parse;
 using DataBase.Model.EntitiesInventory;
 
 using System.Collections.ObjectModel;
@@ -34,13 +33,15 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                 AddEdit.UpdateP = false;
                 Product = new ListProductM()
                 {
-                    Name = new Model.MVVM.ProductNameM() { Name = "" },
+                    Name = new ProductName() { Name = "" },
                     Prices = [],
                 };
             }
             ImgList ??= [];
             _db = db;
         }
+
+        private static readonly string[] extensionsValues = ["jpg", "png", "gif"];
 
         #region Method
 
@@ -49,8 +50,8 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             var pOptions = new PickOptions();
             var dictionaryTyp = new Dictionary<DevicePlatform, IEnumerable<string>>
             {
-                { DevicePlatform.WinUI, new[] { "jpg", "png","gif" } },
-                { DevicePlatform.Android, new[] { "jpg", "png", "gif" } }
+                { DevicePlatform.WinUI, extensionsValues },
+                { DevicePlatform.Android, extensionsValues }
             };
 
             pOptions.FileTypes = new FilePickerFileType(dictionaryTyp);
@@ -60,12 +61,9 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
 
         public async Task GetPrices(Guid id)
         {
-            var priceM = await _db.DataBaseAsync.Table<ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(x => x.Id).ToArrayAsync();
+            var price = await _db.DataBaseAsync.Table<ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(x => x.CreatedTicks).ToArrayAsync();
             Product.Prices.Clear();
-            for (int i = 0; i < priceM.Length; i++)
-            {
-                Product.Prices.Add(priceM[i].PareseAsProductPriceM());
-            }
+            Product.Prices = new(price);
         }
         #endregion
 
@@ -75,8 +73,6 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
         {
             try
             {
-                await Inventory.Service.ProductsUpdateService.OnUpdate();
-
                 Product.Prices.Clear();
 
                 await Shell.Current.GoToAsync("..");
@@ -98,10 +94,18 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                     Name = Product.Name.Name,
                     Description = Product.Name.Description,
                     Img = Product.Name.Img,
-                    Updated=DateTime.Now
+                    Updated = DateTime.Now,
+                    IsVisible = Product.Name.IsVisible,
+                    Arrangement = Product.Name.Arrangement,
                 };
-
                 await _db.DataBaseAsync.UpdateAsync(productName);
+
+                var count = await _db.DataBaseAsync.Table<ProductPrice>().CountAsync(x => x.ProductNameId == productName.Id);
+
+                for (int i = 0; i < (Product.Prices.Count - count); i++)
+                {
+                    await _db.DataBaseAsync.InsertAsync(Product.Prices[i]);
+                }
 
                 await Shell.Current.DisplayAlert("Aktualizacja", $"Produkt {Product.Name.Name} został zaktualizowany", "Ok");
             }
@@ -117,7 +121,6 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
         {
             try
             {
-
                 var productName = new ProductName()
                 {
                     Id = Guid.NewGuid(),
@@ -127,19 +130,34 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                     Updated = DateTime.Now,
                     Created = DateTime.Now,
                 };
-                productName.Img = DataBase.Helper.Img.ImgPath.Logo;
+                if (string.IsNullOrWhiteSpace(productName.Img))
+                {
+                    productName.Img = DataBase.Helper.Img.ImgPath.Logo;
+                }
+                productName.Arrangement = _db.DataBase.Table<ProductName>().Count() + 1;
+
+
                 await _db.DataBaseAsync.InsertAsync(productName);
 
-                var id = await _db.DataBaseAsync.Table<ProductName>().Where(x => x.Name == productName.Name).FirstOrDefaultAsync();
-                Product.Name = id.PareseAsProductNameM();
-                await Shell.Current.DisplayAlert("Dodany", $"Produkt {Product.Name.Name} został dodany", "Ok");
+                if (Product.Prices is not null)
+                    for (int i = 0; i < Product.Prices.Count; i++)
+                    {
+                        Product.Prices[i].ProductNameId = new Guid(productName.Id.ToByteArray());
+                        await _db.DataBaseAsync.InsertAllAsync(Product.Prices);
+                    }
 
-                AddEdit.AddP = false;
-                AddEdit.UpdateP = true;
+                Product.Name = productName;
+
+                await Shell.Current.DisplayAlert("Dodany", $"Produkt {Product.Name.Name} został dodany", "Ok");
             }
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
+            }
+            finally
+            {
+                AddEdit.AddP = false;
+                AddEdit.UpdateP = true;
             }
         }
 
@@ -149,12 +167,6 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
         {
             try
             {
-
-                if (Product.Name.Id == Guid.Empty)
-                {
-                    await Shell.Current.DisplayAlert("Uwaga", "Aby dodać cenę wcześniej musisz utworzyć produkt", "Ok");
-                    return;
-                }
 
 #if __ANDROID_24__
                 var result = await Shell.Current.DisplayPromptAsync
@@ -179,8 +191,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                         PriceDecimal = price,
                         ProductNameId = Product.Name.Id
                     };
-                    await _db.DataBaseAsync.InsertAsync(newPrice);
-                    await GetPrices(Product.Name.Id);
+                    Product.Prices.Insert(0, newPrice);
                 }
             }
             catch (Exception ex)
@@ -236,6 +247,11 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             }
 
             var file = await FilePicker.PickAsync(FileTyp());
+
+            if (file is null)
+            {
+                return;
+            }
 
             var bytes = File.ReadAllBytes(file.FullPath);
             var stringBase = System.Convert.ToBase64String(bytes);

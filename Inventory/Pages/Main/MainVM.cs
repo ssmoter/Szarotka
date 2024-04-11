@@ -9,7 +9,7 @@ using Inventory.Service;
 
 namespace Inventory.Pages.Main
 {
-    [QueryProperty(nameof(dayM), nameof(Model.MVVM.DayM))]
+    [QueryProperty(nameof(Day), nameof(DataBase.Model.EntitiesInventory.Day))]
     public partial class MainVM : ObservableObject
     {
         [ObservableProperty]
@@ -18,8 +18,7 @@ namespace Inventory.Pages.Main
         [ObservableProperty]
         MainM mainM;
 
-
-        Model.MVVM.DayM dayM;
+        public Day Day { get; set; }
 
         readonly DataBase.Data.AccessDataBase _db;
         readonly Service.ISelectDayService _selectDayService;
@@ -39,8 +38,6 @@ namespace Inventory.Pages.Main
         {
             try
             {
-
-
                 var tableInfo = _db.DataBase.GetTableInfo(nameof(SelectedDriver));
                 bool exist = tableInfo.Count > 0;
                 if (exist)
@@ -99,29 +96,34 @@ namespace Inventory.Pages.Main
                 if (await MainVM.CheckDriver())
                     return;
 
-                if (dayM is null)
+                if (Day is not null)
                 {
-                    dayM = await _selectDayService.GetDayProcedure(DateTime.Now);
-                }
-                else if (dayM.Created.ToShortDateString() != DateTime.Now.ToShortDateString())
-                {
-                    dayM = await _selectDayService.GetDayProcedure(DateTime.Now);
-                }
-                else if (dayM.DriverGuid != new Guid(Helper.SelectedDriver.Id))
-                {
-                    dayM = await _selectDayService.GetDayProcedure(DateTime.Now);
+                    Day.Products = new(Day.Products.OrderBy(x => x.Name.Arrangement));
                 }
 
-                dayM.CanUpadte = true;
-                for (int i = 0; i < dayM.Products.Count; i++)
+                if (Day is null)
                 {
-                    dayM.Products[i].CanUpadte = true;
+                    Day = await _selectDayService.GetDayProcedure(DateTime.Now);
+                }
+                else if (Day.Created.ToShortDateString() != DateTime.Now.ToShortDateString())
+                {
+                    Day = await _selectDayService.GetDayProcedure(DateTime.Now);
+                }
+                else if (Day.DriverGuid != new Guid(Helper.SelectedDriver.Id))
+                {
+                    Day = await _selectDayService.GetDayProcedure(DateTime.Now);
                 }
 
+                Day.CanUpadte = true;
+                for (int i = 0; i < Day.Products.Count; i++)
+                {
+                    Day.Products[i].CanUpadte = true;
+                }
                 await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
                     new Dictionary<string, object>()
                     {
-                        [nameof(Model.MVVM.DayM)] = dayM
+                        [nameof(DataBase.Model.EntitiesInventory.Day)] = Day,
+
                     });
             }
             catch (Exception ex)
@@ -150,22 +152,19 @@ namespace Inventory.Pages.Main
                 if (await MainVM.CheckDriver())
                     return;
                 if (string.IsNullOrWhiteSpace(MainM.DisplyDate))
-                {
                     return;
-                }
 
-                var day = await _selectDayService.GetDayProcedure(MainM.Date);
 
-                //dayM = await _selectDayService.GetDay(MainM.Date.AddHours(12));
-                day.CanUpadte = true;
-                for (int i = 0; i < day.Products.Count; i++)
+                var days = await _selectDayService.GetDayProcedure(MainM.Date);
+                days.CanUpadte = true;
+                for (int i = 0; i < days.Products.Count; i++)
                 {
-                    day.Products[i].CanUpadte = true;
+                    days.Products[i].CanUpadte = true;
                 }
                 await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
                     new Dictionary<string, object>()
                     {
-                        [nameof(Model.MVVM.DayM)] = day
+                        [nameof(DataBase.Model.EntitiesInventory.Day)] = days
                     });
             }
             catch (Exception ex)

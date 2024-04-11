@@ -44,17 +44,17 @@ namespace Inventory.Data.File
                     csv.ReadHeader();
                     csv.Read();
 
-                    model[i].DayM.Id = csv.GetField<Guid>("Dzień_Id");
-                    model[i].DayM.DriverGuid = csv.GetField<Guid>("Dzień_Kierowca_Id");
-                    model[i].DayM.Description = csv.GetField<string>("Dzień_Opis");
-                    model[i].DayM.Created = csv.GetField<DateTime>("Dzień_Data");
-                    model[i].DayM.TotalPriceProduct = csv.GetField<decimal>("Dzień_Utarg_Produkty");
-                    model[i].DayM.TotalPriceCake = csv.GetField<decimal>("Dzień_Utarg_Ciasto");
-                    model[i].DayM.TotalPrice = csv.GetField<decimal>("Dzień_Utarg_Suma");
-                    model[i].DayM.TotalPriceCorrect = csv.GetField<decimal>("Dzień_Utarg_Korekta");
-                    model[i].DayM.TotalPriceAfterCorrect = csv.GetField<decimal>("Dzień_Utarg_Po_Korekcie");
-                    model[i].DayM.TotalPriceMoney = csv.GetField<decimal>("Dzień_Pieniądze");
-                    model[i].DayM.TotalPriceDifference = csv.GetField<decimal>("Dzień_Różnica");
+                    model[i].Day.Id = csv.GetField<Guid>("Dzień_Id");
+                    model[i].Day.DriverGuid = csv.GetField<Guid>("Dzień_Kierowca_Id");
+                    model[i].Day.Description = csv.GetField<string>("Dzień_Opis");
+                    model[i].Day.Created = csv.GetField<DateTime>("Dzień_Data");
+                    model[i].Day.TotalPriceProductsDecimal = csv.GetField<decimal>("Dzień_Utarg_Produkty");
+                    model[i].Day.TotalPriceCakeDecimal = csv.GetField<decimal>("Dzień_Utarg_Ciasto");
+                    model[i].Day.TotalPriceDecimal = csv.GetField<decimal>("Dzień_Utarg_Suma");
+                    model[i].Day.TotalPriceCorrectDecimal = csv.GetField<decimal>("Dzień_Utarg_Korekta");
+                    model[i].Day.TotalPriceAfterCorrectDecimal = csv.GetField<decimal>("Dzień_Utarg_Po_Korekcie");
+                    model[i].Day.TotalPriceMoneyDecimal = csv.GetField<decimal>("Dzień_Pieniądze");
+                    model[i].Day.TotalPriceDifferenceDecimal = csv.GetField<decimal>("Dzień_Różnica");
 
                     csv.Read();
                     csv.ReadHeader();
@@ -69,35 +69,35 @@ namespace Inventory.Data.File
                         {
                             break;
                         }
-                        model[i].DayM.Products.Add(new());
+                        model[i].Day.Products.Add(new());
 
 
 
 
-                        model[i].DayM.Products[j].Name.Name = csv.GetField<string>("Produkt_Nazwa");
+                        model[i].Day.Products[j].Name.Name = csv.GetField<string>("Produkt_Nazwa");
 
-                        model[i].DayM.Products[j].Number = csv.GetField<int>("Produkt_Ilość");
-                        model[i].DayM.Products[j].NumberEdit = csv.GetField<int>("Produkt_Ilość_Edycja");
-                        model[i].DayM.Products[j].NumberReturn = csv.GetField<int>("Produkt_Ilość_zwrot");
-                        model[i].DayM.Products[j].PriceTotal = csv.GetField<decimal>("Produkt_Utarg");
-                        model[i].DayM.Products[j].PriceTotalCorrect = csv.GetField<decimal>("Produkt_Utarg_Edycja");
-                        model[i].DayM.Products[j].PriceTotalAfterCorrect = csv.GetField<decimal>("Produkt_Utarg_Po_Edycji");
+                        model[i].Day.Products[j].Number = csv.GetField<int>("Produkt_Ilość");
+                        model[i].Day.Products[j].NumberEdit = csv.GetField<int>("Produkt_Ilość_Edycja");
+                        model[i].Day.Products[j].NumberReturn = csv.GetField<int>("Produkt_Ilość_zwrot");
+                        model[i].Day.Products[j].PriceTotalDecimal = csv.GetField<decimal>("Produkt_Utarg");
+                        model[i].Day.Products[j].PriceTotalCorrectDecimal = csv.GetField<decimal>("Produkt_Utarg_Edycja");
+                        model[i].Day.Products[j].PriceTotalAfterCorrectDecimal = csv.GetField<decimal>("Produkt_Utarg_Po_Edycji");
 
-                        model[i].DayM.Products[j].Price.Price = csv.GetField<decimal>("Produkt_Cena_Wartość");
+                        model[i].Day.Products[j].Price.PriceDecimal = csv.GetField<decimal>("Produkt_Cena_Wartość");
 
-                        model[i].DayM.Products[j].Price.Id = csv.GetField<Guid>("Produkt_Cena_Id");
-                        model[i].DayM.Products[j].Price.ProductNameId = csv.GetField<Guid>("Produkt_Cena_Nazwa_Id");
-                        model[i].DayM.Products[j].Price.Created = csv.GetField<DateTime>("Produkt_Cena_Stworzono");
+                        model[i].Day.Products[j].Price.Id = csv.GetField<Guid>("Produkt_Cena_Id");
+                        model[i].Day.Products[j].Price.ProductNameId = csv.GetField<Guid>("Produkt_Cena_Nazwa_Id");
+                        model[i].Day.Products[j].Price.Created = csv.GetField<DateTime>("Produkt_Cena_Stworzono");
 
-                        model[i].DayM.Products[j].Id = csv.GetField<Guid>("Produkt_Id");
-                        model[i].DayM.Products[j].DayId = csv.GetField<Guid>("Produkt_Dzień_Id");
-                        model[i].DayM.Products[j].ProductNameId = csv.GetField<Guid>("Produkt_Nazwa_Id");
-                        model[i].DayM.Products[j].ProductNameId = csv.GetField<Guid>("Produkt_Wybrana_Cena_Id");
-                        model[i].DayM.Products[j].Description = csv.GetField<string>("Produkt_Opis");
+                        model[i].Day.Products[j].Id = csv.GetField<Guid>("Produkt_Id");
+                        model[i].Day.Products[j].DayId = csv.GetField<Guid>("Produkt_Dzień_Id");
+                        model[i].Day.Products[j].ProductNameId = csv.GetField<Guid>("Produkt_Nazwa_Id");
+                        model[i].Day.Products[j].ProductNameId = csv.GetField<Guid>("Produkt_Wybrana_Cena_Id");
+                        model[i].Day.Products[j].Description = csv.GetField<string>("Produkt_Opis");
 
-                        model[i].DayM.Products[j].Name.Id = csv.GetField<Guid>("Produkt_Nazwa_Id");
-                        model[i].DayM.Products[j].Name.Description = csv.GetField<string>("Produkt_Nazwa_Opis");
-                        model[i].DayM.Products[j].Name.Img = csv.GetField<string>("Produkt_Nazwa_Img");
+                        model[i].Day.Products[j].Name.Id = csv.GetField<Guid>("Produkt_Nazwa_Id");
+                        model[i].Day.Products[j].Name.Description = csv.GetField<string>("Produkt_Nazwa_Opis");
+                        model[i].Day.Products[j].Name.Img = csv.GetField<string>("Produkt_Nazwa_Img");
 
                         csv.Read();
                     }
@@ -118,12 +118,12 @@ namespace Inventory.Data.File
                             csv.ReadHeader();
                             break;
                         }
-                        model[i].DayM.Cakes.Add(new());
-                        model[i].DayM.Cakes[j].Price = csv.GetField<decimal>("Ciasto_Cena");
-                        model[i].DayM.Cakes[j].IsSell = csv.GetField<bool>("Ciasto_CzySprzedane");
+                        model[i].Day.Cakes.Add(new());
+                        model[i].Day.Cakes[j].PriceDecimal = csv.GetField<decimal>("Ciasto_Cena");
+                        model[i].Day.Cakes[j].IsSell = csv.GetField<bool>("Ciasto_CzySprzedane");
 
-                        model[i].DayM.Cakes[j].Id = csv.GetField<Guid>("Ciasto_Id");
-                        model[i].DayM.Cakes[j].DayId = csv.GetField<Guid>("Ciasto_Dzień_Id");
+                        model[i].Day.Cakes[j].Id = csv.GetField<Guid>("Ciasto_Id");
+                        model[i].Day.Cakes[j].DayId = csv.GetField<Guid>("Ciasto_Dzień_Id");
 
                         csv.Read();
 
@@ -158,9 +158,9 @@ namespace Inventory.Data.File
                     CSVWriteHeader.WriteSum(csv);
                     csv.NextRecord();
                     csv.WriteField(SetRangeDay(model));
-                    csv.WriteField(model.Sum(x => x.DayM.TotalPriceMoney));
-                    csv.WriteField(model.Sum(x => x.DayM.TotalPriceAfterCorrect));
-                    csv.WriteField(model.Sum(x => x.DayM.TotalPriceDifference));
+                    csv.WriteField(model.Sum(x => x.Day.TotalPriceMoneyDecimal));
+                    csv.WriteField(model.Sum(x => x.Day.TotalPriceAfterCorrectDecimal));
+                    csv.WriteField(model.Sum(x => x.Day.TotalPriceDifferenceDecimal));
 
                     csv.NextRecord();
 
@@ -177,62 +177,62 @@ namespace Inventory.Data.File
 
                         CSVWriteHeader.Day(csv);
                         csv.NextRecord();
-                        csv.WriteField(model[i].DayM.Id);
-                        csv.WriteField(model[i].DayM.DriverGuid);
-                        csv.WriteField(model[i].DayM.Description);
-                        csv.WriteField(model[i].DayM.Created);
-                        csv.WriteField(model[i].DayM.TotalPriceProduct);
-                        csv.WriteField(model[i].DayM.TotalPriceCake);
-                        csv.WriteField(model[i].DayM.TotalPrice);
-                        csv.WriteField(model[i].DayM.TotalPriceCorrect);
-                        csv.WriteField(model[i].DayM.TotalPriceAfterCorrect);
-                        csv.WriteField(model[i].DayM.TotalPriceMoney);
-                        csv.WriteField(model[i].DayM.TotalPriceDifference);
+                        csv.WriteField(model[i].Day.Id);
+                        csv.WriteField(model[i].Day.DriverGuid);
+                        csv.WriteField(model[i].Day.Description);
+                        csv.WriteField(model[i].Day.Created);
+                        csv.WriteField(model[i].Day.TotalPriceProductsDecimal);
+                        csv.WriteField(model[i].Day.TotalPriceCakeDecimal);
+                        csv.WriteField(model[i].Day.TotalPriceDecimal);
+                        csv.WriteField(model[i].Day.TotalPriceCorrectDecimal);
+                        csv.WriteField(model[i].Day.TotalPriceAfterCorrectDecimal);
+                        csv.WriteField(model[i].Day.TotalPriceMoneyDecimal);
+                        csv.WriteField(model[i].Day.TotalPriceDifferenceDecimal);
 
                         csv.NextRecord();
 
                         CSVWriteHeader.Product(csv);
                         csv.NextRecord();
-                        for (int j = 0; j < model[i].DayM.Products.Count; j++)
+                        for (int j = 0; j < model[i].Day.Products.Count; j++)
                         {
-                            csv.WriteField(model[i].DayM.Products[j].Name.Name);
+                            csv.WriteField(model[i].Day.Products[j].Name.Name);
 
-                            csv.WriteField(model[i].DayM.Products[j].Number);
-                            csv.WriteField(model[i].DayM.Products[j].NumberEdit);
-                            csv.WriteField(model[i].DayM.Products[j].NumberReturn);
-                            csv.WriteField(model[i].DayM.Products[j].PriceTotal);
-                            csv.WriteField(model[i].DayM.Products[j].PriceTotalCorrect);
-                            csv.WriteField(model[i].DayM.Products[j].PriceTotalAfterCorrect);
+                            csv.WriteField(model[i].Day.Products[j].Number);
+                            csv.WriteField(model[i].Day.Products[j].NumberEdit);
+                            csv.WriteField(model[i].Day.Products[j].NumberReturn);
+                            csv.WriteField(model[i].Day.Products[j].PriceTotalDecimal);
+                            csv.WriteField(model[i].Day.Products[j].PriceTotalCorrectDecimal);
+                            csv.WriteField(model[i].Day.Products[j].PriceTotalAfterCorrectDecimal);
 
-                            csv.WriteField(model[i].DayM.Products[j].Price.Price);
+                            csv.WriteField(model[i].Day.Products[j].Price.PriceDecimal);
 
-                            csv.WriteField(model[i].DayM.Products[j].Price.Id);
-                            csv.WriteField(model[i].DayM.Products[j].Price.ProductNameId);
-                            csv.WriteField(model[i].DayM.Products[j].Price.Created);
+                            csv.WriteField(model[i].Day.Products[j].Price.Id);
+                            csv.WriteField(model[i].Day.Products[j].Price.ProductNameId);
+                            csv.WriteField(model[i].Day.Products[j].Price.Created);
 
-                            csv.WriteField(model[i].DayM.Products[j].Id);
-                            csv.WriteField(model[i].DayM.Products[j].DayId);
-                            csv.WriteField(model[i].DayM.Products[j].ProductNameId);
-                            csv.WriteField(model[i].DayM.Products[j].ProductPriceId);
-                            csv.WriteField(model[i].DayM.Products[j].Description);
+                            csv.WriteField(model[i].Day.Products[j].Id);
+                            csv.WriteField(model[i].Day.Products[j].DayId);
+                            csv.WriteField(model[i].Day.Products[j].ProductNameId);
+                            csv.WriteField(model[i].Day.Products[j].ProductPriceId);
+                            csv.WriteField(model[i].Day.Products[j].Description);
 
-                            csv.WriteField(model[i].DayM.Products[j].Name.Id);
-                            csv.WriteField(model[i].DayM.Products[j].Name.Description);
-                            csv.WriteField(model[i].DayM.Products[j].Name.Img);
+                            csv.WriteField(model[i].Day.Products[j].Name.Id);
+                            csv.WriteField(model[i].Day.Products[j].Name.Description);
+                            csv.WriteField(model[i].Day.Products[j].Name.Img);
 
                             csv.NextRecord();
                         }
 
                         CSVWriteHeader.Cake(csv);
                         csv.NextRecord();
-                        for (int j = 0; j < model[i].DayM.Cakes.Count; j++)
+                        for (int j = 0; j < model[i].Day.Cakes.Count; j++)
                         {
 
-                            csv.WriteField(model[i].DayM.Cakes[j].Price);
-                            csv.WriteField(model[i].DayM.Cakes[j].IsSell);
+                            csv.WriteField(model[i].Day.Cakes[j].PriceDecimal);
+                            csv.WriteField(model[i].Day.Cakes[j].IsSell);
 
-                            csv.WriteField(model[i].DayM.Cakes[j].Id);
-                            csv.WriteField(model[i].DayM.Cakes[j].DayId);
+                            csv.WriteField(model[i].Day.Cakes[j].Id);
+                            csv.WriteField(model[i].Day.Cakes[j].DayId);
 
                             csv.NextRecord();
                         }
@@ -254,11 +254,11 @@ namespace Inventory.Data.File
             string date;
             if (model.Count > 1)
             {
-                date = $"{model.FirstOrDefault().DayM.Created.ToShortDateString()}_{model.LastOrDefault().DayM.Created.ToShortDateString()}";
+                date = $"{model.FirstOrDefault().Day.Created.ToShortDateString()}_{model.LastOrDefault().Day.Created.ToShortDateString()}";
             }
             else
             {
-                date = model.FirstOrDefault().DayM.Created.ToShortDateString();
+                date = model.FirstOrDefault().Day.Created.ToShortDateString();
             }
 
 

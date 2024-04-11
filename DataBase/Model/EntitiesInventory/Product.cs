@@ -51,6 +51,7 @@ public partial class Product : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(PriceTotal));
                 OnPropertyChanged(nameof(PriceTotalDecimal));
+                CalculatePrice();
             }
         }
     }
@@ -69,19 +70,21 @@ public partial class Product : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(PriceTotal));
                 OnPropertyChanged(nameof(PriceTotalDecimal));
+                CalculatePrice();
             }
         }
     }
     private int priceTotalCorrect;
     public int PriceTotalCorrect
     {
-        get => priceTotalAfterCorrect;
+        get => priceTotalCorrect;
         set
         {
             if (SetProperty(ref priceTotalCorrect, value))
             {
                 OnPropertyChanged(nameof(PriceTotalCorrect));
                 OnPropertyChanged(nameof(PriceTotalCorrectDecimal));
+                CalculatePrice();
             }
         }
     }
@@ -99,6 +102,7 @@ public partial class Product : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(PriceTotalCorrect));
                 OnPropertyChanged(nameof(PriceTotalCorrectDecimal));
+                CalculatePrice();
             }
         }
     }
@@ -108,10 +112,11 @@ public partial class Product : BaseEntities<Guid>
         get => priceTotalAfterCorrect;
         set
         {
-            if (SetProperty(ref priceTotalAfterCorrect, (int)(value * 100)))
+            if (SetProperty(ref priceTotalAfterCorrect, value))
             {
                 OnPropertyChanged(nameof(PriceTotalAfterCorrect));
                 OnPropertyChanged(nameof(PriceTotalAfterCorrectDecimal));
+                CalculatePrice();
             }
         }
     }
@@ -128,13 +133,93 @@ public partial class Product : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(PriceTotalAfterCorrect));
                 OnPropertyChanged(nameof(PriceTotalAfterCorrectDecimal));
+                CalculatePrice();
             }
         }
     }
-    [ObservableProperty]
+
+
+
     private int number;
-    [ObservableProperty]
+    public int Number
+    {
+        get => number;
+        set
+        {
+            if (SetProperty(ref number, value))
+            {
+                OnPropertyChanged(nameof(Number));
+                CalculatePrice();
+            }
+        }
+    }
     private int numberEdit;
-    [ObservableProperty]
+    public int NumberEdit
+    {
+        get => numberEdit;
+        set
+        {
+            if (SetProperty(ref numberEdit, value))
+            {
+                OnPropertyChanged(nameof(NumberEdit));
+                CalculatePrice();
+            }
+        }
+    }
+
     private int numberReturn;
+    public int NumberReturn
+    {
+        get => numberReturn;
+        set
+        {
+            if (SetProperty(ref numberReturn, value))
+            {
+                OnPropertyChanged(nameof(NumberReturn));
+                CalculatePrice();
+            }
+        }
+    }
+
+    [Ignore]
+    public bool CanUpadte { get; set; }
+
+    public Product()
+    {
+        Name ??= new();
+        Price ??= new();
+    }
+    public Product(Product product)
+    {
+        this.Id = product.Id;
+        this.Created = product.Created;
+        this.Updated = product.Updated;
+
+        this.DayId = product.DayId;
+        this.ProductNameId = product.ProductNameId;
+        this.ProductPriceId = product.ProductPriceId;
+        this.Description = product.Description;
+
+        this.Name = product.Name;
+        this.Price = product.Price;
+
+        this.PriceTotalDecimal = product.PriceTotalDecimal;
+        this.PriceTotalCorrectDecimal = product.PriceTotalCorrectDecimal;
+        this.PriceTotalAfterCorrectDecimal = product.PriceTotalAfterCorrectDecimal;
+
+        this.Number = product.Number;
+        this.NumberEdit = product.NumberEdit;
+        this.NumberReturn = product.NumberReturn;
+
+        this.CanUpadte = product.CanUpadte;
+    }
+    public void CalculatePrice()
+    {
+        if (CanUpadte)
+        {
+            PriceTotalDecimal = (number + numberEdit - numberReturn) * Price.PriceDecimal;
+            PriceTotalAfterCorrectDecimal = PriceTotalDecimal + PriceTotalCorrectDecimal;
+            ProductUpdatePriceService.OnUpdate();
+        }
+    }
 }
