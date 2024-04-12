@@ -102,37 +102,47 @@ namespace Inventory.Pages.RangeDay
 
         static RangeDayM[] SumTotalPriceOfRange(RangeDayM[] range)
         {
-            List<Driver> driver = [];
+            List<Driver> drivers = [];
             for (int i = 0; i < range.Length; i++)
             {
                 if (i == 0)
                 {
-                    driver.Add(range[i].Driver);
+                    drivers.Add(range[i].Driver);
                     continue;
                 }
 
-                if (driver.Any(x => x.Id != range[i].Driver.Id))
+                if (drivers.Any(x => x.Id != range[i].Driver.Id))
                 {
-                    driver.Add(range[i].Driver);
+                    drivers.Add(range[i].Driver);
                 }
             }
 
-            RangeDayM[] SumRange = new RangeDayM[driver.Count];
-            for (int i = 0; i < driver.Count; i++)
+            RangeDayM[] SumRange = new RangeDayM[drivers.Count];
+            for (int i = 0; i < drivers.Count; i++)
             {
+                var driver = drivers[i];
+
+                var product = range.Where(z => z.Driver.Id == driver.Id);
+                var cake = range.Where(z => z.Driver.Id == driver.Id);
+                var price = range.Where(z => z.Driver.Id == driver.Id);
+                var correct = range.Where(z => z.Driver.Id == driver.Id);
+                var money = range.Where(z => z.Driver.Id == driver.Id);
+                var difference = range.Where(z => z.Driver.Id == driver.Id);
+                var after = range.Where(z => z.Driver.Id == driver.Id);
+
                 var day = new Day
                 {
-                    TotalPriceProducts = range.Where(z => z.Driver == driver[i]).Sum(x => x.Day.TotalPriceProducts),
-                    TotalPriceCake = range.Where(z => z.Driver == driver[i]).Sum(x => x.Day.TotalPriceCake),
-                    TotalPrice = range.Where(z => z.Driver == driver[i]).Sum(x => x.Day.TotalPrice),
-                    TotalPriceCorrect = range.Where(z => z.Driver == driver[i]).Sum(x => x.Day.TotalPriceCorrect),
-                    TotalPriceMoney = range.Where(z => z.Driver == driver[i]).Sum(x => x.Day.TotalPriceMoney),
-                    TotalPriceDifference = range.Where(z => z.Driver == driver[i]).Sum(x => x.Day.TotalPriceDifference),
-                    TotalPriceAfterCorrect = range.Where(z => z.Driver == driver[i]).Sum(x => x.Day.TotalPriceAfterCorrect)
+                    TotalPriceProducts = product.Sum(x => x.Day.TotalPriceProducts),
+                    TotalPriceCake = cake.Sum(x => x.Day.TotalPriceCake),
+                    TotalPrice = price.Sum(x => x.Day.TotalPrice),
+                    TotalPriceCorrect = correct.Sum(x => x.Day.TotalPriceCorrect),
+                    TotalPriceMoney = money.Sum(x => x.Day.TotalPriceMoney),
+                    TotalPriceDifference = difference.Sum(x => x.Day.TotalPriceDifference),
+                    TotalPriceAfterCorrect = after.Sum(x => x.Day.TotalPriceAfterCorrect)
                 };
                 SumRange[i] = new()
                 {
-                    Driver = driver[i],
+                    Driver = drivers[i],
                     Day = day,
                 };
             }
