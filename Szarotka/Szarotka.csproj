@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net8.0-maccatalyst;net8.0-android34.0</TargetFrameworks>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.22621.0</TargetFrameworks>
 		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
 		<!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
 
@@ -45,13 +45,13 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|AnyCPU'">
 	  <ApplicationId>com.szarotka.szarotka</ApplicationId>
-	  <ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>2</ApplicationVersion>
+	  <ApplicationDisplayVersion>1</ApplicationDisplayVersion>
+	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|AnyCPU'">
 	  <ApplicationId>com.szarotka.szarotka</ApplicationId>
-	  <ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>2</ApplicationDisplayVersion>
 	  <ApplicationVersion>2</ApplicationVersion>
 	</PropertyGroup>
 
@@ -63,25 +63,35 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|AnyCPU'">
 	  <ApplicationId>com.szarotka.szarotka</ApplicationId>
-	  <ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
-	  <ApplicationVersion>2</ApplicationVersion>
+	  <ApplicationDisplayVersion>1</ApplicationDisplayVersion>
+	  <ApplicationVersion>1</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|AnyCPU'">
 	  <ApplicationId>com.szarotka.szarotka</ApplicationId>
-	  <ApplicationDisplayVersion>1.1.0</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>2</ApplicationDisplayVersion>
 	  <ApplicationVersion>2</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android34.0|AnyCPU'">
-	  <ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>1.2.0</ApplicationDisplayVersion>
 	  <ApplicationId>com.szarotka.szarotka</ApplicationId>
 	  <ApplicationVersion>2</ApplicationVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android34.0|AnyCPU'">
-	  <ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
+	  <ApplicationDisplayVersion>1.2.0</ApplicationDisplayVersion>
 	  <ApplicationId>com.szarotka.szarotka</ApplicationId>
+	  <ApplicationVersion>2</ApplicationVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.22621.0|AnyCPU'">
+	  <ApplicationDisplayVersion>1.2.0</ApplicationDisplayVersion>
+	  <ApplicationVersion>2</ApplicationVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.22621.0|AnyCPU'">
+	  <ApplicationDisplayVersion>1.2.0</ApplicationDisplayVersion>
 	  <ApplicationVersion>2</ApplicationVersion>
 	</PropertyGroup>
 
