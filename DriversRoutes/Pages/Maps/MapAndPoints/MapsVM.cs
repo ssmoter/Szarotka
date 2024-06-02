@@ -94,7 +94,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                     return szarotka;
                 }
 
-                MapSpan mapSpan = new(location, 0.1, 0.1);
+                MapSpan mapSpan = new(location, 0.01, 0.01);
                 return mapSpan;
             }
             catch (Exception ex)
@@ -112,7 +112,8 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 Geolocation.LocationChanged += (sender, e) =>
                 {
                     var location = e.Location;
-                    map.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(location.Latitude, location.Longitude), Distance.FromMiles(1)));
+                    var radius = map.VisibleRegion.Radius;
+                    map.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(location.Latitude, location.Longitude), radius));
                 };
                 if (!result)
                 {
@@ -244,7 +245,19 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 _db.SaveLog(ex);
             }
         }
+        public async void GetSelectedDaysAndForget(SelectedDayOfWeekRoutes week)
+        {
+            try
+            {
+                AllPoints.Clear();
+                AllPoints = await GetSelectedDays(LastSelectedDayOfWeekWhenNavigation);
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
 
+        }
         public async Task<ObservableCollection<MapsM>> GetSelectedDays(SelectedDayOfWeekRoutes week)
         {
             var points = new ObservableCollection<MapsM>();
@@ -330,7 +343,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             if (mapsM is null)
                 return;
 
-            var mapSpan = new MapSpan(mapsM.Pin.Location, 0.01, 0.01);
+            var mapSpan = new MapSpan(mapsM.Pin.Location, 0.005, 0.005);
             OnGoToLocation(mapSpan);
         }
 
@@ -349,7 +362,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
         }
 
         [RelayCommand]
-        async Task DisplayPin(MapsM point)
+        async Task DisplayDescriptionPin(MapsM point)
         {
             try
             {
@@ -386,7 +399,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
         }
 
         [RelayCommand]
-        async Task CurrentLocationPin()
+        async Task CurrentLocationNewPin()
         {
             try
             {

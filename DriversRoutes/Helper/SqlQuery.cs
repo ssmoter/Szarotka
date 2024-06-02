@@ -198,7 +198,7 @@ WHERE CustomerRoutes.RoutesId == ");
 
             if (dayOf.IfAnyIsTrue())
             {
-                sb.Append(" DESC");
+                sb.Append(" ASC");
             }
 
             #endregion

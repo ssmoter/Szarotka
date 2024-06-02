@@ -11,19 +11,6 @@ public partial class MapsV : ContentPage, IDisposable
         InitializeComponent();
         vm.GoToLocation += Map.MoveToRegion;
         BindingContext = vm;
-
-        Task.Run(async () =>
-        {
-            await vm.StartListeningLocation(this.Map);
-        });
-
-        //MapSpan mapSpan = vm.szarotka;
-        //Task.Run(async () =>
-        //{
-        //    mapSpan = await vm.GetCurrentLocation();
-        //});
-        //if (mapSpan is not null)
-        //    this.Map.MoveToRegion(mapSpan);
     }
 
     public void Dispose()
@@ -44,12 +31,17 @@ public partial class MapsV : ContentPage, IDisposable
         }
     }
 
-    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
 
         if (BindingContext is MapsVM vm)
         {
+            Task.Run(async () =>
+            {
+                await vm.StartListeningLocation(this.Map);
+            });
+
             if (vm.Routes is null)
                 return;
             if (vm.DriversRoutesName.Length <= 16)
@@ -57,13 +49,11 @@ public partial class MapsV : ContentPage, IDisposable
 
             if (vm.LastSelectedDayOfWeekWhenNavigation is not null)
             {
-                vm.AllPoints.Clear();
-                vm.AllPoints = await vm.GetSelectedDays(vm.LastSelectedDayOfWeekWhenNavigation);
+                vm.GetSelectedDaysAndForget(vm.LastSelectedDayOfWeek);
             }
             else if (vm.LastSelectedDayOfWeek is not null)
             {
-                vm.AllPoints.Clear();
-                vm.AllPoints = await vm.GetSelectedDays(vm.LastSelectedDayOfWeek);
+                vm.GetSelectedDaysAndForget(vm.LastSelectedDayOfWeek);
             }
         }
     }

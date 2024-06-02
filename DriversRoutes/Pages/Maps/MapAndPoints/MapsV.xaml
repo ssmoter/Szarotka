@@ -129,7 +129,7 @@
 
                                     <Button
                                         Padding="5,0,5,0"
-                                        Command="{Binding CurrentLocationPinCommand}"
+                                        Command="{Binding CurrentLocationNewPinCommand}"
                                         CornerRadius="50"
                                         HorizontalOptions="Center"
                                         Text="Dodaj" />
@@ -155,7 +155,7 @@
                                         CreatedDate="{Binding Created}"
                                         DayOfWeek="{Binding SelectedDayOfWeek}"
                                         Description="{Binding Description}"
-                                        DisplayButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:MapsVM}}, Path=DisplayPinCommand}"
+                                        DisplayButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:MapsVM}}, Path=DisplayDescriptionPinCommand}"
                                         DisplayButtonCommandParameter="{Binding .}"
                                         DisplayIsVisible="True"
                                         LocationButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:MapsVM}}, Path=LocationOfPinCommand}"

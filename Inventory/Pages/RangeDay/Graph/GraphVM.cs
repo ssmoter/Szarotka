@@ -38,8 +38,7 @@ namespace Inventory.Pages.RangeDay.Graph
         const string _zl = " zł";
         readonly Driver[] _allDrivers;
         readonly DataBase.Data.AccessDataBase _db;
-        readonly Service.ISelectDayService _selectDayService;
-        public GraphVM(DataBase.Data.AccessDataBase db, Service.ISelectDayService selectDayService)
+        public GraphVM(DataBase.Data.AccessDataBase db)
         {
             RangeDayMs ??= [];
             Legend ??= [];
@@ -52,29 +51,12 @@ namespace Inventory.Pages.RangeDay.Graph
 
             var driver = _db.DataBase.Table<Driver>().ToArray();
             _allDrivers = driver;
-            _selectDayService = selectDayService;
-
             DeviceDisplay.MainDisplayInfoChanged += OnMainDisplayInfoChanged;
         }
 
 
 
         #region Method
-
-        async Task<RangeDayM[]> SelectDays(long from, long to, Guid[] selectedDriverName, bool moreData)
-        {
-            var (drivers, days) = await _selectDayService.GetDaysAndDrivers(from, to, selectedDriverName, moreData);
-
-            var range = new RangeDayM[days.Length];
-
-            for (int i = 0; i < range.Length; i++)
-            {
-                range[i].Day = days[i];
-                range[i].Driver = drivers[i];
-            }
-
-            return range.Reverse().ToArray();
-        }
 
         public void OnReDraw(IDrawable drawable)
         {
@@ -173,7 +155,7 @@ namespace Inventory.Pages.RangeDay.Graph
                     {
                         if (RangeDayMs[i].Day.DriverGuid == drivers[d].Id)
                         {
-                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceCake);
+                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceCakeDecimal);
                             DrawGraph.GraphValues[current].Path.LineTo(point);
                             x++;
                         }
@@ -190,7 +172,7 @@ namespace Inventory.Pages.RangeDay.Graph
                     {
                         if (RangeDayMs[i].Day.DriverGuid == drivers[d].Id)
                         {
-                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPrice);
+                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceDecimal);
                             DrawGraph.GraphValues[current].Path.LineTo(point);
                             x++;
                         }
@@ -207,7 +189,7 @@ namespace Inventory.Pages.RangeDay.Graph
                     {
                         if (RangeDayMs[i].Day.DriverGuid == drivers[d].Id)
                         {
-                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceCorrect);
+                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceCorrectDecimal);
                             DrawGraph.GraphValues[current].Path.LineTo(point);
                             x++;
                         }
@@ -224,7 +206,7 @@ namespace Inventory.Pages.RangeDay.Graph
                     {
                         if (RangeDayMs[i].Day.DriverGuid == drivers[d].Id)
                         {
-                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceAfterCorrect);
+                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceAfterCorrectDecimal);
                             DrawGraph.GraphValues[current].Path.LineTo(point);
                             x++;
                         }
@@ -241,7 +223,7 @@ namespace Inventory.Pages.RangeDay.Graph
                     {
                         if (RangeDayMs[i].Day.DriverGuid == drivers[d].Id)
                         {
-                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceMoney);
+                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceMoneyDecimal);
                             DrawGraph.GraphValues[current].Path.LineTo(point);
                             x++;
                         }
@@ -258,7 +240,7 @@ namespace Inventory.Pages.RangeDay.Graph
                     {
                         if (RangeDayMs[i].Day.DriverGuid == drivers[d].Id)
                         {
-                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceDifference);
+                            var point = new PointF(x, -(float)RangeDayMs[i].Day.TotalPriceDifferenceDecimal);
                             DrawGraph.GraphValues[current].Path.LineTo(point);
                             x++;
                         }
@@ -331,7 +313,7 @@ namespace Inventory.Pages.RangeDay.Graph
                                     {
                                         if (RangeDayMs[i].Day.Products[k].Name.Name == optionsM.ProductMs[j].Name)
                                         {
-                                            var point = new PointF(x, -(float)(RangeDayMs[i].Day.Products[k].PriceTotalAfterCorrect));
+                                            var point = new PointF(x, -(float)(RangeDayMs[i].Day.Products[k].PriceTotalAfterCorrectDecimal));
                                             DrawGraph.GraphValues[current].Path.LineTo(point);
                                             x++;
                                             break;
@@ -354,7 +336,7 @@ namespace Inventory.Pages.RangeDay.Graph
             {
                 if (RangeDayMs[i].Day.DriverGuid == drivers[0].Id)
                 {
-                    DrawGraph.XValues[i] = RangeDayMs[i].Day.Created;
+                    DrawGraph.XValues[i] = RangeDayMs[i].Day.SelectedDate;
                 }
             }
 
@@ -391,7 +373,7 @@ namespace Inventory.Pages.RangeDay.Graph
                 return [];
 
 
-            var first = rangeDayMs.FirstOrDefault();
+            var first = rangeDayMs.MaxBy(x=>x.Day.Products.Count);
             if (first is null)
                 return [];
 
@@ -448,34 +430,6 @@ namespace Inventory.Pages.RangeDay.Graph
 
         #region Command
 
-        [RelayCommand]
-        async Task SelectMoreDate()
-        {
-            try
-            {
-                var popup = new PopupSelectRangeDate.PopupSelectRangeDateV(_allDrivers);
-                var result = await Shell.Current.ShowPopupAsync(popup);
-
-                if (result is PopupDateModel model)
-                {
-                    RangeDayMs = await SelectDays(model.From, model.To, model.DriverId, model.MoreData);
-
-                    try
-                    {
-                        DrawGraph.Dispose();
-                        Legend.Clear();
-                        SetValuesToDraw(_optionsM);
-                        OnReDraw(DrawGraph);
-                    }
-                    catch { }
-                    finally { IsRefreshingGraph = false; }
-                }
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLog(ex);
-            }
-        }
 
         [RelayCommand]
         void GetRandomData()

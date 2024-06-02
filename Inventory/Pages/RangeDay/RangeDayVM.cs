@@ -27,6 +27,13 @@ namespace Inventory.Pages.RangeDay
         [ObservableProperty]
         bool enableSave;
 
+        [ObservableProperty]
+        bool listIsVisible=true;
+        [ObservableProperty]
+        bool graphIsVisible;
+        [ObservableProperty]
+        bool tableIsVisible;
+
         string filesPath;
         public string FilesPath
         {

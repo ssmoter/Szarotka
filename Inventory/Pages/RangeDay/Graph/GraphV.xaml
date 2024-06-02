@@ -1,37 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
+<ContentView
     x:Class="Inventory.Pages.RangeDay.Graph.GraphV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:DrawGraph="clr-namespace:Inventory.Data.Draw"
     xmlns:VM="clr-namespace:Inventory.Pages.RangeDay.Graph"
-    Title="Wykres"
-    x:DataType="VM:GraphVM">
+    x:Name="this">
 
-    <Shell.BackButtonBehavior>
-        <BackButtonBehavior Command="{Binding BackCommand}" />
-    </Shell.BackButtonBehavior>
 
-    <Grid ColumnDefinitions="*,*" RowDefinitions="auto,*,1">
+    <Grid
+        BindingContext="{x:Reference this}"
+        ColumnDefinitions="*,*"
+        RowDefinitions="auto,*,1">
         <VerticalStackLayout Grid.ColumnSpan="2">
 
             <HorizontalStackLayout HorizontalOptions="Center">
-
-
                 <Button
-                    Command="{Binding SelectMoreDateCommand}"
-                    HorizontalOptions="Center"
-                    Text="Zakres dat"
-                    VerticalOptions="Center" />
-
-
-                <Button
-                    Command="{Binding OpenOptonsGraphCommand}"
+                    Command="{Binding Vm.OpenOptonsGraphCommand}"
                     HorizontalOptions="Center"
                     Text="Opcje Wyświetlania"
                     VerticalOptions="Center" />
                 <Button
-                    Command="{Binding SwipeViewGestureCommand}"
+                    Command="{Binding Vm.SwipeViewGestureCommand}"
                     HorizontalOptions="Center"
                     Text="Opcje Wykresu"
                     VerticalOptions="Center" />
@@ -50,16 +40,17 @@
             Grid.Column="1"
             BackgroundColor="{AppThemeBinding Light=White,
                                               Dark=Black}"
-            IsVisible="{Binding IsVisibleFrame}"
+            IsVisible="{Binding Vm.IsVisibleFrame}"
+            VerticalOptions="Start"
             ZIndex="102">
             <Border.GestureRecognizers>
-                <SwipeGestureRecognizer Command="{Binding SwipeViewGestureCommand}" Direction="Right" />
+                <SwipeGestureRecognizer Command="{Binding Vm.SwipeViewGestureCommand}" Direction="Right" />
             </Border.GestureRecognizers>
 
             <VerticalStackLayout Spacing="5">
 
                 <Button
-                    Command="{Binding SwipeViewGestureCommand}"
+                    Command="{Binding Vm.SwipeViewGestureCommand}"
                     HorizontalOptions="Fill"
                     Text="Schowaj" />
                 <Border>
@@ -69,45 +60,15 @@
 
                     <VerticalStackLayout>
                         <Label HorizontalOptions="Center" Text="Typ Wykresu" />
-                        <Grid ColumnDefinitions="*,*" RowDefinitions="*,*,*,*">
 
-                            <CheckBox
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                IsChecked="{Binding TypeOfGraphM.Column}" />
-                            <Label
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Text="Kolumnowy" />
+                        <VerticalStackLayout>
+                            <RadioButton Content="Kolumnowy" IsChecked="{Binding Vm.TypeOfGraphM.Column}" />
+                            <RadioButton Content="Liniowy" IsChecked="{Binding Vm.TypeOfGraphM.Line}" />
+                            <RadioButton Content="Punktowy" IsChecked="{Binding Vm.TypeOfGraphM.Point}" />
+                            <RadioButton Content="Liniowo/Punktowy" IsChecked="{Binding Vm.TypeOfGraphM.LinePoint}" />
 
-                            <CheckBox
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                IsChecked="{Binding TypeOfGraphM.Line}" />
-                            <Label
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Text="Liniowy" />
+                        </VerticalStackLayout>
 
-                            <CheckBox
-                                Grid.Row="2"
-                                Grid.Column="0"
-                                IsChecked="{Binding TypeOfGraphM.Point}" />
-                            <Label
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Text="Punktowy" />
-
-                            <CheckBox
-                                Grid.Row="3"
-                                Grid.Column="0"
-                                IsChecked="{Binding TypeOfGraphM.LinePoint}" />
-                            <Label
-                                Grid.Row="3"
-                                Grid.Column="1"
-                                Text="Liniowo/Punktowy" />
-
-                        </Grid>
                     </VerticalStackLayout>
                 </Border>
             </VerticalStackLayout>
@@ -117,15 +78,15 @@
         <RefreshView
             Grid.Row="1"
             Grid.ColumnSpan="2"
-            Command="{Binding RefreshGraphCommand}"
-            IsRefreshing="{Binding IsRefreshingGraph}">
+            Command="{Binding Vm.RefreshGraphCommand}"
+            IsRefreshing="{Binding Vm.IsRefreshingGraph}">
             <ScrollView>
 
                 <Grid ColumnDefinitions="*,auto">
                     <GraphicsView x:Name="GVDrawGraph" Grid.ColumnSpan="2" />
 
                     <Grid Grid.Column="1" RowDefinitions="*">
-                        <CollectionView ItemsSource="{Binding Legend}">
+                        <CollectionView ItemsSource="{Binding Vm.Legend}">
 
                             <CollectionView.ItemTemplate>
 
@@ -153,4 +114,4 @@
     </Grid>
 
 
-</ContentPage>
+</ContentView>

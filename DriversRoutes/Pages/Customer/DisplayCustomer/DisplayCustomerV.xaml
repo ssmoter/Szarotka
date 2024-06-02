@@ -8,7 +8,7 @@
     xmlns:MapSmall="clr-namespace:DriversRoutes.Pages.Maps.MapSmall"
     xmlns:Vm="clr-namespace:DriversRoutes.Pages.Customer.DisplayCustomer"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    Title="DisplayCustomerV"
+    Title="{Binding Customer.Name}"
     x:DataType="Vm:DisplayCustomerVM">
 
 

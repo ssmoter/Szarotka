@@ -12,191 +12,201 @@
 
 
 
-    <Border
-        Margin="10,10,10,5"
-        Padding="10,10,10,5"
-        HorizontalOptions="Center"
-        VerticalOptions="Center">
+    <ScrollView
+        Margin="10,10,10,-5"
+        Padding="10,10,10,0"
+        Orientation="Horizontal">
 
-        <Grid
-            HorizontalOptions="Center"
-            RowDefinitions="300,auto"
-            RowSpacing="5">
+        <Border HorizontalOptions="Center" VerticalOptions="Start">
 
-            <HorizontalStackLayout
-                Padding="5"
+            <Grid
                 HorizontalOptions="Center"
-                VerticalOptions="Center">
+                RowDefinitions="300,auto"
+                RowSpacing="5">
 
-                <ScrollView HorizontalOptions="Center" VerticalOptions="Start">
+                <HorizontalStackLayout
+                    Padding="5"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
+
+
+                    <Border HorizontalOptions="Center" VerticalOptions="Start">
+                        <ScrollView>
+
+                            <Grid ColumnDefinitions="50,100" RowDefinitions="50,50,50,50,50,50,50,80">
+
+                                <Label
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Margin="-10,0,0,0"
+                                    Text="Utarg Produkty"
+                                    VerticalOptions="Center" />
+                                <CheckBox
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    IsChecked="{Binding GraphOptionsMs.TotalPriceProduct}"
+                                    VerticalOptions="Center" />
+
+                                <Label
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="-10,0,0,0"
+                                    Text="Utarg Ciasto"
+                                    VerticalOptions="Center" />
+                                <CheckBox
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    IsChecked="{Binding GraphOptionsMs.TotalPriceCake}"
+                                    VerticalOptions="Center" />
+
+                                <Label
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Margin="-10,0,0,0"
+                                    Text="Utarg Suma"
+                                    VerticalOptions="Center" />
+                                <CheckBox
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    IsChecked="{Binding GraphOptionsMs.TotalPrice}"
+                                    VerticalOptions="Center" />
+
+                                <Label
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    Margin="-10,0,0,0"
+                                    Text="Utarg Korekta"
+                                    VerticalOptions="Center" />
+                                <CheckBox
+                                    Grid.Row="3"
+                                    Grid.Column="0"
+                                    IsChecked="{Binding GraphOptionsMs.TotalPriceCorrect}"
+                                    VerticalOptions="Center" />
+
+                                <Label
+                                    Grid.Row="4"
+                                    Grid.Column="1"
+                                    Margin="-10,0,0,0"
+                                    Text="Utarg Po Korekcie"
+                                    VerticalOptions="Center" />
+                                <CheckBox
+                                    Grid.Row="4"
+                                    Grid.Column="0"
+                                    IsChecked="{Binding GraphOptionsMs.TotalPriceAfterCorrect}"
+                                    VerticalOptions="Center" />
+
+                                <Label
+                                    Grid.Row="5"
+                                    Grid.Column="1"
+                                    Margin="-10,0,0,0"
+                                    Text="Zapłacono"
+                                    VerticalOptions="Center" />
+                                <CheckBox
+                                    Grid.Row="5"
+                                    Grid.Column="0"
+                                    IsChecked="{Binding GraphOptionsMs.TotalPriceMoney}"
+                                    VerticalOptions="Center" />
+
+                                <Label
+                                    Grid.Row="6"
+                                    Grid.Column="1"
+                                    Margin="-10,0,0,0"
+                                    Text="Różnica"
+                                    VerticalOptions="Center" />
+                                <CheckBox
+                                    Grid.Row="6"
+                                    Grid.Column="0"
+                                    IsChecked="{Binding GraphOptionsMs.TotalPriceDifference}"
+                                    VerticalOptions="Center" />
+
+                                <Label
+                                    Grid.Row="7"
+                                    Grid.Column="1"
+                                    Margin="-10,0,0,0"
+                                    Text="Ilość Sprzedanych Ciast"
+                                    VerticalOptions="Center" />
+                                <CheckBox
+                                    Grid.Row="7"
+                                    Grid.Column="0"
+                                    IsChecked="{Binding GraphOptionsMs.NumberOfCakes}"
+                                    VerticalOptions="Center" />
+                            </Grid>
+
+                        </ScrollView>
+                    </Border>
 
                     <Border>
+                        <CollectionView ItemsSource="{Binding GraphOptionsMs.ProductMs}">
 
-                        <Grid ColumnDefinitions="100,50" RowDefinitions="50,50,50,50,50,50,50,80">
+                            <CollectionView.ItemTemplate>
 
-                            <Label
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Text="Utarg Produkty"
-                                VerticalOptions="Center" />
-                            <CheckBox
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                IsChecked="{Binding GraphOptionsMs.TotalPriceProduct}"
-                                VerticalOptions="Center" />
+                                <DataTemplate x:DataType="VM:GraphOptionsProductM">
+                                    <Border>
 
-                            <Label
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                Text="Utarg Ciasto"
-                                VerticalOptions="Center" />
-                            <CheckBox
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                IsChecked="{Binding GraphOptionsMs.TotalPriceCake}"
-                                VerticalOptions="Center" />
+                                        <StackLayout HorizontalOptions="FillAndExpand">
 
-                            <Label
-                                Grid.Row="2"
-                                Grid.Column="0"
-                                Text="Utarg Suma"
-                                VerticalOptions="Center" />
-                            <CheckBox
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                IsChecked="{Binding GraphOptionsMs.TotalPrice}"
-                                VerticalOptions="Center" />
+                                            <Label
+                                                HorizontalOptions="Center"
+                                                Text="{Binding Name}"
+                                                VerticalOptions="Center" />
 
-                            <Label
-                                Grid.Row="3"
-                                Grid.Column="0"
-                                Text="Utarg Korekta"
-                                VerticalOptions="Center" />
-                            <CheckBox
-                                Grid.Row="3"
-                                Grid.Column="1"
-                                IsChecked="{Binding GraphOptionsMs.TotalPriceCorrect}"
-                                VerticalOptions="Center" />
+                                            <HorizontalStackLayout HorizontalOptions="Start">
 
-                            <Label
-                                Grid.Row="4"
-                                Grid.Column="0"
-                                Text="Utarg Po Korekcie"
-                                VerticalOptions="Center" />
-                            <CheckBox
-                                Grid.Row="4"
-                                Grid.Column="1"
-                                IsChecked="{Binding GraphOptionsMs.TotalPriceAfterCorrect}"
-                                VerticalOptions="Center" />
+                                                <CheckBox
+                                                    HorizontalOptions="End"
+                                                    IsChecked="{Binding IsNumber}"
+                                                    VerticalOptions="Center" />
+                                                <Label
+                                                    HorizontalOptions="Start"
+                                                    Text="Sprzedanych"
+                                                    VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
 
-                            <Label
-                                Grid.Row="5"
-                                Grid.Column="0"
-                                Text="Zapłacono"
-                                VerticalOptions="Center" />
-                            <CheckBox
-                                Grid.Row="5"
-                                Grid.Column="1"
-                                IsChecked="{Binding GraphOptionsMs.TotalPriceMoney}"
-                                VerticalOptions="Center" />
+                                            <HorizontalStackLayout HorizontalOptions="Start">
+                                                <CheckBox
+                                                    HorizontalOptions="End"
+                                                    IsChecked="{Binding IsPrice}"
+                                                    VerticalOptions="Center" />
+                                                <Label
+                                                    HorizontalOptions="Start"
+                                                    Text="Utarg"
+                                                    VerticalOptions="Center" />
+                                            </HorizontalStackLayout>
 
-                            <Label
-                                Grid.Row="6"
-                                Grid.Column="0"
-                                Text="Różnica"
-                                VerticalOptions="Center" />
-                            <CheckBox
-                                Grid.Row="6"
-                                Grid.Column="1"
-                                IsChecked="{Binding GraphOptionsMs.TotalPriceDifference}"
-                                VerticalOptions="Center" />
+                                        </StackLayout>
 
-                            <Label
-                                Grid.Row="7"
-                                Grid.Column="0"
-                                Text="Ilość Sprzedanych Ciast"
-                                VerticalOptions="Center" />
-                            <CheckBox
-                                Grid.Row="7"
-                                Grid.Column="1"
-                                IsChecked="{Binding GraphOptionsMs.NumberOfCakes}"
-                                VerticalOptions="Center" />
-                        </Grid>
+                                    </Border>
+                                </DataTemplate>
 
+                            </CollectionView.ItemTemplate>
+
+                        </CollectionView>
                     </Border>
-                </ScrollView>
 
-                <ScrollView HorizontalOptions="FillAndExpand">
-
-                    <CollectionView ItemsSource="{Binding GraphOptionsMs.ProductMs}">
-
-                        <CollectionView.ItemTemplate>
-
-                            <DataTemplate x:DataType="VM:GraphOptionsProductM">
-                                <Border>
-
-                                    <VerticalStackLayout HorizontalOptions="Center">
-
-                                        <Label
-                                            HorizontalOptions="Center"
-                                            Text="{Binding Name}"
-                                            VerticalOptions="Center" />
-                                        <HorizontalStackLayout HorizontalOptions="Center">
-
-                                            <Label
-                                                HorizontalOptions="Start"
-                                                Text="Sprzedanych"
-                                                VerticalOptions="Center" />
-                                            <CheckBox
-                                                HorizontalOptions="End"
-                                                IsChecked="{Binding IsNumber}"
-                                                VerticalOptions="Center" />
-                                        </HorizontalStackLayout>
-
-                                        <HorizontalStackLayout HorizontalOptions="Center">
-                                            <Label
-                                                HorizontalOptions="Start"
-                                                Text="Utarg"
-                                                VerticalOptions="Center" />
-                                            <CheckBox
-                                                HorizontalOptions="End"
-                                                IsChecked="{Binding IsPrice}"
-                                                VerticalOptions="Center" />
-                                        </HorizontalStackLayout>
-
-                                    </VerticalStackLayout>
-
-                                </Border>
-                            </DataTemplate>
-
-                        </CollectionView.ItemTemplate>
-
-                    </CollectionView>
-                </ScrollView>
-
-            </HorizontalStackLayout>
+                </HorizontalStackLayout>
 
 
-            <HorizontalStackLayout
-                Grid.Row="1"
-                Padding="5"
-                HorizontalOptions="Center"
-                VerticalOptions="Center">
-                <Button
-                    Command="{Binding CancelAndReturnCommand}"
+                <HorizontalStackLayout
+                    Grid.Row="1"
+                    Padding="5"
                     HorizontalOptions="Center"
-                    Text="Anuluj"
-                    VerticalOptions="Center" />
-                <Button
-                    Command="{Binding SaveAndReturnCommand}"
-                    HorizontalOptions="Center"
-                    Text="Ustaw"
-                    VerticalOptions="Center" />
-            </HorizontalStackLayout>
+                    VerticalOptions="Center">
+                    <Button
+                        Command="{Binding CancelAndReturnCommand}"
+                        HorizontalOptions="Center"
+                        Text="Anuluj"
+                        VerticalOptions="Center" />
+                    <Button
+                        Command="{Binding SaveAndReturnCommand}"
+                        HorizontalOptions="Center"
+                        Text="Ustaw"
+                        VerticalOptions="Center" />
+                </HorizontalStackLayout>
 
-        </Grid>
+            </Grid>
 
-    </Border>
+        </Border>
+    </ScrollView>
 
 
 
