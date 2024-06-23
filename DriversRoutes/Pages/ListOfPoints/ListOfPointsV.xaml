@@ -30,9 +30,9 @@
                 </HorizontalStackLayout>
 
                 <HorizontalStackLayout IsVisible="{Binding SaveIsVisible}">
-                    
-                    <Button Text="Zapisz plik" />
-                    
+
+                    <Button Command="{Binding SaveFromFileCommand}" Text="Zapisz plik" />
+
                 </HorizontalStackLayout>
 
                 <Button Command="{Binding GetFilesCommand}" Text="Pliki" />

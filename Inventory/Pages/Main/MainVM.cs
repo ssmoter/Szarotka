@@ -18,6 +18,7 @@ namespace Inventory.Pages.Main
         [ObservableProperty]
         MainM mainM;
 
+
         public Day Day { get; set; }
 
         readonly DataBase.Data.AccessDataBase _db;

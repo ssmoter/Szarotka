@@ -1,5 +1,5 @@
-﻿using DataBase.Model.EntitiesInventory;
-
+﻿using DataBase.Helper;
+using DataBase.Model.EntitiesInventory;
 namespace Inventory.Pages.SingleDay;
 
 public partial class SingleDayV : ContentPage
@@ -80,76 +80,80 @@ public partial class SingleDayV : ContentPage
 
     #region Product SwipeView RightItems 
 
-    private void Button_Clicked_FastMinusProductNumber(object sender, EventArgs e)
+    private async void Button_Clicked_FastMinusProductNumber(object sender, EventArgs e)
     {
         if (sender is not ImageButton item) { return; }
 
         if (item.BindingContext is not Product product) { return; }
-
+        await item.BounceOnPressAsync();
         _vm.FastMinusProductNumberCommand.Execute(product);
     }
-    private void Button_Clicked_FastAddProductNumber(object sender, EventArgs e)
+    private async void Button_Clicked_FastAddProductNumber(object sender, EventArgs e)
     {
         if (sender is not ImageButton item) { return; }
 
         if (item.BindingContext is not Product product) { return; }
 
+        await item.BounceOnPressAsync();
         _vm.FastAddProductNumberCommand.Execute(product);
     }
-    private void Button_Clicked_FastMinusProductEdit(object sender, EventArgs e)
+    private async void Button_Clicked_FastMinusProductEdit(object sender, EventArgs e)
     {
         if (sender is not ImageButton item) { return; }
 
         if (item.BindingContext is not Product product) { return; }
 
+        await item.BounceOnPressAsync();
         _vm.FastMinusProductEditCommand.Execute(product);
     }
-    private void Button_Clicked_FastAddProductEdit(object sender, EventArgs e)
+    private async void Button_Clicked_FastAddProductEdit(object sender, EventArgs e)
     {
         if (sender is not ImageButton item) { return; }
 
         if (item.BindingContext is not Product product) { return; }
-
+        await item.BounceOnPressAsync();
         _vm.FastAddProductEditCommand.Execute(product);
     }
-    private void Button_Clicked_FastMinusProductReturn(object sender, EventArgs e)
+    private async void Button_Clicked_FastMinusProductReturn(object sender, EventArgs e)
     {
         if (sender is not ImageButton item) { return; }
 
         if (item.BindingContext is not Product product) { return; }
-
+        await item.BounceOnPressAsync();
         _vm.FastMinusProductReturnCommand.Execute(product);
     }
-    private void Button_Clicked_FastAddProductReturn(object sender, EventArgs e)
+    private async void Button_Clicked_FastAddProductReturn(object sender, EventArgs e)
     {
         if (sender is not ImageButton item) { return; }
 
         if (item.BindingContext is not Product product) { return; }
-
+        await item.BounceOnPressAsync();
         _vm.FastAddProductReturnCommand.Execute(product);
     }
 
     #region left
 
-    private void Button_Clicked_ChangeProductPrice(object sender, EventArgs e)
+    private async void Button_Clicked_ChangeProductPrice(object sender, EventArgs e)
     {
         if (sender is not ImageButton item) { return; }
 
         if (item.BindingContext is not Product product) { return; }
-
+        await item.BounceOnPressAsync();
         _vm.ChangeProductPriceCommand.Execute(product);
     }
-    private void Button_Clicked_DeleteSelectedProduct(object sender, EventArgs e)
+    private async void Button_Clicked_DeleteSelectedProduct(object sender, EventArgs e)
     {
         if (sender is not ImageButton item) { return; }
 
         if (item.BindingContext is not Product product) { return; }
-
+        await item.BounceOnPressAsync();
         _vm.DeleteSelectedProductCommand.Execute(product);
     }
 
     #endregion
     #endregion
+
+
     private void SwipeItem_Invoked_DeleteCake(object sender, EventArgs e)
     {
         if (sender is not SwipeItem item) { return; }

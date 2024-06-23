@@ -235,6 +235,7 @@
                     <maps:Pin
                         Address="{Binding Pin.Address}"
                         InfoWindowClicked="Pin_InfoWindowClicked"
+                        MarkerClicked="Pin_InfoWindowClicked"
                         Label="{Binding Pin.Label}"
                         Location="{Binding Pin.Location}" />
 

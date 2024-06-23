@@ -58,19 +58,19 @@ namespace DriversRoutes.Pages.ListOfPoints
                     var extension = Path.GetExtension(filesPath);
                     if (extension == FileHelper.jsonTyp)
                     {
-                        Task.Run(async () => { await GetCustomerPointsFromFile(); });
+                        Task.Run(async () => { await GetCustomerPointsFromFile(value); });
                     }
                 }
             }
         }
 
-        private async Task GetCustomerPointsFromFile()
+        private async Task GetCustomerPointsFromFile(string path)
         {
             try
             {
                 CustomerListRefresh = true;
 
-                var result = await JsonFile.GetFileJson<CustomerRoutes[]>(filesPath);
+                var result = await JsonFile.GetFileJson<CustomerRoutes[]>(path);
 
                 CustomerRoutes?.Clear();
                 CustomerRoutes = new ObservableCollection<CustomerRoutes>(result);
@@ -261,14 +261,21 @@ namespace DriversRoutes.Pages.ListOfPoints
                 if (!result)
                     return;
 
+                Task[] task = new Task[CustomerRoutes.Count];
                 for (int i = 0; i < CustomerRoutes.Count; i++)
                 {
-                    await _saveRoutes.SaveCustomer(CustomerRoutes[i], CustomerRoutes[i].RoutesId.ToByteArray());
+                    task[i] = _saveRoutes.SaveCustomer(CustomerRoutes[i], CustomerRoutes[i].RoutesId.ToByteArray());
                 }
+                await Task.WhenAll(task);
+                await Shell.Current.DisplayAlert("Zapisywanie", "Udało się zapisać wszystkie dane", "Ok");
             }
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
+            }
+            finally 
+            {
+                saveData = false;
             }
         }
 

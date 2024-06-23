@@ -10,7 +10,7 @@ using Inventory.Service;
 namespace Inventory.Pages.SingleDay
 {
     [QueryProperty(nameof(Day), nameof(Day))]
-    public partial class SingleDayVM : ObservableObject
+    public partial class SingleDayVM : ObservableObject, IDisposable
     {
         [ObservableProperty]
         Day day;
@@ -18,28 +18,49 @@ namespace Inventory.Pages.SingleDay
         [ObservableProperty]
         SingleDayM singleDayM;
 
+        static PeriodicTimer lastFastValuePeriodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(1));
         static (string name, int value, char sign) lastFastValue = new("", 0, ' ');
+        static int lastFastValueClearTimerValue = 0;
+
         const char signPlus = '+';
         //const char signMinus = '-';
         readonly DataBase.Data.AccessDataBase _db;
         readonly ISaveDayService _saveDay;
         readonly ISelectDayService _selectDay;
 
-        public SingleDayVM(DataBase.Data.AccessDataBase db, ISaveDayService saveDay, ISelectDayService selectDay)
+        public SingleDayVM(DataBase.Data.AccessDataBase db,
+            ISaveDayService saveDay,
+            ISelectDayService selectDay)
         {
             _db = db;
             _saveDay = saveDay;
             Day ??= new();
             SingleDayM ??= new();
             _selectDay = selectDay;
+            ResetLastFastValue();
         }
-
+        public void Dispose()
+        {
+            lastFastValuePeriodicTimer.Dispose();
+        }
 
 
         #region Method
         public async Task ShowCurrentDay()
         {
             await CommunityToolkit.Maui.Alerts.Toast.Make($"Wczytano dzień {Day.SelectedDate.ToShortDateString()}", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
+        }
+
+        async void ResetLastFastValue()
+        {
+            while (await lastFastValuePeriodicTimer.WaitForNextTickAsync())
+            {
+                lastFastValueClearTimerValue--;
+                if (lastFastValueClearTimerValue == 0)
+                {
+                    lastFastValue.value = 0;
+                }
+            }
         }
 
         static void FastChangeProductNumber(Product product, int value)
@@ -51,11 +72,9 @@ namespace Inventory.Pages.SingleDay
                     SetCanUpdate(product);
                 }
                 product.Number += value;
-
                 ToastMakeFastChange(product, value, "ilość");
             }
         }
-
         static void FastChangeProductEdit(Product product, int value)
         {
             if (product is not null)
@@ -69,7 +88,6 @@ namespace Inventory.Pages.SingleDay
                 ToastMakeFastChange(product, value, "edycja");
             }
         }
-
         static void FastChangeProductReturn(Product product, int value)
         {
             if (product is not null)
@@ -83,6 +101,7 @@ namespace Inventory.Pages.SingleDay
                 ToastMakeFastChange(product, value, "zwrot");
             }
         }
+
         private static void ToastMakeFastChange(Product product, int value, string message)
         {
             if (Math.Sign(lastFastValue.value) != Math.Sign(value))
@@ -91,12 +110,15 @@ namespace Inventory.Pages.SingleDay
             }
 
             if (lastFastValue.name == product.Name.Name)
+            {
                 lastFastValue.value += value;
+            }
             else
             {
                 lastFastValue.value = 1;
                 lastFastValue.name = product.Name.Name;
             }
+            lastFastValueClearTimerValue = 10;
             char sign = value > 0 ? signPlus : ' ';
             Toast.Make($"{product.Name.Name} {message} {sign} {lastFastValue.value}", duration: CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
         }
@@ -199,7 +221,7 @@ namespace Inventory.Pages.SingleDay
                         DayId = Day.Id,
                         Index = Day.Cakes.Count + 1,
                         Created = DateTime.Now,
-                        Updated=DateTime.Now,
+                        Updated = DateTime.Now,
                     };
 
                     Day.Cakes.Add(cake);
@@ -465,6 +487,8 @@ namespace Inventory.Pages.SingleDay
                 Day.Cakes = new(Day.Cakes.OrderByDescending(x => x.CreatedTicks));
             }
         }
+
+
         #endregion
 
     }

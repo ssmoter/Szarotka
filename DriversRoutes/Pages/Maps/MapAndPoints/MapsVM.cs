@@ -250,7 +250,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             try
             {
                 AllPoints.Clear();
-                AllPoints = await GetSelectedDays(LastSelectedDayOfWeekWhenNavigation);
+                AllPoints = await GetSelectedDays(week);
             }
             catch (Exception ex)
             {

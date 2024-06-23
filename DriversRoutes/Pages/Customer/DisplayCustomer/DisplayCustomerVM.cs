@@ -56,7 +56,7 @@ namespace DriversRoutes.Pages.Customer.DisplayCustomer
 
                 if (!result)
                     await Shell.Current.GoToAsync("..");
-                if (!result)
+                if (result)
                 {
                     await _saveRoutes.SaveCustomer(Customer, Customer.RoutesId.ToByteArray());
                 }

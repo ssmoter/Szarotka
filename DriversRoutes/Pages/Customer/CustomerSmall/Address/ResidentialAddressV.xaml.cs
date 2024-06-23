@@ -3,8 +3,6 @@ using CommunityToolkit.Maui.Core;
 
 using DataBase.Model.EntitiesRoutes;
 
-using System.Text;
-
 namespace DriversRoutes.Pages.Customer.CustomerSmall.Address;
 
 
@@ -16,15 +14,17 @@ public partial class ResidentialAddressV : ContentView
     {
         var control = (ResidentialAddressV)bindable;
         var address = newValue as ResidentialAddress;
-
-        control.ResidentialAddressM.Name = !string.IsNullOrWhiteSpace(address.Name);
-        control.ResidentialAddressM.Surname = !string.IsNullOrWhiteSpace(address.Surname);
-        control.ResidentialAddressM.Street = !string.IsNullOrWhiteSpace(address.Street);
-        control.ResidentialAddressM.HouseNumber = !string.IsNullOrWhiteSpace(address.HouseNumber);
-        control.ResidentialAddressM.ApartmentNumber = !string.IsNullOrWhiteSpace(address.ApartmentNumber);
-        control.ResidentialAddressM.PostalCode = !string.IsNullOrWhiteSpace(address.PostalCode);
-        control.ResidentialAddressM.City = !string.IsNullOrWhiteSpace(address.City);
-        control.ResidentialAddressM.Country = !string.IsNullOrWhiteSpace(address.Country);
+        if (address is not null)
+        {
+            control.ResidentialAddressM.Name = !string.IsNullOrWhiteSpace(address.Name);
+            control.ResidentialAddressM.Surname = !string.IsNullOrWhiteSpace(address.Surname);
+            control.ResidentialAddressM.Street = !string.IsNullOrWhiteSpace(address.Street);
+            control.ResidentialAddressM.HouseNumber = !string.IsNullOrWhiteSpace(address.HouseNumber);
+            control.ResidentialAddressM.ApartmentNumber = !string.IsNullOrWhiteSpace(address.ApartmentNumber);
+            control.ResidentialAddressM.PostalCode = !string.IsNullOrWhiteSpace(address.PostalCode);
+            control.ResidentialAddressM.City = !string.IsNullOrWhiteSpace(address.City);
+            control.ResidentialAddressM.Country = !string.IsNullOrWhiteSpace(address.Country);
+        }
 
         if
         (control.ResidentialAddressM.Name
@@ -82,21 +82,6 @@ public partial class ResidentialAddressV : ContentView
     }
     private async Task CopyAddress()
     {
-        //StringBuilder sb = new();
-        //sb.Append(ResidentialAddress.Street);
-        //sb.Append(' ');
-        //sb.Append(ResidentialAddress.HouseNumber);
-        //if (!string.IsNullOrWhiteSpace(ResidentialAddress.ApartmentNumber))
-        //{
-        //    sb.Append('/');
-        //    sb.Append(ResidentialAddress.ApartmentNumber);
-        //}
-        //sb.AppendLine();
-        //sb.Append(ResidentialAddress.PostalCode);
-        //sb.Append(' ');
-        //sb.AppendLine(ResidentialAddress.City);
-        //sb.Append(ResidentialAddress.Country);
-
         await Clipboard.SetTextAsync(ResidentialAddress.ToString());
 
         var toast = Toast.Make("Skopiowano adres", ToastDuration.Short);

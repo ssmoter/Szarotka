@@ -7,36 +7,42 @@
     Title="{Binding SingleLog.Id}"
     x:DataType="VM:LogDataVM">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding CopyCommand}" Text="Skopiuj" />
+    </ContentPage.ToolbarItems>
 
 
 
-    <VerticalStackLayout HorizontalOptions="Center">
+    <ScrollView>
 
-        <VerticalStackLayout>
-            <Border>
-                <Label HorizontalOptions="Center" Text="Data" />
-            </Border>
-            <Label Text="{Binding SingleLog.Created}" />
-            <Line Background="red" />
+        <VerticalStackLayout HorizontalOptions="Center">
+
+            <VerticalStackLayout>
+                <Border>
+                    <Label HorizontalOptions="Center" Text="Data" />
+                </Border>
+                <Label Text="{Binding SingleLog.Created}" />
+                <Line Background="red" />
+            </VerticalStackLayout>
+            <VerticalStackLayout>
+                <Border>
+                    <Label HorizontalOptions="Center" Text="Wiadomość" />
+                </Border>
+                <Label Text="{Binding SingleLog.Message}" />
+                <Line Background="red" />
+
+            </VerticalStackLayout>
+            <VerticalStackLayout>
+                <Border>
+                    <Label HorizontalOptions="Center" Text="Miejsce wystąpienia" />
+                </Border>
+                <Label Text="{Binding SingleLog.StackTrace}" />
+                <Line Background="red" />
+
+            </VerticalStackLayout>
+
         </VerticalStackLayout>
-        <VerticalStackLayout>
-            <Border>
-                <Label HorizontalOptions="Center" Text="Wiadomość" />
-            </Border>
-            <Label Text="{Binding SingleLog.Message}" />
-            <Line Background="red" />
-
-        </VerticalStackLayout>
-        <VerticalStackLayout>
-            <Border>
-                <Label HorizontalOptions="Center" Text="Miejsce wystąpienia" />
-            </Border>
-            <Label Text="{Binding SingleLog.StackTrace}" />
-            <Line Background="red" />
-
-        </VerticalStackLayout>
-
-    </VerticalStackLayout>
+    </ScrollView>
 
 
 
