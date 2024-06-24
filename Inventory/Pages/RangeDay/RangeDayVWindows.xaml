@@ -18,9 +18,18 @@
     </Shell.BackButtonBehavior>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem x:DataType="VM:RangeDayVM" Command="{Binding GoToGraphCommand}" Text="Wykres" />
-        <ToolbarItem x:DataType="VM:RangeDayVM" Command="{Binding GenerateCSVFileCommand}" Text="CSV" />
-        <ToolbarItem x:DataType="VM:RangeDayVM" Command="{Binding GenerateJsonFileCommand}" Text="JSON" />
+        <ToolbarItem
+            x:DataType="VM:RangeDayVM"
+            Command="{Binding GoToGraphCommand}"
+            Text="Wykres" />
+        <ToolbarItem
+            x:DataType="VM:RangeDayVM"
+            Command="{Binding GenerateCSVFileCommand}"
+            Text="CSV" />
+        <ToolbarItem
+            x:DataType="VM:RangeDayVM"
+            Command="{Binding GenerateJsonFileCommand}"
+            Text="JSON" />
     </ContentPage.ToolbarItems>
 
 

@@ -6,7 +6,7 @@
     xmlns:Convert="clr-namespace:DataBase.Helper;assembly=DataBase"
     xmlns:VM="clr-namespace:Inventory.Pages.RangeDay"
     xmlns:VMD="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
-    xmlns:graph ="clr-namespace:Inventory.Pages.RangeDay.Graph"
+    xmlns:graph="[graph ]clr-namespace:Inventory.Pages.RangeDay.Graph"
     Title="Zakres dat"
     x:DataType="VM:RangeDayVM">
 
@@ -64,16 +64,22 @@
         </Grid>
 
         <Grid Grid.Row="1" IsVisible="{Binding GraphIsVisible}">
-            <graph:GraphV RangeDayMs="{Binding RangeDays}"/>
+            <!--<graph:GraphV RangeDayMs="{Binding RangeDays}" />-->
         </Grid>
 
         <Grid Grid.Row="1" IsVisible="{Binding TableIsVisible}">
-            <Label Text="Nic"/>
+            <Label Text="Nic" />
         </Grid>
 
-        <Grid RowDefinitions="auto,*" Grid.Row="1" IsVisible="{Binding ListIsVisible}">
+        <Grid
+            Grid.Row="1"
+            IsVisible="{Binding ListIsVisible}"
+            RowDefinitions="auto,*">
 
-            <Border Margin="2" Padding="5" MaximumHeightRequest="100">
+            <Border
+                Margin="2"
+                Padding="5"
+                MaximumHeightRequest="100">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
