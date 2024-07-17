@@ -6,11 +6,7 @@
     xmlns:Img="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
     xmlns:local="clr-namespace:SzarotkaBlazor">
 
-    <!--<BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
-        <BlazorWebView.RootComponents>
-            <RootComponent Selector="#app" ComponentType="{x:Type local:Components.Routes}" />
-        </BlazorWebView.RootComponents>
-    </BlazorWebView>-->
+
 
 
     <ScrollView>
@@ -19,6 +15,12 @@
             Padding="30,0"
             Spacing="25"
             VerticalOptions="Center">
+
+            <!--<BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
+                <BlazorWebView.RootComponents>
+                    <RootComponent ComponentType="{x:Type local:Components.Routes}" Selector="#app" />
+                </BlazorWebView.RootComponents>
+            </BlazorWebView>-->
 
             <Image
                 HeightRequest="100"

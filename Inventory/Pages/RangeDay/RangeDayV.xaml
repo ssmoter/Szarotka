@@ -6,7 +6,8 @@
     xmlns:Convert="clr-namespace:DataBase.Helper;assembly=DataBase"
     xmlns:VM="clr-namespace:Inventory.Pages.RangeDay"
     xmlns:VMD="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
-    xmlns:graph="[graph ]clr-namespace:Inventory.Pages.RangeDay.Graph"
+    xmlns:graph="clr-namespace:Inventory.Pages.RangeDay.Graph"
+    xmlns:table="clr-namespace:Inventory.Pages.RangeDay.Table"
     Title="Zakres dat"
     x:DataType="VM:RangeDayVM">
 
@@ -68,7 +69,14 @@
         </Grid>
 
         <Grid Grid.Row="1" IsVisible="{Binding TableIsVisible}">
-            <Label Text="Nic" />
+
+            <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
+                <BlazorWebView.RootComponents>
+                    <RootComponent ComponentType="{x:Type table:RangeTable}" Selector="#app" />
+                </BlazorWebView.RootComponents>
+            </BlazorWebView>
+
+
         </Grid>
 
         <Grid

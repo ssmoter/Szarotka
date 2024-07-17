@@ -1,0 +1,342 @@
+﻿@using DataBase.Helper;
+@using DataBase.Model.EntitiesInventory;
+@using MudBlazor
+
+
+<MudDataGrid T="RangeDayMWithhNumber" Hover Dense Items="@rangeDayMs" Virtualize="true" FixedHeader="true" RowsPerPage="@RowsPerPage" Height="@Height">
+    <Columns>
+
+        <PropertyColumn Property="x=>x.Number" Title="Lp."></PropertyColumn>
+        <PropertyColumn Property="x=>x.Driver.Name" Title="Kierowca"></PropertyColumn>
+        @if (TimeIsVisible)
+        {
+            <PropertyColumn Property="x=>x.Day.SelectedDate" Title="Data jazdy"></PropertyColumn>
+            <PropertyColumn Property="x=>x.Day.SelectedDate.DayOfWeek.TranslateSelectedDay()" Title="Dzień tygodnia"></PropertyColumn>
+        }
+        @if (DayOfWeekIsVisible)
+        {
+            <PropertyColumn Property="x=>x.Day.SelectedDateString" Title="Dzień tygodnia"></PropertyColumn>
+        }
+        <PropertyColumn Property="x=>x.Day.TotalPriceProductsDecimal" Title="Utarg produkty"></PropertyColumn>
+        <PropertyColumn Property="x=>x.Day.TotalPriceCakeDecimal" Title="Utarg ciasto"></PropertyColumn>
+        <PropertyColumn Property="x=>x.Day.TotalPriceDecimal" Title="Utarg suma"></PropertyColumn>
+        <PropertyColumn Property="x=>x.Day.TotalPriceCorrectDecimal" Title="korekta"></PropertyColumn>
+        <PropertyColumn Property="x=>x.Day.TotalPriceAfterCorrectDecimal" Title="Utarg po korekcie"></PropertyColumn>
+        <PropertyColumn Property="x=>x.Day.TotalPriceMoneyDecimal" Title="Zapłacono"></PropertyColumn>
+        <PropertyColumn Property="x=>x.Day.TotalPriceDifferenceDecimal" Title="Różnica"></PropertyColumn>
+
+        <PropertyColumn Property="x=>x.Day.Products" Title="">
+
+            <CellTemplate>
+
+                <MudSwitch @bind-Value="context.Item.ShowDetails" Label="Wyświetl szczegóły"></MudSwitch>
+
+                @{
+                    var products = context.Item.Day.Products;
+                }
+
+                <MudTable Items="@context.Item.Table" Context="productsItems">
+
+                    <HeaderContent>
+
+                        <MudTh>*</MudTh>
+
+                        @foreach (var item in Products)
+                        {
+                            <MudTh>@item.Name.Name</MudTh>
+                        }
+
+                    </HeaderContent>
+
+                    <ChildRowContent>
+                        <MudTd>
+                            <MudText>Ilość</MudText>
+                            <MudText>Edycja</MudText>
+                            <MudText>Zwrot</MudText>
+                            <MudText>Sprzedane</MudText>
+                            <MudText>Utarg zł</MudText>
+
+                        </MudTd>
+                        @for (int j = 0; j < Products.Count; j++)
+                        {
+                            var find = products.FirstOrDefault(x => x.Name.Id == Products[j].Name.Id);
+                            int index = -1;
+
+                            @if (find is not null)
+                            {
+                                index = products.IndexOf(find);
+                            }
+                            @if (index == -1)
+                            {
+                                <MudTd>0</MudTd>
+                                continue;
+                            }
+                            @if (Products[j].Name.Id != products[index].Name.Id)
+                            {
+                                <MudTd>0</MudTd>
+                                continue;
+                            }
+
+                            <MudTd>
+                                <MudTr DataLabel="@products[index].Name.Name">@products[index].Number</MudTr>
+                                <MudTr DataLabel="@products[index].Name.Name">@products[index].NumberEdit</MudTr>
+                                <MudTr DataLabel="@products[index].Name.Name">@products[index].NumberReturn</MudTr>
+                                <MudTr DataLabel="@products[index].Name.Name">@(products[index].Number + products[index].NumberEdit - products[index].NumberReturn)</MudTr>
+                                <MudTr DataLabel="@products[index].Name.Name">@(products[index].PriceTotalAfterCorrectDecimal)</MudTr>
+                            </MudTd>
+                            @*
+                        <MudTd>
+                        <MudText DataLabel="@products[index].Name.Name">@products[index].Number</MudText>
+                        <MudText DataLabel="@products[index].Name.Name">@products[index].NumberEdit</MudText>
+                        <MudText DataLabel="@products[index].Name.Name">@products[index].NumberReturn</MudText>
+                        <MudText DataLabel="@products[index].Name.Name">@(products[index].Number + products[index].NumberEdit - products[index].NumberReturn)</MudText>
+                        <MudText DataLabel="@products[index].Name.Name">@(products[index].PriceTotalAfterCorrectDecimal + " zł")</MudText>
+                        </MudTd>  *@
+                        }
+
+
+                    </ChildRowContent>
+
+
+                </MudTable>
+
+            </CellTemplate>
+        </PropertyColumn>
+
+
+
+    </Columns>
+
+
+
+    <PagerContent>
+        <MudButton OnClick="@ShowDetailsAll">Wyświetl szczegóły</MudButton>
+        <MudDataGridPager T="RangeDayMWithhNumber" PageSizeOptions=@(new int[] {6, 31,60,183,1000}) />
+    </PagerContent>
+
+</MudDataGrid>
+
+
+<span class="d-none">
+
+    @* <div >
+    @if (RangeDayMs is not null)
+    {
+
+    <table class="table table-hover h-100 w-100">
+    <thead>
+    <tr>
+    <th>Lp.</th>
+    <th>Kierowca</th>
+    @if (TimeIsVisible)
+    {
+    <th>Data Jazdy</th>
+    }
+    @if (DayOfWeekIsVisible)
+    {
+    <td>Dzień jazdy </td>
+    }
+    <th>Utarg Produkty</th>
+    <th>Utarg Ciasto</th>
+    <th>Utarg Suma </th>
+    <th>Korekta</th>
+    <th>Utarg Po Korekcie</th>
+    <th>Różnica</th>
+
+    @if (Products is not null)
+    @if (Products.Count > 0)
+    {
+    <th>*</th>
+
+    for (int i = 0; i < Products.Count; i++)
+    {
+    <th>@Products[i].Name.Name</th>
+    }
+    }
+    @if (TimeIsVisible)
+    {
+    <th>Data Utworzenia</th>
+    <th>Data Ostatniej Edycji</th>
+    }
+
+
+    </tr>
+    </thead>
+    <tbody>
+
+    @for (int i = 0; i < RangeDayMs.Count; i++)
+    {
+    <tr>
+    <td>@i</td>
+    <td>@RangeDayMs[i].Driver.Name</td>
+    @if (TimeIsVisible)
+    {
+    <td>
+    <p>@RangeDayMs[i].Day.SelectedDate</p>
+    <p>@RangeDayMs[i].Day.SelectedDate.DayOfWeek.TranslateSelectedDay()</p>
+    </td>
+    }
+    @if (DayOfWeekIsVisible)
+    {
+    <td>@RangeDayMs[i].Day.SelectedDateString </td>
+    }
+
+
+    <td>@RangeDayMs[i].Day.TotalPriceProductsDecimal</td>
+    <td>@RangeDayMs[i].Day.TotalPriceCakeDecimal</td>
+    <td>@RangeDayMs[i].Day.TotalPriceDecimal</td>
+    <td>@RangeDayMs[i].Day.TotalPriceCorrectDecimal</td>
+    <td>@RangeDayMs[i].Day.TotalPriceAfterCorrectDecimal</td>
+    <td>@RangeDayMs[i].Day.TotalPriceDifferenceDecimal</td>
+
+
+    @if (RangeDayMs[i].Day.Products is not null)
+    @if (RangeDayMs[i].Day.Products.Count > 0)
+    {
+    <td>
+    <p>Ilość</p>
+    <p>Edycja</p>
+    <p>Zwrot</p>
+    <p>Sprzedane</p>
+    </td>
+
+
+    int index = -1;
+    for (int j = 0; j < Products.Count; j++)
+    {
+    var find = RangeDayMs[i].Day.Products.FirstOrDefault(x => x.Name.Id == Products[j].Name.Id);
+    if (find is not null)
+    {
+    index = RangeDayMs[i].Day.Products.IndexOf(find);
+    }
+    if (index == -1)
+    {
+    <td>0</td>
+    continue;
+    }
+    if (Products[j].Name.Id != RangeDayMs[i].Day.Products[index].Name.Id)
+    {
+    <td>0</td>
+    continue;
+    }
+
+
+
+
+
+    <td>
+    <p>@RangeDayMs[i].Day.Products[index].Number</p>
+    <p>@RangeDayMs[i].Day.Products[index].NumberEdit</p>
+    <p>@RangeDayMs[i].Day.Products[index].NumberReturn</p>
+    <p>
+    @(RangeDayMs[i].Day.Products[index].Number + RangeDayMs[i].Day.Products[index].NumberEdit - RangeDayMs[i].Day.Products[index].NumberReturn)
+    </p>
+
+    </td>
+    }
+    }
+
+
+    @if (TimeIsVisible)
+    {
+    <td>@RangeDayMs[i].Day.Created</td>
+    <td>@RangeDayMs[i].Day.Updated</td>
+    }
+
+    </tr>
+    }
+
+    </tbody>
+    </table>
+    }
+
+    </div>
+    *@
+</span>
+
+
+
+
+@code {
+
+    private IList<RangeDayMWithhNumber> rangeDayMs;
+    [Parameter]
+    public IList<RangeDayM> RangeDayMs
+    {
+        get => rangeDayMs as RangeDayM[];
+        set
+        {
+            rangeDayMs = new RangeDayMWithhNumber[value.Count];
+
+            for (int i = 0; i < value.Count; i++)
+            {
+                rangeDayMs[i] = new(value[i]);
+                rangeDayMs[i].Number = i + 1;
+            }
+
+        }
+    }
+    [Parameter]
+    public bool TimeIsVisible { get; set; }
+    [Parameter]
+    public bool DayOfWeekIsVisible { get; set; }
+    [Parameter]
+    public string Title { get; set; } = "";
+    [Parameter]
+    public IList<DataBase.Model.EntitiesInventory.Product> Products { get; set; }
+
+    int RowsPerPage = 31;
+    string Height => SetHeight();
+
+
+
+    private string SetHeight()
+    {
+        var height = (DeviceDisplay.Current.MainDisplayInfo.Height / DeviceDisplay.Current.MainDisplayInfo.Density) * 0.5;
+        if (rangeDayMs.Count <= RowsPerPage)
+        {
+            RowsPerPage = rangeDayMs.Count;
+            return "";
+        }
+        return height.ToString() + "px";
+    }
+    private bool showDetailsAll;
+    private void ShowDetailsAll()
+    {
+        showDetailsAll = !showDetailsAll;
+        for (int i = 0; i < rangeDayMs.Count; i++)
+        {
+            rangeDayMs[i].ShowDetails = showDetailsAll;
+        }
+    }
+
+    public class RangeDayMWithhNumber : RangeDayM
+    {
+        public RangeDayMWithhNumber(RangeDayM rangeDayM)
+        {
+            Day = rangeDayM.Day;
+            Driver = rangeDayM.Driver;
+        }
+        public int[] Table { get; set; }
+        public int Number { get; set; }
+        bool showDetails;
+        public bool ShowDetails
+        {
+            get => showDetails;
+            set
+            {
+                showDetails = value;
+                if (showDetails)
+                {
+                    Table = [1];
+                }
+                else
+                {
+                    Table = null;
+                }
+            }
+        }
+    }
+
+
+}

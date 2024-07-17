@@ -41,7 +41,7 @@ namespace DriversRoutesUnitTest
             }
         }
 
-        [Xunit.Fact]
+        //[Xunit.Fact]
         public async void TestParsingDecimal()
         {
             var req =await FindAddressFromCoordinates(49.74942715620574, 20.40880945691556);

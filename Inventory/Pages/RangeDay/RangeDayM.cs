@@ -11,6 +11,11 @@ namespace Inventory.Pages.RangeDay
         [ObservableProperty]
         Driver driver;
 
+        public RangeDayM(Day day, Driver driver)
+        {
+            Day = day;
+            Driver = driver;
+        }
         public RangeDayM()
         {
             Day = new();

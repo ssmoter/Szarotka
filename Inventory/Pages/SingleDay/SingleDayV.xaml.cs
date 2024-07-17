@@ -29,47 +29,57 @@ public partial class SingleDayV : ContentPage
 
     private void Entry_TextChanged_SetValueToSecendPositionEmptyIsZero(object sender, TextChangedEventArgs e)
     {
-        if (sender is Entry entry)
+        try
         {
-            if (entry.Text.Length > 0 && entry.Text.Length <= 1)
+            if (sender is Entry entry)
             {
-                entry.CursorPosition = 1;
-            }
-
-            if (!string.IsNullOrWhiteSpace(e.OldTextValue))
-            {
-                if (e.OldTextValue.Contains('.'))
+                if (entry.Text.Length > 0 && entry.Text.Length <= 1)
                 {
-                    entry.Text = entry.Text.Replace('.', ',');
-                    entry.CursorPosition = entry.Text.Length;
+                    entry.CursorPosition = 1;
+                }
+
+                if (!string.IsNullOrWhiteSpace(e.OldTextValue))
+                {
+                    if (e.OldTextValue.Contains('.'))
+                    {
+                        entry.Text = entry.Text.Replace('.', ',');
+                        entry.CursorPosition = entry.Text.Length;
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(e.NewTextValue))
+                {
+                    entry.Text = "0";
                 }
             }
-
-            if (string.IsNullOrWhiteSpace(e.NewTextValue))
-            {
-                entry.Text = "0";
-            }
-
         }
+        catch (Exception)
+        { }
     }
     private void Entry_TextChanged_SetValueToSecendPosition(object sender, TextChangedEventArgs e)
     {
-        if (sender is Entry entry)
+        try
         {
-            if (entry.Text.Length > 0 && entry.Text.Length <= 1)
+            if (sender is Entry entry)
             {
-                entry.CursorPosition = 1;
-            }
-
-            if (!string.IsNullOrWhiteSpace(e.OldTextValue))
-            {
-                if (e.OldTextValue.Contains('.'))
+                if (entry.Text.Length > 0 && entry.Text.Length <= 1)
                 {
-                    entry.Text = entry.Text.Replace('.', ',');
-                    entry.CursorPosition = entry.Text.Length;
+                    entry.CursorPosition = 1;
+                }
+
+                if (!string.IsNullOrWhiteSpace(e.OldTextValue))
+                {
+                    if (e.OldTextValue.Contains('.'))
+                    {
+                        entry.Text = entry.Text.Replace('.', ',');
+                        entry.CursorPosition = entry.Text.Length;
+                    }
                 }
             }
         }
+        catch (Exception)
+        { }
+
     }
     private void Button_Clicked_AddProduct(object sender, EventArgs e)
     {

@@ -1,4 +1,6 @@
 ﻿using DataBase.Data;
+using DataBase.Helper;
+using MudBlazor.Services;
 
 namespace DataBase.Service
 {
@@ -6,6 +8,8 @@ namespace DataBase.Service
     {
         public static IServiceCollection AddMyServiceDataBase(this IServiceCollection services)
         {
+            services.AddMudServices();            
+
             services.AddTransient<AccessDataBase>();
 
             services.AddScoped<ICreatedDataBase, CreatedDataBase>();
@@ -28,5 +32,6 @@ namespace DataBase.Service
 
             return services;
         }
+
     }
 }

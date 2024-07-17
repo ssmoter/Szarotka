@@ -109,52 +109,54 @@ namespace Inventory.Pages.RangeDay
 
         static RangeDayM[] SumTotalPriceOfRange(RangeDayM[] range)
         {
-            List<Driver> drivers = [];
-            for (int i = 0; i < range.Length; i++)
-            {
-                if (i == 0)
-                {
-                    drivers.Add(range[i].Driver);
-                    continue;
-                }
+            //List<Driver> drivers = [];
+            //for (int i = 0; i < range.Length; i++)
+            //{
+            //    if (i == 0)
+            //    {
+            //        drivers.Add(range[i].Driver);
+            //        continue;
+            //    }
 
-                if (drivers.Any(x => x.Id != range[i].Driver.Id))
-                {
-                    drivers.Add(range[i].Driver);
-                }
-            }
+            //    if (drivers.Any(x => x.Id != range[i].Driver.Id))
+            //    {
+            //        drivers.Add(range[i].Driver);
+            //    }
+            //}
 
-            RangeDayM[] SumRange = new RangeDayM[drivers.Count];
-            for (int i = 0; i < drivers.Count; i++)
-            {
-                var driver = drivers[i];
+            //RangeDayM[] SumRange = new RangeDayM[drivers.Count];
+            //for (int i = 0; i < drivers.Count; i++)
+            //{
+            //    var driver = drivers[i];
 
-                var product = range.Where(z => z.Driver.Id == driver.Id);
-                var cake = range.Where(z => z.Driver.Id == driver.Id);
-                var price = range.Where(z => z.Driver.Id == driver.Id);
-                var correct = range.Where(z => z.Driver.Id == driver.Id);
-                var money = range.Where(z => z.Driver.Id == driver.Id);
-                var difference = range.Where(z => z.Driver.Id == driver.Id);
-                var after = range.Where(z => z.Driver.Id == driver.Id);
+            //    var product = range.Where(z => z.Driver.Id == driver.Id);
+            //    var cake = range.Where(z => z.Driver.Id == driver.Id);
+            //    var price = range.Where(z => z.Driver.Id == driver.Id);
+            //    var correct = range.Where(z => z.Driver.Id == driver.Id);
+            //    var money = range.Where(z => z.Driver.Id == driver.Id);
+            //    var difference = range.Where(z => z.Driver.Id == driver.Id);
+            //    var after = range.Where(z => z.Driver.Id == driver.Id);
 
-                var day = new Day
-                {
-                    TotalPriceProducts = product.Sum(x => x.Day.TotalPriceProducts),
-                    TotalPriceCake = cake.Sum(x => x.Day.TotalPriceCake),
-                    TotalPrice = price.Sum(x => x.Day.TotalPrice),
-                    TotalPriceCorrect = correct.Sum(x => x.Day.TotalPriceCorrect),
-                    TotalPriceMoney = money.Sum(x => x.Day.TotalPriceMoney),
-                    TotalPriceDifference = difference.Sum(x => x.Day.TotalPriceDifference),
-                    TotalPriceAfterCorrect = after.Sum(x => x.Day.TotalPriceAfterCorrect)
-                };
-                SumRange[i] = new()
-                {
-                    Driver = drivers[i],
-                    Day = day,
-                };
-            }
+            //    var day = new Day
+            //    {
+            //        TotalPriceProducts = product.Sum(x => x.Day.TotalPriceProducts),
+            //        TotalPriceCake = cake.Sum(x => x.Day.TotalPriceCake),
+            //        TotalPrice = price.Sum(x => x.Day.TotalPrice),
+            //        TotalPriceCorrect = correct.Sum(x => x.Day.TotalPriceCorrect),
+            //        TotalPriceMoney = money.Sum(x => x.Day.TotalPriceMoney),
+            //        TotalPriceDifference = difference.Sum(x => x.Day.TotalPriceDifference),
+            //        TotalPriceAfterCorrect = after.Sum(x => x.Day.TotalPriceAfterCorrect)
+            //    };
+            //    SumRange[i] = new()
+            //    {
+            //        Driver = drivers[i],
+            //        Day = day,
+            //    };
+            //}
 
-            return SumRange;
+            //return SumRange;
+
+            return Helper.RangeCalculations.SumTotalOfRangeCalculateAverages(range).ToArray();
         }
 
         async static Task<string> SelectImportExport(string type)
@@ -362,7 +364,10 @@ namespace Inventory.Pages.RangeDay
                 if (result is PopupDateModel model)
                 {
                     PopupDate = model;
-                    RangeDays = await SelectDays(PopupDate.From, PopupDate.To, PopupDate.DriverId, PopupDate.MoreData);
+                   // RangeDays = await SelectDays(PopupDate.From, PopupDate.To, PopupDate.DriverId, PopupDate.MoreData);
+                    RangeDays = await SelectDays(0, DateTime.Today.Ticks, [], true);
+                    
+                    Table.RangeTable.OnSetRangeDayMs(RangeDays);
 
                     TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
                     EnableSave = false;
