@@ -364,8 +364,8 @@ namespace Inventory.Pages.RangeDay
                 if (result is PopupDateModel model)
                 {
                     PopupDate = model;
-                   // RangeDays = await SelectDays(PopupDate.From, PopupDate.To, PopupDate.DriverId, PopupDate.MoreData);
-                    RangeDays = await SelectDays(0, DateTime.Today.Ticks, [], true);
+                    RangeDays = await SelectDays(PopupDate.From, PopupDate.To, PopupDate.DriverId, PopupDate.MoreData);
+                   // RangeDays = await SelectDays(0, DateTime.Today.Ticks, [], true);
                     
                     Table.RangeTable.OnSetRangeDayMs(RangeDays);
 

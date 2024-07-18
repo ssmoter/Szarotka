@@ -15,102 +15,95 @@
 
         @if (RangeDayMs is not null)
         {
-            var order = RangeDayMs.OrderBy(x => x.Day.SelectedDateTicks);
-            var first = order.FirstOrDefault().Day;
-            var last = order.LastOrDefault().Day;
-            if (Sum.Count >= 0)
+            if (RangeDayMs.Count > 0)
             {
-                var title = $"Suma z całego zakresu od {first.SelectedDateString}  do {last.SelectedDateString}  ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
-                <MudExpansionPanels Dense Gutters>
-                    <MudExpansionPanel Text="@title">
+                var order = RangeDayMs.OrderBy(x => x.Day.SelectedDateTicks);
+                var first = order.FirstOrDefault().Day;
+                var last = order.LastOrDefault().Day;
 
-                        <SmallRangeTable Products="ProductsAll" RangeDayMs="Sum" TimeIsVisible="false"
-                                         Title="@title" />
-                    </MudExpansionPanel>
-                </MudExpansionPanels>
-            }
-            if (SumDayOfWeek.Count >= 0)
-            {
-                var title = $"Sumy poszczególnych dni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString}  ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
+
                 <MudExpansionPanels Dense Gutters Class="mt-6">
-                    <MudExpansionPanel Text="@title">
+                    @if (Sum.Count > 0)
+                    {
+                        var title = $"Suma z całego zakresu od {first.SelectedDateString}  do {last.SelectedDateString}  ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
+                        <MudExpansionPanel Text="@title">
 
-                        <SmallRangeTable Products="ProductsAll" RangeDayMs="SumDayOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                         Title="@title" />
-                    </MudExpansionPanel>
+                            <SmallRangeTable Products="ProductsAll" RangeDayMs="Sum" TimeIsVisible="false"
+                                             Title="@title" />
+                        </MudExpansionPanel>
+                    }
+                    @if (SumDayOfWeek.Count > 0)
+                    {
+                        var title = $"Sumy poszczególnych dni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString}  ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
+                        <MudExpansionPanel Text="@title">
+
+                            <SmallRangeTable Products="ProductsAll" RangeDayMs="SumDayOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
+                                             Title="@title" />
+                        </MudExpansionPanel>
+                    }
+                    @if (SumPerOfWeek.Count > 0)
+                    {
+                        var title = $"Sumy poszczególnych tygodni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
+                        <MudExpansionPanel Text="@title">
+
+                            <SmallRangeTable Products="ProductsAll" RangeDayMs="SumPerOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
+                                             Title="@title" />
+                        </MudExpansionPanel>
+                    }
+                    @if (SumPerOfMonth.Count > 0)
+                    {
+                        var title = $"Sumy poszczególnych miesięcy z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
+                        <MudExpansionPanel Text="@title">
+
+                            <SmallRangeTable Products="ProductsAll" RangeDayMs="SumPerOfMonth" TimeIsVisible="false" DayOfWeekIsVisible="true"
+                                             Title="@title" />
+                        </MudExpansionPanel>
+                    }
                 </MudExpansionPanels>
-            }
-            if (AveragesDayOfWeek.Count >= 0)
-            {
-                var title = $"Średnie poszczególnych dni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
+
                 <MudExpansionPanels Dense Gutters Class="mt-6">
-                    <MudExpansionPanel Text="@title">
+                    @if (AveragesDayOfWeek.Count > 0)
+                    {
+                        var title = $"Średnie poszczególnych dni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
+                        <MudExpansionPanel Text="@title">
 
-                        <SmallRangeTable Products="ProductsAll" RangeDayMs="AveragesDayOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                         Title="@title" />
-                    </MudExpansionPanel>
+                            <SmallRangeTable Products="ProductsAll" RangeDayMs="AveragesDayOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
+                                             Title="@title" />
+                        </MudExpansionPanel>
+                    }
+                    @if (AveragesPerOfWeek.Count > 0)
+                    {
+                        var title = $"Średnie poszczególnych tygodni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
+                        <MudExpansionPanel Text="@title">
+
+                            <SmallRangeTable Products="ProductsAll" RangeDayMs="AveragesPerOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
+                                             Title="@title" />
+                        </MudExpansionPanel>
+                    }
+                    @if (AveragesPerOfMonth.Count > 0)
+                    {
+                        var title = $"Średnie poszczególnych miesięcy z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
+                        <MudExpansionPanel Text="@title">
+
+                            <SmallRangeTable Products="ProductsAll" RangeDayMs="AveragesPerOfMonth" TimeIsVisible="false" DayOfWeekIsVisible="true"
+                                             Title="@title" />
+                        </MudExpansionPanel>
+                    }
+                </MudExpansionPanels>
+
+                <MudExpansionPanels MultiExpansion="true" Dense Gutters Class="mt-6">
+                    @for (int i = 0; i < UniqueDriver.Count; i++)
+                    {
+                        var title = $"Dane Kierowcy {RangeDayMs[i].Driver.Name} ({(last.SelectedDate - first.SelectedDate).Days} dni)";
+                        <MudExpansionPanel Text="@title">
+
+                            <SmallRangeTable Products="ProductsAll" RangeDayMs="RangeDayMs.Where(x => x.Driver.Id == UniqueDriver[0].Id).ToArray()" TimeIsVisible="true"
+                                             Title="@title" />
+                        </MudExpansionPanel>
+
+                    }
                 </MudExpansionPanels>
             }
-            if (SumPerOfWeek.Count >= 0)
-            {
-                var title = $"Sumy poszczególnych tygodni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
-                <MudExpansionPanels Dense Gutters Class="mt-6">
-                    <MudExpansionPanel Text="@title">
-
-                        <SmallRangeTable Products="ProductsAll" RangeDayMs="SumPerOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                         Title="@title" />
-                    </MudExpansionPanel>
-                </MudExpansionPanels>
-            }
-            if (AveragesPerOfWeek.Count >= 0)
-            {
-                var title = $"Średnie poszczególnych tygodni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
-                <MudExpansionPanels Dense Gutters Class="mt-6">
-                    <MudExpansionPanel Text="@title">
-
-                        <SmallRangeTable Products="ProductsAll" RangeDayMs="AveragesPerOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                         Title="@title" />
-                    </MudExpansionPanel>
-                </MudExpansionPanels>
-            }
-            if (SumPerOfMonth.Count >= 0)
-            {
-                var title = $"Sumy poszczególnych miesięcy z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
-                <MudExpansionPanels Dense Gutters Class="mt-6">
-                    <MudExpansionPanel Text="@title">
-
-                        <SmallRangeTable Products="ProductsAll" RangeDayMs="SumPerOfMonth" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                         Title="@title" />
-                    </MudExpansionPanel>
-                </MudExpansionPanels>
-            }
-            if (AveragesPerOfMonth.Count >= 0)
-            {
-                var title = $"Średnie poszczególnych miesięcy z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
-                <MudExpansionPanels Dense Gutters Class="mt-6">
-                    <MudExpansionPanel Text="@title">
-
-                        <SmallRangeTable Products="ProductsAll" RangeDayMs="AveragesPerOfMonth" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                         Title="@title" />
-                    </MudExpansionPanel>
-                </MudExpansionPanels>
-            }
-
-            <MudExpansionPanels MultiExpansion="true" Dense Gutters Class="mt-6">
-                @for (int i = 0; i < UniqueDriver.Count; i++)
-                {
-                    var title = $"Dane Kierowcy {RangeDayMs[i].Driver.Name} ({(last.SelectedDate - first.SelectedDate).Days} dni)";
-                    <MudExpansionPanel Text="@title">
-
-                        <SmallRangeTable Products="ProductsAll" RangeDayMs="RangeDayMs.Where(x => x.Driver.Id == UniqueDriver[0].Id).ToArray()" TimeIsVisible="true"
-                                         Title="@title" />
-                    </MudExpansionPanel>
-
-                }
-            </MudExpansionPanels>
-        }
-        else
-        {
         }
 
     </div>
@@ -171,6 +164,7 @@
         if (value is not null)
         {
             Helper.RangeCalculations.GetUniqueDriver(value);
+            UniqueDriver = Helper.RangeCalculations.UniqueDriver;
 
             Sum = Helper.RangeCalculations.SumTotalOfRangeCalculateAverages(value);
 
@@ -186,7 +180,6 @@
             if (Sum.Count > 0)
             {
                 ProductsAll = Sum.MaxBy(x => x.Day.Products.Count).Day.Products.ToArray();
-                UniqueDriver = Helper.RangeCalculations.UniqueDriver;
             }
 
         }
