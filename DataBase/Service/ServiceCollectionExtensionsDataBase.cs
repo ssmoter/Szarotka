@@ -1,5 +1,45 @@
 ﻿using DataBase.Data;
+/* Unmerged change from project 'DataBase (net8.0-maccatalyst)'
+Before:
 using DataBase.Helper;
+using MudBlazor.Services;
+After:
+using DataBase.Helper;
+
+using MudBlazor.Services;
+*/
+
+/* Unmerged change from project 'DataBase (net8.0-windows10.0.19041.0)'
+Before:
+using DataBase.Helper;
+using MudBlazor.Services;
+After:
+using DataBase.Helper;
+
+using MudBlazor.Services;
+*/
+
+/* Unmerged change from project 'DataBase (net8.0)'
+Before:
+using DataBase.Helper;
+using MudBlazor.Services;
+After:
+using DataBase.Helper;
+
+using MudBlazor.Services;
+*/
+
+/* Unmerged change from project 'DataBase (net8.0-android)'
+Before:
+using DataBase.Helper;
+using MudBlazor.Services;
+After:
+using DataBase.Helper;
+
+using MudBlazor.Services;
+*/
+
+
 using MudBlazor.Services;
 
 namespace DataBase.Service
@@ -8,7 +48,7 @@ namespace DataBase.Service
     {
         public static IServiceCollection AddMyServiceDataBase(this IServiceCollection services)
         {
-            services.AddMudServices();            
+            services.AddMudServices();
 
             services.AddTransient<AccessDataBase>();
 

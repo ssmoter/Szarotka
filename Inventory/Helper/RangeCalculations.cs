@@ -493,7 +493,7 @@ public class RangeCalculations
 
                     for (int k = 0; k < sum.Count; k++)
                     {
-                        sum[k].Day.SelectedDateString = $"{CultureInfo.GetCultureInfo("pl-PL").DateTimeFormat.GetMonthName(j)}.{curentYear}{Environment.NewLine}({last.Day.SelectedDate.ToString("dd.MM")}-{first.Day.SelectedDate.ToString("dd.MM")})";
+                        sum[k].Day.SelectedDateString = $"{CultureInfo.GetCultureInfo("pl-PL").DateTimeFormat.GetMonthName(j)}.{curentYear}{Environment.NewLine}({last.Day.SelectedDate:dd.MM}-{first.Day.SelectedDate:dd.MM})";
                     }
                     if (sum.Count > 0)
                     {
@@ -541,7 +541,7 @@ public class RangeCalculations
 
                     for (int k = 0; k < sum.Count; k++)
                     {
-                        sum[k].Day.SelectedDateString = $"{CultureInfo.GetCultureInfo("pl-PL").DateTimeFormat.GetMonthName(j)}.{curentYear}{Environment.NewLine}({last.Day.SelectedDate.ToString("dd.MM")}-{first.Day.SelectedDate.ToString("dd.MM")})";
+                        sum[k].Day.SelectedDateString = $"{CultureInfo.GetCultureInfo("pl-PL").DateTimeFormat.GetMonthName(j)}.{curentYear}{Environment.NewLine}({last.Day.SelectedDate:dd.MM}-{first.Day.SelectedDate:dd.MM})";
                     }
                     if (sum.Count > 0)
                     {

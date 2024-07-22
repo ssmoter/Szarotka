@@ -199,203 +199,396 @@
                 <CollectionView x:Name="CVProducts" ItemsSource="{Binding Day.Products}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <SwipeView>
-                                <SwipeView.RightItems>
-                                    <SwipeItems SwipeBehaviorOnInvoked="RemainOpen">
+                            <StackLayout>
 
-                                        <SwipeItemView>
-
-                                            <VerticalStackLayout HorizontalOptions="End" VerticalOptions="End">
-
-                                                <HorizontalStackLayout>
-                                                    <ImageButton Clicked="Button_Clicked_FastMinusProductNumber" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
-                                                    <ImageButton Clicked="Button_Clicked_FastAddProductNumber" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
-                                                </HorizontalStackLayout>
-
-
-                                                <HorizontalStackLayout>
-                                                    <ImageButton Clicked="Button_Clicked_FastMinusProductEdit" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
-                                                    <ImageButton Clicked="Button_Clicked_FastAddProductEdit" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
-                                                </HorizontalStackLayout>
-
-
-
-                                                <HorizontalStackLayout>
-                                                    <ImageButton Clicked="Button_Clicked_FastMinusProductReturn" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
-                                                    <ImageButton Clicked="Button_Clicked_FastAddProductReturn" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
-                                                </HorizontalStackLayout>
-
-
-                                            </VerticalStackLayout>
-
-                                        </SwipeItemView>
-
-
-                                    </SwipeItems>
-                                </SwipeView.RightItems>
-
-                                <SwipeView.LeftItems>
-                                    <SwipeItems SwipeBehaviorOnInvoked="Auto">
-                                        <SwipeItemView>
-                                            <VerticalStackLayout VerticalOptions="Center">
-
-                                                <Label HorizontalTextAlignment="Center">
-                                                    <Label.FormattedText>
-                                                        <FormattedString x:DataType="Product:Product">
-                                                            <Span Text="cena: " />
-                                                            <Span Text="&#10;" />
-                                                            <Span Text="{Binding Price.PriceDecimal}" />
-                                                            <Span Text="zł" />
-                                                        </FormattedString>
-                                                    </Label.FormattedText>
-                                                </Label>
-
-                                                <Label Text="Sprzedanych:" />
-                                                <HorizontalStackLayout HorizontalOptions="Center">
-                                                    <Label x:DataType="Product:Product">
-                                                        <Label.Text>
-                                                            <MultiBinding Converter="{StaticResource MultiMathExpressionConverter}" ConverterParameter="x0 + x1 - x2">
-                                                                <Binding Path="Number" />
-                                                                <Binding Path="NumberEdit" />
-                                                                <Binding Path="NumberReturn" />
-                                                            </MultiBinding>
-                                                        </Label.Text>
-                                                    </Label>
-                                                    <Label Text="szt." />
-                                                </HorizontalStackLayout>
-
-                                                <ImageButton Clicked="Button_Clicked_ChangeProductPrice" Source="{AppThemeBinding Light={Static ImgPath:ImgMoney.PriceChangBlack}, Dark={Static ImgPath:ImgMoney.PriceChangWhite}}" />
-                                                <ImageButton Clicked="Button_Clicked_DeleteSelectedProduct" Source="{AppThemeBinding Light={Static ImgPath:ImgMoney.OutlineDeleteBlack}, Dark={Static ImgPath:ImgMoney.OutlineDeleteWhite}}" />
-
-                                                <Border VerticalOptions="End" />
-                                            </VerticalStackLayout>
-                                        </SwipeItemView>
-                                    </SwipeItems>
-                                </SwipeView.LeftItems>
-
-                                <Border Padding="2">
+                                <!--  Nowa wersja  -->
+                                <Border
+                                    Margin="0,1,0,1"
+                                    Padding="2"
+                                    x:DataType="Product:Product">
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="10" />
                                     </Border.StrokeShape>
 
-                                    <Grid
-                                        x:DataType="Product:Product"
-                                        ColumnDefinitions="70,*,*"
-                                        ColumnSpacing="1"
-                                        RowDefinitions="*,*,*,*">
+                                    <toolkit:Expander
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=HideElseExpandedCommand}"
+                                        CommandParameter="{Binding .}"
+                                        IsExpanded="{Binding IsExpanded}">
+                                        <toolkit:Expander.Header>
+                                            <Grid ColumnDefinitions="70,*,*" RowDefinitions="*,*,*,*">
+                                                <Label
+                                                    Grid.Row="0"
+                                                    Grid.Column="0"
+                                                    Grid.ColumnSpan="3"
+                                                    FontAttributes="Bold"
+                                                    FontSize="Medium"
+                                                    HorizontalOptions="Center"
+                                                    Text="{Binding Name.Name}"
+                                                    VerticalOptions="Center" />
+                                                <CustomControls:StringImage
+                                                    Grid.Row="0"
+                                                    Grid.RowSpan="4"
+                                                    Grid.Column="0"
+                                                    String64Base="{Binding Name.Img}"
+                                                    WidthRequest="70" />
 
-                                        <Label
-                                            Grid.Row="0"
-                                            Grid.Column="0"
-                                            Grid.ColumnSpan="3"
-                                            FontAttributes="Bold"
-                                            FontSize="Medium"
-                                            HorizontalOptions="Center"
-                                            Text="{Binding Name.Name}"
-                                            VerticalOptions="Center" />
+                                                <Label Grid.Row="1" Grid.Column="1">
+                                                    <Label.FormattedText>
+                                                        <FormattedString>
+                                                            <Span Text="Ilość: " />
+                                                            <Span Text="{Binding Number}" />
+                                                        </FormattedString>
+                                                    </Label.FormattedText>
+                                                </Label>
+                                                <Label Grid.Row="2" Grid.Column="1">
+                                                    <Label.FormattedText>
+                                                        <FormattedString>
+                                                            <Span Text="Edycja: " />
+                                                            <Span Text="{Binding NumberEdit}" />
+                                                        </FormattedString>
+                                                    </Label.FormattedText>
+                                                </Label>
+                                                <Label Grid.Row="3" Grid.Column="1">
+                                                    <Label.FormattedText>
+                                                        <FormattedString>
+                                                            <Span Text="Zwrot: " />
+                                                            <Span Text="{Binding NumberReturn}" />
+                                                        </FormattedString>
+                                                    </Label.FormattedText>
+                                                </Label>
 
-                                        <StackLayout
-                                            Grid.Row="1"
-                                            Grid.RowSpan="3"
-                                            Grid.Column="0"
-                                            HorizontalOptions="Center"
-                                            VerticalOptions="Center">
-                                            <CustomControls:StringImage String64Base="{Binding Name.Img}" WidthRequest="70" />
-                                        </StackLayout>
+                                                <Label Grid.Row="1" Grid.Column="2">
+                                                    <Label.FormattedText>
+                                                        <FormattedString>
+                                                            <Span Text="Suma: " />
+                                                            <Span Text="{Binding PriceTotalDecimal}" />
+                                                            <Span Text="zł" />
+                                                        </FormattedString>
+                                                    </Label.FormattedText>
+                                                </Label>
+                                                <Label Grid.Row="2" Grid.Column="2">
+                                                    <Label.FormattedText>
+                                                        <FormattedString>
+                                                            <Span Text="Korekta: " />
+                                                            <Span Text="{Binding PriceTotalCorrectDecimal}" />
+                                                            <Span Text="zł" />
+                                                        </FormattedString>
+                                                    </Label.FormattedText>
+                                                </Label>
+                                                <Label Grid.Row="3" Grid.Column="2">
+                                                    <Label.FormattedText>
+                                                        <FormattedString>
+                                                            <Span Text="Korekta: " />
+                                                            <Span Text="{Binding PriceTotalAfterCorrectDecimal}" />
+                                                            <Span Text="zł" />
+                                                        </FormattedString>
+                                                    </Label.FormattedText>
+                                                </Label>
+                                            </Grid>
+                                        </toolkit:Expander.Header>
+                                        <VerticalStackLayout>
+                                            <Border HorizontalOptions="FillAndExpand" />
 
-                                        <HorizontalStackLayout
-                                            Grid.Row="1"
-                                            Grid.Column="1"
-                                            HorizontalOptions="Start"
-                                            VerticalOptions="Center">
-                                            <Label
-                                                HorizontalOptions="Center"
-                                                Text="Ilość"
-                                                VerticalOptions="Center" />
-                                            <Entry
-                                                Keyboard="Numeric"
-                                                Text="{Binding Number}"
-                                                TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
-                                        </HorizontalStackLayout>
+                                            <Grid ColumnDefinitions="auto,*,auto">
+                                                <VerticalStackLayout
+                                                    Grid.Column="2"
+                                                    HorizontalOptions="End"
+                                                    VerticalOptions="Start">
 
-                                        <HorizontalStackLayout
-                                            Grid.Row="2"
-                                            Grid.Column="1"
-                                            HorizontalOptions="Start"
-                                            VerticalOptions="Center">
+                                                    <HorizontalStackLayout>
+                                                        <ImageButton Clicked="Button_Clicked_FastMinusProductNumber" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
+                                                        <ImageButton Clicked="Button_Clicked_FastAddProductNumber" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
+                                                    </HorizontalStackLayout>
 
-                                            <Label
-                                                HorizontalOptions="Center"
-                                                Text="Edycja"
-                                                VerticalOptions="Center" />
-                                            <Entry
-                                                Keyboard="Numeric"
-                                                Text="{Binding NumberEdit}"
-                                                TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
-                                        </HorizontalStackLayout>
 
-                                        <HorizontalStackLayout
-                                            Grid.Row="3"
-                                            Grid.Column="1"
-                                            HorizontalOptions="Start"
-                                            VerticalOptions="Center">
-                                            <Label
-                                                HorizontalOptions="Center"
-                                                Text="Zwrot"
-                                                VerticalOptions="Center" />
-                                            <Entry
-                                                Keyboard="Numeric"
-                                                Text="{Binding NumberReturn}"
-                                                TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
-                                        </HorizontalStackLayout>
+                                                    <HorizontalStackLayout>
+                                                        <ImageButton Clicked="Button_Clicked_FastMinusProductEdit" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
+                                                        <ImageButton Clicked="Button_Clicked_FastAddProductEdit" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
+                                                    </HorizontalStackLayout>
 
-                                        <Label
-                                            Grid.Row="1"
-                                            Grid.Column="2"
-                                            HorizontalOptions="Start"
-                                            VerticalOptions="Center">
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="Suma = " />
-                                                    <Span Text="{Binding PriceTotalDecimal}" />
-                                                    <Span Text=" zł" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
 
-                                        <HorizontalStackLayout
-                                            Grid.Row="2"
-                                            Grid.Column="2"
-                                            HorizontalOptions="Start"
-                                            VerticalOptions="Center">
-                                            <Label
-                                                HorizontalOptions="Center"
-                                                Text="Korekta"
-                                                VerticalOptions="Center" />
-                                            <Entry
-                                                Keyboard="Numeric"
-                                                Text="{Binding PriceTotalCorrectDecimal}"
-                                                TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
-                                        </HorizontalStackLayout>
 
-                                        <Label
-                                            Grid.Row="3"
-                                            Grid.Column="2"
-                                            HorizontalOptions="Start"
-                                            VerticalOptions="Center">
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="Po korekcie = " />
-                                                    <Span Text="{Binding PriceTotalAfterCorrectDecimal}" />
-                                                    <Span Text=" zł" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
+                                                    <HorizontalStackLayout>
+                                                        <ImageButton Clicked="Button_Clicked_FastMinusProductReturn" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
+                                                        <ImageButton Clicked="Button_Clicked_FastAddProductReturn" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
+                                                    </HorizontalStackLayout>
 
-                                    </Grid>
+
+                                                </VerticalStackLayout>
+                                                <VerticalStackLayout Grid.Column="1">
+
+                                                    <Grid ColumnDefinitions="auto,*">
+                                                        <Label Text="Ilość: " VerticalOptions="Center" />
+                                                        <Entry
+                                                            Grid.Column="1"
+                                                            Keyboard="Numeric"
+                                                            Text="{Binding Number}"
+                                                            TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                                    </Grid>
+                                                    <Grid ColumnDefinitions="auto,*">
+                                                        <Label Text="Edycja: " VerticalOptions="Center" />
+                                                        <Entry
+                                                            Grid.Column="1"
+                                                            Keyboard="Numeric"
+                                                            Text="{Binding NumberEdit}"
+                                                            TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                                    </Grid>
+                                                    <Grid ColumnDefinitions="auto,*">
+                                                        <Label Text="Zwrot: " VerticalOptions="Center" />
+                                                        <Entry
+                                                            Grid.Column="1"
+                                                            Keyboard="Numeric"
+                                                            Text="{Binding NumberReturn}"
+                                                            TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                                    </Grid>
+                                                    <Grid ColumnDefinitions="auto,*">
+                                                        <Label Text="Korekta: " VerticalOptions="Center" />
+                                                        <Entry
+                                                            Grid.Column="1"
+                                                            Keyboard="Numeric"
+                                                            Text="{Binding NumberReturn}"
+                                                            TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                                    </Grid>
+                                                </VerticalStackLayout>
+                                                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+
+                                                    <Label HorizontalTextAlignment="Center">
+                                                        <Label.FormattedText>
+                                                            <FormattedString x:DataType="Product:Product">
+                                                                <Span Text="cena: " />
+                                                                <Span Text="&#10;" />
+                                                                <Span Text="{Binding Price.PriceDecimal}" />
+                                                                <Span Text="zł" />
+                                                            </FormattedString>
+                                                        </Label.FormattedText>
+                                                    </Label>
+
+                                                    <Label Text="Sprzedanych:" />
+                                                    <HorizontalStackLayout HorizontalOptions="Center">
+                                                        <Label x:DataType="Product:Product">
+                                                            <Label.Text>
+                                                                <MultiBinding Converter="{StaticResource MultiMathExpressionConverter}" ConverterParameter="x0 + x1 - x2">
+                                                                    <Binding Path="Number" />
+                                                                    <Binding Path="NumberEdit" />
+                                                                    <Binding Path="NumberReturn" />
+                                                                </MultiBinding>
+                                                            </Label.Text>
+                                                        </Label>
+                                                        <Label Text="szt." />
+                                                    </HorizontalStackLayout>
+
+                                                    <ImageButton Clicked="Button_Clicked_ChangeProductPrice" Source="{AppThemeBinding Light={Static ImgPath:ImgMoney.PriceChangBlack}, Dark={Static ImgPath:ImgMoney.PriceChangWhite}}" />
+                                                    <ImageButton Clicked="Button_Clicked_DeleteSelectedProduct" Source="{AppThemeBinding Light={Static ImgPath:ImgMoney.OutlineDeleteBlack}, Dark={Static ImgPath:ImgMoney.OutlineDeleteWhite}}" />
+                                                </VerticalStackLayout>
+
+
+                                            </Grid>
+
+                                        </VerticalStackLayout>
+                                    </toolkit:Expander>
                                 </Border>
 
-                            </SwipeView>
+                                <!--  Stara wersja  -->
+
+                                <SwipeView IsVisible="false">
+                                    <SwipeView.RightItems>
+                                        <SwipeItems SwipeBehaviorOnInvoked="RemainOpen">
+
+                                            <SwipeItemView>
+
+                                                <VerticalStackLayout HorizontalOptions="End" VerticalOptions="End">
+
+                                                    <HorizontalStackLayout>
+                                                        <ImageButton Clicked="Button_Clicked_FastMinusProductNumber" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
+                                                        <ImageButton Clicked="Button_Clicked_FastAddProductNumber" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
+                                                    </HorizontalStackLayout>
+
+
+                                                    <HorizontalStackLayout>
+                                                        <ImageButton Clicked="Button_Clicked_FastMinusProductEdit" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
+                                                        <ImageButton Clicked="Button_Clicked_FastAddProductEdit" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
+                                                    </HorizontalStackLayout>
+
+
+
+                                                    <HorizontalStackLayout>
+                                                        <ImageButton Clicked="Button_Clicked_FastMinusProductReturn" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
+                                                        <ImageButton Clicked="Button_Clicked_FastAddProductReturn" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
+                                                    </HorizontalStackLayout>
+
+
+                                                </VerticalStackLayout>
+
+                                            </SwipeItemView>
+
+
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
+
+                                    <SwipeView.LeftItems>
+                                        <SwipeItems SwipeBehaviorOnInvoked="Auto">
+                                            <SwipeItemView>
+                                                <VerticalStackLayout VerticalOptions="Center">
+
+                                                    <Label HorizontalTextAlignment="Center">
+                                                        <Label.FormattedText>
+                                                            <FormattedString x:DataType="Product:Product">
+                                                                <Span Text="cena: " />
+                                                                <Span Text="&#10;" />
+                                                                <Span Text="{Binding Price.PriceDecimal}" />
+                                                                <Span Text="zł" />
+                                                            </FormattedString>
+                                                        </Label.FormattedText>
+                                                    </Label>
+
+                                                    <Label Text="Sprzedanych:" />
+                                                    <HorizontalStackLayout HorizontalOptions="Center">
+                                                        <Label x:DataType="Product:Product">
+                                                            <Label.Text>
+                                                                <MultiBinding Converter="{StaticResource MultiMathExpressionConverter}" ConverterParameter="x0 + x1 - x2">
+                                                                    <Binding Path="Number" />
+                                                                    <Binding Path="NumberEdit" />
+                                                                    <Binding Path="NumberReturn" />
+                                                                </MultiBinding>
+                                                            </Label.Text>
+                                                        </Label>
+                                                        <Label Text="szt." />
+                                                    </HorizontalStackLayout>
+
+                                                    <ImageButton Clicked="Button_Clicked_ChangeProductPrice" Source="{AppThemeBinding Light={Static ImgPath:ImgMoney.PriceChangBlack}, Dark={Static ImgPath:ImgMoney.PriceChangWhite}}" />
+                                                    <ImageButton Clicked="Button_Clicked_DeleteSelectedProduct" Source="{AppThemeBinding Light={Static ImgPath:ImgMoney.OutlineDeleteBlack}, Dark={Static ImgPath:ImgMoney.OutlineDeleteWhite}}" />
+
+                                                    <Border VerticalOptions="End" />
+                                                </VerticalStackLayout>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.LeftItems>
+
+                                    <Border Padding="2">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10" />
+                                        </Border.StrokeShape>
+
+                                        <Grid
+                                            x:DataType="Product:Product"
+                                            ColumnDefinitions="70,*,*"
+                                            ColumnSpacing="1"
+                                            RowDefinitions="*,*,*,*">
+
+                                            <Label
+                                                Grid.Row="0"
+                                                Grid.Column="0"
+                                                Grid.ColumnSpan="3"
+                                                FontAttributes="Bold"
+                                                FontSize="Medium"
+                                                HorizontalOptions="Center"
+                                                Text="{Binding Name.Name}"
+                                                VerticalOptions="Center" />
+
+                                            <StackLayout
+                                                Grid.Row="1"
+                                                Grid.RowSpan="3"
+                                                Grid.Column="0"
+                                                HorizontalOptions="Center"
+                                                VerticalOptions="Center">
+                                                <CustomControls:StringImage String64Base="{Binding Name.Img}" WidthRequest="70" />
+                                            </StackLayout>
+
+                                            <HorizontalStackLayout
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                                HorizontalOptions="Start"
+                                                VerticalOptions="Center">
+                                                <Label
+                                                    HorizontalOptions="Center"
+                                                    Text="Ilość"
+                                                    VerticalOptions="Center" />
+                                                <Entry
+                                                    Keyboard="Numeric"
+                                                    Text="{Binding Number}"
+                                                    TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                            </HorizontalStackLayout>
+
+                                            <HorizontalStackLayout
+                                                Grid.Row="2"
+                                                Grid.Column="1"
+                                                HorizontalOptions="Start"
+                                                VerticalOptions="Center">
+
+                                                <Label
+                                                    HorizontalOptions="Center"
+                                                    Text="Edycja"
+                                                    VerticalOptions="Center" />
+                                                <Entry
+                                                    Keyboard="Numeric"
+                                                    Text="{Binding NumberEdit}"
+                                                    TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                            </HorizontalStackLayout>
+
+                                            <HorizontalStackLayout
+                                                Grid.Row="3"
+                                                Grid.Column="1"
+                                                HorizontalOptions="Start"
+                                                VerticalOptions="Center">
+                                                <Label
+                                                    HorizontalOptions="Center"
+                                                    Text="Zwrot"
+                                                    VerticalOptions="Center" />
+                                                <Entry
+                                                    Keyboard="Numeric"
+                                                    Text="{Binding NumberReturn}"
+                                                    TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                            </HorizontalStackLayout>
+
+                                            <Label
+                                                Grid.Row="1"
+                                                Grid.Column="2"
+                                                HorizontalOptions="Start"
+                                                VerticalOptions="Center">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="Suma = " />
+                                                        <Span Text="{Binding PriceTotalDecimal}" />
+                                                        <Span Text=" zł" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+
+                                            <HorizontalStackLayout
+                                                Grid.Row="2"
+                                                Grid.Column="2"
+                                                HorizontalOptions="Start"
+                                                VerticalOptions="Center">
+                                                <Label
+                                                    HorizontalOptions="Center"
+                                                    Text="Korekta"
+                                                    VerticalOptions="Center" />
+                                                <Entry
+                                                    Keyboard="Numeric"
+                                                    Text="{Binding PriceTotalCorrectDecimal}"
+                                                    TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                            </HorizontalStackLayout>
+
+                                            <Label
+                                                Grid.Row="3"
+                                                Grid.Column="2"
+                                                HorizontalOptions="Start"
+                                                VerticalOptions="Center">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="Po korekcie = " />
+                                                        <Span Text="{Binding PriceTotalAfterCorrectDecimal}" />
+                                                        <Span Text=" zł" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+
+                                        </Grid>
+                                    </Border>
+
+                                </SwipeView>
+                            </StackLayout>
+
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                     <CollectionView.Footer>
@@ -437,10 +630,10 @@
 
                             <VerticalStackLayout>
 
-                                <!--<HorizontalStackLayout>
+                                <HorizontalStackLayout>
                                     <Label Text="Tylko sprzedane" VerticalOptions="Center" />
                                     <Switch IsToggled="{Binding SingleDayM.CakeAllIsVisible}" />
-                                </HorizontalStackLayout>-->
+                                </HorizontalStackLayout>
 
                                 <HorizontalStackLayout>
                                     <Label Text="Po cenie " VerticalOptions="Center" />
@@ -465,9 +658,10 @@
                     </Grid>
                     <CollectionView Grid.Row="1" ItemsSource="{Binding Day.Cakes}">
                         <CollectionView.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="Product:Cake">
+                                <!--  {Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=HideElseExpandedCommand}  -->
+                                <CustomControls:BorderWithTwoIsVisible Margin="2">
 
-                                <Border Margin="2">
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="10" />
                                     </Border.StrokeShape>
@@ -494,7 +688,6 @@
                                         <Grid
                                             x:Name="CVGCakes"
                                             Padding="5,0,5,0"
-                                            x:DataType="Product:Cake"
                                             ColumnDefinitions="30,*,auto"
                                             ColumnSpacing="0">
                                             <Label
@@ -523,7 +716,7 @@
                                         </Grid>
 
                                     </SwipeView>
-                                </Border>
+                                </CustomControls:BorderWithTwoIsVisible>
 
                             </DataTemplate>
                         </CollectionView.ItemTemplate>

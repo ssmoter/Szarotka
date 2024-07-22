@@ -12,7 +12,7 @@
 #if ANDROID
             DriversRoutes.Service.RoutingCollectionExtensionsDriversRoutes.AddRoutings();
 #endif
-            
+
         }
     }
 }

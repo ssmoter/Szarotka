@@ -10,6 +10,7 @@ using DataBase.Service;
 using Inventory.Data.File;
 using Inventory.Model;
 using Inventory.Service;
+using Inventory.Pages.RangeDay;
 
 namespace Inventory.Pages.RangeDay
 {
@@ -19,8 +20,17 @@ namespace Inventory.Pages.RangeDay
         [ObservableProperty]
         RangeDayM[] rangeDays;
 
+
         [ObservableProperty]
-        RangeDayM[] totalPriceOfRange;
+        IList<RangeDayM> sum = [];
+        public IList<RangeDayM> SumDayOfWeek { get; set; } = [];
+        public IList<RangeDayM> AveragesDayOfWeek { get; set; } = [];
+        public IList<RangeDayM> SumPerOfWeek { get; set; } = [];
+        public IList<RangeDayM> AveragesPerOfWeek { get; set; } = [];
+        public IList<RangeDayM> SumPerOfMonth { get; set; } = [];
+        public IList<RangeDayM> AveragesPerOfMonth { get; set; } = [];
+        public IList<DataBase.Model.EntitiesInventory.Product> ProductsAll { get; set; }
+        IList<DataBase.Model.EntitiesInventory.Driver> UniqueDriver = [];
 
         readonly Driver[] _allDrivers;
 
@@ -28,11 +38,12 @@ namespace Inventory.Pages.RangeDay
         bool enableSave;
 
         [ObservableProperty]
-        bool listIsVisible=true;
+        bool listIsVisible = true;
         [ObservableProperty]
         bool graphIsVisible;
         [ObservableProperty]
         bool tableIsVisible;
+
 
         string filesPath;
         public string FilesPath
@@ -48,13 +59,13 @@ namespace Inventory.Pages.RangeDay
                         Task.Run(async () =>
                         {
                             RangeDays = await JsonFile.GetFileJson<RangeDayM[]>(filesPath);
-                            TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
+                            Calculate(RangeDays);
                         });
                     }
                     if (extension == FileHelper.csvTyp)
                     {
                         RangeDays = CSVFile.GetFileCSV(filesPath);
-                        TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
+                        Calculate(RangeDays);
                     }
 
                     EnableSave = true;
@@ -63,13 +74,13 @@ namespace Inventory.Pages.RangeDay
         }
 
 
-        PopupDateModel PopupDate = new(DateTime.Today.Ticks, DateTime.Today.AddDays(1).Ticks, false, Array.Empty<Guid>());
+        PopupDateModel PopupDate = new(DateTime.Today.Ticks, DateTime.Today.AddDays(1).Ticks, false, []);
         readonly DataBase.Data.AccessDataBase _db;
         readonly ISelectDayService _selectDayService;
         readonly ISaveDayService _dayService;
         public RangeDayVM(DataBase.Data.AccessDataBase db, ISelectDayService selectDay, ISaveDayService dayService)
         {
-            TotalPriceOfRange = [];
+            sum = [];
             _db = db;
             _selectDayService = selectDay;
 
@@ -107,56 +118,34 @@ namespace Inventory.Pages.RangeDay
             return range;
         }
 
-        static RangeDayM[] SumTotalPriceOfRange(RangeDayM[] range)
+        public void Calculate(IList<RangeDayM> value)
         {
-            //List<Driver> drivers = [];
-            //for (int i = 0; i < range.Length; i++)
-            //{
-            //    if (i == 0)
-            //    {
-            //        drivers.Add(range[i].Driver);
-            //        continue;
-            //    }
+            if (value is not null)
+            {
+                Helper.RangeCalculations.GetUniqueDriver(value);
+                UniqueDriver = Helper.RangeCalculations.UniqueDriver;
 
-            //    if (drivers.Any(x => x.Id != range[i].Driver.Id))
-            //    {
-            //        drivers.Add(range[i].Driver);
-            //    }
-            //}
+                Sum = Helper.RangeCalculations.SumTotalOfRangeCalculateAverages(value);
+                if (Sum.Count > 0)
+                {
+                    ProductsAll = Sum.MaxBy(x => x.Day.Products.Count).Day.Products;
+                }
 
-            //RangeDayM[] SumRange = new RangeDayM[drivers.Count];
-            //for (int i = 0; i < drivers.Count; i++)
-            //{
-            //    var driver = drivers[i];
+                SumDayOfWeek = Helper.RangeCalculations.SumDayOfWeek(value);
+                AveragesDayOfWeek = Helper.RangeCalculations.AveragesDayOfWeek(value);
 
-            //    var product = range.Where(z => z.Driver.Id == driver.Id);
-            //    var cake = range.Where(z => z.Driver.Id == driver.Id);
-            //    var price = range.Where(z => z.Driver.Id == driver.Id);
-            //    var correct = range.Where(z => z.Driver.Id == driver.Id);
-            //    var money = range.Where(z => z.Driver.Id == driver.Id);
-            //    var difference = range.Where(z => z.Driver.Id == driver.Id);
-            //    var after = range.Where(z => z.Driver.Id == driver.Id);
+                SumPerOfWeek = Helper.RangeCalculations.SumPerOfWeek(value);
+                AveragesPerOfWeek = Helper.RangeCalculations.AveragesPerOfWeek(value);
 
-            //    var day = new Day
-            //    {
-            //        TotalPriceProducts = product.Sum(x => x.Day.TotalPriceProducts),
-            //        TotalPriceCake = cake.Sum(x => x.Day.TotalPriceCake),
-            //        TotalPrice = price.Sum(x => x.Day.TotalPrice),
-            //        TotalPriceCorrect = correct.Sum(x => x.Day.TotalPriceCorrect),
-            //        TotalPriceMoney = money.Sum(x => x.Day.TotalPriceMoney),
-            //        TotalPriceDifference = difference.Sum(x => x.Day.TotalPriceDifference),
-            //        TotalPriceAfterCorrect = after.Sum(x => x.Day.TotalPriceAfterCorrect)
-            //    };
-            //    SumRange[i] = new()
-            //    {
-            //        Driver = drivers[i],
-            //        Day = day,
-            //    };
-            //}
 
-            //return SumRange;
+                SumPerOfMonth = Helper.RangeCalculations.SumPerOfMonth(value);
+                AveragesPerOfMonth = Helper.RangeCalculations.AveragesPerOfMonth(value);
 
-            return Helper.RangeCalculations.SumTotalOfRangeCalculateAverages(range).ToArray();
+            }
+
+            Table.RangeTable.OnSetRangeDayMs(RangeDays, Sum, SumDayOfWeek, AveragesDayOfWeek, SumPerOfWeek, AveragesPerOfWeek, SumPerOfMonth, AveragesPerOfMonth, ProductsAll, UniqueDriver);
+            Graph.Graph.OnSetRangeDayMs(RangeDays, Sum, SumDayOfWeek, AveragesDayOfWeek, SumPerOfWeek, AveragesPerOfWeek, SumPerOfMonth, AveragesPerOfMonth, ProductsAll, UniqueDriver);
+
         }
 
         async static Task<string> SelectImportExport(string type)
@@ -234,7 +223,7 @@ namespace Inventory.Pages.RangeDay
                         return;
                     var file = await JsonFile.GetFileJson<RangeDayM[]>(response.FullPath);
                     RangeDays = file;
-                    TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
+                    Calculate(RangeDays);
                     EnableSave = true;
                 }
                 if (result == "Eksport")
@@ -299,7 +288,7 @@ namespace Inventory.Pages.RangeDay
                         return;
                     var file = CSVFile.GetFileCSV(response.FullPath);
                     RangeDays = file;
-                    TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
+                    Calculate(RangeDays);
                     EnableSave = true;
                 }
                 if (result == "Eksport")
@@ -365,11 +354,9 @@ namespace Inventory.Pages.RangeDay
                 {
                     PopupDate = model;
                     RangeDays = await SelectDays(PopupDate.From, PopupDate.To, PopupDate.DriverId, PopupDate.MoreData);
-                   // RangeDays = await SelectDays(0, DateTime.Today.Ticks, [], true);
-                    
-                    Table.RangeTable.OnSetRangeDayMs(RangeDays);
+                    // RangeDays = await SelectDays(0, DateTime.Today.Ticks, [], true);
 
-                    TotalPriceOfRange = RangeDayVM.SumTotalPriceOfRange(RangeDays);
+                    Calculate(RangeDays);
                     EnableSave = false;
                 }
             }

@@ -62,6 +62,11 @@ public partial class SingleDayV : ContentPage
         {
             if (sender is Entry entry)
             {
+                if (entry.Text is null)
+                {
+                    return;
+                }
+
                 if (entry.Text.Length > 0 && entry.Text.Length <= 1)
                 {
                     entry.CursorPosition = 1;

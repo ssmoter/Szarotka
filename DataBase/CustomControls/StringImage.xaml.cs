@@ -8,14 +8,10 @@ public partial class StringImage : ContentView
             var control = (StringImage)bindable;
             try
             {
-                if(string.IsNullOrWhiteSpace((string)newValue))
-                    throw new Exception();
+                if (string.IsNullOrWhiteSpace((string)newValue))
+                    throw new ArgumentNullException();
 
-                var imageBytes = System.Convert.FromBase64String((string)newValue);
-                
-                if (imageBytes is null)
-                    throw new Exception();
-
+                var imageBytes = System.Convert.FromBase64String((string)newValue) ?? throw new ArgumentNullException();
                 var imageStream = new MemoryStream(imageBytes);
                 var image = ImageSource.FromStream(() => imageStream);
                 control.ImageFromString.Source = image;

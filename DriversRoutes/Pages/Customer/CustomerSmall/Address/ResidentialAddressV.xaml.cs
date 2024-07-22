@@ -3,8 +3,6 @@ using CommunityToolkit.Maui.Core;
 
 using DataBase.Model.EntitiesRoutes;
 
-using System.Text;
-
 namespace DriversRoutes.Pages.Customer.CustomerSmall.Address;
 
 

@@ -199,7 +199,7 @@ namespace Inventory.Pages.SingleDay
                         DayId = Day.Id,
                         Index = Day.Cakes.Count + 1,
                         Created = DateTime.Now,
-                        Updated=DateTime.Now,
+                        Updated = DateTime.Now,
                     };
 
                     Day.Cakes.Add(cake);
@@ -464,6 +464,19 @@ namespace Inventory.Pages.SingleDay
                 SingleDayM.CakeSortDateRotateX = 0;
                 Day.Cakes = new(Day.Cakes.OrderByDescending(x => x.CreatedTicks));
             }
+        }
+
+        Product lastproduct = new();
+        [RelayCommand]
+        void HideElseExpanded(Product product)
+        {
+            if (lastproduct.ProductNameId == product.ProductNameId)
+            {
+                return;
+            }
+
+            lastproduct.IsExpanded = false;
+            lastproduct = product;            
         }
         #endregion
 

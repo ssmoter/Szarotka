@@ -184,6 +184,20 @@ public partial class Product : BaseEntities<Guid>
     [Ignore]
     public bool CanUpadte { get; set; }
 
+    private bool isExpanded;
+    [Ignore]
+    public bool IsExpanded
+    {
+        get => isExpanded;
+        set
+        {
+            if (SetProperty(ref isExpanded, value))
+            {
+                OnPropertyChanged(nameof(IsExpanded));
+            }
+        }
+    }
+
     public Product()
     {
         Name ??= new();

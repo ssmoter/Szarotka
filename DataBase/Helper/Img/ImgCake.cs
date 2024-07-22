@@ -13,7 +13,7 @@
         public static string Jabłecznik => "jablko.png";
         public static string Kilimandzaro => "kilimandzaro.png";
         public static string Kokos => "kokos.png";
-        public static string  Krata=> "krata.png";
+        public static string Krata => "krata.png";
         public static string Krolewiec => "krolewiec.png";
         public static string Migdalowiec => "migdalowiec.png";
         public static string Pychotka => "pychotka.png";

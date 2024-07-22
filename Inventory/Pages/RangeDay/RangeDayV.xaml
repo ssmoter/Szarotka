@@ -65,12 +65,17 @@
         </Grid>
 
         <Grid Grid.Row="1" IsVisible="{Binding GraphIsVisible}">
+            <!--<BlazorWebView x:Name="blazorWebViewGraph" HostPage="wwwroot/index.html">
+                <BlazorWebView.RootComponents>
+                    <RootComponent ComponentType="{x:Type graph:Graph}" Selector="#app" />
+                </BlazorWebView.RootComponents>
+            </BlazorWebView>-->
             <!--<graph:GraphV RangeDayMs="{Binding RangeDays}" />-->
         </Grid>
 
         <Grid Grid.Row="1" IsVisible="{Binding TableIsVisible}">
 
-            <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
+            <BlazorWebView x:Name="blazorWebViewTable" HostPage="wwwroot/index.html">
                 <BlazorWebView.RootComponents>
                     <RootComponent ComponentType="{x:Type table:RangeTable}" Selector="#app" />
                 </BlazorWebView.RootComponents>
@@ -91,7 +96,7 @@
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
-                <CollectionView ItemsSource="{Binding TotalPriceOfRange}">
+                <CollectionView ItemsSource="{Binding Sum}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="VM:RangeDayM">
 

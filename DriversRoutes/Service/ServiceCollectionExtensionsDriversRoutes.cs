@@ -17,7 +17,7 @@
             services.AddScoped<ISelectRoutes, Data.SelectRoutes>();
             services.AddScoped<ISaveRoutes, Data.SaveRoutes>();
 #if ANDROID
-            services.AddScoped<IDownloadAddress,Platforms.Android.DownloadAddress>();
+            services.AddScoped<IDownloadAddress, Platforms.Android.DownloadAddress>();
 #endif
 
             services.AddScoped<Pages.ListOfPoints.ListOfPointsV>();

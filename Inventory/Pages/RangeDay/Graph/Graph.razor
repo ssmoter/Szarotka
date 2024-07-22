@@ -1,14 +1,17 @@
-﻿@implements IDisposable
-
-@using Inventory.Pages.RangeDay
+﻿@using Inventory.Pages.RangeDay
 @using DataBase.Helper
 @using MudBlazor
+
+@implements IDisposable
 
 <MudThemeProvider @bind-IsDarkMode="@DataBase.Helper.MudBlazorTheme.IsDarkMode" Theme="@DataBase.Helper.MudBlazorTheme.Theme" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
+<div class="mx-auto pa-6">
+
+    <SmallGraph chartType="@chartType" RangeDayMs="@RangeDayMs" />
 
 <div>
     @if (RangeDayMs is not null)
@@ -26,17 +29,16 @@
                     var title = $"Suma z całego zakresu od {first.SelectedDateString}  do {last.SelectedDateString}  ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
                     <MudExpansionPanel Text="@title">
 
-                        <SmallRangeTable Products="ProductsAll" RangeDayMs="Sum" TimeIsVisible="false"
-                                         Title="@title" />
+                        <MudChart ChartType="chartType" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries />
+
                     </MudExpansionPanel>
                 }
                 @if (SumDayOfWeek.Count > 0)
                 {
                     var title = $"Sumy poszczególnych dni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString}  ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
                     <MudExpansionPanel Text="@title">
+                        <MudChart ChartType="chartType" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries />
 
-                        <SmallRangeTable Products="ProductsAll" RangeDayMs="SumDayOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                         Title="@title" />
                     </MudExpansionPanel>
                 }
                 @if (SumPerOfWeek.Count > 0)
@@ -44,17 +46,16 @@
                     var title = $"Sumy poszczególnych tygodni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
                     <MudExpansionPanel Text="@title">
 
-                        <SmallRangeTable Products="ProductsAll" RangeDayMs="SumPerOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                         Title="@title" />
+                        <MudChart ChartType="chartType" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries />
+
                     </MudExpansionPanel>
                 }
                 @if (SumPerOfMonth.Count > 0)
                 {
                     var title = $"Sumy poszczególnych miesięcy z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
                     <MudExpansionPanel Text="@title">
+                        <MudChart ChartType="chartType" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries />
 
-                        <SmallRangeTable Products="ProductsAll" RangeDayMs="SumPerOfMonth" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                         Title="@title" />
                     </MudExpansionPanel>
                 }
             </MudExpansionPanels>
@@ -65,8 +66,8 @@
                     var title = $"Średnie poszczególnych dni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
                     <MudExpansionPanel Text="@title">
 
-                        <SmallRangeTable Products="ProductsAll" RangeDayMs="AveragesDayOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                         Title="@title" />
+                        <MudChart ChartType="chartType" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries />
+
                     </MudExpansionPanel>
                 }
                 @if (AveragesPerOfWeek.Count > 0)
@@ -74,17 +75,16 @@
                     var title = $"Średnie poszczególnych tygodni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
                     <MudExpansionPanel Text="@title">
 
-                        <SmallRangeTable Products="ProductsAll" RangeDayMs="AveragesPerOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                         Title="@title" />
+                        <MudChart ChartType="chartType" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries />
+
                     </MudExpansionPanel>
                 }
                 @if (AveragesPerOfMonth.Count > 0)
                 {
                     var title = $"Średnie poszczególnych miesięcy z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
                     <MudExpansionPanel Text="@title">
+                        <MudChart ChartType="chartType" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries />
 
-                        <SmallRangeTable Products="ProductsAll" RangeDayMs="AveragesPerOfMonth" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                         Title="@title" />
                     </MudExpansionPanel>
                 }
             </MudExpansionPanels>
@@ -94,9 +94,8 @@
                 {
                     var title = $"Dane Kierowcy {RangeDayMs[i].Driver.Name} ({(last.SelectedDate - first.SelectedDate).Days} dni)";
                     <MudExpansionPanel Text="@title">
+                        <MudChart ChartType="chartType" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries />
 
-                        <SmallRangeTable Products="ProductsAll" RangeDayMs="RangeDayMs.Where(x => x.Driver.Id == UniqueDriver[0].Id).ToArray()" TimeIsVisible="true"
-                                         Title="@title" />
                     </MudExpansionPanel>
 
                 }
@@ -104,15 +103,17 @@
         }
     }
 </div>
-
-
-
-
-
+</div>
 
 
 
 @code {
+
+    public List<ChartSeries> Series = new List<ChartSeries>();
+    public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+    public ChartType chartType = ChartType.Bar;
+
+
     public IList<RangeDayM> RangeDayMs { get; set; } = [];
 
     public IList<RangeDayM> Sum { get; set; } = [];
@@ -193,31 +194,5 @@
     {
         SetRangeDayMs -= setRange;
         GC.SuppressFinalize(this);
-    }
-
-    public void Calculate(IList<RangeDayM> value)
-    {
-        if (value is not null)
-        {
-            Helper.RangeCalculations.GetUniqueDriver(value);
-            UniqueDriver = Helper.RangeCalculations.UniqueDriver;
-
-            Sum = Helper.RangeCalculations.SumTotalOfRangeCalculateAverages(value);
-            if (Sum.Count > 0)
-            {
-                ProductsAll = Sum.MaxBy(x => x.Day.Products.Count).Day.Products.ToArray();
-            }
-
-            SumDayOfWeek = Helper.RangeCalculations.SumDayOfWeek(value);
-            AveragesDayOfWeek = Helper.RangeCalculations.AveragesDayOfWeek(value);
-
-            SumPerOfWeek = Helper.RangeCalculations.SumPerOfWeek(value);
-            AveragesPerOfWeek = Helper.RangeCalculations.AveragesPerOfWeek(value);
-
-
-            SumPerOfMonth = Helper.RangeCalculations.SumPerOfMonth(value);
-            AveragesPerOfMonth = Helper.RangeCalculations.AveragesPerOfMonth(value);
-
-        }
     }
 }

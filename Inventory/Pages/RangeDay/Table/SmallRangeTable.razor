@@ -84,14 +84,7 @@
                                 <MudTr DataLabel="@products[index].Name.Name">@(products[index].Number + products[index].NumberEdit - products[index].NumberReturn)</MudTr>
                                 <MudTr DataLabel="@products[index].Name.Name">@(products[index].PriceTotalAfterCorrectDecimal)</MudTr>
                             </MudTd>
-                            @*
-                        <MudTd>
-                        <MudText DataLabel="@products[index].Name.Name">@products[index].Number</MudText>
-                        <MudText DataLabel="@products[index].Name.Name">@products[index].NumberEdit</MudText>
-                        <MudText DataLabel="@products[index].Name.Name">@products[index].NumberReturn</MudText>
-                        <MudText DataLabel="@products[index].Name.Name">@(products[index].Number + products[index].NumberEdit - products[index].NumberReturn)</MudText>
-                        <MudText DataLabel="@products[index].Name.Name">@(products[index].PriceTotalAfterCorrectDecimal + " zł")</MudText>
-                        </MudTd>  *@
+
                         }
 
 
@@ -261,21 +254,7 @@
 
     private IList<RangeDayMWithhNumber> rangeDayMs;
     [Parameter]
-    public IList<RangeDayM> RangeDayMs
-    {
-        get => rangeDayMs as RangeDayM[];
-        set
-        {
-            rangeDayMs = new RangeDayMWithhNumber[value.Count];
-
-            for (int i = 0; i < value.Count; i++)
-            {
-                rangeDayMs[i] = new(value[i]);
-                rangeDayMs[i].Number = i + 1;
-            }
-
-        }
-    }
+    public IList<RangeDayM> RangeDayMs { get; set; }
     [Parameter]
     public bool TimeIsVisible { get; set; }
     [Parameter]
@@ -288,6 +267,18 @@
     int RowsPerPage = 31;
     string Height => SetHeight();
 
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        rangeDayMs = new RangeDayMWithhNumber[RangeDayMs.Count];
+
+        for (int i = 0; i < RangeDayMs.Count; i++)
+        {
+            rangeDayMs[i] = new(RangeDayMs[i]);
+            rangeDayMs[i].Number = i + 1;
+        }
+
+    }
 
 
     private string SetHeight()

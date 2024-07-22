@@ -306,10 +306,10 @@ namespace DriversRoutes.Pages.ListOfPoints
             try
             {
 #if ANDROID
-            if (!await AndroidPermissionService.CheckAllPermissionsAboutStorage())
-            {
-                return;
-            }
+                if (!await AndroidPermissionService.CheckAllPermissionsAboutStorage())
+                {
+                    return;
+                }
 #endif
                 var files = FileHelper.GetFilesPaths(FileHelper.DriversRoutes);
                 await Shell.Current.GoToAsync($"{nameof(ExistingFilesV)}?GetTyp={FileHelper.DriversRoutes}",

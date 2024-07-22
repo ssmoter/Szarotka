@@ -12,7 +12,7 @@ namespace InventoryUnitTest.ModelTest
               [dateTime, dateTime.ToLocalTime().Ticks],
               [dateTime, dateTime.ToLocalTime().Ticks],
           ];
-    
+
         [Theory]
         [MemberData(nameof(TestDateTime))]
         public void TestUpdate(DateTime request, long result)

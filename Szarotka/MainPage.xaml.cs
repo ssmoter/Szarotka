@@ -1,6 +1,5 @@
 ﻿using DataBase.Data;
 using DataBase.Model;
-using DataBase.Service;
 
 using Szarotka.Pages.Options.Main;
 

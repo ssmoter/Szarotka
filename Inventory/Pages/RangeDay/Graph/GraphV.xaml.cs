@@ -1,5 +1,3 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-
 namespace Inventory.Pages.RangeDay.Graph;
 
 public partial class GraphV : ContentView, IDisposable

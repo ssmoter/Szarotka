@@ -1,8 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Inventory.Model;
 using DataBase.Model.EntitiesInventory;
+
+using Inventory.Model;
 
 using System.Collections.ObjectModel;
 
@@ -88,23 +89,24 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
         long to = 0;
 
         public Func<object, CancellationToken, Task> Close;
-        public Task OnClose(object result = null, CancellationToken token = default(CancellationToken))
+        public Task OnClose(object result = null, CancellationToken token = default)
         {
             return Close?.Invoke(result, token);
         }
 
         public PopupSelectRangeDateVM(Driver[] drivers)
         {
-            RangeFast ??= new ObservableCollection<string>
-            {
+            RangeFast ??=
+            [
                 "Poprzedni tydzień",
                 "Dzisiaj",
                 "Tydzień",
                 "Miesiąc",
                 "Rok",
-            };
-            RangeMonth ??= new ObservableCollection<string>
-            {
+                "Cały zakres",
+            ];
+            RangeMonth ??=
+            [
                 "Styczeń",
                 "Luty",
                 "Marzec",
@@ -117,11 +119,11 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
                 "Październik",
                 "Listopad",
                 "Grudzień",
-            };
+            ];
             FromDate = DateTime.Today.AddDays(-1);
             ToDate = DateTime.Today.AddDays(1);
 
-            SelectRangeDateMs ??= new();
+            SelectRangeDateMs ??= [];
 
             for (int i = 0; i < drivers.Length; i++)
             {
@@ -153,7 +155,9 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
                 case "Rok":
                     result = SelectYear();
                     break;
-
+                case "Cały zakres":
+                    result = FullRange();
+                    break;
 
                 case "Styczeń":
                     result = SelectMonth(1);
@@ -254,6 +258,10 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             var to = new DateTime(DateTime.Today.AddYears(1).Year, 1, 1, 0, 0, 0).ToUniversalTime();
 
             return (from.Ticks, to.Ticks);
+        }
+        static (long, long) FullRange()
+        {
+            return (0, DateTime.Today.Ticks);
         }
         static (long, long) SelectMonth(int month = 0)
         {

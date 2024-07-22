@@ -24,14 +24,14 @@ namespace SzarotkaBlazor.Service
             services.AddSingleton<MainOptionsVM>();
 
 #if WINDOWS
-  Microsoft.Maui.Handlers.SwitchHandler.Mapper.AppendToMapping("NoLabel", (handler, View) =>
-  {
-      handler.PlatformView.OnContent = null;
-      handler.PlatformView.OffContent = null;
+            Microsoft.Maui.Handlers.SwitchHandler.Mapper.AppendToMapping("NoLabel", (handler, View) =>
+            {
+                handler.PlatformView.OnContent = null;
+                handler.PlatformView.OffContent = null;
 
-      // Add this to remove the padding around the switch as well
-       handler.PlatformView.MinWidth = 0;
-  });
+                // Add this to remove the padding around the switch as well
+                handler.PlatformView.MinWidth = 0;
+            });
 #endif
 
 
