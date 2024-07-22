@@ -346,8 +346,8 @@
                                                         <Entry
                                                             Grid.Column="1"
                                                             Keyboard="Numeric"
-                                                            Text="{Binding NumberReturn}"
-                                                            TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+                                                            Text="{Binding PriceTotalCorrectDecimal}"
+                                                            TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
                                                     </Grid>
                                                 </VerticalStackLayout>
                                                 <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
@@ -390,7 +390,7 @@
 
                                 <!--  Stara wersja  -->
 
-                                <SwipeView IsVisible="false">
+                                <!--<SwipeView IsVisible="false">
                                     <SwipeView.RightItems>
                                         <SwipeItems SwipeBehaviorOnInvoked="RemainOpen">
 
@@ -586,7 +586,8 @@
                                         </Grid>
                                     </Border>
 
-                                </SwipeView>
+                                </SwipeView>-->
+
                             </StackLayout>
 
                         </DataTemplate>
@@ -659,8 +660,10 @@
                     <CollectionView Grid.Row="1" ItemsSource="{Binding Day.Cakes}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="Product:Cake">
-                                <!--  {Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=HideElseExpandedCommand}  -->
-                                <CustomControls:BorderWithTwoIsVisible Margin="2">
+                                <CustomControls:BorderWithTwoIsVisible
+                                    Margin="2"
+                                    IsVisibleOne="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=SingleDayM.CakeAllIsVisible, Converter={StaticResource InvertedBoolConverter}}"
+                                    IsVisibleSecond="{Binding IsSell}">
 
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="10" />

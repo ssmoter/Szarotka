@@ -449,6 +449,7 @@ namespace Inventory.Pages.SingleDay
                 SingleDayM.CakeSortPriceRotateX = 0;
                 Day.Cakes = new(Day.Cakes.OrderByDescending(x => x.Price));
             }
+            SingleDayM.CakeAllIsVisible = false;
         }
 
         [RelayCommand]
@@ -464,19 +465,20 @@ namespace Inventory.Pages.SingleDay
                 SingleDayM.CakeSortDateRotateX = 0;
                 Day.Cakes = new(Day.Cakes.OrderByDescending(x => x.CreatedTicks));
             }
+            SingleDayM.CakeAllIsVisible = false;
         }
 
-        Product lastproduct = new();
+        private Product lastProductHideElseExpanded = new();
         [RelayCommand]
         void HideElseExpanded(Product product)
         {
-            if (lastproduct.ProductNameId == product.ProductNameId)
+            if (lastProductHideElseExpanded.ProductNameId == product.ProductNameId)
             {
                 return;
             }
 
-            lastproduct.IsExpanded = false;
-            lastproduct = product;            
+            lastProductHideElseExpanded.IsExpanded = false;
+            lastProductHideElseExpanded = product;
         }
         #endregion
 
