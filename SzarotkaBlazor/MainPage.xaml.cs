@@ -1,7 +1,12 @@
 ﻿using DataBase.Data;
 using DataBase.Model;
 
+using DriversRoutes.Data;
+
+using Microsoft.Maui.Graphics.Skia;
+
 using SzarotkaBlazor.Pages.Options.Main;
+
 
 namespace SzarotkaBlazor
 {
@@ -15,6 +20,7 @@ namespace SzarotkaBlazor
             _db = new();
             _createdDataBase = new CreatedDataBase(_db);
         }
+
 
 
         protected override async void OnNavigatedTo(NavigatedToEventArgs args)
@@ -51,5 +57,6 @@ namespace SzarotkaBlazor
         {
             await Shell.Current.GoToAsync(nameof(DriversRoutes.Pages.Main.MainVDriversRoutesV));
         }
+
     }
 }

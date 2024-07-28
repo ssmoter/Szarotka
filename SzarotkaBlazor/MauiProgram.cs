@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Maui;
 
-
 #if ANDROID
 using DriversRoutes.Platforms.Android;
 #endif
@@ -36,10 +35,10 @@ namespace SzarotkaBlazor
 
 #if ANDROID
             builder.UseMauiMaps();
-            //builder.ConfigureMauiHandlers(handlers =>
-            //{
-            //    handlers.AddHandler<Microsoft.Maui.Controls.Maps.Map, CustomMapHandler>();
-            //});
+            builder.ConfigureMauiHandlers(handlers =>
+            {
+                handlers.AddHandler<Microsoft.Maui.Controls.Maps.Map, CustomMapHandler>();
+            });
 #endif
 
             return builder.Build();

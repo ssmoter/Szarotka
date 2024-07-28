@@ -480,6 +480,15 @@ namespace Inventory.Pages.SingleDay
             lastProductHideElseExpanded.IsExpanded = false;
             lastProductHideElseExpanded = product;
         }
+
+        [RelayCommand]
+        static void SetFullReturn(Product product)
+        {
+            if (product is not null)
+            {
+                product.NumberReturn = product.Number + product.NumberEdit;
+            }
+        }
         #endregion
 
     }

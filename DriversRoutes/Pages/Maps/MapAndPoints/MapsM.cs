@@ -15,14 +15,13 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
 {
     public partial class MapsM : ObservableObject
     {
-        //#if ANDROID
-
-        //        [ObservableProperty]
-        //        CustomPin pin;
-        //#else
-        //#endif
         [ObservableProperty]
-        Pin pin;
+        DriversRoutes.Model.CustomPin pin;
+#if ANDROID
+#else
+        //[ObservableProperty]
+       // Pin pin;
+#endif
 
         [ObservableProperty]
         Guid id;
@@ -72,22 +71,22 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
 
         public MapsM()
         {
-            //#if ANDROID
-            //            Pin = new CustomPin();
-            //#else
-            //#endif
-            Pin = new Pin();
+            Pin = new DriversRoutes.Model.CustomPin();
+#if ANDROID
+#else
+            //Pin = new Pin();
+#endif
 
             SelectedDayOfWeek ??= new SelectedDayOfWeekRoutes();
         }
 
         public void SetPin()
         {
-            //#if ANDROID
-            //            Pin = new CustomPin();
-            //#else
-            //#endif
-            Pin = new Pin();
+            Pin = new DriversRoutes.Model.CustomPin();
+#if ANDROID
+#else
+            //Pin = new Pin();
+#endif
 
             Pin.Location = new Location(Latitude, Longitude);
             Pin.Label = $"{Index}: {Name}";
@@ -108,7 +107,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             {
                 if (chars[i] == colonChar)
                 {
-                    index = int.Parse(chars.Slice(0, i));
+                    index = int.Parse(chars[..i]);
                     break;
                 }
             }

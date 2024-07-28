@@ -1,13 +1,18 @@
-﻿using CommunityToolkit.Maui.Views;
+﻿
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Model.EntitiesRoutes;
 
+using DriversRoutes.Data;
 using DriversRoutes.Helper;
 
 using Microsoft.Maui.Controls.Maps;
+using Microsoft.Maui.Graphics.Skia;
 using Microsoft.Maui.Maps;
+
+using MudBlazor;
 
 using System.Collections.ObjectModel;
 
@@ -250,7 +255,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             try
             {
                 AllPoints.Clear();
-                AllPoints = await GetSelectedDays(LastSelectedDayOfWeekWhenNavigation);
+                AllPoints = await GetSelectedDays(week);
             }
             catch (Exception ex)
             {
@@ -267,6 +272,17 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 for (int i = 0; i < result.Length; i++)
                 {
                     points.Add(result[i].ParseAsCustomerM());
+
+                    SkiaBitmapExportContext skiaBitmapExportContext = new(48, 48 + 10, 1);
+                    ICanvas canvas = skiaBitmapExportContext.Canvas;
+                    DrawIconOnMap drawIconOnMap = new()
+                    {
+                        Number = i + 1
+                    };
+                    drawIconOnMap.Draw(canvas, new RectF(0, 0, skiaBitmapExportContext.Width, skiaBitmapExportContext.Height));
+
+                    points[i].Pin.ImageSource = ImageSource.FromStream(() => skiaBitmapExportContext.Image.AsStream());
+
                 }
             }
             catch (Exception ex)
@@ -274,6 +290,34 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 _db.SaveLog(ex);
             }
             return points;
+        }
+
+        private void DescriptionOfPreviousPoint(int direction)
+        {
+            int index;
+            if (MapsPoint.Length <= 0)
+            {
+                return;
+            }
+
+            index = MapsPoint.FirstOrDefault().Index + direction;
+
+            if (index > AllPoints.Count)
+            {
+                index = 1;
+            }
+            else if (index < 1)
+            {
+                index = AllPoints.Count;
+            }
+
+            MapsPoint = AllPoints.Where(x => x.Index == index).ToArray();
+            if (MapsPoint.Length <= 0)
+            {
+                return;
+            }
+            var mapSpan = new MapSpan(MapsPoint.FirstOrDefault().Pin.Location, 0.05, 0.05);
+            OnGoToLocation(mapSpan);
         }
 
         #endregion
@@ -434,6 +478,16 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             }
         }
 
+        [RelayCommand]
+        void DisplayDescriptionOfNextPoint()
+        {
+            DescriptionOfPreviousPoint(1);
+        }
+        [RelayCommand]
+        void DisplayDescriptionOfPreviousPoint()
+        {
+            DescriptionOfPreviousPoint(-1);
+        }
         #endregion
 
     }

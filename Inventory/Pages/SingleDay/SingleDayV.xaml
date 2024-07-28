@@ -278,7 +278,7 @@
                                                 <Label Grid.Row="3" Grid.Column="2">
                                                     <Label.FormattedText>
                                                         <FormattedString>
-                                                            <Span Text="Korekta: " />
+                                                            <Span Text="Po Korekcie: " />
                                                             <Span Text="{Binding PriceTotalAfterCorrectDecimal}" />
                                                             <Span Text="zł" />
                                                         </FormattedString>
@@ -290,66 +290,135 @@
                                             <Border HorizontalOptions="FillAndExpand" />
 
                                             <Grid ColumnDefinitions="auto,*,auto">
-                                                <VerticalStackLayout
+                                                <Grid
                                                     Grid.Column="2"
                                                     HorizontalOptions="End"
+                                                    RowDefinitions="*,*,*,*"
                                                     VerticalOptions="Start">
 
-                                                    <HorizontalStackLayout>
+                                                    <HorizontalStackLayout Grid.Column="0">
                                                         <ImageButton Clicked="Button_Clicked_FastMinusProductNumber" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
                                                         <ImageButton Clicked="Button_Clicked_FastAddProductNumber" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
                                                     </HorizontalStackLayout>
 
 
-                                                    <HorizontalStackLayout>
+                                                    <HorizontalStackLayout Grid.Row="1">
                                                         <ImageButton Clicked="Button_Clicked_FastMinusProductEdit" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
                                                         <ImageButton Clicked="Button_Clicked_FastAddProductEdit" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
                                                     </HorizontalStackLayout>
 
-
-
-                                                    <HorizontalStackLayout>
+                                                    <HorizontalStackLayout Grid.Row="2">
                                                         <ImageButton Clicked="Button_Clicked_FastMinusProductReturn" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.MinusBlack}, Dark={Static ImgPath:ImgAddMinus.MinusWhite}}" />
                                                         <ImageButton Clicked="Button_Clicked_FastAddProductReturn" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
                                                     </HorizontalStackLayout>
 
+                                                    <Border
+                                                        Grid.Row="3"
+                                                        Margin="0"
+                                                        Padding="2"
+                                                        BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                                                          Dark={StaticResource PrimaryDark}}"
+                                                        VerticalOptions="Center">
+                                                        <Border.StrokeShape>
+                                                            <RoundRectangle CornerRadius="10" />
+                                                        </Border.StrokeShape>
 
-                                                </VerticalStackLayout>
-                                                <VerticalStackLayout Grid.Column="1">
+                                                        <Border.GestureRecognizers>
+                                                            <TapGestureRecognizer
+                                                                Buttons="Primary"
+                                                                Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=SetFullReturnCommand}"
+                                                                CommandParameter="{Binding .}"
+                                                                NumberOfTapsRequired="1" />
+                                                        </Border.GestureRecognizers>
 
-                                                    <Grid ColumnDefinitions="auto,*">
-                                                        <Label Text="Ilość: " VerticalOptions="Center" />
-                                                        <Entry
-                                                            Grid.Column="1"
-                                                            Keyboard="Numeric"
-                                                            Text="{Binding Number}"
-                                                            TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
-                                                    </Grid>
-                                                    <Grid ColumnDefinitions="auto,*">
-                                                        <Label Text="Edycja: " VerticalOptions="Center" />
-                                                        <Entry
-                                                            Grid.Column="1"
-                                                            Keyboard="Numeric"
-                                                            Text="{Binding NumberEdit}"
-                                                            TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
-                                                    </Grid>
-                                                    <Grid ColumnDefinitions="auto,*">
-                                                        <Label Text="Zwrot: " VerticalOptions="Center" />
-                                                        <Entry
-                                                            Grid.Column="1"
-                                                            Keyboard="Numeric"
-                                                            Text="{Binding NumberReturn}"
-                                                            TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
-                                                    </Grid>
-                                                    <Grid ColumnDefinitions="auto,*">
-                                                        <Label Text="Korekta: " VerticalOptions="Center" />
-                                                        <Entry
-                                                            Grid.Column="1"
-                                                            Keyboard="Numeric"
-                                                            Text="{Binding PriceTotalCorrectDecimal}"
-                                                            TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
-                                                    </Grid>
-                                                </VerticalStackLayout>
+                                                        <Grid>
+                                                            <HorizontalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                                                                <Label Text="Zwrot=" />
+                                                                <Label>
+                                                                    <Label.Text>
+                                                                        <MultiBinding Converter="{StaticResource MultiMathExpressionConverter}" ConverterParameter="x0 + x1">
+                                                                            <Binding Path="Number" />
+                                                                            <Binding Path="NumberEdit" />
+                                                                        </MultiBinding>
+                                                                    </Label.Text>
+                                                                </Label>
+                                                            </HorizontalStackLayout>
+                                                        </Grid>
+                                                        <VisualStateManager.VisualStateGroups>
+                                                            <VisualStateGroup x:Name="CommonStates">
+                                                                <VisualState x:Name="Normal" />
+                                                                <VisualState x:Name="PointerOver">
+                                                                    <VisualState.Setters>
+                                                                        <Setter Property="Scale" Value="1.1" />
+                                                                        <Setter Property="Stroke" Value="DarkBlue" />
+                                                                    </VisualState.Setters>
+                                                                </VisualState>
+                                                                <VisualState x:Name="Pressed">
+                                                                    <VisualState.Setters>
+                                                                        <Setter Property="Scale" Value="0.9" />
+                                                                    </VisualState.Setters>
+                                                                </VisualState>
+                                                            </VisualStateGroup>
+                                                        </VisualStateManager.VisualStateGroups>
+                                                    </Border>
+                                                </Grid>
+
+                                                <Grid
+                                                    Grid.Column="1"
+                                                    ColumnDefinitions="auto,*"
+                                                    RowDefinitions="*,*,*,*">
+
+                                                    <Label
+                                                        Grid.Row="0"
+                                                        Grid.Column="0"
+                                                        Text="Ilość: "
+                                                        VerticalOptions="Center" />
+                                                    <Entry
+                                                        Grid.Column="1"
+                                                        Keyboard="Numeric"
+                                                        Text="{Binding Number}"
+                                                        TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+
+                                                    <Label
+                                                        Grid.Row="1"
+                                                        Grid.Column="0"
+                                                        Text="Edycja: "
+                                                        VerticalOptions="Center" />
+                                                    <Entry
+                                                        Grid.Row="1"
+                                                        Grid.Column="1"
+                                                        Keyboard="Numeric"
+                                                        Text="{Binding NumberEdit}"
+                                                        TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+
+
+                                                    <Label
+                                                        Grid.Row="2"
+                                                        Grid.Column="0"
+                                                        Text="Zwrot: "
+                                                        VerticalOptions="Center" />
+                                                    <Entry
+                                                        Grid.Row="2"
+                                                        Grid.Column="1"
+                                                        Keyboard="Numeric"
+                                                        Text="{Binding NumberReturn}"
+                                                        TextChanged="Entry_TextChanged_SetValueToSecendPositionEmptyIsZero" />
+
+
+                                                    <Label
+                                                        Grid.Row="3"
+                                                        Grid.Column="0"
+                                                        Text="Korekta: "
+                                                        VerticalOptions="Center" />
+
+                                                    <Entry
+                                                        Grid.Row="3"
+                                                        Grid.Column="1"
+                                                        Keyboard="Numeric"
+                                                        Text="{Binding PriceTotalCorrectDecimal}"
+                                                        TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
+                                                </Grid>
+
                                                 <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
 
                                                     <Label HorizontalTextAlignment="Center">
@@ -379,6 +448,7 @@
 
                                                     <ImageButton Clicked="Button_Clicked_ChangeProductPrice" Source="{AppThemeBinding Light={Static ImgPath:ImgMoney.PriceChangBlack}, Dark={Static ImgPath:ImgMoney.PriceChangWhite}}" />
                                                     <ImageButton Clicked="Button_Clicked_DeleteSelectedProduct" Source="{AppThemeBinding Light={Static ImgPath:ImgMoney.OutlineDeleteBlack}, Dark={Static ImgPath:ImgMoney.OutlineDeleteWhite}}" />
+
                                                 </VerticalStackLayout>
 
 

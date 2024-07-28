@@ -48,10 +48,6 @@
 
         <!-- Images -->
         <MauiImage Include="Resources\Images\*" />
-        <MauiImage Update="Resources\Images\dotnet_bot.png">
-          <Resize>True</Resize>
-          <BaseSize>300,185</BaseSize>
-        </MauiImage>
 
         <!-- Custom Fonts -->
         <MauiFont Include="Resources\Fonts\*" />
@@ -340,6 +336,14 @@
       <Compile Update="Pages\Options\Main\MainOptionsV.xaml.cs">
         <DependentUpon>%(Filename)</DependentUpon>
       </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <MauiImage Update="Resources\Images\dotnet_bot.png">
+        <Resize>True</Resize>
+        <BaseSize>300,185</BaseSize>
+        <CopyToOutputDirectory></CopyToOutputDirectory>
+      </MauiImage>
     </ItemGroup>
 
     <ItemGroup>

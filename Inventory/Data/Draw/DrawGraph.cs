@@ -26,6 +26,7 @@ namespace Inventory.Data.Draw
             }
             GraphValues = null;
             XValues = null;
+            GC.SuppressFinalize(this);
         }
 
         public void Draw(ICanvas canvas, RectF dirtyRect)

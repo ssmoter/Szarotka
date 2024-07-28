@@ -5,19 +5,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:Route="clr-namespace:DataBase.Model.EntitiesRoutes;assembly=DataBase"
     xmlns:VM="clr-namespace:DriversRoutes.Pages.Main"
-    Title="MainVDriversRoutesV"
+    Title="Dostępne Mapy"
     x:DataType="VM:MainVDriversRoutesVM">
 
     <ScrollView>
         <VerticalStackLayout VerticalOptions="Start">
-            <Label
-                Grid.Row="0"
-                Margin="5"
-                Padding="20"
-                FontAttributes="Bold"
-                FontSize="Large"
-                HorizontalOptions="Center"
-                Text="Dostępne Mapy" />
 
             <Border
                 Margin="10"
