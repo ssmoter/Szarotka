@@ -20,10 +20,10 @@
                     <RoundRectangle CornerRadius="50" />
                 </Border.StrokeShape>
 
-                <Grid HorizontalOptions="Center" RowDefinitions="*,1">
+                <Grid HorizontalOptions="Center" RowDefinitions="*,1" >
 
 
-                    <CollectionView Grid.Row="0" ItemsSource="{Binding Routes}">
+                    <CollectionView Grid.Row="0" ItemsSource="{Binding Routes}" >
 
                         <CollectionView.ItemTemplate>
 

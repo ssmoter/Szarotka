@@ -242,14 +242,34 @@ namespace Inventory.Pages.SingleDay
         {
             try
             {
-                var result = await Shell.Current.DisplayAlert("Zapisać", "Czy zapisać przy cofaniu", "Tak", "Nie");
-                if (result)
+                string yes = "Tak";
+                string no = "Nie";
+                string cancel = "Anuluj";
+
+                var result = await Shell.Current.DisplayActionSheet("Czy zapisać przy cofaniu", "", "", yes, no, cancel);
+                //var result = await Shell.Current.DisplayAlert("Zapisać", "Czy zapisać przy cofaniu", "Tak", "Nie");
+
+                if (result == yes)
+                {
                     await SaveDay();
-                await Shell.Current.GoToAsync("..?",
-                    new Dictionary<string, object>()
-                    {
-                        [nameof(Day)] = Day
-                    });
+                }
+                else if (result == cancel)
+                {
+                    return;
+                }
+                else if (result == no)
+                {
+
+                    await Shell.Current.GoToAsync("..?",
+                        new Dictionary<string, object>()
+                        {
+                            [nameof(Day)] = Day
+                        });
+                }
+                else
+                {
+                    return;
+                }
             }
             catch (Exception ex)
             {

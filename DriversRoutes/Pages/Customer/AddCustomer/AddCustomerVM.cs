@@ -32,6 +32,9 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         [ObservableProperty]
         bool dayOfWeekCustomerAfterIsVisible;
 
+        List<SelectedDayOfWeekRoutes> DayOfWeekCustomerBeforeList;
+        List<SelectedDayOfWeekRoutes> DayOfWeekCustomerAfterList;
+
         readonly Service.ISaveRoutes _saveRoutes;
         readonly Service.IDownloadAddress _downloadAddress;
         readonly DataBase.Data.AccessDataBase _db;
@@ -63,16 +66,15 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
                 var date = DateTime.Now;
                 if (Customer.Name != NewPoint)
                 {
-                    date = Customer.DayOfWeek.GetTodayDatetimeFromSelectedDayOfWeekRoutes();
+                    date = Customer.DayOfWeek.GetTodayDatetimeFromSelectedDayOfWeekRoutes(date);
                 }
-                var list = await _db.DataBaseAsync.QueryAsync<SelectedDayOfWeekRoutes>(
-                    Helper.SqlQuery.GetSelectedDayOfWeekRoutesNearestDate(date, Helper.SqlQuery._less,Helper.SqlQuery._DESC));
-                var first = list.FirstOrDefault();
+                DayOfWeekCustomerBeforeList = await _db.DataBaseAsync.QueryAsync<SelectedDayOfWeekRoutes>(
+                    Helper.SqlQuery.GetSelectedDayOfWeekRoutesNearestDate(date, Helper.SqlQuery._less, Helper.SqlQuery._DESC));
+                var first = DayOfWeekCustomerBeforeList.FirstOrDefault();
                 if (first is not null)
                 {
                     DayOfWeekCustomerBefore = first;
                     DayOfWeekCustomerBeforeIsVisible = true;
-                    list.Clear();
                 }
             }
             catch (Exception ex)
@@ -88,16 +90,15 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
                 var date = DateTime.Now;
                 if (Customer.Name != NewPoint)
                 {
-                    date = Customer.DayOfWeek.GetTodayDatetimeFromSelectedDayOfWeekRoutes();
+                    date = Customer.DayOfWeek.GetTodayDatetimeFromSelectedDayOfWeekRoutes(date);
                 }
-                var list = await _db.DataBaseAsync.QueryAsync<SelectedDayOfWeekRoutes>(
+                DayOfWeekCustomerAfterList = await _db.DataBaseAsync.QueryAsync<SelectedDayOfWeekRoutes>(
                     Helper.SqlQuery.GetSelectedDayOfWeekRoutesNearestDate(date, Helper.SqlQuery._more, Helper.SqlQuery._ASC));
-                var first = list.FirstOrDefault();
+                var first = DayOfWeekCustomerAfterList.FirstOrDefault();
                 if (first is not null)
                 {
                     DayOfWeekCustomerAfter = first;
                     DayOfWeekCustomerAfterIsVisible = true;
-                    list.Clear();
                 }
             }
             catch (Exception ex)
@@ -134,11 +135,12 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             try
             {
 
-                await Shell.Current.GoToAsync("..");
-                //await Shell.Current.GoToAsync($"..?", new Dictionary<string, object>()
-                //{
-                //    [nameof(Routes)] = RouteId
-                //});
+                // await Shell.Current.GoToAsync("..");
+                await Shell.Current.GoToAsync($"..?", new Dictionary<string, object>()
+                {
+                    [nameof(CustomerRoutes)] = Customer,
+                    [nameof(Routes)] = RouteId
+                });
             }
             catch (Exception ex)
             {
@@ -272,6 +274,101 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             }
 
         }
+
+        [RelayCommand]
+        void ChangeTimeBefore(string direction)
+        {
+            if (DayOfWeekCustomerBeforeList is null)
+            {
+                return;
+            }
+            if (DayOfWeekCustomerBeforeList.Count < 1)
+            {
+                return;
+            }
+            var index = DayOfWeekCustomerBeforeList.IndexOf(DayOfWeekCustomerBefore);
+            if (direction == "left")
+            {
+                if (index == 0)
+                {
+                    DayOfWeekCustomerBefore = DayOfWeekCustomerBeforeList.LastOrDefault();
+                    return;
+                }
+                index--;
+                if (index < 0)
+                {
+                    index = DayOfWeekCustomerBeforeList.Count;
+                }
+                DayOfWeekCustomerBefore = DayOfWeekCustomerBeforeList[index];
+            }
+            else if (direction == "right")
+            {
+                if (index == DayOfWeekCustomerBeforeList.Count)
+                {
+                    DayOfWeekCustomerBefore = DayOfWeekCustomerBeforeList.FirstOrDefault();
+                    return;
+                }
+                index++;
+                if (index >= DayOfWeekCustomerBeforeList.Count)
+                {
+                    index = 0;
+                }
+                DayOfWeekCustomerBefore = DayOfWeekCustomerBeforeList[index];
+            }
+            else if (direction == "zero")
+            {
+                DayOfWeekCustomerBefore = DayOfWeekCustomerBeforeList.FirstOrDefault();
+            }
+        }
+        [RelayCommand]
+        void ChangeTimeAfter(string direction)
+        {
+            if (DayOfWeekCustomerAfterList is null)
+            {
+                return;
+            }
+            if (DayOfWeekCustomerAfterList.Count < 1)
+            {
+                return;
+            }
+            var index = DayOfWeekCustomerAfterList.IndexOf(DayOfWeekCustomerAfter);
+            if (direction == "left")
+            {
+                if (index == 0)
+                {
+                    DayOfWeekCustomerAfter = DayOfWeekCustomerAfterList.LastOrDefault();
+                    return;
+                }
+                index--;
+
+                if (index < 0)
+                {
+                    index = DayOfWeekCustomerAfterList.Count;
+                }
+
+                DayOfWeekCustomerAfter = DayOfWeekCustomerAfterList[index];
+            }
+            else if (direction == "right")
+            {
+                if (index == DayOfWeekCustomerAfterList.Count)
+                {
+                    DayOfWeekCustomerAfter = DayOfWeekCustomerAfterList.FirstOrDefault();
+                    return;
+                }
+                index++;
+                if (index >= DayOfWeekCustomerAfterList.Count)
+                {
+                    index = 0;
+                }
+                DayOfWeekCustomerAfter = DayOfWeekCustomerAfterList[index];
+            }
+            else if (direction == "zero")
+            {
+                DayOfWeekCustomerAfter = DayOfWeekCustomerAfterList.FirstOrDefault();
+            }
+        }
+
+
         #endregion
 
     }

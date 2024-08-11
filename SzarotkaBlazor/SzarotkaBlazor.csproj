@@ -126,6 +126,8 @@
       <None Remove="Resources\Images\Icon\baseline_arrow_downward_white_24dp.png" />
       <None Remove="Resources\Images\Icon\baseline_arrow_upward_black_24dp.png" />
       <None Remove="Resources\Images\Icon\baseline_arrow_upward_white_24dp.png" />
+      <None Remove="Resources\Images\Icon\baseline_horizontal_rule_black_24.png" />
+      <None Remove="Resources\Images\Icon\baseline_horizontal_rule_white_24.png" />
       <None Remove="Resources\Images\Icon\baseline_location_on_black_24dp.png" />
       <None Remove="Resources\Images\Icon\baseline_location_on_white_24dp.png" />
       <None Remove="Resources\Images\Icon\outline_add_circle_outline_black_24.png" />
@@ -256,6 +258,8 @@
       <MauiImage Include="Resources\Images\Icon\baseline_arrow_downward_white_24dp.png" />
       <MauiImage Include="Resources\Images\Icon\baseline_arrow_upward_black_24dp.png" />
       <MauiImage Include="Resources\Images\Icon\baseline_arrow_upward_white_24dp.png" />
+      <MauiImage Include="Resources\Images\Icon\baseline_horizontal_rule_black_24.png" />
+      <MauiImage Include="Resources\Images\Icon\baseline_horizontal_rule_white_24.png" />
       <MauiImage Include="Resources\Images\Icon\baseline_location_on_black_24dp.png" />
       <MauiImage Include="Resources\Images\Icon\baseline_location_on_white_24dp.png" />
       <MauiImage Include="Resources\Images\Icon\outline_add_circle_outline_black_24.png" />

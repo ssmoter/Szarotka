@@ -87,5 +87,6 @@ namespace DriversRoutes.Platforms.Android
             pin.MarkerId = marker.Id;
             markers.Add(marker);
         }
+
     }
 }

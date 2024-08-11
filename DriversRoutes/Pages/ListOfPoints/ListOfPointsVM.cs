@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -7,6 +9,8 @@ using DataBase.Data.File;
 using DataBase.Model.EntitiesRoutes;
 using DataBase.Pages.ExistingFiles;
 using DataBase.Service;
+
+using DriversRoutes.Pages.Popups.MoveTimeOnCustomers;
 
 using System.Collections.ObjectModel;
 
@@ -51,31 +55,29 @@ namespace DriversRoutes.Pages.ListOfPoints
                 {
                     filesPath = value;
 
-                    saveData = true;
-                    OnPropertyChanged(nameof(SaveIsVisible));
-                    OnPropertyChanged(nameof(RangeIsVisible));
+                    SetSaveData(true);
 
                     var extension = Path.GetExtension(filesPath);
-                    if (extension == FileHelper.jsonTyp)
+                    if (extension == FileHelper.jsonTyp || extension == FileHelper.txtTyp)
                     {
-                        Task.Run(async () => { await GetCustomerPointsFromFile(); });
+                        GetCustomerPointsFromFile();
                     }
                 }
             }
         }
-
-        private async Task GetCustomerPointsFromFile()
+        private SelectedDayOfWeekRoutes lastSelectedDayOfWeekRoutes;
+        private void GetCustomerPointsFromFile()
         {
             try
             {
                 CustomerListRefresh = true;
 
-                var result = await JsonFile.GetFileJson<CustomerRoutes[]>(filesPath);
+                var result = JsonFile.GetFileJson<CustomerRoutes[]>(filesPath);
 
                 CustomerRoutes?.Clear();
                 CustomerRoutes = new ObservableCollection<CustomerRoutes>(result);
 
-                await GetRouteFromPoints();
+                GetRouteFromPoints();
             }
             catch (Exception ex)
             {
@@ -104,6 +106,7 @@ namespace DriversRoutes.Pages.ListOfPoints
             try
             {
                 CustomerListRefresh = true;
+                lastSelectedDayOfWeekRoutes = week;
                 var result = _selectRoutes.GetCustomerRoutesQuery(routes, week);
                 return new ObservableCollection<CustomerRoutes>(result);
             }
@@ -123,6 +126,7 @@ namespace DriversRoutes.Pages.ListOfPoints
             try
             {
                 CustomerListRefresh = true;
+                lastSelectedDayOfWeekRoutes = week;
                 var result = await _selectRoutes.GetCustomerRoutesQueryAsync(routes, week);
                 return new ObservableCollection<CustomerRoutes>(result);
             }
@@ -137,7 +141,7 @@ namespace DriversRoutes.Pages.ListOfPoints
             }
         }
 
-        async Task GetRouteFromPoints()
+        void GetRouteFromPoints()
         {
             if (Route is not null)
             {
@@ -153,11 +157,14 @@ namespace DriversRoutes.Pages.ListOfPoints
                 return;
             }
 
-            var routes = await _db.DataBaseAsync.Table<Routes>().ToArrayAsync();
+            var routes = _db.DataBase.Table<Routes>().ToArray();
 
             for (int i = 0; i < routes.Length; i++)
             {
-                if (CustomerRoutes.FirstOrDefault().RoutesId == routes[i].Id)
+                var customer = CustomerRoutes.FirstOrDefault();
+                if (customer is null)
+                    break;
+                if (customer.RoutesId == routes[i].Id)
                 {
                     Route = routes[i];
                     break;
@@ -247,9 +254,26 @@ namespace DriversRoutes.Pages.ListOfPoints
         }
 
         [RelayCommand]
-        void Refresh()
+        async Task Refresh()
         {
-            CustomerListRefresh = false;
+            try
+            {
+                if (RangeIsVisible)
+                {
+                    if (lastSelectedDayOfWeekRoutes is not null)
+                    {
+                        CustomerRoutes = await GetPointsAsync(Route, lastSelectedDayOfWeekRoutes);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+            finally
+            {
+                CustomerListRefresh = false;
+            }
         }
 
         [RelayCommand]
@@ -260,6 +284,7 @@ namespace DriversRoutes.Pages.ListOfPoints
                 var result = await Shell.Current.DisplayAlert("Zapisywanie", "Czy chcesz zapisać lub zaktualizować wczytane punkty", "Tak", "Nie");
                 if (!result)
                     return;
+                await Toast.Make("Trwa zapisywanie zmian", ToastDuration.Long).Show();
 
                 for (int i = 0; i < CustomerRoutes.Count; i++)
                 {
@@ -270,6 +295,18 @@ namespace DriversRoutes.Pages.ListOfPoints
             {
                 _db.SaveLog(ex);
             }
+            finally
+            {
+                await Toast.Make("Zapisywanie zmiań zakończone", ToastDuration.Long).Show();
+                SetSaveData(false);
+            }
+        }
+
+        public void SetSaveData(bool value)
+        {
+            saveData = value;
+            OnPropertyChanged(nameof(SaveIsVisible));
+            OnPropertyChanged(nameof(RangeIsVisible));
         }
 
         [RelayCommand]
@@ -324,6 +361,32 @@ namespace DriversRoutes.Pages.ListOfPoints
             {
                 _db.SaveLog(ex);
             }
+        }
+
+
+        [RelayCommand]
+        async Task MoveTimeOnPoints(SelectedDayOfWeekRoutes selectDayMs)
+        {
+            try
+            {
+                var result = await MoveTimeOnCustomersV.ShowPopUp(Route, selectDayMs, _selectRoutes, _saveRoutes);
+                if (result)
+                {
+                    await Refresh();
+                }
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
+
+        [RelayCommand]
+        async Task DiscardFromFile()
+        {
+            await Refresh();
+            SetSaveData(false);
+            await Toast.Make("Wczytany plik usunięto").Show();
         }
 
         #endregion

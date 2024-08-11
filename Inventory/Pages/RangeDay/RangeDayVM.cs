@@ -10,7 +10,6 @@ using DataBase.Service;
 using Inventory.Data.File;
 using Inventory.Model;
 using Inventory.Service;
-using Inventory.Pages.RangeDay;
 
 namespace Inventory.Pages.RangeDay
 {
@@ -56,11 +55,8 @@ namespace Inventory.Pages.RangeDay
                     var extension = Path.GetExtension(filesPath);
                     if (extension == FileHelper.jsonTyp)
                     {
-                        Task.Run(async () =>
-                        {
-                            RangeDays = await JsonFile.GetFileJson<RangeDayM[]>(filesPath);
-                            Calculate(RangeDays);
-                        });
+                        RangeDays = JsonFile.GetFileJson<RangeDayM[]>(filesPath);
+                        Calculate(RangeDays);
                     }
                     if (extension == FileHelper.csvTyp)
                     {
@@ -221,7 +217,7 @@ namespace Inventory.Pages.RangeDay
                     var response = await FilePicker.PickAsync(ExistingFilesVM.FileTypJson());
                     if (response == null)
                         return;
-                    var file = await JsonFile.GetFileJson<RangeDayM[]>(response.FullPath);
+                    var file = JsonFile.GetFileJson<RangeDayM[]>(response.FullPath);
                     RangeDays = file;
                     Calculate(RangeDays);
                     EnableSave = true;

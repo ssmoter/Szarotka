@@ -29,10 +29,10 @@
             x:DataType="VM:SingleDayVM"
             Command="{Binding SaveDayCommand}"
             Text="Zapisz" />
-        <ToolbarItem
+        <!--<ToolbarItem
             x:DataType="VM:SingleDayVM"
             Command="{Binding BackWithoutSaveCommand}"
-            Text="Anuluj" />
+            Text="Anuluj" />-->
     </ContentPage.ToolbarItems>
 
 
@@ -40,132 +40,174 @@
 
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.2*" />
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="{OnPlatform Android=44, Default=auto}" />
                 <RowDefinition Height="*" />
 
             </Grid.RowDefinitions>
-            <ScrollView Grid.Row="0">
-                <Border Margin="5,0,5,0">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="10" />
-                    </Border.StrokeShape>
-
-                    <!--  Dane o utargu  -->
-                    <Grid
-                        Padding="5,0,5,0"
-                        ColumnDefinitions="*,*"
-                        ColumnSpacing="10"
-                        RowDefinitions="*,*,*,*,*"
-                        RowSpacing="0">
-
-                        <Label
-                            Grid.Row="0"
-                            Grid.ColumnSpan="5"
-                            FontSize="Medium"
-                            HorizontalOptions="Center"
-                            Text="Suma utargów :" />
-
-                        <Label
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            VerticalTextAlignment="Center">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="Produkty = " />
-                                    <Span Text="{Binding Day.TotalPriceProductsDecimal}" />
-                                    <Span Text=" zł" />
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-
-                        <Label
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            VerticalTextAlignment="Center">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="Ciasto = " />
-                                    <Span Text="{Binding Day.TotalPriceCakeDecimal}" />
-                                    <Span Text=" zł" />
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-
-                        <Label
-                            Grid.Row="3"
-                            Grid.Column="0"
-                            VerticalTextAlignment="Center">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="Suma = " />
-                                    <Span Text="{Binding Day.TotalPriceDecimal}" />
-                                    <Span Text=" zł" />
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-
-                        <HorizontalStackLayout
-                            Grid.Row="1"
-                            Grid.Column="2"
-                            VerticalOptions="Center">
-                            <Label Text="Korekta = " VerticalOptions="Center" />
-                            <Entry
-                                Keyboard="Numeric"
-                                Text="{Binding Day.TotalPriceCorrectDecimal}"
-                                TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
-                            <Label Text=" zł" VerticalOptions="Center" />
-                        </HorizontalStackLayout>
-
-                        <Label
-                            Grid.Row="3"
-                            Grid.Column="2"
-                            VerticalTextAlignment="Center">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="Po korekcie = " />
-                                    <Span Text="{Binding Day.TotalPriceAfterCorrectDecimal}" />
-                                    <Span Text=" zł" />
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
 
 
-                        <VerticalStackLayout Grid.Row="4" Grid.Column="0">
-                            <HorizontalStackLayout>
-                                <Label Text="Zapłacono = " VerticalOptions="Center" />
+            <!--  Dane o utargu  -->
+            <Border Grid.Row="0" Margin="5,0,5,0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+
+                <toolkit:Expander>
+
+                    <toolkit:Expander.Header>
+
+                        <Grid ColumnDefinitions="*,*" RowDefinitions="*,*">
+
+                            <Label
+                                Grid.Row="0"
+                                Grid.ColumnSpan="2"
+                                FontSize="Medium"
+                                HorizontalOptions="Center"
+                                Text="Suma utargów :" />
+
+
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                HorizontalOptions="Center">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Zapłacono = " />
+                                        <Span Text="{Binding Day.TotalPriceMoneyDecimal}" />
+                                        <Span Text=" zł" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                HorizontalOptions="Center">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Utarg = " />
+                                        <Span Text="{Binding Day.TotalPriceAfterCorrectDecimal}" />
+                                        <Span Text=" zł" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+                        </Grid>
+                    </toolkit:Expander.Header>
+                    <VerticalStackLayout>
+                        <Border HorizontalOptions="Fill" />
+
+                        <Grid
+                            Margin="5"
+                            Padding="5,0,5,0"
+                            RowDefinitions="*,*,*,*,*,*,*"
+                            RowSpacing="5">
+
+                            <Label Grid.Row="0" VerticalTextAlignment="Center">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Produkty = " />
+                                        <Span Text="{Binding Day.TotalPriceProductsDecimal}" />
+                                        <Span Text=" zł" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+
+                            <Label Grid.Row="1" VerticalTextAlignment="Center">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Ciasto = " />
+                                        <Span Text="{Binding Day.TotalPriceCakeDecimal}" />
+                                        <Span Text=" zł" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+                            <Label Grid.Row="2" VerticalTextAlignment="Center">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Suma = " />
+                                        <Span Text="{Binding Day.TotalPriceDecimal}" />
+                                        <Span Text=" zł" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+                            <Grid Grid.Row="3" ColumnDefinitions="auto,*,auto">
+                                <Label Text="Korekta = " VerticalOptions="Center" />
                                 <Entry
+                                    Grid.Column="1"
+                                    Keyboard="Numeric"
+                                    Text="{Binding Day.TotalPriceCorrectDecimal}"
+                                    TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
+                                <Label
+                                    Grid.Column="2"
+                                    Text=" zł"
+                                    VerticalOptions="Center" />
+                            </Grid>
+
+                            <Label Grid.Row="4" VerticalTextAlignment="Center">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Po korekcie = " />
+                                        <Span Text="{Binding Day.TotalPriceAfterCorrectDecimal}" />
+                                        <Span Text=" zł" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+
+                            <Grid
+                                Grid.Row="5"
+                                ColumnDefinitions="auto,*,auto"
+                                RowDefinitions="*,auto">
+                                <Label
+                                    Grid.Column="0"
+                                    Text="Zapłacono = "
+                                    VerticalOptions="Center" />
+                                <Entry
+                                    Grid.Column="1"
                                     Keyboard="Numeric"
                                     Text="{Binding Day.TotalPriceMoneyDecimal}"
                                     TextChanged="Entry_TextChanged_SetValueToSecendPosition" />
-                                <Label Text=" zł" VerticalOptions="Center" />
+                                <Label
+                                    Grid.Column="2"
+                                    Text=" zł"
+                                    VerticalOptions="Center" />
 
-                            </HorizontalStackLayout>
-                            <Button
-                                Command="{Binding AddPriceMoneyFromClipboardCommand}"
-                                HeightRequest="10"
-                                HorizontalOptions="Fill"
-                                VerticalOptions="Center" />
-                        </VerticalStackLayout>
+                                <Button
+                                    Grid.Row="1"
+                                    Command="{Binding AddPriceMoneyFromClipboardCommand}"
+                                    HeightRequest="10"
+                                    HorizontalOptions="Fill"
+                                    VerticalOptions="Center" />
+                            </Grid>
 
-                        <Label
-                            Grid.Row="4"
-                            Grid.Column="2"
-                            VerticalTextAlignment="Center">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="Różnica = " />
-                                    <Span Text="{Binding Day.TotalPriceDifferenceDecimal}" />
-                                    <Span Text=" zł" />
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
+                            <Label Grid.Row="6" VerticalTextAlignment="Center">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Różnica = " />
+                                        <Span Text="{Binding Day.TotalPriceDifferenceDecimal}" />
+                                        <Span Text=" zł" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
 
 
 
-                    </Grid>
-                </Border>
-            </ScrollView>
+                        </Grid>
+
+                    </VerticalStackLayout>
+
+
+
+                </toolkit:Expander>
+
+
+            </Border>
 
             <!--  Wybór produkty / ciasto  -->
             <Border Grid.Row="1" Margin="5,0,5,0">
@@ -739,7 +781,7 @@
                                         <RoundRectangle CornerRadius="10" />
                                     </Border.StrokeShape>
                                     <SwipeView>
-                                        <SwipeView.LeftItems>
+                                        <!--<SwipeView.LeftItems>
                                             <SwipeItems>
                                                 <SwipeItem
                                                     BackgroundColor="red"
@@ -747,7 +789,7 @@
                                                     Text="Usuń" />
 
                                             </SwipeItems>
-                                        </SwipeView.LeftItems>
+                                        </SwipeView.LeftItems>-->
                                         <SwipeView.RightItems>
                                             <SwipeItems>
                                                 <SwipeItem

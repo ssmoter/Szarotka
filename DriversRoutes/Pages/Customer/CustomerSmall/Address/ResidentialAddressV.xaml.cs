@@ -15,6 +15,11 @@ public partial class ResidentialAddressV : ContentView
         var control = (ResidentialAddressV)bindable;
         var address = newValue as ResidentialAddress;
 
+        if (address is null)
+        {
+            return;
+        }
+
         control.ResidentialAddressM.Name = !string.IsNullOrWhiteSpace(address.Name);
         control.ResidentialAddressM.Surname = !string.IsNullOrWhiteSpace(address.Surname);
         control.ResidentialAddressM.Street = !string.IsNullOrWhiteSpace(address.Street);

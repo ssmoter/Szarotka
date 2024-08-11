@@ -45,21 +45,23 @@
                                 <SwipeItems SwipeBehaviorOnInvoked="RemainOpen">
 
                                     <SwipeItemView VerticalOptions="FillAndExpand">
-                                        <VerticalStackLayout VerticalOptions="Center">
+                                        <Grid RowDefinitions="*,*" VerticalOptions="Center">
 
                                             <ImageButton
+                                                Grid.Row="0"
                                                 Clicked="ImageButton_Clicked_SetDown"
                                                 Source="{AppThemeBinding Light={Static ImgPath:ImgArrow.ArrowUpwardBlack},
                                                                          Dark={Static ImgPath:ImgArrow.ArrowUpwardWhite}}"
                                                 VerticalOptions="Center" />
 
                                             <ImageButton
+                                                Grid.Row="1"
                                                 Clicked="ImageButton_Clicked_SetUp"
                                                 Source="{AppThemeBinding Light={Static ImgPath:ImgArrow.ArrowDownwardBlack},
                                                                          Dark={Static ImgPath:ImgArrow.ArrowDownwardWhite}}"
                                                 VerticalOptions="Center" />
 
-                                        </VerticalStackLayout>
+                                        </Grid>
                                     </SwipeItemView>
 
                                 </SwipeItems>

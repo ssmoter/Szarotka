@@ -75,10 +75,16 @@
 
 
 
-            <HorizontalStackLayout HorizontalOptions="Center">
-                <Button Command="{Binding CancelAndReturCommand}" Text="Anuluj" />
-                <Button Command="{Binding SaveAndReturnCommand}" Text="Wczytaj" />
-            </HorizontalStackLayout>
+            <Grid ColumnDefinitions="*,*">
+                <Button
+                    Grid.Column="0"
+                    Command="{Binding CancelAndReturCommand}"
+                    Text="Anuluj" />
+                <Button
+                    Grid.Column="1"
+                    Command="{Binding SaveAndReturnCommand}"
+                    Text="Wczytaj" />
+            </Grid>
 
         </VerticalStackLayout>
 

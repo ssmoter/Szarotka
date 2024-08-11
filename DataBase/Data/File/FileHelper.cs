@@ -3,6 +3,7 @@
     public static class FileHelper
     {
         public const string jsonTyp = ".json";
+        public const string txtTyp = ".txt";
         public const string JsonFolder = "Json";
         public const string csvTyp = ".csv";
         public const string CsvFolder = "CSV";

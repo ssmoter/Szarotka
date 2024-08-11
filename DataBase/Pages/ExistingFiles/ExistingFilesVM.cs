@@ -96,14 +96,19 @@ namespace DataBase.Pages.ExistingFiles
         [RelayCommand]
         async Task FindFile()
         {
-            var response = await FilePicker.PickAsync(ExistingFilesVM.FileTypJson());
+
+            //ExistingFilesVM.FileTypJson()
+            var response = await FilePicker.PickAsync();
 
             if (response is not null)
             {
-                await Shell.Current.GoToAsync($"../../{ReturnPage}?FilesPath={response.FullPath}");
+                GoAndForget(response);
             }
-
         }
 
+        private async void GoAndForget(FileResult response)
+        {
+            await Shell.Current.GoToAsync($"../../{ReturnPage}?FilesPath={response.FullPath}");
+        }
     }
 }

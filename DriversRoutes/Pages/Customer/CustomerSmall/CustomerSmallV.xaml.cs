@@ -163,7 +163,15 @@ public partial class CustomerSmallV : ContentView
         get => (bool)GetValue(LocationIsVisibleProperty);
         set => SetValue(LocationIsVisibleProperty, value);
     }
-
+    public static readonly BindableProperty MoveTimeIsVisibleProperty
+        = BindableProperty.Create(nameof(MoveTimeIsVisible), typeof(bool), typeof(CustomerSmallV), propertyChanged: (bindable, oldValu, newValue) =>
+        {
+        });
+    public bool MoveTimeIsVisible
+    {
+        get => (bool)GetValue(MoveTimeIsVisibleProperty);
+        set => SetValue(MoveTimeIsVisibleProperty, value);
+    }
     #endregion
 
     #region Buttons
@@ -195,14 +203,21 @@ public partial class CustomerSmallV : ContentView
         set => SetValue(DisplayButtonCommandProperty, value);
     }
     public static readonly BindableProperty LocationButtonCommandProperty =
-   BindableProperty.Create(nameof(LocationButtonCommand), typeof(ICommand), typeof(CustomerSmallV));
+     BindableProperty.Create(nameof(LocationButtonCommand), typeof(ICommand), typeof(CustomerSmallV));
 
     public ICommand LocationButtonCommand
     {
         get => (ICommand)GetValue(LocationButtonCommandProperty);
         set => SetValue(LocationButtonCommandProperty, value);
     }
+    public static readonly BindableProperty MoveTimeButtonCommandProperty =
+        BindableProperty.Create(nameof(MoveTimeButtonCommand), typeof(ICommand), typeof(CustomerSmallV));
 
+    public ICommand MoveTimeButtonCommand
+    {
+        get => (ICommand)GetValue(MoveTimeButtonCommandProperty);
+        set => SetValue(MoveTimeButtonCommandProperty, value);
+    }
 
 
 
@@ -235,14 +250,21 @@ public partial class CustomerSmallV : ContentView
     }
 
     public static readonly BindableProperty LocationButtonCommandParameterProperty =
-   BindableProperty.Create(nameof(LocationButtonCommandParameter), typeof(object), typeof(CustomerSmallV));
+    BindableProperty.Create(nameof(LocationButtonCommandParameter), typeof(object), typeof(CustomerSmallV));
 
     public object LocationButtonCommandParameter
     {
         get => GetValue(LocationButtonCommandParameterProperty);
         set => SetValue(LocationButtonCommandParameterProperty, value);
     }
+    public static readonly BindableProperty MoveTimeButtonCommandParameterProperty =
+        BindableProperty.Create(nameof(MoveTimeButtonCommandParameter), typeof(object), typeof(CustomerSmallV));
 
+    public object MoveTimeButtonCommandParameter
+    {
+        get => GetValue(MoveTimeButtonCommandParameterProperty);
+        set => SetValue(MoveTimeButtonCommandParameterProperty, value);
+    }
     #endregion
 
     private CustomerSmallM customerSmallM;

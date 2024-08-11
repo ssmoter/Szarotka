@@ -8,9 +8,13 @@ namespace DriversRoutes.Data
     public class SelectRoutes(AccessDataBase db) : ISelectRoutes
     {
         readonly AccessDataBase _db = db;
+        private Routes _routesLast;
 
         public async Task<CustomerRoutes[]> GetCustomerRoutesQueryAsync(Routes routes, SelectedDayOfWeekRoutes dayOf)
         {
+            routes ??= _routesLast;
+            _routesLast = routes;
+
             var queryResult = await _db.DataBaseAsync.QueryAsync<FullModelForQuery>(Helper.SqlQuery.GetQueryForSelectedRoutes(routes.Id.ToString(), dayOf));
             var customers = new CustomerRoutes[queryResult.Count];
 

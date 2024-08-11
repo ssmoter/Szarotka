@@ -19,7 +19,7 @@
         ColumnDefinitions="*">
         <ScrollView Padding="3">
 
-            <Border StrokeThickness="3">
+            <Border Padding="5,0,5,0" StrokeThickness="3">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
@@ -138,7 +138,14 @@
                             VerticalOptions="Center" />
 
                     </HorizontalStackLayout>
-
+                    <Button
+                        Command="{Binding MoveTimeButtonCommand}"
+                        CommandParameter="{Binding MoveTimeButtonCommandParameter}"
+                        HorizontalOptions="Center"
+                        IsVisible="{Binding MoveTimeIsVisible}"
+                        LineBreakMode="WordWrap"
+                        Text="Przesuń czas na pozostałych dniach"
+                        VerticalOptions="Center" />
 
                 </VerticalStackLayout>
 

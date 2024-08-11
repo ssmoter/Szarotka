@@ -283,7 +283,28 @@ namespace DataBase.Model.EntitiesRoutes
         //    }
         //}
 
+        public SelectedDayOfWeekRoutes(SelectedDayOfWeekRoutes copy)
+        {
+            this.Id = copy.Id;
+            this.Created = copy.Created;
+            this.Updated = copy.Updated;
+            this.Sunday = copy.Sunday;
+            this.SundayTimeSpan = copy.SundayTimeSpan;
+            this.Monday = copy.Monday;
+            this.MondayTimeSpan = copy.MondayTimeSpan;
+            this.Tuesday = copy.Tuesday;
+            this.TuesdayTimeSpan = copy.TuesdayTimeSpan;
+            this.Wednesday = copy.Wednesday;
+            this.WednesdayTimeSpan = copy.WednesdayTimeSpan;
+            this.Thursday = copy.Thursday;
+            this.ThursdayTimeSpan = copy.ThursdayTimeSpan;
+            this.Friday = copy.Friday;
+            this.FridayTimeSpan = copy.FridayTimeSpan;
+            this.Saturday = copy.Saturday;
+            this.SaturdayTimeSpan = copy.SaturdayTimeSpan;
+            this.Optional = copy.Optional;
 
+        }
         public override string ToString()
         {
             StringBuilder sb = new();

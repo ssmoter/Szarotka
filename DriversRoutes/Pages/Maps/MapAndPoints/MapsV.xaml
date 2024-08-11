@@ -61,23 +61,10 @@
 
                     <Grid RowDefinitions="auto,*">
 
-                        <Grid ColumnDefinitions="auto,*,auto" HorizontalOptions="Center">
-
-                            <ImageButton
-                                Grid.Column="0"
-                                Command="{Binding DisplayDescriptionOfPreviousPointCommand}"
-                                Rotation="90"
-                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardWhite},
-                                                         Dark={Static img:ImgArrow.ArrowDownwardBlack}}" />
-                            <ImageButton
-                                Grid.Column="2"
-                                Command="{Binding DisplayDescriptionOfNextPointCommand}"
-                                Rotation="-90"
-                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardWhite},
-                                                         Dark={Static img:ImgArrow.ArrowDownwardBlack}}" />
+                        <Grid HorizontalOptions="Center" RowDefinitions="*,auto">
 
                             <Grid
-                                Grid.Column="1"
+                                Grid.Row="0"
                                 ColumnDefinitions="*,*"
                                 RowDefinitions="*,*">
 
@@ -163,7 +150,7 @@
                                     </VerticalStackLayout>
                                 </Border>
 
-
+                                <!--  &#10;  -->
                                 <Border
                                     Grid.Row="1"
                                     Grid.Column="1"
@@ -172,7 +159,7 @@
                                         <RoundRectangle CornerRadius="0,0,30,30" />
                                     </Border.StrokeShape>
                                     <VerticalStackLayout>
-                                        <Label Text="Lokalzacja&#10;" />
+                                        <Label Text="Lokalizacja" />
                                         <Button
                                             Padding="0"
                                             Command="{Binding CurrentLocationNewPinCommand}"
@@ -185,6 +172,24 @@
 
 
                             </Grid>
+                            <Grid Grid.Row="1" ColumnDefinitions="*,*">
+
+                                <ImageButton
+                                    Grid.Column="0"
+                                    Command="{Binding DisplayDescriptionOfPreviousPointCommand}"
+                                    HorizontalOptions="Start"
+                                    Rotation="90"
+                                    Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                             Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                                <ImageButton
+                                    Grid.Column="1"
+                                    Command="{Binding DisplayDescriptionOfNextPointCommand}"
+                                    HorizontalOptions="End"
+                                    Rotation="-90"
+                                    Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                             Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                            </Grid>
+
                         </Grid>
 
 
@@ -208,6 +213,9 @@
                                         LocationButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:MapsVM}}, Path=LocationOfPinCommand}"
                                         LocationButtonCommandParameter="{Binding .}"
                                         LocationIsVisible="True"
+                                        MoveTimeButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:MapsVM}}, Path=MoveTimeOnPointsCommand}"
+                                        MoveTimeButtonCommandParameter="{Binding SelectedDayOfWeek}"
+                                        MoveTimeIsVisible="True"
                                         PhoneNumber="{Binding PhoneNumber}"
                                         QueueNumber="{Binding Index}"
                                         ResidentialAddress="{Binding ResidentialAddress}" />
@@ -278,8 +286,7 @@
                         InfoWindowClicked="Pin_InfoWindowClicked"
                         Label="{Binding Pin.Label}"
                         Location="{Binding Pin.Location}"
-                        MarkerClicked="Pin_InfoWindowClicked"
-                        Type="Place" />
+                        MarkerClicked="Pin_InfoWindowClicked" />
 
 
                     <!--<maps:Pin

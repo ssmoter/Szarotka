@@ -64,6 +64,9 @@
 	  <MauiXaml Update="Pages\Customer\AddCustomer\AddCustomerV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\Popups\MoveTimeOnCustomers\MoveTimeOnCustomersV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\Popups\SelectDay\SelectDayV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

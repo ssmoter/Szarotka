@@ -27,6 +27,16 @@ public partial class SingleDayV : ContentPage
         }
     }
 
+    protected override bool OnBackButtonPressed()
+    {
+        if (BindingContext is SingleDayVM vm)
+        {
+            vm.BackCommand.Execute(null);
+        }
+        return true;
+        //return base.OnBackButtonPressed();
+    }
+
     private void Entry_TextChanged_SetValueToSecendPositionEmptyIsZero(object sender, TextChangedEventArgs e)
     {
         try

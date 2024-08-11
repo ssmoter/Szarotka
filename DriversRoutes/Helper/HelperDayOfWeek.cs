@@ -68,9 +68,8 @@ namespace DriversRoutes.Helper
             return false;
         }
 
-        public static DateTime GetTodayDatetimeFromSelectedDayOfWeekRoutes(this SelectedDayOfWeekRoutes dayOf)
+        public static DateTime GetTodayDatetimeFromSelectedDayOfWeekRoutes(this SelectedDayOfWeekRoutes dayOf, DateTime today)
         {
-            var today = DateTime.Today;
             var now = DateTime.Now;
             TimeSpan timespan;
             switch (today.DayOfWeek)
@@ -109,7 +108,38 @@ namespace DriversRoutes.Helper
             return now;
         }
 
+        public static DayOfWeek GetFirstDayOfWeek(this SelectedDayOfWeekRoutes dayOf)
+        {
+            if (dayOf.Sunday)
+            {
+                return DayOfWeek.Sunday;
+            }
+            if (dayOf.Monday)
+            {
+                return DayOfWeek.Monday;
+            }
+            if (dayOf.Tuesday)
+            {
+                return DayOfWeek.Tuesday;
+            }
+            if (dayOf.Wednesday)
+            {
+                return DayOfWeek.Wednesday;
+            }
+            if (dayOf.Thursday)
+            {
+                return DayOfWeek.Thursday;
+            }
+            if (dayOf.Friday)
+            {
+                return DayOfWeek.Friday;
+            }
+            if (dayOf.Saturday)
+            {
+                return DayOfWeek.Saturday;
+            }
+            throw new ArgumentException("Nie wybrano dnia");
+        }
+
     }
-
-
 }

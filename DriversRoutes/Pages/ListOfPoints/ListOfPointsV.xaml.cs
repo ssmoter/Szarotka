@@ -29,6 +29,7 @@ public partial class ListOfPointsV : ContentPage
 
             vm.CustomerRoutes.Clear();
             vm.CustomerRoutes = result;
+            vm.SetSaveData(false);
         }
     }
 
