@@ -31,11 +31,11 @@ namespace DataBase.Data
             var version = _db.DataBase.Table<DataBaseVersion>().FirstOrDefault();
 
             version ??= new DataBaseVersion()
-                {
-                    DataBase = 0,
-                    DriversRoutes = 0,
-                    Inventory = 0
-                };
+            {
+                DataBase = 0,
+                DriversRoutes = 0,
+                Inventory = 0
+            };
             _db.DataBase.InsertOrReplace(version);
             return version;
 

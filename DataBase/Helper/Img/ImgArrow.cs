@@ -7,6 +7,8 @@
         public static string ArrowUpwardWhite { get => "baseline_arrow_upward_white_24dp.png"; }
         public static string ArrowDownwardWhite { get => "baseline_arrow_downward_white_24dp.png"; }
 
+        public static string LineWhite { get => "baseline_horizontal_rule_white_24.png"; }
+        public static string LineBlack { get => "baseline_horizontal_rule_black_24.png"; }
     }
     public static class ImgAddMinus
     {

@@ -12,11 +12,11 @@ public partial class MapsV : ContentPage, IDisposable
         vm.GoToLocation += Map.MoveToRegion;
         BindingContext = vm;
     }
-
     public void Dispose()
     {
         if (BindingContext is MapsVM vm)
             vm.GoToLocation -= Map.MoveToRegion;
+        GC.SuppressFinalize(this);
     }
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
@@ -37,19 +37,22 @@ public partial class MapsV : ContentPage, IDisposable
 
         if (BindingContext is MapsVM vm)
         {
-            Task.Run(async () =>
-            {
-                await vm.StartListeningLocation(this.Map);
-            });
+            vm.StartListeningLocation(this.Map);
 
             if (vm.Routes is null)
                 return;
             if (vm.DriversRoutesName.Length <= 16)
+            {
                 vm.DriversRoutesName += vm.Routes.Name;
+            }
+            if (!vm.DriversRoutesName.Contains(vm.Routes.Name))
+            {
+                vm.DriversRoutesName = $"Trasa kierowcy: {vm.Routes.Name}";
+            }
 
             if (vm.LastSelectedDayOfWeekWhenNavigation is not null)
             {
-                vm.GetSelectedDaysAndForget(vm.LastSelectedDayOfWeek);
+                vm.GetSelectedDaysAndForget(vm.LastSelectedDayOfWeekWhenNavigation);
             }
             else if (vm.LastSelectedDayOfWeek is not null)
             {

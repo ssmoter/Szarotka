@@ -6,10 +6,12 @@ namespace DataBase.Data.File
 {
     public static class JsonFile
     {
-        public static async Task<T> GetFileJson<T>(string path)
+        public static async Task<T> GetFileJsonAsync<T>(string path)
         {
             try
             {
+
+                //var text = System.IO.File.ReadAllText(path);
                 using var sourceStream = new FileStream(path,
                       FileMode.Open, FileAccess.Read, FileShare.Read,
                       bufferSize: 4096, useAsync: true);
@@ -32,6 +34,21 @@ namespace DataBase.Data.File
                 throw;
             }
         }
+        public static T GetFileJson<T>(string path)
+        {
+            try
+            {
+                var text = System.IO.File.ReadAllText(path,Encoding.Unicode);
+
+                var model = JsonConvert.DeserializeObject<T>(text);
+                return model;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public static async Task<string> SaveFileJson(object model, string name, string folderName = FileHelper.JsonFolder)
         {
             try

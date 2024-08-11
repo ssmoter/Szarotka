@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="SzarotkaBlazor.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:Img="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
+    xmlns:local="clr-namespace:SzarotkaBlazor">
+
+
+
+
+    <ScrollView>
+
+        <VerticalStackLayout
+            Padding="30,0"
+            Spacing="25"
+            VerticalOptions="Center">
+
+            <!--<BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
+                <BlazorWebView.RootComponents>
+                    <RootComponent ComponentType="{x:Type local:Components.Routes}" Selector="#app" />
+                </BlazorWebView.RootComponents>
+            </BlazorWebView>-->
+
+            <Grid
+                IsVisible="False"
+                HorizontalOptions="Center"
+                RowDefinitions="*,auto"
+                VerticalOptions="Center">
+                <GraphicsView x:Name="gv" />
+                <Button
+                    Grid.Row="1"
+                    Clicked="Button_Clicked"
+                    Text="test" />
+            </Grid>
+            <Image
+                HeightRequest="100"
+                HorizontalOptions="Center"
+                Source="logo2.png" />
+
+
+            <Button
+                Clicked="Inventory_Clicked"
+                HorizontalOptions="Center"
+                Text="Inwentarz" />
+
+            <Button
+                Clicked="Maps_Clicked"
+                HorizontalOptions="Center"
+                IsVisible="{OnPlatform Android=true,
+                                       Default=false}"
+                Text="Mapy" />
+
+            <Button
+                Clicked="Options_Clicked"
+                HorizontalOptions="Center"
+                Text="Opcje" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+
+</ContentPage>

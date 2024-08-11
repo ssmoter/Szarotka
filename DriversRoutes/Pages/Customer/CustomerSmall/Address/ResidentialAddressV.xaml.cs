@@ -14,17 +14,20 @@ public partial class ResidentialAddressV : ContentView
     {
         var control = (ResidentialAddressV)bindable;
         var address = newValue as ResidentialAddress;
-        if (address is not null)
+
+        if (address is null)
         {
-            control.ResidentialAddressM.Name = !string.IsNullOrWhiteSpace(address.Name);
-            control.ResidentialAddressM.Surname = !string.IsNullOrWhiteSpace(address.Surname);
-            control.ResidentialAddressM.Street = !string.IsNullOrWhiteSpace(address.Street);
-            control.ResidentialAddressM.HouseNumber = !string.IsNullOrWhiteSpace(address.HouseNumber);
-            control.ResidentialAddressM.ApartmentNumber = !string.IsNullOrWhiteSpace(address.ApartmentNumber);
-            control.ResidentialAddressM.PostalCode = !string.IsNullOrWhiteSpace(address.PostalCode);
-            control.ResidentialAddressM.City = !string.IsNullOrWhiteSpace(address.City);
-            control.ResidentialAddressM.Country = !string.IsNullOrWhiteSpace(address.Country);
+            return;
         }
+
+        control.ResidentialAddressM.Name = !string.IsNullOrWhiteSpace(address.Name);
+        control.ResidentialAddressM.Surname = !string.IsNullOrWhiteSpace(address.Surname);
+        control.ResidentialAddressM.Street = !string.IsNullOrWhiteSpace(address.Street);
+        control.ResidentialAddressM.HouseNumber = !string.IsNullOrWhiteSpace(address.HouseNumber);
+        control.ResidentialAddressM.ApartmentNumber = !string.IsNullOrWhiteSpace(address.ApartmentNumber);
+        control.ResidentialAddressM.PostalCode = !string.IsNullOrWhiteSpace(address.PostalCode);
+        control.ResidentialAddressM.City = !string.IsNullOrWhiteSpace(address.City);
+        control.ResidentialAddressM.Country = !string.IsNullOrWhiteSpace(address.Country);
 
         if
         (control.ResidentialAddressM.Name

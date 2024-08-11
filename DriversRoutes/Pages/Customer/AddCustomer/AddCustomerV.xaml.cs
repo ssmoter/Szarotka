@@ -14,7 +14,7 @@ public partial class AddCustomerV : ContentPage
         base.OnNavigatedTo(args);
         if (BindingContext is AddCustomerVM vm)
         {
-
+            vm.GetHelperDayOfWeek();
         }
     }
 }

@@ -56,7 +56,7 @@ namespace DataBase.Helper
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), DatabaseName);
 #elif ANDROID
                 var doc = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDocuments);
-                return Path.Combine(doc.Path,DatabaseName);
+                return Path.Combine(doc.Path, DatabaseName);
 #else
                 return "";
 #endif
@@ -71,7 +71,7 @@ namespace DataBase.Helper
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), BackupName);
 #elif ANDROID
                 var doc = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDocuments);
-                return Path.Combine(doc.Path,BackupName);
+                return Path.Combine(doc.Path, BackupName);
 #else
                 return "";
 #endif

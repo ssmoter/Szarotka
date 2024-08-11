@@ -68,7 +68,7 @@ namespace DriversRoutes.Helper
                 Longitude = from.Longitude,
                 Latitude = from.Latitude,
                 SelectedDayOfWeek = from.DayOfWeek,
-                ResidentialAddress = from.ResidentialAddress
+                ResidentialAddress = from.ResidentialAddress,                
             };
             to.SetPin();
             from.Dispose();

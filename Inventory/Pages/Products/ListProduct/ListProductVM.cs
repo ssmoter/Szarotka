@@ -97,16 +97,17 @@ namespace Inventory.Pages.Products.ListProduct
         {
             ScrollTo?.Invoke(index, groupIndex, position, animate);
         }
-        void SetPositions(int index, ListProductM value)
+        async Task SetPositions(int index, ListProductM value)
         {
-            ProductMs.Remove(value);
-            ProductMs.Insert(index, value);
+            var oldIndex = ProductMs.IndexOf(value);
+            ProductMs.Move(oldIndex, index);
 
-            SetArrangement(index);
+            await SetArrangement();
         }
 
-        private void SetArrangement(int index)
+        private async Task SetArrangement()
         {
+            var task = new Task[ProductMs.Count];
             for (int i = 0; i < ProductMs.Count; i++)
             {
                 int arrangement = i + 1;
@@ -114,9 +115,9 @@ namespace Inventory.Pages.Products.ListProduct
 
                 var entities = ProductMs[i].Name;
                 entities.Updated = DateTime.Now;
-                _db.DataBase.Update(entities);
+                task[i] = _db.DataBaseAsync.UpdateAsync(entities);
             }
-            OnScrollTo(index, position: ScrollToPosition.Center, animate: false);
+            await Task.WhenAll(task);
         }
 
         #endregion
@@ -219,7 +220,7 @@ namespace Inventory.Pages.Products.ListProduct
 
 
         [RelayCommand]
-        void SetUp(ListProductM value)
+        async Task SetUp(ListProductM value)
         {
             var index = ProductMs.IndexOf(value);
             index += 1;
@@ -227,10 +228,10 @@ namespace Inventory.Pages.Products.ListProduct
             {
                 return;
             }
-            SetPositions(index, value);
+            await SetPositions(index, value);
         }
         [RelayCommand]
-        void SetDown(ListProductM value)
+        async Task SetDown(ListProductM value)
         {
             var index = ProductMs.IndexOf(value);
             index -= 1;
@@ -238,7 +239,7 @@ namespace Inventory.Pages.Products.ListProduct
             {
                 return;
             }
-            SetPositions(index, value);
+            await SetPositions(index, value);
         }
 
 
@@ -265,15 +266,15 @@ namespace Inventory.Pages.Products.ListProduct
         }
 
         [RelayCommand]
-        void OnDrop(ListProductM value)
+        async Task OnDrop(ListProductM value)
         {
-            if (value is null)           
+            if (value is null)
                 return;
-            
+
 
             var index = ProductMs.IndexOf(value);
 
-            SetPositions(index, DragAndDropProduct);
+            await SetPositions(index, DragAndDropProduct);
 
             DragAndDropProduct = null;
         }

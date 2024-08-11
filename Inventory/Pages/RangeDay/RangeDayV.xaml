@@ -6,7 +6,8 @@
     xmlns:Convert="clr-namespace:DataBase.Helper;assembly=DataBase"
     xmlns:VM="clr-namespace:Inventory.Pages.RangeDay"
     xmlns:VMD="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
-    xmlns:graph ="clr-namespace:Inventory.Pages.RangeDay.Graph"
+    xmlns:graph="clr-namespace:Inventory.Pages.RangeDay.Graph"
+    xmlns:table="clr-namespace:Inventory.Pages.RangeDay.Table"
     Title="Zakres dat"
     x:DataType="VM:RangeDayVM">
 
@@ -64,20 +65,38 @@
         </Grid>
 
         <Grid Grid.Row="1" IsVisible="{Binding GraphIsVisible}">
-            <graph:GraphV RangeDayMs="{Binding RangeDays}"/>
+            <!--<BlazorWebView x:Name="blazorWebViewGraph" HostPage="wwwroot/index.html">
+                <BlazorWebView.RootComponents>
+                    <RootComponent ComponentType="{x:Type graph:Graph}" Selector="#app" />
+                </BlazorWebView.RootComponents>
+            </BlazorWebView>-->
+            <!--<graph:GraphV RangeDayMs="{Binding RangeDays}" />-->
         </Grid>
 
         <Grid Grid.Row="1" IsVisible="{Binding TableIsVisible}">
-            <Label Text="Nic"/>
+
+            <BlazorWebView x:Name="blazorWebViewTable" HostPage="wwwroot/index.html">
+                <BlazorWebView.RootComponents>
+                    <RootComponent ComponentType="{x:Type table:RangeTable}" Selector="#app" />
+                </BlazorWebView.RootComponents>
+            </BlazorWebView>
+
+
         </Grid>
 
-        <Grid RowDefinitions="auto,*" Grid.Row="1" IsVisible="{Binding ListIsVisible}">
+        <Grid
+            Grid.Row="1"
+            IsVisible="{Binding ListIsVisible}"
+            RowDefinitions="auto,*">
 
-            <Border Margin="2" Padding="5" MaximumHeightRequest="100">
+            <Border
+                Margin="2"
+                Padding="5"
+                MaximumHeightRequest="100">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
-                <CollectionView ItemsSource="{Binding TotalPriceOfRange}">
+                <CollectionView ItemsSource="{Binding Sum}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="VM:RangeDayM">
 

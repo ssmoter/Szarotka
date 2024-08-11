@@ -26,6 +26,7 @@ namespace Inventory.Data.Draw
             }
             GraphValues = null;
             XValues = null;
+            GC.SuppressFinalize(this);
         }
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
@@ -438,7 +439,7 @@ namespace Inventory.Data.Draw
         protected void YDrawValuesMore(ICanvas canvas, RectF dirtyRect, (float, float) scale)
         {
             canvas.SaveState();
-            
+
             canvas.DrawString((-_max).ToString(), 0, (-_min * scale.Item2) + _fromBotton, HorizontalAlignment.Left);
             canvas.DrawString((-_min).ToString(), 0, (-_max * scale.Item2) + _fromBotton, HorizontalAlignment.Left);
             canvas.RestoreState();

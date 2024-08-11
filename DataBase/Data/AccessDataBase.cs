@@ -2,6 +2,8 @@
 
 using SQLite;
 
+using System.Diagnostics;
+
 namespace DataBase.Data
 {
     public class AccessDataBase : IDisposable
@@ -27,7 +29,9 @@ namespace DataBase.Data
             DataBase.Insert(log);
 
             Shell.Current.CurrentPage.DisplayAlert("Error", ex.Message, "Ok");
-
+#if DEBUG
+            Debug.WriteLine($"Error{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
+#endif
         }
 
         public async Task SaveLogAsync(Exception ex)

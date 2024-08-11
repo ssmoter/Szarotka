@@ -264,14 +264,34 @@ namespace Inventory.Pages.SingleDay
         {
             try
             {
-                var result = await Shell.Current.DisplayAlert("Zapisać", "Czy zapisać przy cofaniu", "Tak", "Nie");
-                if (result)
+                string yes = "Tak";
+                string no = "Nie";
+                string cancel = "Anuluj";
+
+                var result = await Shell.Current.DisplayActionSheet("Czy zapisać przy cofaniu", "", "", yes, no, cancel);
+                //var result = await Shell.Current.DisplayAlert("Zapisać", "Czy zapisać przy cofaniu", "Tak", "Nie");
+
+                if (result == yes)
+                {
                     await SaveDay();
-                await Shell.Current.GoToAsync("..?",
-                    new Dictionary<string, object>()
-                    {
-                        [nameof(Day)] = Day
-                    });
+                }
+                else if (result == cancel)
+                {
+                    return;
+                }
+                else if (result == no)
+                {
+
+                    await Shell.Current.GoToAsync("..?",
+                        new Dictionary<string, object>()
+                        {
+                            [nameof(Day)] = Day
+                        });
+                }
+                else
+                {
+                    return;
+                }
             }
             catch (Exception ex)
             {
@@ -471,6 +491,7 @@ namespace Inventory.Pages.SingleDay
                 SingleDayM.CakeSortPriceRotateX = 0;
                 Day.Cakes = new(Day.Cakes.OrderByDescending(x => x.Price));
             }
+            SingleDayM.CakeAllIsVisible = false;
         }
 
         [RelayCommand]
@@ -485,6 +506,29 @@ namespace Inventory.Pages.SingleDay
             {
                 SingleDayM.CakeSortDateRotateX = 0;
                 Day.Cakes = new(Day.Cakes.OrderByDescending(x => x.CreatedTicks));
+            }
+            SingleDayM.CakeAllIsVisible = false;
+        }
+
+        private Product lastProductHideElseExpanded = new();
+        [RelayCommand]
+        void HideElseExpanded(Product product)
+        {
+            if (lastProductHideElseExpanded.ProductNameId == product.ProductNameId)
+            {
+                return;
+            }
+
+            lastProductHideElseExpanded.IsExpanded = false;
+            lastProductHideElseExpanded = product;
+        }
+
+        [RelayCommand]
+        static void SetFullReturn(Product product)
+        {
+            if (product is not null)
+            {
+                product.NumberReturn = product.Number + product.NumberEdit;
             }
         }
 

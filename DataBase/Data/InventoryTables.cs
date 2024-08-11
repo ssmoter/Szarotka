@@ -8,7 +8,7 @@ namespace DataBase.Data
         readonly AccessDataBase _db = db;
         static readonly Random _random = new(2137);
 
-        static Guid GetGuidSed()
+        public static Guid GetGuidSed()
         {
             byte[] guidBytes = new byte[16];
             _random.NextBytes(guidBytes);

@@ -1,7 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-using SQLite;
-
 namespace Inventory.Pages.Options.CreateTable
 {
     public partial class CreateTableM : ObservableObject

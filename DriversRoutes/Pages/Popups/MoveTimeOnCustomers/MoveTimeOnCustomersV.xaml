@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="DriversRoutes.Pages.Popups.MoveTimeOnCustomers.MoveTimeOnCustomersV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:DriversRoutes.Pages.Popups.MoveTimeOnCustomers"
+    x:DataType="vm:MoveTimeOnCustomersVM"
+    Color="{AppThemeBinding Light={StaticResource White},
+                            Dark={StaticResource Black}}">
+
+    <!--
+    -->
+    <Border
+        Margin="10,10,10,5"
+        Padding="10,10,10,5"
+        HorizontalOptions="Center"
+        VerticalOptions="Center">
+
+        <VerticalStackLayout>
+
+            <Label FontSize="Large" Text="Przesuń czas na pozostałych punktach" />
+
+            <Grid ColumnDefinitions="*,1,*" ColumnSpacing="5">
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Text="Wybierz dzień:" />
+                    <RadioButton
+                        CheckedChanged="RadioButton_CheckedChanged"
+                        Content="Poniedziałek"
+                        IsChecked="{Binding SelectDayMs.Monday}" />
+                    <RadioButton
+                        CheckedChanged="RadioButton_CheckedChanged"
+                        Content="Wtorek"
+                        IsChecked="{Binding SelectDayMs.Tuesday}" />
+                    <RadioButton
+                        CheckedChanged="RadioButton_CheckedChanged"
+                        Content="Środa"
+                        IsChecked="{Binding SelectDayMs.Wednesday}" />
+                    <RadioButton
+                        CheckedChanged="RadioButton_CheckedChanged"
+                        Content="Czwartek"
+                        IsChecked="{Binding SelectDayMs.Thursday}" />
+                    <RadioButton
+                        CheckedChanged="RadioButton_CheckedChanged"
+                        Content="Piątek"
+                        IsChecked="{Binding SelectDayMs.Friday}" />
+                    <RadioButton
+                        CheckedChanged="RadioButton_CheckedChanged"
+                        Content="Sobota"
+                        IsChecked="{Binding SelectDayMs.Saturday}" />
+                </VerticalStackLayout>
+
+                <Border Grid.Column="1" />
+
+                <VerticalStackLayout Grid.Column="2">
+                    <Label Text="Ustaw czas:" />
+                    <HorizontalStackLayout>
+                        <TimePicker IsEnabled="False" Time="{Binding SelectedTime}" />
+                        <Label VerticalOptions="Center">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding Sign}" />
+                                    <Span Text="{Binding AddTime.TotalMinutes}" />
+                                    <Span Text="min" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </HorizontalStackLayout>
+                    <Button
+                        Margin="0,0,0,5"
+                        Command="{Binding AddCommand}"
+                        CommandParameter="0"
+                        Text="Ustaw 0" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <VerticalStackLayout Grid.Column="0" Spacing="5">
+                            <Button
+                                Command="{Binding AddCommand}"
+                                CommandParameter="-1"
+                                Text="-1" />
+                            <Button
+                                Command="{Binding AddCommand}"
+                                CommandParameter="-5"
+                                Text="-5" />
+                            <Button
+                                Command="{Binding AddCommand}"
+                                CommandParameter="-10"
+                                Text="-10" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="5">
+                            <Button
+                                Command="{Binding AddCommand}"
+                                CommandParameter="1"
+                                Text="+1" />
+                            <Button
+                                Command="{Binding AddCommand}"
+                                CommandParameter="5"
+                                Text="+5" />
+                            <Button
+                                Command="{Binding AddCommand}"
+                                CommandParameter="10"
+                                Text="+10" />
+                        </VerticalStackLayout>
+                    </Grid>
+                    <TimePicker Time="{Binding AddTime}" />
+                </VerticalStackLayout>
+            </Grid>
+
+            <Border Margin="0,0,0,5" />
+
+            <Grid ColumnDefinitions="*,*">
+                <Button
+                    Grid.Column="0"
+                    Command="{Binding CancelAndReturCommand}"
+                    Text="Anuluj" />
+                <Button
+                    Grid.Column="1"
+                    Command="{Binding SaveAndReturnCommand}"
+                    Text="Zapisz" />
+            </Grid>
+
+        </VerticalStackLayout>
+
+    </Border>
+
+</toolkit:Popup>

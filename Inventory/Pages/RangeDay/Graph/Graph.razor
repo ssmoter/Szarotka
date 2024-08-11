@@ -1,0 +1,198 @@
+﻿@using Inventory.Pages.RangeDay
+@using DataBase.Helper
+@using MudBlazor
+
+@implements IDisposable
+
+<MudThemeProvider @bind-IsDarkMode="@DataBase.Helper.MudBlazorTheme.IsDarkMode" Theme="@DataBase.Helper.MudBlazorTheme.Theme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<div class="mx-auto pa-6">
+
+    <SmallGraph chartType="@chartType" RangeDayMs="@RangeDayMs" />
+
+<div>
+    @if (RangeDayMs is not null)
+    {
+        if (RangeDayMs.Count > 0)
+        {
+            var order = RangeDayMs.OrderBy(x => x.Day.SelectedDateTicks);
+            var first = order.FirstOrDefault().Day;
+            var last = order.LastOrDefault().Day;
+
+
+            <MudExpansionPanels Dense Gutters Class="mt-6">
+                @if (Sum.Count > 0)
+                {
+                    var title = $"Suma z całego zakresu od {first.SelectedDateString}  do {last.SelectedDateString}  ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
+                    <MudExpansionPanel Text="@title">
+
+                        <MudChart ChartType="chartType" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries />
+
+                    </MudExpansionPanel>
+                }
+                @if (SumDayOfWeek.Count > 0)
+                {
+                    var title = $"Sumy poszczególnych dni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString}  ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
+                    <MudExpansionPanel Text="@title">
+                        <MudChart ChartType="chartType" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries />
+
+                    </MudExpansionPanel>
+                }
+                @if (SumPerOfWeek.Count > 0)
+                {
+                    var title = $"Sumy poszczególnych tygodni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
+                    <MudExpansionPanel Text="@title">
+
+                        <MudChart ChartType="chartType" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries />
+
+                    </MudExpansionPanel>
+                }
+                @if (SumPerOfMonth.Count > 0)
+                {
+                    var title = $"Sumy poszczególnych miesięcy z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
+                    <MudExpansionPanel Text="@title">
+                        <MudChart ChartType="chartType" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries />
+
+                    </MudExpansionPanel>
+                }
+            </MudExpansionPanels>
+
+            <MudExpansionPanels Dense Gutters Class="mt-6">
+                @if (AveragesDayOfWeek.Count > 0)
+                {
+                    var title = $"Średnie poszczególnych dni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
+                    <MudExpansionPanel Text="@title">
+
+                        <MudChart ChartType="chartType" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries />
+
+                    </MudExpansionPanel>
+                }
+                @if (AveragesPerOfWeek.Count > 0)
+                {
+                    var title = $"Średnie poszczególnych tygodni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
+                    <MudExpansionPanel Text="@title">
+
+                        <MudChart ChartType="chartType" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries />
+
+                    </MudExpansionPanel>
+                }
+                @if (AveragesPerOfMonth.Count > 0)
+                {
+                    var title = $"Średnie poszczególnych miesięcy z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({(last.SelectedDate - first.SelectedDate).Days} Dni)";
+                    <MudExpansionPanel Text="@title">
+                        <MudChart ChartType="chartType" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries />
+
+                    </MudExpansionPanel>
+                }
+            </MudExpansionPanels>
+
+            <MudExpansionPanels MultiExpansion="true" Dense Gutters Class="mt-6">
+                @for (int i = 0; i < UniqueDriver.Count; i++)
+                {
+                    var title = $"Dane Kierowcy {RangeDayMs[i].Driver.Name} ({(last.SelectedDate - first.SelectedDate).Days} dni)";
+                    <MudExpansionPanel Text="@title">
+                        <MudChart ChartType="chartType" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" CanHideSeries />
+
+                    </MudExpansionPanel>
+
+                }
+            </MudExpansionPanels>
+        }
+    }
+</div>
+</div>
+
+
+
+@code {
+
+    public List<ChartSeries> Series = new List<ChartSeries>();
+    public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+    public ChartType chartType = ChartType.Bar;
+
+
+    public IList<RangeDayM> RangeDayMs { get; set; } = [];
+
+    public IList<RangeDayM> Sum { get; set; } = [];
+
+    public IList<RangeDayM> SumDayOfWeek { get; set; } = [];
+    public IList<RangeDayM> AveragesDayOfWeek { get; set; } = [];
+
+    public IList<RangeDayM> SumPerOfWeek { get; set; } = [];
+    public IList<RangeDayM> AveragesPerOfWeek { get; set; } = [];
+
+
+    public IList<RangeDayM> SumPerOfMonth { get; set; } = [];
+    public IList<RangeDayM> AveragesPerOfMonth { get; set; } = [];
+
+
+    public IList<DataBase.Model.EntitiesInventory.Product> ProductsAll { get; set; }
+
+    IList<DataBase.Model.EntitiesInventory.Driver> UniqueDriver = [];
+
+    private static event Action<
+        IList<RangeDayM>
+    , IList<RangeDayM>
+    , IList<RangeDayM>
+    , IList<RangeDayM>
+    , IList<RangeDayM>
+    , IList<RangeDayM>
+    , IList<RangeDayM>
+    , IList<RangeDayM>
+    , IList<DataBase.Model.EntitiesInventory.Product>
+    , IList<DataBase.Model.EntitiesInventory.Driver>
+    > SetRangeDayMs;
+    private void setRange(
+        IList<RangeDayM> rangeDayMs
+    , IList<RangeDayM> sum
+    , IList<RangeDayM> sumDayOfWeek
+    , IList<RangeDayM> averagesDayOfWeek
+    , IList<RangeDayM> sumPerOfWeek
+    , IList<RangeDayM> averagesPerOfWeek
+    , IList<RangeDayM> sumPerOfMonth
+    , IList<RangeDayM> averagesPerOfMonth
+    , IList<DataBase.Model.EntitiesInventory.Product> productsAll
+    , IList<DataBase.Model.EntitiesInventory.Driver> uniqueDriver
+    )
+    {
+        RangeDayMs = rangeDayMs;
+        Sum = sum;
+        SumDayOfWeek = sumDayOfWeek;
+        AveragesDayOfWeek = averagesDayOfWeek;
+        SumPerOfWeek = sumPerOfWeek;
+        AveragesPerOfWeek = averagesPerOfWeek;
+        SumPerOfMonth = sumPerOfMonth;
+        AveragesPerOfMonth = averagesPerOfMonth;
+        ProductsAll = productsAll;
+        UniqueDriver = uniqueDriver;
+        StateHasChanged();
+    }
+    public static void OnSetRangeDayMs(IList<RangeDayM> rangeDayMs
+    , IList<RangeDayM> sum
+    , IList<RangeDayM> sumDayOfWeek
+    , IList<RangeDayM> averagesDayOfWeek
+    , IList<RangeDayM> sumPerOfWeek
+    , IList<RangeDayM> averagesPerOfWeek
+    , IList<RangeDayM> sumPerOfMonth
+    , IList<RangeDayM> averagesPerOfMonth
+    , IList<DataBase.Model.EntitiesInventory.Product> productsAll
+    , IList<DataBase.Model.EntitiesInventory.Driver> uniqueDriver)
+    {
+        SetRangeDayMs?.Invoke(rangeDayMs, sum, sumDayOfWeek, averagesDayOfWeek, sumPerOfWeek, averagesPerOfWeek, sumPerOfMonth, averagesPerOfMonth, productsAll, uniqueDriver);
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        SetRangeDayMs += setRange;
+    }
+
+    public void Dispose()
+    {
+        SetRangeDayMs -= setRange;
+        GC.SuppressFinalize(this);
+    }
+}

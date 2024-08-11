@@ -15,7 +15,6 @@
 
     <Grid ColumnDefinitions="*,2*" RowDefinitions="auto,0.8*,*,1">
         <VerticalStackLayout Grid.ColumnSpan="2">
-
             <HorizontalStackLayout
                 Margin="2"
                 Padding="2"
@@ -31,6 +30,7 @@
 
                 <HorizontalStackLayout IsVisible="{Binding SaveIsVisible}">
 
+                    <Button Command="{Binding DiscardFromFileCommand}" Text="Cofnij" />
                     <Button Command="{Binding SaveFromFileCommand}" Text="Zapisz plik" />
 
                 </HorizontalStackLayout>
@@ -87,6 +87,9 @@
                                 LocationButtonCommandParameter="{Binding .}"
                                 LocationIsVisible="True"
                                 Longitude="{Binding Longitude}"
+                                MoveTimeButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListOfPointsVM}}, Path=MoveTimeOnPointsCommand}"
+                                MoveTimeButtonCommandParameter="{Binding DayOfWeek}"
+                                MoveTimeIsVisible="True"
                                 PhoneNumber="{Binding PhoneNumber}"
                                 QueueNumber="{Binding QueueNumber}"
                                 ResidentialAddress="{Binding ResidentialAddress}" />

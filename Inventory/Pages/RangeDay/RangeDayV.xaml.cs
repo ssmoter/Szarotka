@@ -16,11 +16,9 @@ public partial class RangeDayV : ContentPage
 
     private void SwipeItem_Invoked_OpenDay(object sender, EventArgs e)
     {
-        var item = sender as SwipeItem;
-        if (item is null) { return; }
+        if (sender is not SwipeItem item) { return; }
 
-        var product = item.BindingContext as RangeDayM;
-        if (product == null) { return; }
+        if (item.BindingContext is not RangeDayM product) { return; }
 
         _vm.OpenDetailpageCommand.Execute(product);
     }

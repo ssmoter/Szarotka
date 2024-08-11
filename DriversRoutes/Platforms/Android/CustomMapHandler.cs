@@ -6,7 +6,7 @@ using Android.Graphics.Drawables;
 using Microsoft.Maui.Maps;
 using Microsoft.Maui.Maps.Handlers;
 using Microsoft.Maui.Platform;
-
+using DriversRoutes.Model;
 namespace DriversRoutes.Platforms.Android
 {
     public class CustomMapHandler : MapHandler
@@ -67,7 +67,7 @@ namespace DriversRoutes.Platforms.Android
                         {
                             if (result?.Value is BitmapDrawable bitmapDrawable)
                             {
-                                markerOption.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmapDrawable.Bitmap));
+                                markerOption.SetIcon(BitmapDescriptorFactory.FromBitmap(bitmapDrawable.Bitmap));       
                             }
 
                             AddMarker(Map, pin, Markers, markerOption);
@@ -87,5 +87,6 @@ namespace DriversRoutes.Platforms.Android
             pin.MarkerId = marker.Id;
             markers.Add(marker);
         }
+
     }
 }

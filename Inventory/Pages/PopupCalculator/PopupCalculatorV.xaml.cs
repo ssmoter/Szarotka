@@ -4,9 +4,9 @@ namespace Inventory.Pages.PopupCalculator;
 
 public partial class PopupCalculatorV : Popup
 {
-	public PopupCalculatorV()
-	{
-		InitializeComponent();
-		BindingContext= new PopupCalculatorVM();
-	}
+    public PopupCalculatorV()
+    {
+        InitializeComponent();
+        BindingContext = new PopupCalculatorVM();
+    }
 }

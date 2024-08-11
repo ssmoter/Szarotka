@@ -6,6 +6,12 @@ namespace DriversRoutes.Helper
 {
     public static class SqlQuery
     {
+        public const char _equals = '=';
+        public const char _more = '>';
+        public const char _less = '<';
+
+        public const string _ASC = "ASC";
+        public const string _DESC = "DESC";
         public static string GetQueryForSelectedRoutes(string id, SelectedDayOfWeekRoutes dayOf)
         {
             var sb = new StringBuilder();
@@ -205,6 +211,77 @@ WHERE CustomerRoutes.RoutesId == ");
 
 
             return sb.ToString();
+        }
+
+        public static string GetSelectedDayOfWeekRoutesNearestDate(DateTime date, char sing,string orderBy)
+        {
+            SelectedDayOfWeekRoutes today = new();
+            today.SetTodayDayOfWeek(date);
+
+            today.SundayTimeSpan =new TimeSpan(date.Hour, date.Minute, date.Second);
+            today.MondayTimeSpan = new TimeSpan(date.Hour, date.Minute, date.Second);
+            today.TuesdayTimeSpan = new TimeSpan(date.Hour, date.Minute, date.Second);
+            today.WednesdayTimeSpan = new TimeSpan(date.Hour, date.Minute, date.Second);
+            today.ThursdayTimeSpan = new TimeSpan(date.Hour, date.Minute, date.Second);
+            today.FridayTimeSpan = new TimeSpan(date.Hour, date.Minute, date.Second);
+            today.SaturdayTimeSpan = new TimeSpan(date.Hour, date.Minute, date.Second);
+
+            var sb = new StringBuilder();
+
+
+            sb.AppendLine("SELECT * FROM ");
+            sb.Append(nameof(SelectedDayOfWeekRoutes));
+            sb.AppendLine(" WHERE ");
+            AddParametr(sb, nameof(today.SundayTicks), today.SundayTicks.ToString(), today.Sunday, sing);
+            AddParametr(sb, nameof(today.MondayTicks), today.MondayTicks.ToString(), today.Monday, sing);
+            AddParametr(sb, nameof(today.TuesdayTicks), today.TuesdayTicks.ToString(), today.Tuesday, sing);
+            AddParametr(sb, nameof(today.WednesdayTicks), today.WednesdayTicks.ToString(), today.Wednesday, sing);
+            AddParametr(sb, nameof(today.ThursdayTicks), today.ThursdayTicks.ToString(), today.Thursday, sing);
+            AddParametr(sb, nameof(today.FridayTicks), today.FridayTicks.ToString(), today.Friday, sing);
+            AddParametr(sb, nameof(today.SaturdayTicks), today.SaturdayTicks.ToString(), today.Saturday, sing);
+            sb.Append(" AND ");
+            AddParametr(sb, nameof(today.Sunday), today.Sunday.ToString(), today.Sunday, _equals);
+            AddParametr(sb, nameof(today.Monday), today.Monday.ToString(), today.Monday, _equals);
+            AddParametr(sb, nameof(today.Tuesday), today.Tuesday.ToString(), today.Tuesday, _equals);
+            AddParametr(sb, nameof(today.Wednesday), today.Wednesday.ToString(), today.Wednesday, _equals);
+            AddParametr(sb, nameof(today.Thursday), today.Thursday.ToString(), today.Thursday, _equals);
+            AddParametr(sb, nameof(today.Friday), today.Friday.ToString(), today.Friday, _equals);
+            AddParametr(sb, nameof(today.Saturday), today.Saturday.ToString(), today.Saturday, _equals);
+
+            sb.Append(' ');
+
+            AddOrderBy(sb, orderBy, nameof(today.SundayTicks), today.Sunday);
+            AddOrderBy(sb, orderBy, nameof(today.MondayTicks), today.Monday);
+            AddOrderBy(sb, orderBy, nameof(today.TuesdayTicks), today.Tuesday);
+            AddOrderBy(sb, orderBy, nameof(today.WednesdayTicks), today.Wednesday);
+            AddOrderBy(sb, orderBy, nameof(today.ThursdayTicks), today.Thursday);
+            AddOrderBy(sb, orderBy, nameof(today.FridayTicks), today.Friday);
+            AddOrderBy(sb, orderBy, nameof(today.SaturdayTicks), today.Saturday);
+
+
+            return sb.ToString();
+        }
+        private static void AddParametr(StringBuilder sb, string columnName, string value, bool isEnable, char sign)
+        {
+            if (isEnable)
+            {
+                sb.Append(columnName);
+                sb.Append(' ');
+                sb.Append(sign);
+                sb.Append(' ');
+                sb.AppendLine(value);
+            }
+        }
+        private static void AddOrderBy(StringBuilder sb, string orderBy, string columnName, bool isEnable)
+        {
+            if (isEnable)
+            {
+                sb.Append("ORDER BY ");
+                sb.Append(columnName);
+                sb.Append(' ');
+                sb.Append(orderBy);
+
+            }
         }
     }
 }

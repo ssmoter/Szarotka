@@ -373,7 +373,7 @@ namespace Inventory.Pages.RangeDay.Graph
                 return [];
 
 
-            var first = rangeDayMs.MaxBy(x=>x.Day.Products.Count);
+            var first = rangeDayMs.MaxBy(x => x.Day.Products.Count);
             if (first is null)
                 return [];
 

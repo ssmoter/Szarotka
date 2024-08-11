@@ -1,0 +1,96 @@
+﻿@using MudBlazor
+@using DataBase.Helper
+@using MudBlazor.Components.Chart.Models
+
+
+<div Class="">
+
+    <MudChart ChartType="chartType"  ChartSeries="@Series" XAxisLabels="@XAxisLabels" CanHideSeries Width="100%" ChartOptions="chartOptions" />
+</div>
+
+
+
+<h3>SmallGraph</h3>
+
+@code {
+    [Parameter]
+    public IList<RangeDayM> RangeDayMs { get; set; } = [];
+    [Parameter]
+    public ChartType chartType { get; set; } = ChartType.Line;
+
+    private ChartOptions chartOptions = new();
+    private List<ChartSeries> Series = new();
+    private string[] XAxisLabels = [];
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        Series.Clear();
+
+        Series.Add(CreatedNewOneChart("Utarg produkty", Enumerable.Range(0, 200).Select(x => (double)Random.Shared.Next(800, 2000))));
+        if (RangeDayMs.Count > 0)
+        {
+            //SetXAxisLabels(RangeDayMs);
+            //
+            //Series.Add(CreatedNewOneChart("Utarg produkty", RangeDayMs.Select(x => (double)(x.Day.TotalPriceProducts / 100))));
+
+
+
+
+        }
+    }
+
+    private ChartSeries CreatedNewOneChart(string name, IEnumerable<double> value)
+    {
+        var chart = new ChartSeries();
+
+        chart.Name = name;
+        chart.Data = value.ToArray();
+
+        return chart;
+    }
+    private void SetXAxisLabels(IList<RangeDayM> value)
+    {
+        if (value.Count < 7)
+        {
+            XAxisLabels = value.Select(x => x.Day.SelectedDate.DayOfWeek.TranslateSelectedDay()).ToArray();
+        }
+        else if (value.Count < 32)
+        {
+            XAxisLabels = value.Where((n, index) => index % 2 == 0).Select(x => x.Day.SelectedDate.ToString("dd.MM")).ToArray();
+        }
+        else if (value.Count < 63)
+        {
+            XAxisLabels = value.Where((n, index) => index % 3 == 0).Select(x => x.Day.SelectedDate.ToString("dd.MM.yyyy")).ToArray();
+        }
+        else
+        {
+            XAxisLabels = new string[value.Count];
+            for (int i = 0; i < value.Count; i++)
+            {
+                XAxisLabels[i] = "";
+                if (i == 0)
+                {
+                    XAxisLabels[i] = value[i].Day.SelectedDate.ToString("dd.MM.yyyy");
+                    continue;
+                }
+                if (i == value.Count)
+                {
+                    XAxisLabels[i] = value[i].Day.SelectedDate.ToString("dd.MM.yyyy");
+                    continue;
+                }
+
+                if (i % 30 == 0)
+                {
+                    XAxisLabels[i] = value[i].Day.SelectedDate.ToString("dd.MM.yyyy");
+                }
+
+            }
+
+        }
+
+    }
+
+
+
+}

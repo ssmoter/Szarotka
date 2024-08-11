@@ -6,7 +6,7 @@ namespace DriversRoutes.Helper
     {
         public static void SetTodayDayOfWeek(this SelectedDayOfWeekRoutes dayOfWeek, DateTime dateTime)
         {
-            var today = DateTime.Today.DayOfWeek;
+            var today = dateTime.DayOfWeek;
             switch (today)
             {
                 case DayOfWeek.Sunday:
@@ -67,7 +67,79 @@ namespace DriversRoutes.Helper
             }
             return false;
         }
+
+        public static DateTime GetTodayDatetimeFromSelectedDayOfWeekRoutes(this SelectedDayOfWeekRoutes dayOf, DateTime today)
+        {
+            var now = DateTime.Now;
+            TimeSpan timespan;
+            switch (today.DayOfWeek)
+            {
+                case DayOfWeek.Sunday:
+                    timespan = dayOf.SundayTimeSpan;
+                    now = new DateTime(2024, 9, 1, timespan.Hours, timespan.Minutes, timespan.Seconds, timespan.Milliseconds, timespan.Nanoseconds);
+                    break;
+                case DayOfWeek.Monday:
+                    timespan = dayOf.MondayTimeSpan;
+                    now = new DateTime(2024, 9, 2, timespan.Hours, timespan.Minutes, timespan.Seconds, timespan.Milliseconds, timespan.Nanoseconds);
+                    break;
+                case DayOfWeek.Tuesday:
+                    timespan = dayOf.TuesdayTimeSpan;
+                    now = new DateTime(2024, 9, 3, timespan.Hours, timespan.Minutes, timespan.Seconds, timespan.Milliseconds, timespan.Nanoseconds);
+                    break;
+                case DayOfWeek.Wednesday:
+                    timespan = dayOf.WednesdayTimeSpan;
+                    now = new DateTime(2024, 9, 4, timespan.Hours, timespan.Minutes, timespan.Seconds, timespan.Milliseconds, timespan.Nanoseconds);
+                    break;
+                case DayOfWeek.Thursday:
+                    timespan = dayOf.ThursdayTimeSpan;
+                    now = new DateTime(2024, 9, 5, timespan.Hours, timespan.Minutes, timespan.Seconds, timespan.Milliseconds, timespan.Nanoseconds);
+                    break;
+                case DayOfWeek.Friday:
+                    timespan = dayOf.FridayTimeSpan;
+                    now = new DateTime(2024, 9, 6, timespan.Hours, timespan.Minutes, timespan.Seconds, timespan.Milliseconds, timespan.Nanoseconds);
+                    break;
+                case DayOfWeek.Saturday:
+                    timespan = dayOf.SaturdayTimeSpan;
+                    now = new DateTime(2024, 9, 7, timespan.Hours, timespan.Minutes, timespan.Seconds, timespan.Milliseconds, timespan.Nanoseconds);
+                    break;
+                default:
+                    break;
+            }
+            return now;
+        }
+
+        public static DayOfWeek GetFirstDayOfWeek(this SelectedDayOfWeekRoutes dayOf)
+        {
+            if (dayOf.Sunday)
+            {
+                return DayOfWeek.Sunday;
+            }
+            if (dayOf.Monday)
+            {
+                return DayOfWeek.Monday;
+            }
+            if (dayOf.Tuesday)
+            {
+                return DayOfWeek.Tuesday;
+            }
+            if (dayOf.Wednesday)
+            {
+                return DayOfWeek.Wednesday;
+            }
+            if (dayOf.Thursday)
+            {
+                return DayOfWeek.Thursday;
+            }
+            if (dayOf.Friday)
+            {
+                return DayOfWeek.Friday;
+            }
+            if (dayOf.Saturday)
+            {
+                return DayOfWeek.Saturday;
+            }
+            throw new ArgumentException("Nie wybrano dnia");
+        }
+
     }
-
-
 }

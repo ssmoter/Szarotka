@@ -303,6 +303,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
     }
     [Ignore]
     public bool CanUpadte { get; set; }
+
     public void UpdateTotalPrice()
     {
         if (CanUpadte)
@@ -318,6 +319,9 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             TotalPriceDifferenceDecimal = TotalPriceMoneyDecimal - TotalPriceAfterCorrectDecimal;
         }
     }
+
+
+
     public Day()
     {
         Products ??= [];
@@ -348,6 +352,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         Products.Clear();
         Cakes.Clear();
         ProductUpdatePriceService.UpdatePrice -= UpdateTotalPrice;
+        GC.SuppressFinalize(this);
     }
 
 }

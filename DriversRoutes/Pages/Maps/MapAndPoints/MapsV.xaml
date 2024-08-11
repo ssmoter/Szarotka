@@ -4,7 +4,9 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:VM="clr-namespace:DriversRoutes.Pages.Maps.MapAndPoints"
+    xmlns:customPin="clr-namespace:DriversRoutes.Model"
     xmlns:customer="clr-namespace:DriversRoutes.Pages.Customer.CustomerSmall"
+    xmlns:img="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
     xmlns:maps="http://schemas.microsoft.com/dotnet/2021/maui/maps"
     xmlns:sensors="clr-namespace:Microsoft.Maui.Devices.Sensors;assembly=Microsoft.Maui.Essentials"
     xmlns:views="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
@@ -14,8 +16,7 @@
     <!--  xmlns:customPin="clr-namespace:DriversRoutes.Platforms.Android"  -->
 
 
-
-    <Grid ColumnDefinitions="*,*" RowDefinitions=".7*,*">
+    <Grid ColumnDefinitions="1.25*,*" RowDefinitions=".7*,*">
 
         <Border
             Grid.Row="0"
@@ -60,84 +61,136 @@
 
                     <Grid RowDefinitions="auto,*">
 
-                        <VerticalStackLayout>
-                            <HorizontalStackLayout HorizontalOptions="Center">
+                        <Grid HorizontalOptions="Center" RowDefinitions="*,auto">
+
+                            <Grid
+                                Grid.Row="0"
+                                ColumnDefinitions="*,*"
+                                RowDefinitions="*,*">
 
 
-                                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="End">
-                                    <Button
-                                        Padding="5,0,5,0"
-                                        Command="{Binding DisplayTypeOfMapCommand}"
-                                        CornerRadius="50"
-                                        HorizontalOptions="Center"
-                                        Text="Typ mapy" />
+
+                                <VerticalStackLayout
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    HorizontalOptions="Fill">
+
+                                    <Border StrokeThickness="0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="30,30,0,0" />
+                                        </Border.StrokeShape>
+
+                                        <Button
+                                            Padding="0"
+                                            Command="{Binding DisplayTypeOfMapCommand}"
+                                            HorizontalOptions="Fill"
+                                            Text="Typ mapy" />
+                                    </Border>
 
                                     <VerticalStackLayout Padding="0" IsVisible="{Binding IsVisibleTypeOfMap}">
                                         <Button
+                                            Padding="0"
                                             Command="{Binding ChangeTypeOfMapCommand}"
                                             CommandParameter="0"
                                             CornerRadius="50"
-                                            HorizontalOptions="Center"
-                                            Text="Ulica"
-                                            VerticalOptions="Center" />
+                                            HorizontalOptions="Fill"
+                                            Text="Ulica" />
                                         <Button
+                                            Padding="0"
                                             Command="{Binding ChangeTypeOfMapCommand}"
                                             CommandParameter="1"
                                             CornerRadius="50"
-                                            HorizontalOptions="Center"
-                                            Text="Satelita"
-                                            VerticalOptions="Center" />
+                                            HorizontalOptions="Fill"
+                                            Text="Satelita" />
                                         <Button
+                                            Padding="0"
                                             Command="{Binding ChangeTypeOfMapCommand}"
                                             CommandParameter="2"
                                             CornerRadius="50"
-                                            HorizontalOptions="Center"
-                                            Text="Hybryda"
-                                            VerticalOptions="Center" />
+                                            HorizontalOptions="Fill"
+                                            Text="Hybryda" />
                                     </VerticalStackLayout>
 
                                 </VerticalStackLayout>
 
-                                <Button
-                                    Padding="5,0,5,0"
-                                    Command="{Binding SwipeViewGestureCommand}"
-                                    CornerRadius="50"
-                                    HorizontalOptions="Center"
-                                    Text="Schowaj"
-                                    VerticalOptions="End"
-                                    ZIndex="102" />
-
-
-                            </HorizontalStackLayout>
-                            <HorizontalStackLayout HorizontalOptions="Center">
-
-                                <VerticalStackLayout Margin="0,0,5,0" HorizontalOptions="Center">
-
-
-                                    <Label HorizontalOptions="Center" Text="Dodawanie z &#10;mapy:" />
-                                    <Button
-                                        Padding="5,0,5,0"
-                                        Command="{Binding ChangeAddLocationIsCommand}"
-                                        CornerRadius="50"
-                                        HorizontalOptions="Center"
-                                        Text="{Binding AddLocationIsText}"
-                                        VerticalOptions="Center" />
-                                </VerticalStackLayout>
-
-                                <VerticalStackLayout Margin="0,0,5,0" HorizontalOptions="Center">
-                                    <Label HorizontalOptions="Center" Text="Twoja &#10;pozycja:" />
+                                <Border
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="30,30,0,0" />
+                                    </Border.StrokeShape>
 
                                     <Button
-                                        Padding="5,0,5,0"
-                                        Command="{Binding CurrentLocationNewPinCommand}"
-                                        CornerRadius="50"
-                                        HorizontalOptions="Center"
-                                        Text="Dodaj" />
-                                </VerticalStackLayout>
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        Padding="0"
+                                        Command="{Binding SwipeViewGestureCommand}"
+                                        HorizontalOptions="Fill"
+                                        Text="Schowaj" />
+                                </Border>
 
 
-                            </HorizontalStackLayout>
-                        </VerticalStackLayout>
+                                <Border
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Padding="5">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="0,0,30,30" />
+                                    </Border.StrokeShape>
+                                    <VerticalStackLayout HorizontalOptions="Center">
+
+                                        <Label Text="Dodaj z mapy:" />
+                                        <Button
+                                            Padding="0"
+                                            Command="{Binding ChangeAddLocationIsCommand}"
+                                            CornerRadius="50"
+                                            HorizontalOptions="Fill"
+                                            Text="{Binding AddLocationIsText}" />
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <!--  &#10;  -->
+                                <Border
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Padding="5">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="0,0,30,30" />
+                                    </Border.StrokeShape>
+                                    <VerticalStackLayout>
+                                        <Label Text="Lokalizacja" />
+                                        <Button
+                                            Padding="0"
+                                            Command="{Binding CurrentLocationNewPinCommand}"
+                                            CornerRadius="50"
+                                            HorizontalOptions="Fill"
+                                            Text="Dodaj" />
+                                    </VerticalStackLayout>
+                                </Border>
+
+
+
+                            </Grid>
+                            <Grid Grid.Row="1" ColumnDefinitions="*,*">
+
+                                <ImageButton
+                                    Grid.Column="0"
+                                    Command="{Binding DisplayDescriptionOfPreviousPointCommand}"
+                                    HorizontalOptions="Start"
+                                    Rotation="90"
+                                    Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                             Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                                <ImageButton
+                                    Grid.Column="1"
+                                    Command="{Binding DisplayDescriptionOfNextPointCommand}"
+                                    HorizontalOptions="End"
+                                    Rotation="-90"
+                                    Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                             Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                            </Grid>
+
+                        </Grid>
 
 
                         <CollectionView
@@ -148,7 +201,6 @@
 
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-
                                     <customer:CustomerSmallV
                                         Name="{Binding Name}"
                                         x:DataType="VM:MapsM"
@@ -161,6 +213,9 @@
                                         LocationButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:MapsVM}}, Path=LocationOfPinCommand}"
                                         LocationButtonCommandParameter="{Binding .}"
                                         LocationIsVisible="True"
+                                        MoveTimeButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:MapsVM}}, Path=MoveTimeOnPointsCommand}"
+                                        MoveTimeButtonCommandParameter="{Binding SelectedDayOfWeek}"
+                                        MoveTimeIsVisible="True"
                                         PhoneNumber="{Binding PhoneNumber}"
                                         QueueNumber="{Binding Index}"
                                         ResidentialAddress="{Binding ResidentialAddress}" />
@@ -224,20 +279,23 @@
             <maps:Map.ItemTemplate>
                 <DataTemplate x:DataType="VM:MapsM">
 
-                    <!--<customPin:CustomPin
+
+                    <customPin:CustomPin
                         Address="{Binding Pin.Address}"
                         ImageSource="{Binding Pin.ImageSource}"
                         InfoWindowClicked="Pin_InfoWindowClicked"
                         Label="{Binding Pin.Label}"
                         Location="{Binding Pin.Location}"
-                        Type="Place" />-->
+                        MarkerClicked="Pin_InfoWindowClicked" />
 
-                    <maps:Pin
+
+                    <!--<maps:Pin
                         Address="{Binding Pin.Address}"
                         InfoWindowClicked="Pin_InfoWindowClicked"
                         MarkerClicked="Pin_InfoWindowClicked"
                         Label="{Binding Pin.Label}"
-                        Location="{Binding Pin.Location}" />
+                        Location="{Binding Pin.Location}"
+                        MarkerClicked="Pin_InfoWindowClicked" />-->
 
                 </DataTemplate>
             </maps:Map.ItemTemplate>

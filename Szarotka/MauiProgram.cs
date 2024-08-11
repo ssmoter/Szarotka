@@ -2,7 +2,16 @@
 
 using Microsoft.Extensions.Logging;
 
+
+/* Unmerged change from project 'Szarotka (net8.0-android34.0)'
+Before:
 using DataBase.Service;
+using Szarotka.Service;
+After:
+using DataBase.Service;
+
+using Szarotka.Service;
+*/
 using Szarotka.Service;
 
 #if ANDROID

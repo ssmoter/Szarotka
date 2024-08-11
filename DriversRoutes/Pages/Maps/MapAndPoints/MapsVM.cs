@@ -1,13 +1,19 @@
-﻿using CommunityToolkit.Maui.Views;
+﻿
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Model.EntitiesRoutes;
 
+using DriversRoutes.Data;
 using DriversRoutes.Helper;
+using DriversRoutes.Pages.Popups.MoveTimeOnCustomers;
 
 using Microsoft.Maui.Controls.Maps;
+using Microsoft.Maui.Graphics.Skia;
 using Microsoft.Maui.Maps;
+
+using MudBlazor;
 
 using System.Collections.ObjectModel;
 
@@ -61,14 +67,16 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
 
         readonly DataBase.Data.AccessDataBase _db;
         readonly Service.ISelectRoutes _selectRoutes;
+        readonly Service.ISaveRoutes _saveRoutes;
         #endregion
-        public MapsVM(DataBase.Data.AccessDataBase db, Service.ISelectRoutes selectRoutes)
+        public MapsVM(DataBase.Data.AccessDataBase db, Service.ISelectRoutes selectRoutes, Service.ISaveRoutes saveRoutes)
         {
             _db = db;
             SelectedDayName = DisplaySelectedDayName(DateTime.Today.DayOfWeek);
             MapType = MapType.Street;
             AllPoints ??= [];
             _selectRoutes = selectRoutes;
+            _saveRoutes = saveRoutes;
             //for (int i = 0; i < 200; i++)
             //{
             //    AllPoints.Add(new MapsM().CreateRandomPoint(i));
@@ -104,7 +112,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             }
         }
 
-        public async Task StartListeningLocation(Microsoft.Maui.Controls.Maps.Map map)
+        public async void StartListeningLocation(Microsoft.Maui.Controls.Maps.Map map)
         {
             try
             {
@@ -175,6 +183,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
 
             MapsPoint = AllPoints.Where(x => x.Index == index).ToArray();
         }
+
         public async Task AddNewPoint(CustomerRoutes customer)
         {
             try
@@ -251,6 +260,11 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             {
                 AllPoints.Clear();
                 AllPoints = await GetSelectedDays(week);
+                var first = AllPoints.FirstOrDefault();
+                if (first is not null)
+                {
+                    MapsPoint = [first];
+                }
             }
             catch (Exception ex)
             {
@@ -263,10 +277,45 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             var points = new ObservableCollection<MapsM>();
             try
             {
+
+                int scaleX = (int)DeviceDisplay.Current.MainDisplayInfo.Density;
+                int scaleY = scaleX;
+
+                var width = 40 * scaleX;
+                var height = 58 * scaleY;
+
                 var result = await _selectRoutes.GetCustomerRoutesQueryAsync(Routes, week);
                 for (int i = 0; i < result.Length; i++)
                 {
                     points.Add(result[i].ParseAsCustomerM());
+
+                    //Assembly assembly = AppDomain.CurrentDomain.GetAssemblies()
+                    //                 .SingleOrDefault(assembly => assembly.GetName().Name == AppInfo.Name);
+
+                    //using Stream stream = assembly.GetManifestResourceStream(
+                    //    $"{AppInfo.Name}.Resources.Images.EmbeddedResource.{DataBase.Helper.Img.ImgMapsSymbols.LocationOnWhite}");
+
+                    //var image = PlatformImage.FromStream(stream);
+                    //DrawIconOnMap drawIconOnMap = new()
+                    //{
+                    //    Number = i + 1,
+                    //    Image = image
+                    //};
+
+                    //points[i].Pin.ImageSource = ImageSource.FromStream(() => drawIconOnMap.DrawWithImage(image));
+
+                    SkiaBitmapExportContext skiaBitmapExportContext = new(width, height, 1);
+                    ICanvas canvas = skiaBitmapExportContext.Canvas;
+                    DrawIconOnMap drawIconOnMap = new()
+                    {
+                        Number = i + 1,
+                        ScaleX = scaleX,
+                        ScaleY = scaleY,
+                    };
+                    drawIconOnMap.Draw(canvas, new RectF(0, 0, skiaBitmapExportContext.Width, skiaBitmapExportContext.Height));
+
+                    points[i].Pin.ImageSource = ImageSource.FromStream(() => skiaBitmapExportContext.Image.AsStream());
+
                 }
             }
             catch (Exception ex)
@@ -274,6 +323,39 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 _db.SaveLog(ex);
             }
             return points;
+        }
+
+        private void DescriptionOfPreviousPoint(int direction)
+        {
+            int index;
+            if (MapsPoint is null)
+            {
+                return;
+            }
+
+            if (MapsPoint.Length <= 0)
+            {
+                return;
+            }
+
+            index = MapsPoint.FirstOrDefault().Index + direction;
+
+            if (index > AllPoints.Count)
+            {
+                index = 1;
+            }
+            else if (index < 1)
+            {
+                index = AllPoints.Count;
+            }
+
+            MapsPoint = AllPoints.Where(x => x.Index == index).ToArray();
+            if (MapsPoint.Length <= 0)
+            {
+                return;
+            }
+            var mapSpan = new MapSpan(MapsPoint.FirstOrDefault().Pin.Location, 0.05, 0.05);
+            OnGoToLocation(mapSpan);
         }
 
         #endregion
@@ -302,6 +384,11 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                     LastSelectedDayOfWeek = day;
                     SelectedDayName = day.ToString();
                     AllPoints = await GetSelectedDays(LastSelectedDayOfWeek);
+                    var first = AllPoints.FirstOrDefault();
+                    if (first is not null)
+                    {
+                        MapsPoint = [first];
+                    }
                 }
             }
             catch (Exception ex)
@@ -427,6 +514,35 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                         [nameof(Routes)] = Routes,
                     });
 
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
+
+        [RelayCommand]
+        void DisplayDescriptionOfNextPoint()
+        {
+            DescriptionOfPreviousPoint(1);
+        }
+        [RelayCommand]
+        void DisplayDescriptionOfPreviousPoint()
+        {
+            DescriptionOfPreviousPoint(-1);
+        }
+
+
+        [RelayCommand]
+        async Task MoveTimeOnPoints(SelectedDayOfWeekRoutes selectDayMs)
+        {
+            try
+            {
+                var result = await MoveTimeOnCustomersV.ShowPopUp(Routes, selectDayMs, _selectRoutes, _saveRoutes);
+                if (result)
+                {
+                    GetSelectedDaysAndForget(LastSelectedDayOfWeek);
+                }
             }
             catch (Exception ex)
             {
