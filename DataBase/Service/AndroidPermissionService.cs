@@ -89,27 +89,27 @@
 
         public static async Task<bool> CheckAllPermissionsAboutStorage()
         {
+
             if (!await CheckMedia())
             {
                 await Shell.Current.DisplayAlert("Pozwolenie", "Dane pozwolenie jest wymagane", "Ok");
                 return false;
             }
 
-#if !ANDROID33_0_OR_GREATER
-
-
-            if (!await CheckWrite())
+            if (!OperatingSystem.IsAndroidVersionAtLeast(33))
             {
-                await Shell.Current.DisplayAlert("Pozwolenie", "Dane pozwolenie jest wymagane", "Ok");
-                return false;
-            }
+                if (!await CheckWrite())
+                {
+                    await Shell.Current.DisplayAlert("Pozwolenie", "Dane pozwolenie jest wymagane", "Ok");
+                    return false;
+                }
 
-            if (!await CheckRead())
-            {
-                await Shell.Current.DisplayAlert("Pozwolenie", "Dane pozwolenie jest wymagane", "Ok");
-                return false;
+                if (!await CheckRead())
+                {
+                    await Shell.Current.DisplayAlert("Pozwolenie", "Dane pozwolenie jest wymagane", "Ok");
+                    return false;
+                }
             }
-#endif
 
             return true;
         }

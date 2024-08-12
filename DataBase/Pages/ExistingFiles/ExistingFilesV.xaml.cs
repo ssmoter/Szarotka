@@ -14,7 +14,25 @@ public partial class ExistingFilesV : ContentPage
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
+
+#if ANDROID
+        CheckPermissions();
+#endif
     }
+
+    private async void CheckPermissions()
+    {
+        var result = await Service.AndroidPermissionService.CheckAllPermissionsAboutStorage();
+        if (!result)
+        {
+            if (BindingContext is ExistingFilesVM vm)
+            {
+                await Shell.Current.GoToAsync($"../../{vm.ReturnPage}");
+            }
+        }
+    }
+
+
 
     private void SwipeItem_Invoked_SelectedImport(object sender, EventArgs e)
     {

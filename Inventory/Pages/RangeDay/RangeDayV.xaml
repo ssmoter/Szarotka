@@ -70,7 +70,7 @@
                     <RootComponent ComponentType="{x:Type graph:Graph}" Selector="#app" />
                 </BlazorWebView.RootComponents>
             </BlazorWebView>-->
-            <!--<graph:GraphV RangeDayMs="{Binding RangeDays}" />-->
+            <graph:GraphV RangeDayMs="{Binding RangeDays}" />
         </Grid>
 
         <Grid Grid.Row="1" IsVisible="{Binding TableIsVisible}">

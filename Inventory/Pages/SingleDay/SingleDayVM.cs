@@ -274,6 +274,7 @@ namespace Inventory.Pages.SingleDay
                 if (result == yes)
                 {
                     await SaveDay();
+                    await BackWithoutSave();
                 }
                 else if (result == cancel)
                 {
@@ -281,12 +282,7 @@ namespace Inventory.Pages.SingleDay
                 }
                 else if (result == no)
                 {
-
-                    await Shell.Current.GoToAsync("..?",
-                        new Dictionary<string, object>()
-                        {
-                            [nameof(Day)] = Day
-                        });
+                    await BackWithoutSave();
                 }
                 else
                 {
