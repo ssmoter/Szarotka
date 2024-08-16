@@ -123,7 +123,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             {
                 var productName = new ProductName()
                 {
-                    Id = Guid.NewGuid(),
+                    Id = DataBase.Data.InventoryTables.GetGuidSed(),
                     Name = Product.Name.Name,
                     Description = Product.Name.Description,
                     Img = Product.Name.Img,
@@ -185,7 +185,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                 {
                     ProductPrice newPrice = new()
                     {
-                        Id = Guid.NewGuid(),
+                        Id = DataBase.Data.InventoryTables.GetGuidSed(),
                         Created = DateTime.Now,
                         Updated = DateTime.Now,
                         PriceDecimal = price,

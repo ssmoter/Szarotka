@@ -76,7 +76,7 @@
 
             if (Permissions.ShouldShowRationale<Permissions.LocationWhenInUse>())
             {
-                await Shell.Current.DisplayAlert("Pozwolenie", "Pozwolenie na odczyt danych z galerii jest wymagane", "Ok");
+                await Shell.Current.DisplayAlert("Pozwolenie", "Pozwolenie na sprawdzenie lokalizacji jest wymagane", "Ok");
             }
 
             status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();

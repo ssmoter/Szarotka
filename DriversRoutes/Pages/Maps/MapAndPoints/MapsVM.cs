@@ -25,7 +25,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
     [QueryProperty(nameof(AllPoints), nameof(MapsM))]
     [QueryProperty(nameof(LastSelectedDayOfWeek), nameof(SelectedDayOfWeekRoutes))]
 
-    public partial class MapsVM : ObservableObject
+    public partial class MapsVM : ObservableObject, IDisposable
     {
         #region Variable
         [ObservableProperty]
@@ -62,6 +62,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
         const string block = "Zablokowane";
 
         public Action<MapSpan> GoToLocation;
+        public Microsoft.Maui.Controls.Maps.Map GetMap { get; set; }
 
         public readonly MapSpan szarotka = new(new Location(49.74918622300343, 20.40891067705071), 0.1, 0.1);
 
@@ -86,6 +87,14 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             // MapsPoint = AllPoints.ToArray();
         }
 
+        public void Dispose()
+        {
+            AllPoints.Clear();
+            MapsPoint = null;
+            Geolocation.LocationChanged -= StartListening;
+            _db.Dispose();
+            GC.SuppressFinalize(this);
+        }
 
         #region Method
         public async Task<MapSpan> GetCurrentLocation()
@@ -112,17 +121,23 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             }
         }
 
+        public void StopListeningLocation()
+        {
+            Geolocation.StopListeningForeground();
+            Geolocation.LocationChanged -= StartListening;
+        }
         public async void StartListeningLocation(Microsoft.Maui.Controls.Maps.Map map)
         {
             try
             {
                 var result = await Geolocation.StartListeningForegroundAsync(new GeolocationListeningRequest(GeolocationAccuracy.High, TimeSpan.FromSeconds(10)));
-                Geolocation.LocationChanged += (sender, e) =>
-                {
-                    var location = e.Location;
-                    var radius = map.VisibleRegion.Radius;
-                    map.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(location.Latitude, location.Longitude), radius));
-                };
+                Geolocation.LocationChanged += StartListening;
+                // Geolocation.LocationChanged += (sender, e) =>
+                // {
+                //     var location = e.Location;
+                //     var radius = map.VisibleRegion.Radius;
+                //     map.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(location.Latitude, location.Longitude), radius));
+                // };
                 if (!result)
                 {
                     throw new Exception("Can't Start Listening Foreground Async");
@@ -134,7 +149,12 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             }
         }
 
-
+        private void StartListening(object sender, GeolocationLocationChangedEventArgs e)
+        {
+            var location = e.Location;
+            var radius = GetMap.VisibleRegion.Radius;
+            GetMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(location.Latitude, location.Longitude), radius));
+        }
 
         static string DisplaySelectedDayName(DayOfWeek day)
         {
@@ -549,6 +569,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 _db.SaveLog(ex);
             }
         }
+
 
         #endregion
 

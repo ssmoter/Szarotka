@@ -10,6 +10,7 @@ public partial class MapsV : ContentPage, IDisposable
     {
         InitializeComponent();
         vm.GoToLocation += Map.MoveToRegion;
+        vm.GetMap = Map;
         BindingContext = vm;
     }
     public void Dispose()
@@ -24,6 +25,7 @@ public partial class MapsV : ContentPage, IDisposable
         base.OnNavigatedFrom(args);
         if (BindingContext is MapsVM vm)
         {
+            vm.StopListeningLocation();
             if (vm.LastSelectedDayOfWeek is not null)
             {
                 vm.LastSelectedDayOfWeekWhenNavigation = vm.LastSelectedDayOfWeek;

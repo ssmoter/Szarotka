@@ -292,7 +292,6 @@ namespace DriversRoutes.Pages.ListOfPoints
                     task[i] = _saveRoutes.SaveCustomer(CustomerRoutes[i], CustomerRoutes[i].RoutesId.ToByteArray());
                 }
                 await Task.WhenAll(task);
-                await Shell.Current.DisplayAlert("Zapisywanie", "Udało się zapisać wszystkie dane", "Ok");
             }
             catch (Exception ex)
             {
