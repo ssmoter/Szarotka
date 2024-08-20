@@ -21,6 +21,8 @@
                 Spacing="25"
                 VerticalOptions="Start">
 
+
+
                 <Button
                     Command="{Binding NavigationToSingleDayCommand}"
                     HorizontalOptions="Center"

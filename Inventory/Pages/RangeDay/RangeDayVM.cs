@@ -177,6 +177,11 @@ namespace Inventory.Pages.RangeDay
             try
             {
                 rangeDay.Day = await _selectDayService.GetDayProcedure(rangeDay.Day.Id);
+                rangeDay.Day.CanUpadte = true;
+                for (int i = 0; i < rangeDay.Day.Products.Count; i++)
+                {
+                    rangeDay.Day.Products[i].CanUpadte = true;
+                }
 
                 await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
                     new Dictionary<string, object>()

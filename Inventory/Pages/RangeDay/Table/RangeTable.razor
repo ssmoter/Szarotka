@@ -4,16 +4,16 @@
 @using DataBase.Helper
 @using MudBlazor
 
-<MudThemeProvider @bind-IsDarkMode="@DataBase.Helper.MudBlazorTheme.IsDarkMode" Theme="@DataBase.Helper.MudBlazorTheme.Theme" />
+ <MudThemeProvider @bind-IsDarkMode="@DataBase.Helper.MudBlazorTheme.IsDarkMode" Theme="@DataBase.Helper.MudBlazorTheme.Theme" />
 <MudPopoverProvider />
 <MudDialogProvider />
-<MudSnackbarProvider />
+<MudSnackbarProvider /> 
 
 
-<div>
+ <div>
     @if (RangeDayMs is not null)
     {
-        if (RangeDayMs.Count > 0)
+        @if (RangeDayMs.Count > 0)
         {
             var order = RangeDayMs.OrderBy(x => x.Day.SelectedDateTicks);
             var first = order.FirstOrDefault().Day;
@@ -104,7 +104,7 @@
         }
     }
 </div>
-
+ 
 
 
 
@@ -186,7 +186,10 @@
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        SetRangeDayMs += setRange;
+    }
+    public RangeTable()
+    {
+        SetRangeDayMs += setRange;        
     }
 
     public void Dispose()

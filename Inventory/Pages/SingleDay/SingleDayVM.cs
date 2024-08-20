@@ -268,8 +268,7 @@ namespace Inventory.Pages.SingleDay
                 string no = "Nie";
                 string cancel = "Anuluj";
 
-                var result = await Shell.Current.DisplayActionSheet("Czy zapisać przy cofaniu", "", "", yes, no, cancel);
-                //var result = await Shell.Current.DisplayAlert("Zapisać", "Czy zapisać przy cofaniu", "Tak", "Nie");
+                var result = await Shell.Current.DisplayActionSheet("Czy zapisać przy cofaniu", cancel, "", yes, no);
 
                 if (result == yes)
                 {

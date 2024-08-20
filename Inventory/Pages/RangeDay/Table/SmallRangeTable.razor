@@ -28,70 +28,82 @@
         <PropertyColumn Property="x=>x.Day.Products" Title="">
 
             <CellTemplate>
+                <div class="w-100 text-start">
 
-                <MudSwitch @bind-Value="context.Item.ShowDetails" Label="Wyświetl szczegóły"></MudSwitch>
+                    <MudSwitch @bind-Value="context.Item.ShowDetails" Label="Wyświetl szczegóły" Class="d-block"></MudSwitch>
 
-                @{
-                    var products = context.Item.Day.Products;
-                }
+                    @{
+                        var products = context.Item.Day.Products;
+                    }
 
-                <MudTable Items="@context.Item.Table" Context="productsItems">
+                    <MudTable Items="@context.Item.Table" Context="productsItems" Class="d-block">
 
-                    <HeaderContent>
+                        <HeaderContent>
 
-                        <MudTh>*</MudTh>
+                            <MudTh>*</MudTh>
 
-                        @foreach (var item in Products)
-                        {
-                            <MudTh>@item.Name.Name</MudTh>
-                        }
-
-                    </HeaderContent>
-
-                    <ChildRowContent>
-                        <MudTd>
-                            <MudText>Ilość</MudText>
-                            <MudText>Edycja</MudText>
-                            <MudText>Zwrot</MudText>
-                            <MudText>Sprzedane</MudText>
-                            <MudText>Utarg zł</MudText>
-
-                        </MudTd>
-                        @for (int j = 0; j < Products.Count; j++)
-                        {
-                            var find = products.FirstOrDefault(x => x.Name.Id == Products[j].Name.Id);
-                            int index = -1;
-
-                            @if (find is not null)
+                            @foreach (var item in Products)
                             {
-                                index = products.IndexOf(find);
-                            }
-                            @if (index == -1)
-                            {
-                                <MudTd>0</MudTd>
-                                continue;
-                            }
-                            @if (Products[j].Name.Id != products[index].Name.Id)
-                            {
-                                <MudTd>0</MudTd>
-                                continue;
+                                <MudTh>@item.Name.Name</MudTh>
                             }
 
+                        </HeaderContent>
+
+                        <ChildRowContent>
                             <MudTd>
-                                <MudTr DataLabel="@products[index].Name.Name">@products[index].Number</MudTr>
-                                <MudTr DataLabel="@products[index].Name.Name">@products[index].NumberEdit</MudTr>
-                                <MudTr DataLabel="@products[index].Name.Name">@products[index].NumberReturn</MudTr>
-                                <MudTr DataLabel="@products[index].Name.Name">@(products[index].Number + products[index].NumberEdit - products[index].NumberReturn)</MudTr>
-                                <MudTr DataLabel="@products[index].Name.Name">@(products[index].PriceTotalAfterCorrectDecimal)</MudTr>
+                                <MudTr Style="d-flex justify-start">
+                                    
+                                </MudTr>
+                                <MudTr>Ilość</MudTr>
+                                <MudTr>Edycja</MudTr>
+                                <MudTr>Zwrot</MudTr>
+                                <MudTr>Sprzedane</MudTr>
+                                <MudTr>Utarg zł</MudTr>
+
                             </MudTd>
+                            @for (int j = 0; j < Products.Count; j++)
+                            {
+                                var find = products.FirstOrDefault(x => x.Name.Id == Products[j].Name.Id);
+                                int index = -1;
 
-                        }
+                                @if (find is not null)
+                                {
+                                    index = products.IndexOf(find);
+                                }
+                                @if (index == -1)
+                                {
+                                    <MudTd>0</MudTd>
+                                    continue;
+                                }
+                                @if (Products[j].Name.Id != products[index].Name.Id)
+                                {
+                                    <MudTd>0</MudTd>
+                                    continue;
+                                }
+
+                                <MudTd>
+
+                                    <MudTr media="screen and (min-width: 600px)">
+                                       @*  @products[index].Name.Name *@
+                                    </MudTr>
 
 
-                    </ChildRowContent>
+                                    <MudTr DataLabel="@products[index].Name.Name">@products[index].Number</MudTr>
+                                    <MudTr DataLabel="@products[index].Name.Name">@products[index].NumberEdit</MudTr>
+                                    <MudTr DataLabel="@products[index].Name.Name">@products[index].NumberReturn</MudTr>
+                                    <MudTr DataLabel="@products[index].Name.Name">@(products[index].Number + products[index].NumberEdit - products[index].NumberReturn)</MudTr>
+                                    <MudTr DataLabel="@products[index].Name.Name">@(products[index].PriceTotalAfterCorrectDecimal)</MudTr>
+                                </MudTd>
+
+                            }
 
 
-                </MudTable>
+                        </ChildRowContent>
+
+
+                    </MudTable>
+
+                </div>
 
             </CellTemplate>
         </PropertyColumn>
