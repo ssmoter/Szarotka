@@ -55,33 +55,33 @@ namespace DataBase.Data
             await Task.WhenAll(update, toast);
         }
 
-        public async Task<bool> UpdateDataBase(Action<double, int> uppdateDataBase, Action<double, int> uppdateInventory, Action<double, int> uppdateDriverRoutes)
+        public async Task<bool> UpdateDataBase(Action<double, int> updateDataBase, Action<double, int> updateInventory, Action<double, int> updateDriverRoutes)
         {
             var oldVersion = GetCurrentVersion();
             var newVersion = new DataBaseVersion();
 
 
             double progressBar = 0;
-            double uppdateProgressBar = newVersion.DataBase - oldVersion.DataBase;
-            uppdateProgressBar /= uppdateProgressBar.ToString().Length * 10;
+            double updateProgressBar = newVersion.DataBase - oldVersion.DataBase;
+            updateProgressBar /= updateProgressBar.ToString().Length * 10;
 
 
             if (oldVersion.DataBase < 1)
             {
                 await _db.DataBaseAsync.CreateTableAsync<LogsModel>();
-                progressBar += uppdateProgressBar;
+                progressBar += updateProgressBar;
                 oldVersion.DataBase = 1;
-                uppdateDataBase?.Invoke(progressBar, oldVersion.DataBase);
+                updateDataBase?.Invoke(progressBar, oldVersion.DataBase);
             }
 
 
 
-            var inventory = _inventoryTables.UpdateInventory(oldVersion.Inventory, newVersion.Inventory, uppdateInventory);
-            var driversRoutes = _driversRoutesTables.UpdateDriversRoutes(oldVersion.DriversRoutes, newVersion.DriversRoutes, uppdateDriverRoutes);
+            var inventory = _inventoryTables.UpdateInventory(oldVersion.Inventory, newVersion.Inventory, updateInventory);
+            var driversRoutes = _driversRoutesTables.UpdateDriversRoutes(oldVersion.DriversRoutes, newVersion.DriversRoutes, updateDriverRoutes);
             await Task.WhenAll(inventory, driversRoutes);
 
 
-            uppdateDataBase?.Invoke(1, newVersion.DataBase);
+            updateDataBase?.Invoke(1, newVersion.DataBase);
             await _db.DataBaseAsync.InsertOrReplaceAsync(newVersion);
 
             return true;

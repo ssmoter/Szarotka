@@ -7,19 +7,20 @@
     xmlns:VM="clr-namespace:Inventory.Pages.RangeDay"
     xmlns:VMD="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
     xmlns:graph="clr-namespace:Inventory.Pages.RangeDay.Graph"
+    xmlns:img="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
     xmlns:table="clr-namespace:Inventory.Pages.RangeDay.Table"
-    Title="Zakres dat"
-    x:DataType="VM:RangeDayVM">
+    x:DataType="VM:RangeDayVM"
+    Shell.NavBarIsVisible="False">
 
     <ContentPage.Resources>
         <Convert:TranslateDayOfWeek x:Key="ANGToPL" />
     </ContentPage.Resources>
 
     <Shell.BackButtonBehavior>
-        <BackButtonBehavior Command="{Binding BackCommand}" />
+        <BackButtonBehavior Command="{Binding BackCommand}" IsVisible="False" />
     </Shell.BackButtonBehavior>
 
-    <ContentPage.ToolbarItems>
+    <!--<ContentPage.ToolbarItems>
         <ToolbarItem
             x:DataType="VM:RangeDayVM"
             Command="{Binding GenerateCSVFileCommand}"
@@ -29,13 +30,30 @@
             x:DataType="VM:RangeDayVM"
             Command="{Binding GenerateJsonFileCommand}"
             Text="JSON" />
-    </ContentPage.ToolbarItems>
+    </ContentPage.ToolbarItems>-->
 
 
     <Grid RowDefinitions="auto,*,0.001">
         <Grid>
-            <VerticalStackLayout HorizontalOptions="Center">
+            <HorizontalStackLayout>
+                <ImageButton
+                    Command="{Binding BackCommand}"
+                    Rotation="90"
+                    Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                             Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                <VerticalStackLayout>
+                    <Label FontSize="Title" Text="Zakres Dat" />
+                    <Button
+                        Margin="-10"
+                        BackgroundColor="Transparent"
+                        HorizontalOptions="Start"
+                        Text="JSON"
+                        TextColor="{AppThemeBinding Light={StaticResource Black},
+                                                    Dark={StaticResource White}}" />
+                </VerticalStackLayout>
 
+            </HorizontalStackLayout>
+            <HorizontalStackLayout HorizontalOptions="Center">
                 <Button
                     Command="{Binding SelectMoreDateCommand}"
                     HorizontalOptions="Center"
@@ -43,22 +61,21 @@
                     VerticalOptions="Center" />
 
                 <Button
-                    Margin="10"
                     Command="{Binding SaveAnotherDriverDataCommand}"
                     IsVisible="{Binding EnableSave}"
                     Text="Zapisz wczytany plik" />
-            </VerticalStackLayout>
+            </HorizontalStackLayout>
             <VerticalStackLayout HorizontalOptions="End">
                 <RadioButton
-                    Margin="0,-10,0,-10"
+                    Margin="0,-11,0,-11"
                     Content="Lista"
                     IsChecked="{Binding ListIsVisible}" />
                 <RadioButton
-                    Margin="0,-10,0,-10"
+                    Margin="0,-11,0,-11"
                     Content="Wykres"
                     IsChecked="{Binding GraphIsVisible}" />
                 <RadioButton
-                    Margin="0,-10,0,-10"
+                    Margin="0,-11,0,-11"
                     Content="Tabela"
                     IsChecked="{Binding TableIsVisible}" />
             </VerticalStackLayout>
@@ -75,12 +92,11 @@
 
         <Grid Grid.Row="1" IsVisible="{Binding TableIsVisible}">
 
-            <BlazorWebView x:Name="blazorWebViewTable" HostPage="wwwroot/index.html">
-                <BlazorWebView.RootComponents>
-                    <RootComponent ComponentType="{x:Type table:RangeTable}" Selector="#app" />
-                </BlazorWebView.RootComponents>
-            </BlazorWebView>
-
+                <BlazorWebView x:Name="blazorWebViewTable" HostPage="wwwroot/index.html">
+                    <BlazorWebView.RootComponents>
+                        <RootComponent ComponentType="{x:Type table:RangeTable}" Selector="#app" />
+                    </BlazorWebView.RootComponents>
+                </BlazorWebView>
 
         </Grid>
 

@@ -55,7 +55,7 @@ namespace Inventory.Pages.Main
                 }
                 if (await MainVM.CheckDriver())
                 {
-                    await Shell.Current.GoToAsync("../MainOptionsV?",
+                    await Shell.Current.GoToAsync("//MainPage/MainOptionsV?",
                         new Dictionary<string, object>()
                         {
                             [nameof(ListOfEnums.TypOfOptions)] = ListOfEnums.TypOfOptions.Inventory,

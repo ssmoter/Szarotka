@@ -3,10 +3,11 @@
     x:Class="SzarotkaBlazor.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:Img="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
-    xmlns:local="clr-namespace:SzarotkaBlazor">
-
-
+    xmlns:img="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
+    xmlns:inventory="clr-namespace:Inventory.Pages.Main;assembly=Inventory"
+    xmlns:local="clr-namespace:SzarotkaBlazor"
+    xmlns:options="clr-namespace:SzarotkaBlazor.Pages.Options.Main"
+    xmlns:routes="clr-namespace:DriversRoutes.Pages.Main;assembly=DriversRoutes">
 
 
     <ScrollView>
@@ -16,23 +17,18 @@
             Spacing="25"
             VerticalOptions="Center">
 
-            <!--<BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
-                <BlazorWebView.RootComponents>
-                    <RootComponent ComponentType="{x:Type local:Components.Routes}" Selector="#app" />
-                </BlazorWebView.RootComponents>
-            </BlazorWebView>-->
 
-            <Grid
-                IsVisible="False"
-                HorizontalOptions="Center"
-                RowDefinitions="*,auto"
-                VerticalOptions="Center">
-                <GraphicsView x:Name="gv" />
-                <Button
-                    Grid.Row="1"
-                    Clicked="Button_Clicked"
-                    Text="test" />
-            </Grid>
+            <!--<Grid
+                            HorizontalOptions="Center"
+                            IsVisible="False"
+                            RowDefinitions="*,auto"
+                            VerticalOptions="Center">
+                            <GraphicsView x:Name="gv" />
+                            <Button
+                                Grid.Row="1"
+                                Clicked="Button_Clicked"
+                                Text="test" />
+                        </Grid>-->
             <Image
                 HeightRequest="100"
                 HorizontalOptions="Center"

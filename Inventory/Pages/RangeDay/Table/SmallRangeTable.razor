@@ -3,7 +3,7 @@
 @using MudBlazor
 
 
-<MudDataGrid T="RangeDayMWithhNumber" Hover Dense Items="@rangeDayMs" Virtualize="true" FixedHeader="true" RowsPerPage="@RowsPerPage" Height="@Height">
+<MudDataGrid T="RangeDayMWithNumber" Hover Dense Items="@rangeDayMs" Virtualize="true" FixedHeader="true" RowsPerPage="@RowsPerPage" Height="@Height">
     <Columns>
 
         <PropertyColumn Property="x=>x.Number" Title="Lp."></PropertyColumn>
@@ -52,7 +52,7 @@
                         <ChildRowContent>
                             <MudTd>
                                 <MudTr Style="d-flex justify-start">
-                                    
+
                                 </MudTr>
                                 <MudTr>Ilość</MudTr>
                                 <MudTr>Edycja</MudTr>
@@ -84,7 +84,7 @@
                                 <MudTd>
 
                                     <MudTr media="screen and (min-width: 600px)">
-                                       @*  @products[index].Name.Name *@
+                                        @*  @products[index].Name.Name *@
                                     </MudTr>
 
 
@@ -116,7 +116,7 @@
 
     <PagerContent>
         <MudButton OnClick="@ShowDetailsAll">Wyświetl szczegóły</MudButton>
-        <MudDataGridPager T="RangeDayMWithhNumber" PageSizeOptions=@(new int[] {6, 31,60,183,1000}) />
+        <MudDataGridPager T="RangeDayMWithNumber" PageSizeOptions=@(new int[] {6, 31,60,183,1000}) />
     </PagerContent>
 
 </MudDataGrid>
@@ -125,7 +125,7 @@
 
 @code {
 
-    private IList<RangeDayMWithhNumber> rangeDayMs;
+    private IList<RangeDayMWithNumber> rangeDayMs;
     [Parameter]
     public IList<RangeDayM> RangeDayMs { get; set; }
     [Parameter]
@@ -143,7 +143,7 @@
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        rangeDayMs = new RangeDayMWithhNumber[RangeDayMs.Count];
+        rangeDayMs = new RangeDayMWithNumber[RangeDayMs.Count];
 
         for (int i = 0; i < RangeDayMs.Count; i++)
         {
@@ -174,9 +174,9 @@
         }
     }
 
-    public class RangeDayMWithhNumber : RangeDayM
+    public class RangeDayMWithNumber : RangeDayM
     {
-        public RangeDayMWithhNumber(RangeDayM rangeDayM)
+        public RangeDayMWithNumber(RangeDayM rangeDayM)
         {
             Day = rangeDayM.Day;
             Driver = rangeDayM.Driver;

@@ -1,10 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model;
 
-using DriversRoutes.Data;
-
-using Microsoft.Maui.Graphics.Skia;
-
 using SzarotkaBlazor.Pages.Options.Main;
 
 
@@ -21,12 +17,9 @@ namespace SzarotkaBlazor
             _createdDataBase = new CreatedDataBase(_db);
         }
 
-
-
         protected override async void OnNavigatedTo(NavigatedToEventArgs args)
         {
             base.OnNavigatedTo(args);
-
             try
             {
                 var old = _createdDataBase.GetCurrentVersion();
@@ -58,25 +51,25 @@ namespace SzarotkaBlazor
             await Shell.Current.GoToAsync(nameof(DriversRoutes.Pages.Main.MainVDriversRoutesV));
         }
 
-        private void Button_Clicked(object sender, EventArgs e)
-        {
-            var width = 40 *10;
-            var height = 58 *10;
+        //private void Button_Clicked(object sender, EventArgs e)
+        //{
+        //    var width = 40 *10;
+        //    var height = 58 *10;
 
-            SkiaBitmapExportContext skiaBitmapExportContext = new(width, height, 1);
-            ICanvas canvas = skiaBitmapExportContext.Canvas;
-            DrawIconOnMap drawIconOnMap = new()
-            {
-                Number = 100
-            };
-            drawIconOnMap.Draw(canvas, new RectF(0, 0, skiaBitmapExportContext.Width, skiaBitmapExportContext.Height));
-            gv.MinimumWidthRequest = width;
-            gv.MinimumHeightRequest = height;
-            gv.Drawable = drawIconOnMap;
-            gv.Invalidate();
-            //= ImageSource.FromStream(() => skiaBitmapExportContext.Image.AsStream());
+        //    SkiaBitmapExportContext skiaBitmapExportContext = new(width, height, 1);
+        //    ICanvas canvas = skiaBitmapExportContext.Canvas;
+        //    DrawIconOnMap drawIconOnMap = new()
+        //    {
+        //        Number = 100
+        //    };
+        //    drawIconOnMap.Draw(canvas, new RectF(0, 0, skiaBitmapExportContext.Width, skiaBitmapExportContext.Height));
+        //    gv.MinimumWidthRequest = width;
+        //    gv.MinimumHeightRequest = height;
+        //    gv.Drawable = drawIconOnMap;
+        //    gv.Invalidate();
+        //    //= ImageSource.FromStream(() => skiaBitmapExportContext.Image.AsStream());
 
 
-        }
+        //}
     }
 }

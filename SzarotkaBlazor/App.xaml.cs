@@ -1,5 +1,6 @@
 ﻿using DataBase.Helper;
 
+using SzarotkaBlazor.Service;
 namespace SzarotkaBlazor
 {
     public partial class App : Application
@@ -14,7 +15,7 @@ namespace SzarotkaBlazor
             RequestedThemeChanged += MudBlazorTheme.Current_RequestedThemeChanged;
 
             InitializeComponent();
-
+            RoutingCollectionExtensions.AddRoutings();
             MainPage = new AppShell();
         }
 

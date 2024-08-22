@@ -7,8 +7,6 @@ namespace SzarotkaBlazor
         public AppShell()
         {
             InitializeComponent();
-            RoutingCollectionExtensions.AddRoutings();
-
         }
     }
 }
