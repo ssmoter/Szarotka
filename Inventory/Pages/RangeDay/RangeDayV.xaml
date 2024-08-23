@@ -67,7 +67,7 @@
             </HorizontalStackLayout>
             <VerticalStackLayout HorizontalOptions="End">
                 <RadioButton
-                    Margin="0,-11,0,-11"
+                    Margin="0,-8,0,-11"
                     Content="Lista"
                     IsChecked="{Binding ListIsVisible}" />
                 <RadioButton
