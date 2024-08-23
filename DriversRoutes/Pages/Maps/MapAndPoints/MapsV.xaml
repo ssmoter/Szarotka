@@ -40,7 +40,6 @@
             Padding="2"
             BackgroundColor="{AppThemeBinding Light=White,
                                               Dark=Black}"
-            HorizontalOptions="Start"
             IsVisible="{Binding IsVisibleList}"
             ZIndex="102">
 
@@ -53,7 +52,7 @@
 
             <ScrollView>
 
-                <Border BackgroundColor="{AppThemeBinding Light=AliceBlue, Dark=Grey}" HorizontalOptions="Center">
+                <Border BackgroundColor="{AppThemeBinding Light=AliceBlue, Dark=Grey}">
 
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="10" />
@@ -61,55 +60,70 @@
 
                     <Grid RowDefinitions="auto,*">
 
-                        <Grid HorizontalOptions="Center" RowDefinitions="*,auto">
+                        <Grid RowDefinitions="*,auto">
 
                             <Grid
                                 Grid.Row="0"
                                 ColumnDefinitions="*,*"
-                                RowDefinitions="*,*">
+                                RowDefinitions="*,*,*">
 
-
-
-                                <VerticalStackLayout
+                                <Border
                                     Grid.Row="0"
                                     Grid.Column="0"
-                                    HorizontalOptions="Fill">
+                                    StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="30,30,0,0" />
+                                    </Border.StrokeShape>
 
-                                    <Border StrokeThickness="0">
-                                        <Border.StrokeShape>
-                                            <RoundRectangle CornerRadius="30,30,0,0" />
-                                        </Border.StrokeShape>
+                                    <Button
+                                        Padding="0"
+                                        Command="{Binding DisplayTypeOfMapCommand}"
+                                        HorizontalOptions="Fill"
+                                        Text="Typ mapy" />
+                                </Border>
 
-                                        <Button
-                                            Padding="0"
-                                            Command="{Binding DisplayTypeOfMapCommand}"
-                                            HorizontalOptions="Fill"
-                                            Text="Typ mapy" />
+                                <VerticalStackLayout
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2">
+
+                                    <Border
+                                        Margin="5"
+                                        IsVisible="{Binding IsVisibleTypeOfMap}"
+                                        StrokeThickness="2">
+                                        <VerticalStackLayout Padding="0">
+                                            <VerticalStackLayout>
+                                                <RadioButton
+                                                    CheckedChanged="RadioButton_CheckedChanged"
+                                                    Content="Ulica"
+                                                    IsChecked="True"
+                                                    Value="0" />
+                                                <RadioButton
+                                                    CheckedChanged="RadioButton_CheckedChanged"
+                                                    Content="Satelita"
+                                                    Value="1" />
+                                                <RadioButton
+                                                    CheckedChanged="RadioButton_CheckedChanged"
+                                                    Content="Hybryda"
+                                                    Value="2" />
+                                            </VerticalStackLayout>
+
+
+                                            <Border />
+
+                                            <Grid Margin="5" ColumnDefinitions="*,*">
+                                                <Label
+                                                    Grid.Column="1"
+                                                    LineBreakMode="WordWrap"
+                                                    Text="Natężenie ruchu"
+                                                    VerticalOptions="Center" />
+                                                <Switch
+                                                    Grid.Column="0"
+                                                    HorizontalOptions="Start"
+                                                    IsToggled="{Binding IsTrafficEnabled}" />
+                                            </Grid>
+                                        </VerticalStackLayout>
                                     </Border>
-
-                                    <VerticalStackLayout Padding="0" IsVisible="{Binding IsVisibleTypeOfMap}">
-                                        <Button
-                                            Padding="0"
-                                            Command="{Binding ChangeTypeOfMapCommand}"
-                                            CommandParameter="0"
-                                            CornerRadius="50"
-                                            HorizontalOptions="Fill"
-                                            Text="Ulica" />
-                                        <Button
-                                            Padding="0"
-                                            Command="{Binding ChangeTypeOfMapCommand}"
-                                            CommandParameter="1"
-                                            CornerRadius="50"
-                                            HorizontalOptions="Fill"
-                                            Text="Satelita" />
-                                        <Button
-                                            Padding="0"
-                                            Command="{Binding ChangeTypeOfMapCommand}"
-                                            CommandParameter="2"
-                                            CornerRadius="50"
-                                            HorizontalOptions="Fill"
-                                            Text="Hybryda" />
-                                    </VerticalStackLayout>
 
                                 </VerticalStackLayout>
 
@@ -126,13 +140,12 @@
                                         Grid.Column="1"
                                         Padding="0"
                                         Command="{Binding SwipeViewGestureCommand}"
-                                        HorizontalOptions="Fill"
                                         Text="Schowaj" />
                                 </Border>
 
 
                                 <Border
-                                    Grid.Row="1"
+                                    Grid.Row="2"
                                     Grid.Column="0"
                                     Padding="5">
                                     <Border.StrokeShape>
@@ -145,14 +158,13 @@
                                             Padding="0"
                                             Command="{Binding ChangeAddLocationIsCommand}"
                                             CornerRadius="50"
-                                            HorizontalOptions="Fill"
                                             Text="{Binding AddLocationIsText}" />
                                     </VerticalStackLayout>
                                 </Border>
 
                                 <!--  &#10;  -->
                                 <Border
-                                    Grid.Row="1"
+                                    Grid.Row="2"
                                     Grid.Column="1"
                                     Padding="5">
                                     <Border.StrokeShape>
@@ -168,8 +180,6 @@
                                             Text="Dodaj" />
                                     </VerticalStackLayout>
                                 </Border>
-
-
 
                             </Grid>
                             <Grid Grid.Row="1" ColumnDefinitions="*,*">
@@ -272,6 +282,7 @@
             Grid.RowSpan="10"
             Grid.ColumnSpan="10"
             IsShowingUser="True"
+            IsTrafficEnabled="{Binding IsTrafficEnabled}"
             ItemsSource="{Binding AllPoints}"
             MapClicked="Map_MapClicked"
             MapType="{Binding MapType}"
@@ -300,9 +311,6 @@
                 </DataTemplate>
             </maps:Map.ItemTemplate>
         </maps:Map>
-
-
-
 
 
 

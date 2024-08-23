@@ -42,9 +42,9 @@ namespace DriversRoutes.Pages.Main
         [RelayCommand]
         async static Task NavigationToMaps()
         {
-            var permision = await AndroidPermissionService.LocationWhenInUse();
+            var permission = await AndroidPermissionService.LocationWhenInUse();
 
-            if (!permision)
+            if (!permission)
             {
                 return;
             }
@@ -57,9 +57,9 @@ namespace DriversRoutes.Pages.Main
         {
             try
             {
-                var permision = await AndroidPermissionService.LocationWhenInUse();
+                var permission = await AndroidPermissionService.LocationWhenInUse();
 
-                if (!permision)
+                if (!permission)
                 {
                     return;
                 }

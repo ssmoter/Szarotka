@@ -43,14 +43,8 @@ public partial class MapsV : ContentPage, IDisposable
 
             if (vm.Routes is null)
                 return;
-            if (vm.DriversRoutesName.Length <= 16)
-            {
-                vm.DriversRoutesName += vm.Routes.Name;
-            }
-            if (!vm.DriversRoutesName.Contains(vm.Routes.Name))
-            {
-                vm.DriversRoutesName = $"Trasa kierowcy: {vm.Routes.Name}";
-            }
+
+            vm.DriversRoutesName = vm.Routes.Name;
 
             if (vm.LastSelectedDayOfWeekWhenNavigation is not null)
             {
@@ -104,5 +98,17 @@ public partial class MapsV : ContentPage, IDisposable
             }
         }
 
+    }
+
+    private void RadioButton_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    {
+        if (BindingContext is MapsVM vm)
+        {
+            if (sender is RadioButton radio)
+            {
+                var value = radio.Value;
+                vm.ChangeTypeOfMapCommand.Execute(value);
+            }
+        }
     }
 }

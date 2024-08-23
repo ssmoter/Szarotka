@@ -6,7 +6,7 @@
 <MudDataGrid T="RangeDayMWithNumber" Hover Dense Items="@rangeDayMs" Virtualize="true" FixedHeader="true" RowsPerPage="@RowsPerPage" Height="@Height">
     <Columns>
         <HierarchyColumn InitiallyExpandedFunc="@(x=>x.ShowDetails=!x.ShowDetails)" />
-        <PropertyColumn Property="x=>x.Number" Title="Lp."></PropertyColumn>
+        <PropertyColumn Property="x=>x.Number" Title="Lp." StickyLeft="true"></PropertyColumn>
         <PropertyColumn Property="x=>x.Driver.Name" Title="Kierowca"></PropertyColumn>
         @if (TimeIsVisible)
         {
@@ -24,82 +24,95 @@
         <PropertyColumn Property="x=>x.Day.TotalPriceAfterCorrectDecimal" Title="Utarg po korekcie"></PropertyColumn>
         <PropertyColumn Property="x=>x.Day.TotalPriceMoneyDecimal" Title="Zapłacono"></PropertyColumn>
         <PropertyColumn Property="x=>x.Day.TotalPriceDifferenceDecimal" Title="Różnica"></PropertyColumn>
-
     </Columns>
 
     <ChildRowContent>
         @{
             var products = context.Item.Day.Products;
-            var a = 1;
         }
+
+        <MudDataGrid class="w-100" T="Product" Hover Dense Items="@products" FixedHeader="true" Height="300px">
+
+            <Columns>
+                <PropertyColumn Property="x=>x.Name.Name" Title="Nazwa" StickyLeft="true"></PropertyColumn>
+                <PropertyColumn Property="x=>x.Number+x.NumberEdit" Title="Ilość"></PropertyColumn>
+                <PropertyColumn Property="x=>x.NumberReturn" Title="Zwrot"></PropertyColumn>
+                <PropertyColumn Property="x=>x.Number+x.NumberEdit - x.NumberReturn" Title="Sprzedane"></PropertyColumn>
+                <PropertyColumn Property="x=>x.PriceTotalAfterCorrectDecimal" Title="Utarg"></PropertyColumn>
+            </Columns>
+
+        </MudDataGrid>
+
+
+        @*
         <MudTable Items="@context.Item.Table" Context="productsItems" Class="d-block">
 
-            <HeaderContent>
+        <HeaderContent>
 
-                <MudTh>*</MudTh>
+        <MudTh>*</MudTh>
 
-                @foreach (var item in Products)
-                {
-                    <MudTh>@item.Name.Name</MudTh>
-                }
+        @foreach (var item in Products)
+        {
+        <MudTh>@item.Name.Name</MudTh>
+        }
 
-            </HeaderContent>
+        </HeaderContent>
 
-            <ChildRowContent>
-                <MudTd>
-                    <MudText>Nazwa</MudText>
-                    <MudText>Ilość</MudText>
-                    <MudText>Zwrot</MudText>
-                    <MudText>Sprzedane</MudText>
-                    <MudText>Utarg zł</MudText>
+        <ChildRowContent>
+        <MudTd>
+        <MudText>Nazwa</MudText>
+        <MudText>Ilość</MudText>
+        <MudText>Zwrot</MudText>
+        <MudText>Sprzedane</MudText>
+        <MudText>Utarg zł</MudText>
 
-                </MudTd>
-                @for (int j = 0; j < Products.Count; j++)
-                {
-                    var find = products.FirstOrDefault(x => x.Name.Id == Products[j].Name.Id);
-                    int index = -1;
+        </MudTd>
+        @for (int j = 0; j < Products.Count; j++)
+        {
+        var find = products.FirstOrDefault(x => x.Name.Id == Products[j].Name.Id);
+        int index = -1;
 
-                    @if (find is not null)
-                    {
-                        index = products.IndexOf(find);
-                    }
-                    @if (index == -1)
-                    {
-                        <MudTd>0</MudTd>
-                        continue;
-                    }
-                    @if (Products[j].Name.Id != products[index].Name.Id)
-                    {
-                        <MudTd>0</MudTd>
-                        continue;
-                    }
+        @if (find is not null)
+        {
+        index = products.IndexOf(find);
+        }
+        @if (index == -1)
+        {
+        <MudTd>0</MudTd>
+        continue;
+        }
+        @if (Products[j].Name.Id != products[index].Name.Id)
+        {
+        <MudTd>0</MudTd>
+        continue;
+        }
 
-                    <MudTd>
+        <MudTd>
 
-                        <MudText>
-                            @products[index].Name.Name
-                        </MudText>
-
-
-                        <MudText DataLabel="@products[index].Name.Name">@(products[index].Number + products[index].NumberEdit)</MudText>
-                        <MudText DataLabel="@products[index].Name.Name">@products[index].NumberReturn</MudText>
-                        <MudText DataLabel="@products[index].Name.Name">@(products[index].Number + products[index].NumberEdit - products[index].NumberReturn)</MudText>
-                        <MudText DataLabel="@products[index].Name.Name">@(products[index].PriceTotalAfterCorrectDecimal)</MudText>
-                    </MudTd>
-
-                }
+        <MudText>
+        @products[index].Name.Name
+        </MudText>
 
 
-            </ChildRowContent>
+        <MudText DataLabel="@products[index].Name.Name">@(products[index].Number + products[index].NumberEdit)</MudText>
+        <MudText DataLabel="@products[index].Name.Name">@products[index].NumberReturn</MudText>
+        <MudText DataLabel="@products[index].Name.Name">@(products[index].Number + products[index].NumberEdit - products[index].NumberReturn)</MudText>
+        <MudText DataLabel="@products[index].Name.Name">@(products[index].PriceTotalAfterCorrectDecimal)</MudText>
+        </MudTd>
+
+        }
+
+
+        </ChildRowContent>
 
 
         </MudTable>
-
+        *@
     </ChildRowContent>
 
 
     <PagerContent>
-        <MudButton OnClick="@ShowDetailsAll">Wyświetl szczegóły</MudButton>
+        @* <MudButton OnClick="@ShowDetailsAll">Wyświetl szczegóły</MudButton> *@
         <MudDataGridPager T="RangeDayMWithNumber" PageSizeOptions=@(new int[] {6, 31,60,183,1000}) />
     </PagerContent>
 

@@ -36,16 +36,19 @@
     <Grid RowDefinitions="auto,*,0.001">
         <Grid>
             <HorizontalStackLayout>
-                <ImageButton
-                    Command="{Binding BackCommand}"
-                    Rotation="90"
-                    Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
-                                             Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                <Grid>
+                    <ImageButton
+                        Command="{Binding BackCommand}"
+                        Rotation="90"
+                        Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                 Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                </Grid>
                 <VerticalStackLayout>
                     <Label FontSize="Title" Text="Zakres Dat" />
                     <Button
                         Margin="-10"
                         BackgroundColor="Transparent"
+                        Command="{Binding GenerateJsonFileCommand}"
                         HorizontalOptions="Start"
                         Text="JSON"
                         TextColor="{AppThemeBinding Light={StaticResource Black},
@@ -92,11 +95,11 @@
 
         <Grid Grid.Row="1" IsVisible="{Binding TableIsVisible}">
 
-                <BlazorWebView x:Name="blazorWebViewTable" HostPage="wwwroot/index.html">
-                    <BlazorWebView.RootComponents>
-                        <RootComponent ComponentType="{x:Type table:RangeTable}" Selector="#app" />
-                    </BlazorWebView.RootComponents>
-                </BlazorWebView>
+            <BlazorWebView x:Name="blazorWebViewTable" HostPage="wwwroot/index.html">
+                <BlazorWebView.RootComponents>
+                    <RootComponent ComponentType="{x:Type table:RangeTable}" Selector="#app" />
+                </BlazorWebView.RootComponents>
+            </BlazorWebView>
 
         </Grid>
 
@@ -167,39 +170,47 @@
                 </CollectionView>
             </Border>
 
-            <Border Grid.Row="1">
+            <Border Grid.Row="1" Padding="3">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
-                <Grid RowDefinitions="auto,*">
-                    <Border Padding="5,5,5,0">
-                        <Grid ColumnDefinitions="*,*,*,*,*">
+                <Grid RowDefinitions="*">
+                    <CollectionView Grid.Row="0" ItemsSource="{Binding RangeDays}">
 
-                            <Label
-                                Grid.Column="0"
-                                HorizontalOptions="Center"
-                                Text="Data" />
-                            <Label
-                                Grid.Column="1"
-                                HorizontalOptions="Center"
-                                Text="Kierowca" />
-                            <Label
-                                Grid.Column="2"
-                                HorizontalOptions="Center"
-                                Text="Zapłacono" />
-                            <Label
-                                Grid.Column="3"
-                                HorizontalOptions="Center"
-                                Text="Utarg" />
-                            <Label
-                                Grid.Column="4"
-                                HorizontalOptions="Center"
-                                Text="Różnica" />
+                        <CollectionView.HeaderTemplate>
+                            <DataTemplate>
+                                <Border Padding="5,5,5,0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10,10,0,0" />
+                                    </Border.StrokeShape>
+                                    <Grid ColumnDefinitions="*,*,*,*,*">
 
-                        </Grid>
-                    </Border>
+                                        <Label
+                                            Grid.Column="0"
+                                            HorizontalOptions="Center"
+                                            Text="Data" />
+                                        <Label
+                                            Grid.Column="1"
+                                            HorizontalOptions="Center"
+                                            Text="Kierowca" />
+                                        <Label
+                                            Grid.Column="2"
+                                            HorizontalOptions="Center"
+                                            Text="Zapłacono" />
+                                        <Label
+                                            Grid.Column="3"
+                                            HorizontalOptions="Center"
+                                            Text="Utarg" />
+                                        <Label
+                                            Grid.Column="4"
+                                            HorizontalOptions="Center"
+                                            Text="Różnica" />
 
-                    <CollectionView Grid.Row="1" ItemsSource="{Binding RangeDays}">
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.HeaderTemplate>
+
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <SwipeView>
@@ -210,7 +221,7 @@
                                     </SwipeView.RightItems>
                                     <Border>
                                         <Border.StrokeShape>
-                                            <RoundRectangle CornerRadius="10" />
+                                            <RoundRectangle CornerRadius="0,0,10,10" />
                                         </Border.StrokeShape>
                                         <Grid
                                             Padding="5,5,5,0"

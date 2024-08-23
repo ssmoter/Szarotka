@@ -52,6 +52,9 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
         [ObservableProperty]
         string addLocationIsText = block;
 
+        [ObservableProperty]
+        bool isTrafficEnabled;
+
         public SelectedDayOfWeekRoutes LastSelectedDayOfWeek { get; set; }
         public SelectedDayOfWeekRoutes LastSelectedDayOfWeekWhenNavigation { get; set; }
 
@@ -72,8 +75,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
         #endregion
         public MapsVM(DataBase.Data.AccessDataBase db, Service.ISelectRoutes selectRoutes, Service.ISaveRoutes saveRoutes)
         {
-            _db = db;
-            SelectedDayName = DisplaySelectedDayName(DateTime.Today.DayOfWeek);
+            _db = db;          
             MapType = MapType.Street;
             AllPoints ??= [];
             _selectRoutes = selectRoutes;
@@ -309,21 +311,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 {
                     points.Add(result[i].ParseAsCustomerM());
 
-                    //Assembly assembly = AppDomain.CurrentDomain.GetAssemblies()
-                    //                 .SingleOrDefault(assembly => assembly.GetName().Name == AppInfo.Name);
-
-                    //using Stream stream = assembly.GetManifestResourceStream(
-                    //    $"{AppInfo.Name}.Resources.Images.EmbeddedResource.{DataBase.Helper.Img.ImgMapsSymbols.LocationOnWhite}");
-
-                    //var image = PlatformImage.FromStream(stream);
-                    //DrawIconOnMap drawIconOnMap = new()
-                    //{
-                    //    Number = i + 1,
-                    //    Image = image
-                    //};
-
-                    //points[i].Pin.ImageSource = ImageSource.FromStream(() => drawIconOnMap.DrawWithImage(image));
-
+#if !DEBUG
                     SkiaBitmapExportContext skiaBitmapExportContext = new(width, height, 1);
                     ICanvas canvas = skiaBitmapExportContext.Canvas;
                     DrawIconOnMap drawIconOnMap = new()
@@ -335,7 +323,10 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                     drawIconOnMap.Draw(canvas, new RectF(0, 0, skiaBitmapExportContext.Width, skiaBitmapExportContext.Height));
 
                     points[i].Pin.ImageSource = ImageSource.FromStream(() => skiaBitmapExportContext.Image.AsStream());
+#endif
 
+
+                    SelectedDayName = week.ToString();
                 }
             }
             catch (Exception ex)
@@ -344,7 +335,6 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             }
             return points;
         }
-
         private void DescriptionOfPreviousPoint(int direction)
         {
             int index;
@@ -402,7 +392,6 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 if (response is SelectedDayOfWeekRoutes day)
                 {
                     LastSelectedDayOfWeek = day;
-                    SelectedDayName = day.ToString();
                     AllPoints = await GetSelectedDays(LastSelectedDayOfWeek);
                     var first = AllPoints.FirstOrDefault();
                     if (first is not null)
