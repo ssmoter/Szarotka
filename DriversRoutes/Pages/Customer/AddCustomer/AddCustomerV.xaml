@@ -79,7 +79,7 @@
                                             Grid.Row="2"
                                             Command="{Binding CopyTimeBeforeCommand}"
                                             CommandParameter="2"
-                                            Text="{Binding DayOfWeekCustomerBefore.ThursdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
+                                            Text="{Binding DayOfWeekCustomerBefore.TuesdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
                                         <Button
                                             Grid.Row="3"
                                             Command="{Binding CopyTimeBeforeCommand}"
@@ -161,7 +161,7 @@
                                             Grid.Row="2"
                                             Command="{Binding CopyTimeAfterCommand}"
                                             CommandParameter="2"
-                                            Text="{Binding DayOfWeekCustomerAfter.ThursdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
+                                            Text="{Binding DayOfWeekCustomerAfter.TuesdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
                                         <Button
                                             Grid.Row="3"
                                             Command="{Binding CopyTimeAfterCommand}"

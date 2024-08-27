@@ -54,9 +54,9 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
 
         public async void GetHelperDayOfWeek()
         {
-            var befor = GetDayOfWeekCustomerBefore();
+            var before = GetDayOfWeekCustomerBefore();
             var after = GetDayOfWeekCustomerAfter();
-            await Task.WhenAll(befor, after);
+            await Task.WhenAll(before, after);
         }
 
         private async Task GetDayOfWeekCustomerBefore()
