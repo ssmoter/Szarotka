@@ -18,5 +18,6 @@ namespace Inventory.Pages.SingleDay
 
         [ObservableProperty]
         bool cakeAllIsVisible;
+
     }
 }

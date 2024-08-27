@@ -18,7 +18,7 @@ namespace Inventory.Pages.SingleDay
         [ObservableProperty]
         SingleDayM singleDayM;
 
-        static PeriodicTimer lastFastValuePeriodicTimer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+        static PeriodicTimer lastFastValuePeriodicTimer = new(TimeSpan.FromSeconds(1));
         static (string name, int value, char sign) lastFastValue = new("", 0, ' ');
         static int lastFastValueClearTimerValue = 0;
 
@@ -27,6 +27,9 @@ namespace Inventory.Pages.SingleDay
         readonly DataBase.Data.AccessDataBase _db;
         readonly ISaveDayService _saveDay;
         readonly ISelectDayService _selectDay;
+
+        public Action<object, object, ScrollToPosition, bool> ProductScrollToObject;
+        public Action<int, int, ScrollToPosition, bool> ProductScrollToInt;
 
         public SingleDayVM(DataBase.Data.AccessDataBase db,
             ISaveDayService saveDay,
@@ -42,6 +45,7 @@ namespace Inventory.Pages.SingleDay
         public void Dispose()
         {
             lastFastValuePeriodicTimer.Dispose();
+            GC.SuppressFinalize(this);
         }
 
 
@@ -50,8 +54,7 @@ namespace Inventory.Pages.SingleDay
         {
             await CommunityToolkit.Maui.Alerts.Toast.Make($"Wczytano dzień {Day.SelectedDate.ToShortDateString()}", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
         }
-
-        async void ResetLastFastValue()
+        static async void ResetLastFastValue()
         {
             while (await lastFastValuePeriodicTimer.WaitForNextTickAsync())
             {
@@ -62,7 +65,6 @@ namespace Inventory.Pages.SingleDay
                 }
             }
         }
-
         static void FastChangeProductNumber(Product product, int value)
         {
             if (product is not null)
@@ -101,7 +103,6 @@ namespace Inventory.Pages.SingleDay
                 ToastMakeFastChange(product, value, "zwrot");
             }
         }
-
         private static void ToastMakeFastChange(Product product, int value, string message)
         {
             if (Math.Sign(lastFastValue.value) != Math.Sign(value))
@@ -128,6 +129,14 @@ namespace Inventory.Pages.SingleDay
             product.CalculatePrice();
         }
 
+        void OnProductScrollTo(object item, object group = null, ScrollToPosition position = ScrollToPosition.MakeVisible, bool animate = true)
+        {
+            ProductScrollToObject.Invoke(item, group, position, animate);
+        }
+        void OnProductScrollTo(int item, int group = -1, ScrollToPosition position = ScrollToPosition.MakeVisible, bool animate = true)
+        {
+            ProductScrollToInt.Invoke(item, group, position, animate);
+        }
         #endregion
 
         #region Command
@@ -202,9 +211,9 @@ namespace Inventory.Pages.SingleDay
                     Day.Cakes = [];
                 }
 
-                var response = await Shell.Current.DisplayPromptAsync("Ciasto", "Podaj cene ciasta", "Tak", "Anuluj", keyboard: Keyboard.Numeric);
+                var response = await Shell.Current.DisplayPromptAsync("Ciasto", "Podaj cenę ciasta", "Tak", "Anuluj", keyboard: Keyboard.Numeric);
 #if __ANDROID_24__
-                //var response = await Shell.Current.DisplayPromptAsync("Ciasto", "Podaj cene ciasta", "Tak", "Anuluj", keyboard: Keyboard.Telephone);
+                //var response = await Shell.Current.DisplayPromptAsync("Ciasto", "Podaj cenę ciasta", "Tak", "Anuluj", keyboard: Keyboard.Telephone);
 #else
 #endif
 
@@ -359,12 +368,12 @@ namespace Inventory.Pages.SingleDay
             try
             {
                 var oldPrice = await _db.DataBaseAsync.Table<ProductPrice>().Where(x => x.ProductNameId == product.ProductNameId).ToArrayAsync();
-                var priceArrya = oldPrice.Select(x => x.PriceDecimal).Select(x => x.ToString()).ToList();
-                priceArrya.Add("Nowa");
+                var priceArray = oldPrice.Select(x => x.PriceDecimal).Select(x => x.ToString()).ToList();
+                priceArray.Add("Nowa");
 
                 var result = await Shell.Current.DisplayActionSheet("Zmiana ceny",
                                                                     "Anuluj",
-                                                                    null, [.. priceArrya]);
+                                                                    null, [.. priceArray]);
                 if (result == "Anuluj")
                 {
                     return;
@@ -509,13 +518,29 @@ namespace Inventory.Pages.SingleDay
         [RelayCommand]
         void HideElseExpanded(Product product)
         {
+            if (product.IsExpanded)
+            {
+                product.IsExpanded = false;
+                return;
+            }
+
+            product.IsExpanded = true;
             if (lastProductHideElseExpanded.ProductNameId == product.ProductNameId)
             {
                 return;
             }
-
             lastProductHideElseExpanded.IsExpanded = false;
             lastProductHideElseExpanded = product;
+
+            var index = Day.Products.IndexOf(lastProductHideElseExpanded);
+            if (index > -1)
+            {
+                if (index > 0)
+                {
+                    index--;
+                }
+                OnProductScrollTo(index, -1, ScrollToPosition.Start, true);
+            }
         }
 
         [RelayCommand]
@@ -526,7 +551,6 @@ namespace Inventory.Pages.SingleDay
                 product.NumberReturn = product.Number + product.NumberEdit;
             }
         }
-
 
         #endregion
 

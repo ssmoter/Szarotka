@@ -2,7 +2,7 @@
 using DataBase.Model.EntitiesInventory;
 namespace Inventory.Pages.SingleDay;
 
-public partial class SingleDayV : ContentPage
+public partial class SingleDayV : ContentPage, IDisposable
 {
     readonly SingleDayVM _vm;
 
@@ -10,13 +10,30 @@ public partial class SingleDayV : ContentPage
     {
         InitializeComponent();
         _vm = vm;
+        vm.ProductScrollToObject += CVProducts.ScrollTo;
+        vm.ProductScrollToInt += CVProducts.ScrollTo;
         BindingContext = vm;
+    }
+    public void Dispose()
+    {
+        if (BindingContext is SingleDayVM vm)
+        {
+            vm.ProductScrollToObject -= CVProducts.ScrollTo;
+            vm.ProductScrollToInt -= CVProducts.ScrollTo;
+
+        }
+        GC.SuppressFinalize(this);
     }
 
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
         var context = BindingContext as SingleDayVM;
+
+        //for (int i = 0; i < 15; i++)
+        //{
+        //    context.Day.Cakes.Add(new Cake() { Price = i * 100, Index = i, IsSell = true, });
+        //}
 
         if (context is not null)
         {
@@ -37,7 +54,7 @@ public partial class SingleDayV : ContentPage
         //return base.OnBackButtonPressed();
     }
 
-    private void Entry_TextChanged_SetValueToSecendPositionEmptyIsZero(object sender, TextChangedEventArgs e)
+    private void Entry_TextChanged_SetValueToSecondPositionEmptyIsZero(object sender, TextChangedEventArgs e)
     {
         try
         {
@@ -70,7 +87,7 @@ public partial class SingleDayV : ContentPage
         catch (Exception)
         { }
     }
-    private void Entry_TextChanged_SetValueToSecendPosition(object sender, TextChangedEventArgs e)
+    private void Entry_TextChanged_SetValueToSecondPosition(object sender, TextChangedEventArgs e)
     {
         try
         {
@@ -192,20 +209,4 @@ public partial class SingleDayV : ContentPage
         _vm.DeleteCakeCommand.Execute(product);
     }
 
-    private void Switch_Toggled(object sender, ToggledEventArgs e)
-    {
-        var myElement = this.FindByName<Label>("CVGCakes");
-        if (myElement != null)
-        {
-            // Wykonaj operacje na elemencie
-            if (e.Value) // Jeśli przełącznik jest włączony
-            {
-                VisualStateManager.GoToState(myElement, "Visible"); // Pokaż element
-            }
-            else // Jeśli przełącznik jest wyłączony
-            {
-                VisualStateManager.GoToState(myElement, "Hidden"); // Ukryj element
-            }
-        }
-    }
 }
