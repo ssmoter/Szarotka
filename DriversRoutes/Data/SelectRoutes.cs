@@ -32,8 +32,8 @@ namespace DriversRoutes.Data
                     Created = queryResult[i].Created,
                     Longitude = queryResult[i].Longitude,
                     Latitude = queryResult[i].Latitude,
-                    DayOfWeek = Newtonsoft.Json.JsonConvert.DeserializeObject<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek),
-                    ResidentialAddress = Newtonsoft.Json.JsonConvert.DeserializeObject<ResidentialAddress>(queryResult[i].JsonAddress)
+                    DayOfWeek = System.Text.Json.JsonSerializer.Deserialize<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek),
+                    ResidentialAddress = System.Text.Json.JsonSerializer.Deserialize<ResidentialAddress>(queryResult[i].JsonAddress)
                 };
                 customers[i] = cust;
             }
@@ -60,8 +60,8 @@ namespace DriversRoutes.Data
                     Created = queryResult[i].Created,
                     Longitude = queryResult[i].Longitude,
                     Latitude = queryResult[i].Latitude,
-                    DayOfWeek = Newtonsoft.Json.JsonConvert.DeserializeObject<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek),
-                    ResidentialAddress = Newtonsoft.Json.JsonConvert.DeserializeObject<ResidentialAddress>(queryResult[i].JsonAddress)
+                    DayOfWeek = System.Text.Json.JsonSerializer.Deserialize<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek),
+                    ResidentialAddress = System.Text.Json.JsonSerializer.Deserialize<ResidentialAddress>(queryResult[i].JsonAddress)
                 };
                 customers[i] = cust;
             }

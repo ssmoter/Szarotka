@@ -72,10 +72,13 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
         readonly DataBase.Data.AccessDataBase _db;
         readonly Service.ISelectRoutes _selectRoutes;
         readonly Service.ISaveRoutes _saveRoutes;
+
+        private static List<ImageSource> pinImage = [];
+
         #endregion
         public MapsVM(DataBase.Data.AccessDataBase db, Service.ISelectRoutes selectRoutes, Service.ISaveRoutes saveRoutes)
         {
-            _db = db;          
+            _db = db;
             MapType = MapType.Street;
             AllPoints ??= [];
             _selectRoutes = selectRoutes;
@@ -95,6 +98,8 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             MapsPoint = null;
             Geolocation.LocationChanged -= StartListening;
             _db.Dispose();
+            pinImage.Clear();
+
             GC.SuppressFinalize(this);
         }
 
@@ -310,24 +315,30 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 for (int i = 0; i < result.Length; i++)
                 {
                     points.Add(result[i].ParseAsCustomerM());
-
 #if !DEBUG
-                    SkiaBitmapExportContext skiaBitmapExportContext = new(width, height, 1);
-                    ICanvas canvas = skiaBitmapExportContext.Canvas;
-                    DrawIconOnMap drawIconOnMap = new()
+                    if (pinImage.Count <= i)
                     {
-                        Number = i + 1,
-                        ScaleX = scaleX,
-                        ScaleY = scaleY,
-                    };
-                    drawIconOnMap.Draw(canvas, new RectF(0, 0, skiaBitmapExportContext.Width, skiaBitmapExportContext.Height));
+                        SkiaBitmapExportContext skiaBitmapExportContext = new(width, height, 1);
+                        ICanvas canvas = skiaBitmapExportContext.Canvas;
+                        DrawIconOnMap drawIconOnMap = new()
+                        {
+                            Number = i + 1,
+                            ScaleX = scaleX,
+                            ScaleY = scaleY,
+                        };
+                        drawIconOnMap.Draw(canvas, new RectF(0, 0, skiaBitmapExportContext.Width, skiaBitmapExportContext.Height));
 
-                    points[i].Pin.ImageSource = ImageSource.FromStream(() => skiaBitmapExportContext.Image.AsStream());
+                        var image = ImageSource.FromStream(() => skiaBitmapExportContext.Image.AsStream());
+                        pinImage.Add(image);
+                        points[i].Pin.ImageSource = image;
+                    }
+                    else
+                    {
+                        points[i].Pin.ImageSource = pinImage[i];
+                    }
 #endif
-
-
-                    SelectedDayName = week.ToString();
                 }
+                SelectedDayName = week.ToString();
             }
             catch (Exception ex)
             {

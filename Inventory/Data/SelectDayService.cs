@@ -121,8 +121,8 @@ namespace Inventory.Data
                 for (int i = 0; i < products.Count; i++)
                 {
                     day.Products.Add(new(products[i]));
-                    day.Products[i].Name = Newtonsoft.Json.JsonConvert.DeserializeObject<ProductName>(products[i].JsonName);
-                    day.Products[i].Price = Newtonsoft.Json.JsonConvert.DeserializeObject<ProductPrice>(products[i].JsonPrice);
+                    day.Products[i].Name = System.Text.Json.JsonSerializer.Deserialize<ProductName>(products[i].JsonName);
+                    day.Products[i].Price = System.Text.Json.JsonSerializer.Deserialize<ProductPrice>(products[i].JsonPrice);
                 }
                 var cakes = await _db.DataBaseAsync.Table<Cake>().Where(x => x.DayId == id).ToArrayAsync();
                 day.Cakes = new ObservableCollection<Cake>(cakes);
@@ -139,7 +139,7 @@ namespace Inventory.Data
                     if (string.IsNullOrWhiteSpace(products[i].JsonPrice))
                         continue;
 
-                    var price = Newtonsoft.Json.JsonConvert.DeserializeObject<ProductPrice>(products[i].JsonPrice);
+                    var price = System.Text.Json.JsonSerializer.Deserialize<ProductPrice>(products[i].JsonPrice);
                     day.Products.Add(new Product()
                     {
                         Name = products[i],

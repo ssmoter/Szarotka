@@ -25,7 +25,6 @@
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.8" />
 	  <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="8.0.80" />
 	  <PackageReference Include="MudBlazor" Version="7.6.0" />
-	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 	</ItemGroup>
 

@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-
+﻿
 using System.Text;
 
 namespace DataBase.Data.File
@@ -26,7 +25,7 @@ namespace DataBase.Data.File
                     sb.Append(text);
                 }
 
-                var model = JsonConvert.DeserializeObject<T>(sb.ToString());
+                var model = System.Text.Json.JsonSerializer.Deserialize<T>(sb.ToString());
                 return model;
             }
             catch (Exception)
@@ -38,9 +37,9 @@ namespace DataBase.Data.File
         {
             try
             {
-                var text = System.IO.File.ReadAllText(path,Encoding.Unicode);
+                var text = System.IO.File.ReadAllText(path, Encoding.Unicode);
 
-                var model = JsonConvert.DeserializeObject<T>(text);
+                var model = System.Text.Json.JsonSerializer.Deserialize<T>(text);
                 return model;
             }
             catch (Exception)
@@ -53,7 +52,7 @@ namespace DataBase.Data.File
         {
             try
             {
-                var json = JsonConvert.SerializeObject(model);
+                var json = System.Text.Json.JsonSerializer.Serialize(model);
                 byte[] encodedtext = Encoding.Unicode.GetBytes(json);
 
                 var path = Path.Combine(DataBase.Helper.Constants.GetPathFolder, folderName);
