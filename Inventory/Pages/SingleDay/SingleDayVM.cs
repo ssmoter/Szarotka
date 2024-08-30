@@ -19,7 +19,7 @@ namespace Inventory.Pages.SingleDay
         SingleDayM singleDayM;
 
         static PeriodicTimer lastFastValuePeriodicTimer = new(TimeSpan.FromSeconds(1));
-        static (string name, int value, char sign) lastFastValue = new("", 0, ' ');
+        static (string name, int value, char sign, string message) lastFastValue = new("", 0, ' ', "");
         static int lastFastValueClearTimerValue = 0;
 
         const char signPlus = '+';
@@ -109,19 +109,25 @@ namespace Inventory.Pages.SingleDay
             {
                 lastFastValue.value = 0;
             }
-
             if (lastFastValue.name == product.Name.Name)
             {
                 lastFastValue.value += value;
             }
             else
             {
-                lastFastValue.value = 1;
+                lastFastValue.value = value;
                 lastFastValue.name = product.Name.Name;
             }
+            if (lastFastValue.message != message)
+            {
+                lastFastValue.value = value;
+            }
+
+
             lastFastValueClearTimerValue = 10;
             char sign = value > 0 ? signPlus : ' ';
-            Toast.Make($"{product.Name.Name} {message} {sign} {lastFastValue.value}", duration: CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
+            lastFastValue.message = message;
+            Toast.Make($"{product.Name.Name} {message} {sign}{lastFastValue.value}", duration: CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
         }
         static void SetCanUpdate(Product product)
         {
