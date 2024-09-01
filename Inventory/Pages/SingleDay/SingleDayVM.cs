@@ -137,11 +137,19 @@ namespace Inventory.Pages.SingleDay
 
         void OnProductScrollTo(object item, object group = null, ScrollToPosition position = ScrollToPosition.MakeVisible, bool animate = true)
         {
-            ProductScrollToObject.Invoke(item, group, position, animate);
+            try
+            {
+                ProductScrollToObject.Invoke(item, group, position, animate);
+            }
+            catch { }
         }
         void OnProductScrollTo(int item, int group = -1, ScrollToPosition position = ScrollToPosition.MakeVisible, bool animate = true)
         {
-            ProductScrollToInt.Invoke(item, group, position, animate);
+            try
+            {
+                ProductScrollToInt.Invoke(item, group, position, animate);
+            }
+            catch { }
         }
         #endregion
 

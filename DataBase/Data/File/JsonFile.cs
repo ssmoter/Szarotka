@@ -1,4 +1,6 @@
 ﻿
+using DataBase.Helper;
+
 using System.Text;
 
 namespace DataBase.Data.File
@@ -25,7 +27,7 @@ namespace DataBase.Data.File
                     sb.Append(text);
                 }
 
-                var model = System.Text.Json.JsonSerializer.Deserialize<T>(sb.ToString());
+                var model = System.Text.Json.JsonSerializer.Deserialize<T>(sb.ToString(), BoolConverter.JsonSerializerOptions);
                 return model;
             }
             catch (Exception)
@@ -39,7 +41,7 @@ namespace DataBase.Data.File
             {
                 var text = System.IO.File.ReadAllText(path, Encoding.Unicode);
 
-                var model = System.Text.Json.JsonSerializer.Deserialize<T>(text);
+                var model = System.Text.Json.JsonSerializer.Deserialize<T>(text, BoolConverter.JsonSerializerOptions);
                 return model;
             }
             catch (Exception)

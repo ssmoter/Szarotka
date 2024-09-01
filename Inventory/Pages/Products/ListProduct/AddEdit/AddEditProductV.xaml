@@ -20,7 +20,7 @@
             ColumnDefinitions="*,2*"
             RowDefinitions="auto,auto,*,auto">
 
-            <Frame
+            <Border
                 Grid.RowSpan="4"
                 Grid.Column="1"
                 Padding="5,5,10,5"
@@ -28,14 +28,14 @@
                                                   Dark=Black}"
                 IsVisible="{Binding AddEdit.IsVisibleFrame}"
                 ZIndex="102">
-                <Frame.GestureRecognizers>
+                <Border.GestureRecognizers>
                     <SwipeGestureRecognizer
                         Command="{Binding SwipeViewGestureCommand}"
                         CommandParameter="0"
                         Direction="Right" />
-                </Frame.GestureRecognizers>
+                </Border.GestureRecognizers>
 
-                <Grid Padding="5" RowDefinitions="auto,*,1">
+                <Grid Padding="5" RowDefinitions="auto,*">
 
                     <VerticalStackLayout Padding="5" Spacing="5">
 
@@ -95,12 +95,11 @@
 
                     </VerticalStackLayout>
 
+
                     <CollectionView
                         Grid.Row="1"
-                        HorizontalOptions="Center"
                         ItemsSource="{Binding ImgList}"
                         SelectionMode="Single"
-                        VerticalOptions="FillAndExpand"
                         VerticalScrollBarVisibility="Always">
 
                         <CollectionView.ItemTemplate>
@@ -129,7 +128,7 @@
 
                 </Grid>
 
-            </Frame>
+            </Border>
 
             <CustomControls:StringImage
                 Grid.Row="0"
@@ -222,5 +221,4 @@
         </Grid>
 
     </ScrollView>
-
 </ContentPage>

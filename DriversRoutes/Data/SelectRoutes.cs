@@ -1,4 +1,5 @@
 ﻿using DataBase.Data;
+using DataBase.Helper;
 using DataBase.Model.EntitiesRoutes;
 
 using DriversRoutes.Service;
@@ -21,7 +22,7 @@ namespace DriversRoutes.Data
 
             for (int i = 0; i < queryResult.Count; i++)
             {
-                var cust = new CustomerRoutes()
+                var cust = new CustomerRoutes
                 {
                     Id = queryResult[i].Id,
                     RoutesId = queryResult[i].RoutesId,
@@ -32,8 +33,10 @@ namespace DriversRoutes.Data
                     Created = queryResult[i].Created,
                     Longitude = queryResult[i].Longitude,
                     Latitude = queryResult[i].Latitude,
-                    DayOfWeek = System.Text.Json.JsonSerializer.Deserialize<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek),
-                    ResidentialAddress = System.Text.Json.JsonSerializer.Deserialize<ResidentialAddress>(queryResult[i].JsonAddress)
+                    DayOfWeek = System.Text.Json.JsonSerializer.Deserialize<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek
+                    , BoolConverter.JsonSerializerOptions),
+                    ResidentialAddress = System.Text.Json.JsonSerializer.Deserialize<ResidentialAddress>(queryResult[i].JsonAddress
+                    , BoolConverter.JsonSerializerOptions)
                 };
                 customers[i] = cust;
             }
@@ -60,8 +63,10 @@ namespace DriversRoutes.Data
                     Created = queryResult[i].Created,
                     Longitude = queryResult[i].Longitude,
                     Latitude = queryResult[i].Latitude,
-                    DayOfWeek = System.Text.Json.JsonSerializer.Deserialize<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek),
-                    ResidentialAddress = System.Text.Json.JsonSerializer.Deserialize<ResidentialAddress>(queryResult[i].JsonAddress)
+                    DayOfWeek = System.Text.Json.JsonSerializer.Deserialize<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek
+                    , BoolConverter.JsonSerializerOptions),
+                    ResidentialAddress = System.Text.Json.JsonSerializer.Deserialize<ResidentialAddress>(queryResult[i].JsonAddress
+                    , BoolConverter.JsonSerializerOptions)
                 };
                 customers[i] = cust;
             }

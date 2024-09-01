@@ -1,4 +1,5 @@
 ﻿using DataBase.Data;
+using DataBase.Helper;
 using DataBase.Model.EntitiesInventory;
 
 using Inventory.Helper;
@@ -121,8 +122,10 @@ namespace Inventory.Data
                 for (int i = 0; i < products.Count; i++)
                 {
                     day.Products.Add(new(products[i]));
-                    day.Products[i].Name = System.Text.Json.JsonSerializer.Deserialize<ProductName>(products[i].JsonName);
-                    day.Products[i].Price = System.Text.Json.JsonSerializer.Deserialize<ProductPrice>(products[i].JsonPrice);
+                    day.Products[i].Name = System.Text.Json.JsonSerializer.Deserialize<ProductName>(products[i].JsonName
+                        , BoolConverter.JsonSerializerOptions);
+                    day.Products[i].Price = System.Text.Json.JsonSerializer.Deserialize<ProductPrice>(products[i].JsonPrice
+                        , BoolConverter.JsonSerializerOptions);
                 }
                 var cakes = await _db.DataBaseAsync.Table<Cake>().Where(x => x.DayId == id).ToArrayAsync();
                 day.Cakes = new ObservableCollection<Cake>(cakes);
@@ -139,7 +142,8 @@ namespace Inventory.Data
                     if (string.IsNullOrWhiteSpace(products[i].JsonPrice))
                         continue;
 
-                    var price = System.Text.Json.JsonSerializer.Deserialize<ProductPrice>(products[i].JsonPrice);
+                    var price = System.Text.Json.JsonSerializer.Deserialize<ProductPrice>(products[i].JsonPrice
+                        , BoolConverter.JsonSerializerOptions);
                     day.Products.Add(new Product()
                     {
                         Name = products[i],
