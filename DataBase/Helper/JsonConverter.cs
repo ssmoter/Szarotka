@@ -3,13 +3,28 @@ using System.Text.Json.Serialization;
 
 namespace DataBase.Helper
 {
-    public class BoolConverter : JsonConverter<bool>
+    public static class JsonOptions
     {
-        public static JsonSerializerOptions JsonSerializerOptions = new()
+        public static JsonSerializerOptions JsonSerializeOptions = new()
         {
             Converters = { new BoolConverter() }
         };
+    }
 
+    public class DateTimeConverter : JsonConverter<DateTime>
+    {
+        public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options) =>
+            writer.WriteStringValue(value.ToString());
+    }
+
+
+    public class BoolConverter : JsonConverter<bool>
+    {
         public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
             reader.TokenType switch
             {

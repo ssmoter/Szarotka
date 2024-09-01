@@ -34,9 +34,9 @@ namespace DriversRoutes.Data
                     Longitude = queryResult[i].Longitude,
                     Latitude = queryResult[i].Latitude,
                     DayOfWeek = System.Text.Json.JsonSerializer.Deserialize<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek
-                    , BoolConverter.JsonSerializerOptions),
+                    , JsonOptions.JsonSerializeOptions),
                     ResidentialAddress = System.Text.Json.JsonSerializer.Deserialize<ResidentialAddress>(queryResult[i].JsonAddress
-                    , BoolConverter.JsonSerializerOptions)
+                    , JsonOptions.JsonSerializeOptions)
                 };
                 customers[i] = cust;
             }
@@ -64,9 +64,9 @@ namespace DriversRoutes.Data
                     Longitude = queryResult[i].Longitude,
                     Latitude = queryResult[i].Latitude,
                     DayOfWeek = System.Text.Json.JsonSerializer.Deserialize<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek
-                    , BoolConverter.JsonSerializerOptions),
+                    , JsonOptions.JsonSerializeOptions),
                     ResidentialAddress = System.Text.Json.JsonSerializer.Deserialize<ResidentialAddress>(queryResult[i].JsonAddress
-                    , BoolConverter.JsonSerializerOptions)
+                    , JsonOptions.JsonSerializeOptions)
                 };
                 customers[i] = cust;
             }

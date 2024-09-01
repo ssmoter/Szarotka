@@ -546,15 +546,15 @@ namespace Inventory.Pages.SingleDay
             lastProductHideElseExpanded.IsExpanded = false;
             lastProductHideElseExpanded = product;
 
-            var index = Day.Products.IndexOf(lastProductHideElseExpanded);
-            if (index > -1)
-            {
-                if (index > 0)
-                {
-                    index--;
-                }
-                OnProductScrollTo(index, -1, ScrollToPosition.Start, true);
-            }
+            //var index = Day.Products.IndexOf(lastProductHideElseExpanded);
+            //if (index > -1)
+            //{
+            //    if (index > 0)
+            //    {
+            //        index--;
+            //    }
+            //    OnProductScrollTo(index, -1, ScrollToPosition.Start, true);
+            //}
         }
 
         [RelayCommand]
