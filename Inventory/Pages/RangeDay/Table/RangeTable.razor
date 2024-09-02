@@ -19,73 +19,81 @@
         var last = order.LastOrDefault().Day;
         var numberOfDay = RangeDayMs.Count;
 
-        <MudExpansionPanels Dense Gutters Class="">
-            @if (Sum.Count > 0)
-            {
-                var title = $"Suma z całego zakresu od {first.SelectedDateString}  do {last.SelectedDateString}  ({numberOfDay} Dni)";
-                <MudExpansionPanel Text="@title">
+        <MudExpansionPanels Dense Gutters>
 
-                    <SmallRangeTable Products="ProductsAll" RangeDayMs="Sum" TimeIsVisible="false"
-                                     Title="@title" />
-                </MudExpansionPanel>
-            }
-            @if (SumDayOfWeek.Count > 0)
-            {
-                var title = $"Sumy poszczególnych dni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString}  ({numberOfDay} Dni)";
-                <MudExpansionPanel Text="@title">
+            <MudExpansionPanel Text="Tabele Sum">
+                <MudExpansionPanels Dense Gutters Class="">
+                    @if (Sum.Count > 0)
+                    {
+                        var title = $"Suma z całego zakresu od {first.SelectedDateString}  do {last.SelectedDateString}  ({numberOfDay} Dni)";
+                        <MudExpansionPanel Text="@title">
 
-                    <SmallRangeTable Products="ProductsAll" RangeDayMs="SumDayOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                     Title="@title" />
-                </MudExpansionPanel>
-            }
-            @if (SumPerOfWeek.Count > 0)
-            {
-                var title = $"Sumy poszczególnych tygodni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({numberOfDay} Dni)";
-                <MudExpansionPanel Text="@title">
+                            <SmallRangeTable Products="ProductsAll" RangeDayMs="Sum" TimeIsVisible="false"
+                                             Title="@title" />
+                        </MudExpansionPanel>
+                    }
+                    @if (SumDayOfWeek.Count > 0)
+                    {
+                        var title = $"Sumy poszczególnych dni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString}  ({numberOfDay} Dni)";
+                        <MudExpansionPanel Text="@title">
 
-                    <SmallRangeTable Products="ProductsAll" RangeDayMs="SumPerOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                     Title="@title" />
-                </MudExpansionPanel>
-            }
-            @if (SumPerOfMonth.Count > 0)
-            {
-                var title = $"Sumy poszczególnych miesięcy z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({numberOfDay} Dni)";
-                <MudExpansionPanel Text="@title">
+                            <SmallRangeTable Products="ProductsAll" RangeDayMs="SumDayOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
+                                             Title="@title" />
+                        </MudExpansionPanel>
+                    }
+                    @if (SumPerOfWeek.Count > 0)
+                    {
+                        var title = $"Sumy poszczególnych tygodni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({numberOfDay} Dni)";
+                        <MudExpansionPanel Text="@title">
 
-                    <SmallRangeTable Products="ProductsAll" RangeDayMs="SumPerOfMonth" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                     Title="@title" />
-                </MudExpansionPanel>
-            }
-        </MudExpansionPanels>
+                            <SmallRangeTable Products="ProductsAll" RangeDayMs="SumPerOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
+                                             Title="@title" />
+                        </MudExpansionPanel>
+                    }
+                    @if (SumPerOfMonth.Count > 0)
+                    {
+                        var title = $"Sumy poszczególnych miesięcy z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({numberOfDay} Dni)";
+                        <MudExpansionPanel Text="@title">
 
-        <MudExpansionPanels Dense Gutters Class="mt-6">
-            @if (AveragesDayOfWeek.Count > 0)
-            {
-                var title = $"Średnie poszczególnych dni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({numberOfDay} Dni)";
-                <MudExpansionPanel Text="@title">
+                            <SmallRangeTable Products="ProductsAll" RangeDayMs="SumPerOfMonth" TimeIsVisible="false" DayOfWeekIsVisible="true"
+                                             Title="@title" />
+                        </MudExpansionPanel>
+                    }
+                </MudExpansionPanels>
+            </MudExpansionPanel>
 
-                    <SmallRangeTable Products="ProductsAll" RangeDayMs="AveragesDayOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                     Title="@title" />
-                </MudExpansionPanel>
-            }
-            @if (AveragesPerOfWeek.Count > 0)
-            {
-                var title = $"Średnie poszczególnych tygodni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({numberOfDay} Dni)";
-                <MudExpansionPanel Text="@title">
+            <MudExpansionPanel Text="Tabele średnich">
+                <MudExpansionPanels Dense Gutters Class="mt-6">
+                    @if (AveragesDayOfWeek.Count > 0)
+                    {
+                        var title = $"Średnie poszczególnych dni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({numberOfDay} Dni)";
+                        <MudExpansionPanel Text="@title">
 
-                    <SmallRangeTable Products="ProductsAll" RangeDayMs="AveragesPerOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                     Title="@title" />
-                </MudExpansionPanel>
-            }
-            @if (AveragesPerOfMonth.Count > 0)
-            {
-                var title = $"Średnie poszczególnych miesięcy z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({numberOfDay} Dni)";
-                <MudExpansionPanel Text="@title">
+                            <SmallRangeTable Products="ProductsAll" RangeDayMs="AveragesDayOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
+                                             Title="@title" />
+                        </MudExpansionPanel>
+                    }
+                    @if (AveragesPerOfWeek.Count > 0)
+                    {
+                        var title = $"Średnie poszczególnych tygodni z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({numberOfDay} Dni)";
+                        <MudExpansionPanel Text="@title">
 
-                    <SmallRangeTable Products="ProductsAll" RangeDayMs="AveragesPerOfMonth" TimeIsVisible="false" DayOfWeekIsVisible="true"
-                                     Title="@title" />
-                </MudExpansionPanel>
-            }
+                            <SmallRangeTable Products="ProductsAll" RangeDayMs="AveragesPerOfWeek" TimeIsVisible="false" DayOfWeekIsVisible="true"
+                                             Title="@title" />
+                        </MudExpansionPanel>
+                    }
+                    @if (AveragesPerOfMonth.Count > 0)
+                    {
+                        var title = $"Średnie poszczególnych miesięcy z zakresu od  {first.SelectedDateString}  do {last.SelectedDateString} ({numberOfDay} Dni)";
+                        <MudExpansionPanel Text="@title">
+
+                            <SmallRangeTable Products="ProductsAll" RangeDayMs="AveragesPerOfMonth" TimeIsVisible="false" DayOfWeekIsVisible="true"
+                                             Title="@title" />
+                        </MudExpansionPanel>
+                    }
+                </MudExpansionPanels>
+            </MudExpansionPanel>
+
         </MudExpansionPanels>
 
         <MudExpansionPanels MultiExpansion="true" Dense Gutters Class="mt-6">
