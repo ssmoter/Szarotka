@@ -7,7 +7,7 @@ namespace DataBase.Helper
     {
         public static JsonSerializerOptions JsonSerializeOptions = new()
         {
-            Converters = { new BoolConverter() }
+            Converters = { new BoolConverter(), new DateTimeConverter() }
         };
     }
 
@@ -15,14 +15,15 @@ namespace DataBase.Helper
     {
         public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
+            reader.TryGetDateTime(out DateTime date);
+            return date;
         }
 
-        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options) =>
-            writer.WriteStringValue(value.ToString());
+        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
+        {
+
+        }
     }
-
-
     public class BoolConverter : JsonConverter<bool>
     {
         public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) =>
