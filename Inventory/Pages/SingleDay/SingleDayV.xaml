@@ -737,11 +737,11 @@
 
                         <Grid Grid.Column="0" ColumnDefinitions="*,auto">
                             <Button Command="{Binding AddCakeCommand}" Text="Dodaj ciasto" />
-                            <HorizontalStackLayout Grid.Column="1" HorizontalOptions="End">
+                            <!--<HorizontalStackLayout Grid.Column="1" HorizontalOptions="End" IsVisible="False">
 
                                 <Label Text="Tylko sprzedane" VerticalOptions="Center" />
                                 <CheckBox IsChecked="{Binding SingleDayM.CakeAllIsVisible}" />
-                            </HorizontalStackLayout>
+                            </HorizontalStackLayout>-->
                         </Grid>
 
                         <toolkit:Expander Grid.RowSpan="2" Grid.Column="1">
@@ -776,9 +776,9 @@
                     <CollectionView Grid.Row="1" ItemsSource="{Binding Day.Cakes}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="Product:Cake">
+                                    <!--IsVisibleOne="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=SingleDayM.CakeAllIsVisible, Converter={StaticResource InvertedBoolConverter}}"-->
                                 <CustomControls:BorderWithTwoIsVisible
                                     Margin="2"
-                                    IsVisibleOne="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=SingleDayM.CakeAllIsVisible, Converter={StaticResource InvertedBoolConverter}}"
                                     IsVisibleSecond="{Binding IsSell}">
 
                                     <Border.StrokeShape>

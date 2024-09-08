@@ -44,7 +44,7 @@
                                                  Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
                 </Grid>
                 <VerticalStackLayout>
-                    <Label FontSize="Title" Text="Zakres Dat" />
+                    <Label FontSize="Title" Text="Zakres" />
                     <Button
                         Margin="-10"
                         BackgroundColor="Transparent"
