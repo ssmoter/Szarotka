@@ -31,13 +31,12 @@ namespace Inventory.Service
             services.AddScoped<ISaveDayService, SaveDayService>();
             services.AddScoped<ISelectDayService, SelectDayService>();
 
-#if false
-            services.AddSingleton<Pages.SingleDay.SingleDayVWindows>();
+            services.AddSingleton<Pages.SingleDay.SingleDayV>();
+#if WINDOWS
             services.AddScoped<Pages.Products.ListProduct.ListProductVWindows>();
             services.AddScoped<Pages.RangeDay.RangeDayVWindows>();
 #else
             services.AddScoped<Pages.RangeDay.RangeDayV>();
-            services.AddSingleton<Pages.SingleDay.SingleDayV>();
             services.AddScoped<Pages.Products.ListProduct.ListProductV>();
 #endif
 

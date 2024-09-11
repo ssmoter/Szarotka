@@ -16,7 +16,7 @@ namespace Inventory.Pages.Products.ListProduct
         ListProductM dragAndDropProduct;
 
         [ObservableProperty]
-        bool isGenerateDefoultEnable;
+        bool isGenerateDefaultEnable;
 
         readonly Random random = new(2137);
         readonly DataBase.Data.AccessDataBase _db;
@@ -48,7 +48,7 @@ namespace Inventory.Pages.Products.ListProduct
                     ProductMs[i].Prices = new(await SelectPricesAsync(names[i].Id));
                     ProductMs[i].SetActualPrice();
                 }
-                IsGenerateDefoultEnable = ProductMs.Count <= 0;
+                IsGenerateDefaultEnable = ProductMs.Count <= 0;
             }
             catch (Exception ex)
             {
@@ -81,7 +81,7 @@ namespace Inventory.Pages.Products.ListProduct
                     ProductMs[i].Prices = new(SelectPrices(names[i].Id));
                     ProductMs[i].SetActualPrice();
                 }
-                IsGenerateDefoultEnable = ProductMs.Count <= 0;
+                IsGenerateDefaultEnable = ProductMs.Count <= 0;
             }
             catch (Exception ex)
             {
@@ -253,7 +253,7 @@ namespace Inventory.Pages.Products.ListProduct
         }
 
         [RelayCommand]
-        void OnDropComplited()
+        void OnDropCompleted()
         {
             if (DragAndDropProduct is null)
                 return;

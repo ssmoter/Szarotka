@@ -19,7 +19,7 @@
         <Button
             Command="{Binding GenerateDefaultProductsCommand}"
             HorizontalOptions="Center"
-            IsVisible="{Binding IsGenerateDefoultEnable}"
+            IsVisible="{Binding IsGenerateDefaultEnable}"
             Text="Dodaj podstawowe"
             VerticalOptions="Center" />
 
@@ -84,12 +84,12 @@
                                 <Grid.GestureRecognizers>
                                     <DragGestureRecognizer
                                         x:DataType="VM:ListProductVM"
-                                        DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DragCommand}"
+                                        DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDragCommand}"
                                         DragStartingCommandParameter="{Binding .}"
-                                        DropCompletedCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DropComplitedCommand}" />
+                                        DropCompletedCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDropCompletedCommand}" />
                                     <DropGestureRecognizer
                                         x:DataType="VM:ListProductVM"
-                                        DropCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=DropCommand}"
+                                        DropCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDropCommand}"
                                         DropCommandParameter="{Binding .}" />
                                 </Grid.GestureRecognizers>
 

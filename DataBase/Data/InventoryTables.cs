@@ -20,25 +20,25 @@ namespace DataBase.Data
         }
 
 
-        public async Task UpdateInventory(int oldVersion, int newVersion, Action<double, int> uppdateInventory)
+        public async Task UpdateInventory(int oldVersion, int newVersion, Action<double, int> updateInventory)
         {
             double progressBar = 0;
-            double uppdateProgressBar = newVersion - oldVersion;
-            uppdateProgressBar = 1 / uppdateProgressBar;
+            double updateProgressBar = newVersion - oldVersion;
+            updateProgressBar = 1 / updateProgressBar;
 
 
             if (oldVersion < 1)
             {
                 await CreateInventoryTables();
-                progressBar += uppdateProgressBar;
+                progressBar += updateProgressBar;
                 oldVersion = 1;
-                uppdateInventory?.Invoke(progressBar, oldVersion);
+                updateInventory?.Invoke(progressBar, oldVersion);
             }
 
 
 
 
-            uppdateInventory?.Invoke(1, oldVersion);
+            updateInventory?.Invoke(1, oldVersion);
         }
 
         private async Task CreateInventoryTables()
@@ -64,7 +64,7 @@ namespace DataBase.Data
 
             for (int i = 0; i < products.Length; i++)
             {
-                var (name, price) = TaskProduct(products[i], i);
+                var (name, price) = TaskProduct(products[i], i + 1);
 
                 taskTableName[i] = name;
                 taskTablePrice[i] = price;
@@ -88,18 +88,18 @@ namespace DataBase.Data
 
         #region Products
 
-        public static Product[] DefaultProducts { get => defoultProducts; }
-        private static readonly Product[] defoultProducts =
+        public static Product[] DefaultProducts { get => defaultProducts; }
+        private static readonly Product[] defaultProducts =
             [
                     new()
                     {
                       Name = new ProductName(){ Name ="Chleb",Img=ImgBread.chleb,Id = GetGuidSed("d2034a6a-3a0d-9b49-05a3-bc49adfc329a"),Created=DateTime.Now,Updated=DateTime.Now},
-                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=6m,Id = GetGuidSed("07ea795b-17cf-9577-499a-d28d4d9b6b5b")},
+                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=6m,Id = GetGuidSed("8012d48e-5f9b-439f-a213-ed2e997b9432")},
                     },
                     new()
                     {
                       Name = new ProductName(){ Name ="Duży chleb",Img="chleb.png", Id = GetGuidSed("24ebc827-bb4e-6fac-4eb4-8f88f524eaf1"),Created=DateTime.Now,Updated=DateTime.Now},
-                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=12m,Id = GetGuidSed("02908508-7cbb-53a5-d36d-897367bb4d6a")},
+                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=12m,Id = GetGuidSed("3200c8fa-be20-449b-9a82-84ff2e9598b5")},
                     },
                     new()
                     {
@@ -164,7 +164,7 @@ namespace DataBase.Data
                     new()
                     {
                       Name = new ProductName(){ Name ="Wafle (opak. 400g)",Img=ImgCookies.Andrut,Id = GetGuidSed("b71b38a6-aaeb-51f7-624d-f6c90dec2c49"),Created=DateTime.Now,Updated=DateTime.Now},
-                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=12m,Id = GetGuidSed("96f1663f-cab3-475b-745b-90e4d73c156d")},
+                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=12m,Id = GetGuidSed("d289404c-2bcf-4b01-86d0-39721960fda5")},
                     },
                     new()
                     {
@@ -179,12 +179,12 @@ namespace DataBase.Data
                     new()
                     {
                       Name = new ProductName(){ Name ="Chleb suchy",Img="chleb.png", Id = GetGuidSed("fa93a809-fc49-99ec-f522-818e412a4184"),Created=DateTime.Now,Updated=DateTime.Now},
-                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=2.5m,Id = GetGuidSed("d4a46c53-3768-583f-fd31-ab574c271bbd")},
+                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=2.5m,Id = GetGuidSed("8bbf1b67-2d21-4ecf-9599-b39bca9a4187")},
                     },
                     new()
                     {
                       Name = new ProductName(){ Name ="Mini Pizza",Img=ImgPath.Logo, Id = GetGuidSed("f03d18f5-12ee-0106-00cd-fa25e92ddb24"),Created=DateTime.Now,Updated=DateTime.Now},
-                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=2.5m,Id = GetGuidSed("99ed587e-2499-dcbd-ddd3-428f1a137a25")},
+                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=3m,Id = GetGuidSed("99ed587e-2499-dcbd-ddd3-428f1a137a25")},
                     },
                     new()
                     {
@@ -194,27 +194,27 @@ namespace DataBase.Data
                     new()
                     {
                       Name = new ProductName(){ Name ="Babka duża",Img=ImgPath.Logo, Id = GetGuidSed("e1c7d127-8f86-49e4-bbdf-26b035d893f6"),Created=DateTime.Now,Updated=DateTime.Now,IsVisible=false},
-                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=2.5m,Id = GetGuidSed("323ecff4-5b51-4218-9a0d-0dac28a94fce")},
+                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=12m,Id = GetGuidSed("323ecff4-5b51-4218-9a0d-0dac28a94fce")},
                     },
                     new()
                     {
                       Name = new ProductName(){ Name ="Babka średnia",Img=ImgPath.Logo, Id = GetGuidSed("7112cea4-6f83-4cfe-9175-d425c94d1651"),Created=DateTime.Now,Updated=DateTime.Now,IsVisible=false},
-                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=2.5m,Id = GetGuidSed("a3db562d-2943-4873-a94d-9c870509daaa")},
+                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=8m,Id = GetGuidSed("a3db562d-2943-4873-a94d-9c870509daaa")},
                     },
                     new()
                     {
                       Name = new ProductName(){ Name ="Babka Mała",Img=ImgPath.Logo, Id = GetGuidSed("1d793cea-742c-4b6a-ad4a-cb567a64bf1a"),Created=DateTime.Now,Updated=DateTime.Now,IsVisible=false},
-                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=2.5m,Id = GetGuidSed("2bad3bff-1f81-4ced-8215-d97c2bfebbae")},
+                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=3m,Id = GetGuidSed("2bad3bff-1f81-4ced-8215-d97c2bfebbae")},
                     },
                     new()
                     {
                       Name = new ProductName(){ Name ="Baranek",Img=ImgPath.Logo, Id = GetGuidSed("60acb83d-3141-4f7d-9d15-714ad357a88d"),Created=DateTime.Now,Updated=DateTime.Now,IsVisible=false},
-                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=2.5m,Id = GetGuidSed("440c664c-3fb3-48b4-bd94-6e0458910f80")},
+                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=3m,Id = GetGuidSed("440c664c-3fb3-48b4-bd94-6e0458910f80")},
                     },
                     new()
                     {
                       Name = new ProductName(){ Name ="Chleb do świecenia",Img=ImgPath.Logo, Id = GetGuidSed("3af7e393-b6af-4015-b5f7-c56d85f375a7"),Created=DateTime.Now,Updated=DateTime.Now,IsVisible=false},
-                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=2.5m,Id = GetGuidSed("5183158d-dea2-4f16-a227-647554417656")},
+                      Price = new ProductPrice(){Created=DateTime.Now,Updated=DateTime.Now,PriceDecimal=3.5m,Id = GetGuidSed("5183158d-dea2-4f16-a227-647554417656")},
                     },
             ];
         #endregion
