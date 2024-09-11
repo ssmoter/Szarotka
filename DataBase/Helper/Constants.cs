@@ -8,10 +8,12 @@ namespace DataBase.Helper
         {
             get
             {
-#if WINDOWS
+#if WINDOWS 
                 return @"Szarotka\DataBaseSzarotkaSQLite.db3";
-#else
+#elif ANDROID
                 return "DataBaseSzarotkaSQLite.db3";
+#else
+                return @"Szarotka\DataBaseSzarotkaSQLite.db3";
 #endif
             }
         }
@@ -21,8 +23,11 @@ namespace DataBase.Helper
             {
 #if WINDOWS
                 return @"Szarotka\BackupDataBaseSzarotkaSQLite.db3";
-#else
+#elif ANDROID
                 return "BackupDataBaseSzarotkaSQLite.db3";
+#else
+                return @"Szarotka\BackupDataBaseSzarotkaSQLite.db3";
+
 #endif
             }
         }
@@ -44,7 +49,7 @@ namespace DataBase.Helper
                 var doc = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDocuments);
                 return Path.Combine(doc.Path);
 #else
-                return "";
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Szarotka");
 #endif
             }
         }
@@ -58,7 +63,7 @@ namespace DataBase.Helper
                 var doc = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDocuments);
                 return Path.Combine(doc.Path, DatabaseName);
 #else
-                return "";
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), DatabaseName);
 #endif
 
             }
@@ -73,7 +78,7 @@ namespace DataBase.Helper
                 var doc = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDocuments);
                 return Path.Combine(doc.Path, BackupName);
 #else
-                return "";
+                return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), BackupName);
 #endif
             }
         }

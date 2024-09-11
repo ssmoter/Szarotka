@@ -106,7 +106,10 @@ namespace Inventory.Data
             var day = await GetSingleDay(id);
             if (day.Id == Guid.Empty)
             {
-                day.SelectedDate = DateTime.Now;
+                var createdDate = DateTime.Now;
+                day.SelectedDate = createdDate;
+                if (day.SelectedDate.Hour == 0 && day.SelectedDate.Minute == 0)
+                    day.SelectedDate = new DateTime(createdDate.Year, createdDate.Month, createdDate.Day, 12, 0, 0);
             }
             return day;
         }

@@ -172,7 +172,7 @@ namespace Inventory.Pages.RangeDay
         #region Command
 
         [RelayCommand]
-        async Task OpenDetailpage(RangeDayM rangeDay)
+        async Task OpenDetailPage(RangeDayM rangeDay)
         {
             try
             {

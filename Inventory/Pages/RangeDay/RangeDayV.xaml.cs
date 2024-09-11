@@ -20,6 +20,6 @@ public partial class RangeDayV : ContentPage
 
         if (item.BindingContext is not RangeDayM product) { return; }
 
-        _vm.OpenDetailpageCommand.Execute(product);
+        _vm.OpenDetailPageCommand.Execute(product);
     }
 }
