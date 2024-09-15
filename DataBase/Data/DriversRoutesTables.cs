@@ -1,33 +1,28 @@
 ﻿using DataBase.Model.EntitiesRoutes;
+using DataBase.Service;
 
 namespace DataBase.Data
 {
-    public class DriversRoutesTables
+    public class DriversRoutesTables(AccessDataBase db) : IUpdateDataBase
     {
-        readonly AccessDataBase _db;
+        readonly AccessDataBase _db = db;
         readonly Random _random = new(1337);
 
-        public DriversRoutesTables(AccessDataBase db)
-        {
-            _db = db;
-        }
-
-
-        public async Task UpdateDriversRoutes(int oldVersion, int newVersion, Action<double, int> uppdateDriverRoutes)
+        public async Task Update(int oldVersion, int newVersion, Action<double, int> updateDriverRoutes)
         {
             double progressBar = 0;
-            double uppdateProgressBar = newVersion - oldVersion;
-            uppdateProgressBar /= uppdateProgressBar.ToString().Length * 10;
+            double updateProgressBar = newVersion - oldVersion;
+            updateProgressBar /= updateProgressBar.ToString().Length * 10;
 
 
             if (oldVersion <= 1)
             {
                 await CreateDriversRoutesTables();
-                progressBar += uppdateProgressBar;
+                progressBar += updateProgressBar;
                 oldVersion = 1;
-                uppdateDriverRoutes?.Invoke(progressBar, oldVersion);
+                updateDriverRoutes?.Invoke(progressBar, oldVersion);
             }
-            uppdateDriverRoutes?.Invoke(1, oldVersion);
+            updateDriverRoutes?.Invoke(1, oldVersion);
         }
 
         private async Task CreateDriversRoutesTables()
@@ -37,13 +32,21 @@ namespace DataBase.Data
             var day = _db.DataBaseAsync.CreateTableAsync<SelectedDayOfWeekRoutes>();
             var address = _db.DataBaseAsync.CreateTableAsync<ResidentialAddress>();
             await Task.WhenAll(routes, customer, day, address);
-            await CreateDefoutlRoutes();
+            await CreatedDefaultRoutes();
         }
 
-        async Task CreateDefoutlRoutes()
+        async Task CreatedDefaultRoutes()
         {
-            var routes = new Routes[]
-            {
+            Routes[] routes = GetDefaultRoutes();
+
+            await _db.DataBaseAsync.InsertAllAsync(routes);
+
+        }
+
+        public static Routes[] GetDefaultRoutes()
+        {
+            return
+            [
                 new()
                 {
                     Id = new Guid("c7f40068-5e43-aa02-c27c-4fd927fc2227"),
@@ -72,11 +75,9 @@ namespace DataBase.Data
                     Created=DateTime.Now,
                     Updated=DateTime.Now,
                 },
-            };
-            
-            await _db.DataBaseAsync.InsertAllAsync(routes);
-
+            ];
         }
+
         Guid GetGuidSed()
         {
             byte[] guidBytes = new byte[16];

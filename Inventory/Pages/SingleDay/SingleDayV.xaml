@@ -776,10 +776,7 @@
                     <CollectionView Grid.Row="1" ItemsSource="{Binding Day.Cakes}">
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="Product:Cake">
-                                    <!--IsVisibleOne="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=SingleDayM.CakeAllIsVisible, Converter={StaticResource InvertedBoolConverter}}"-->
-                                <CustomControls:BorderWithTwoIsVisible
-                                    Margin="2"
-                                    IsVisibleSecond="{Binding IsSell}">
+                                <Border Margin="2">
 
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="10" />
@@ -835,7 +832,7 @@
                                         </Grid>
 
                                     </SwipeView>
-                                </CustomControls:BorderWithTwoIsVisible>
+                                </Border>
 
                             </DataTemplate>
                         </CollectionView.ItemTemplate>

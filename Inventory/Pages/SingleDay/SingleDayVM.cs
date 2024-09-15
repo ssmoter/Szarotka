@@ -245,8 +245,8 @@ namespace Inventory.Pages.SingleDay
                         Index = Day.Cakes.Count + 1,
                         Created = DateTime.Now,
                         Updated = DateTime.Now,
+                        IsSell = true
                     };
-
                     Day.Cakes.Add(cake);
                     Day.Cakes.LastOrDefault().IsSell = true;
                     DataBase.Model.EntitiesInventory.ProductUpdatePriceService.OnUpdate();
@@ -291,7 +291,7 @@ namespace Inventory.Pages.SingleDay
                 string no = "Nie";
                 string cancel = "Anuluj";
 
-                var result = await Shell.Current.DisplayActionSheet("Czy zapisać przy cofaniu", cancel, "", yes, no);
+                var result = await Shell.Current.DisplayActionSheet("Czy zapisać przy cofaniu", cancel, null, yes, no);
 
                 if (result == yes)
                 {

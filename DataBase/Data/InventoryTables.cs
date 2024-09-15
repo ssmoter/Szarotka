@@ -1,9 +1,10 @@
 ﻿using DataBase.Helper.Img;
 using DataBase.Model.EntitiesInventory;
+using DataBase.Service;
 
 namespace DataBase.Data
 {
-    public class InventoryTables(AccessDataBase db)
+    public class InventoryTables(AccessDataBase db) : IUpdateDataBase
     {
         readonly AccessDataBase _db = db;
         static readonly Random _random = new(2137);
@@ -20,7 +21,7 @@ namespace DataBase.Data
         }
 
 
-        public async Task UpdateInventory(int oldVersion, int newVersion, Action<double, int> updateInventory)
+        public async Task Update(int oldVersion, int newVersion, Action<double, int> updateInventory)
         {
             double progressBar = 0;
             double updateProgressBar = newVersion - oldVersion;
@@ -53,10 +54,10 @@ namespace DataBase.Data
 
             await Task.WhenAll(driver, selectedDriver, name, price, product, cake, day);
 
-            await CreateDefaultProduct();
+            await CreatedDefaultProduct();
         }
 
-        private async Task CreateDefaultProduct()
+        private async Task CreatedDefaultProduct()
         {
             var products = DefaultProducts;
             var taskTableName = new Task[products.Length];

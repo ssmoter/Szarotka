@@ -5,11 +5,11 @@ using DataBase.Service;
 
 namespace DataBase.Data
 {
-    public class CreatedDataBase : ICreatedDataBase
+    public class CreatedDataBase : ICreatedDataBase, IUpdateDataBase
     {
-        readonly AccessDataBase _db;
-        readonly InventoryTables _inventoryTables;
-        readonly DriversRoutesTables _driversRoutesTables;
+        private readonly AccessDataBase _db;
+        private readonly InventoryTables _inventoryTables;
+        private readonly DriversRoutesTables _driversRoutesTables;
 
         public CreatedDataBase(AccessDataBase accessData)
         {
@@ -60,24 +60,11 @@ namespace DataBase.Data
             var oldVersion = GetCurrentVersion();
             var newVersion = new DataBaseVersion();
 
+            //zawsze pierwsze
+            await Update(oldVersion.DataBase, newVersion.DataBase, updateDataBase);
 
-            double progressBar = 0;
-            double updateProgressBar = newVersion.DataBase - oldVersion.DataBase;
-            updateProgressBar /= updateProgressBar.ToString().Length * 10;
-
-
-            if (oldVersion.DataBase < 1)
-            {
-                await _db.DataBaseAsync.CreateTableAsync<LogsModel>();
-                progressBar += updateProgressBar;
-                oldVersion.DataBase = 1;
-                updateDataBase?.Invoke(progressBar, oldVersion.DataBase);
-            }
-
-
-
-            var inventory = _inventoryTables.UpdateInventory(oldVersion.Inventory, newVersion.Inventory, updateInventory);
-            var driversRoutes = _driversRoutesTables.UpdateDriversRoutes(oldVersion.DriversRoutes, newVersion.DriversRoutes, updateDriverRoutes);
+            var inventory = _inventoryTables.Update(oldVersion.Inventory, newVersion.Inventory, updateInventory);
+            var driversRoutes = _driversRoutesTables.Update(oldVersion.DriversRoutes, newVersion.DriversRoutes, updateDriverRoutes);
             await Task.WhenAll(inventory, driversRoutes);
 
 
@@ -87,6 +74,21 @@ namespace DataBase.Data
             return true;
         }
 
+        public async Task Update(int oldVersion, int newVersion, Action<double, int> updateAction)
+        {
+            double progressBar = 0;
+            double updateProgressBar = newVersion - oldVersion;
+            updateProgressBar /= updateProgressBar.ToString().Length * 10;
 
+
+            if (oldVersion < 1)
+            {
+                await _db.DataBaseAsync.CreateTableAsync<LogsModel>();
+                progressBar += updateProgressBar;
+                oldVersion = 1;
+                updateAction?.Invoke(progressBar, oldVersion);
+            }
+
+        }
     }
 }

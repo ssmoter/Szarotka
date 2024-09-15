@@ -42,58 +42,58 @@
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|AnyCPU'">
       <ApplicationTitle>Szarotka</ApplicationTitle>
       <ApplicationId>com.szarotka.szarotka</ApplicationId>
-      <ApplicationDisplayVersion>1.2.5</ApplicationDisplayVersion>
-      <ApplicationVersion>5</ApplicationVersion>
+      <ApplicationDisplayVersion>1.2.6</ApplicationDisplayVersion>
+      <ApplicationVersion>6</ApplicationVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
       <ApplicationTitle>Szarotka</ApplicationTitle>
       <ApplicationId>com.szarotka.szarotka</ApplicationId>
-      <ApplicationDisplayVersion>1.2.5</ApplicationDisplayVersion>
-      <ApplicationVersion>5</ApplicationVersion>
+      <ApplicationDisplayVersion>1.2.6</ApplicationDisplayVersion>
+      <ApplicationVersion>6</ApplicationVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|AnyCPU'">
       <ApplicationTitle>Szarotka</ApplicationTitle>
       <ApplicationId>com.szarotka.szarotka</ApplicationId>
-      <ApplicationDisplayVersion>1.2.5</ApplicationDisplayVersion>
-      <ApplicationVersion>5</ApplicationVersion>
+      <ApplicationDisplayVersion>1.2.6</ApplicationDisplayVersion>
+      <ApplicationVersion>6</ApplicationVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|AnyCPU'">
       <ApplicationTitle>Szarotka</ApplicationTitle>
       <ApplicationId>com.szarotka.szarotka</ApplicationId>
-      <ApplicationDisplayVersion>1.2.5</ApplicationDisplayVersion>
-      <ApplicationVersion>5</ApplicationVersion>
+      <ApplicationDisplayVersion>1.2.6</ApplicationDisplayVersion>
+      <ApplicationVersion>6</ApplicationVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
       <ApplicationTitle>Szarotka</ApplicationTitle>
       <ApplicationId>com.szarotka.szarotka</ApplicationId>
-      <ApplicationDisplayVersion>1.2.5</ApplicationDisplayVersion>
-      <ApplicationVersion>5</ApplicationVersion>
+      <ApplicationDisplayVersion>1.2.6</ApplicationDisplayVersion>
+      <ApplicationVersion>6</ApplicationVersion>
       <AndroidPackageFormat>apk</AndroidPackageFormat>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-ios|AnyCPU'">
       <ApplicationTitle>Szarotka</ApplicationTitle>
       <ApplicationId>com.szarotka.szarotka</ApplicationId>
-      <ApplicationDisplayVersion>1.2.5</ApplicationDisplayVersion>
-      <ApplicationVersion>5</ApplicationVersion>
+      <ApplicationDisplayVersion>1.2.6</ApplicationDisplayVersion>
+      <ApplicationVersion>6</ApplicationVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|AnyCPU'">
       <ApplicationTitle>Szarotka</ApplicationTitle>
       <ApplicationId>com.szarotka.szarotka</ApplicationId>
-      <ApplicationDisplayVersion>1.2.5</ApplicationDisplayVersion>
-      <ApplicationVersion>5</ApplicationVersion>
+      <ApplicationDisplayVersion>1.2.6</ApplicationDisplayVersion>
+      <ApplicationVersion>6</ApplicationVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|AnyCPU'">
       <ApplicationTitle>Szarotka</ApplicationTitle>
       <ApplicationId>com.szarotka.szarotka</ApplicationId>
-      <ApplicationDisplayVersion>1.2.5</ApplicationDisplayVersion>
-      <ApplicationVersion>5</ApplicationVersion>
+      <ApplicationDisplayVersion>1.2.6</ApplicationDisplayVersion>
+      <ApplicationVersion>6</ApplicationVersion>
     </PropertyGroup>
 
     <ItemGroup>

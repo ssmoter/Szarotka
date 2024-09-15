@@ -6,6 +6,6 @@ namespace DataBase.Service
     {
         Task CreateBackUp();
         DataBaseVersion GetCurrentVersion();
-        Task<bool> UpdateDataBase(Action<double, int> uppdateDataBase, Action<double, int> uppdateInventory, Action<double, int> uppdateDriverRoutes);
+        Task<bool> UpdateDataBase(Action<double, int> updateDataBase, Action<double, int> updateInventory, Action<double, int> updateDriverRoutes);
     }
 }

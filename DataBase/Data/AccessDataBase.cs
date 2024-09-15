@@ -2,8 +2,6 @@
 
 using SQLite;
 
-using System.Diagnostics;
-
 namespace DataBase.Data
 {
     public class AccessDataBase : IDisposable
@@ -15,6 +13,15 @@ namespace DataBase.Data
         {
             DataBaseAsync ??= new SQLiteAsyncConnection(Constants.DatabasePath, Constants.Flags);
             DataBase ??= new SQLiteConnection(Constants.DatabasePath, Constants.Flags);
+        }
+        /// <summary>
+        /// Tylko dla testów
+        /// </summary>
+        /// <param name="path"></param>
+        public AccessDataBase(string path)
+        {
+            DataBaseAsync ??= new SQLiteAsyncConnection(path, Constants.Flags);
+            DataBase ??= new SQLiteConnection(path, Constants.Flags);
         }
 
         public void SaveLog(Exception ex)
