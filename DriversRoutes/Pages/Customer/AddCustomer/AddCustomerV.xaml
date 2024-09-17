@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:MapSmall="clr-namespace:DriversRoutes.Pages.Maps.MapSmall"
     xmlns:VM="clr-namespace:DriversRoutes.Pages.Customer.AddCustomer"
+    xmlns:controls="clr-namespace:DataBase.CustomControls;assembly=DataBase"
     xmlns:convert="clr-namespace:DriversRoutes.Helper"
     xmlns:img="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
@@ -14,6 +15,9 @@
     <ContentPage.Resources>
         <convert:DisplayHourAndMinuteFromTimeSpan x:Key="timeSpanTohhmm" />
     </ContentPage.Resources>
+
+
+
 
 
     <Grid ColumnDefinitions="*,3*" RowDefinitions="*,*">
@@ -55,7 +59,8 @@
 
                                     <Grid
                                         Padding="5,2,5,2"
-                                        ColumnDefinitions="*"
+                                        ColumnDefinitions="80"
+                                        ColumnSpacing="0"
                                         RowSpacing="0">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*" />
@@ -69,36 +74,63 @@
 
                                         </Grid.RowDefinitions>
 
-                                        <Label Grid.Row="0" Text="Poprzedni &#10;przystanek" />
-                                        <Button
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.ColumnSpan="2"
+                                            LineBreakMode="CharacterWrap"
+                                            Text="Poprzedni przystanek" />
+                                        <controls:ButtonColorsFromBool
                                             Grid.Row="1"
+                                            BackgroundColorFirst="LightGreen"
+                                            BackgroundColorSecond="LightPink"
                                             Command="{Binding CopyTimeBeforeCommand}"
                                             CommandParameter="1"
+                                            SelectedColor="{Binding DayOfWeekCustomerBefore.Monday}"
                                             Text="{Binding DayOfWeekCustomerBefore.MondayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
-                                        <Button
+
+                                        <controls:ButtonColorsFromBool
                                             Grid.Row="2"
+                                            BackgroundColorFirst="LightGreen"
+                                            BackgroundColorSecond="LightPink"
                                             Command="{Binding CopyTimeBeforeCommand}"
                                             CommandParameter="2"
+                                            SelectedColor="{Binding DayOfWeekCustomerBefore.Tuesday}"
                                             Text="{Binding DayOfWeekCustomerBefore.TuesdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
-                                        <Button
+
+                                        <controls:ButtonColorsFromBool
                                             Grid.Row="3"
+                                            BackgroundColorFirst="LightGreen"
+                                            BackgroundColorSecond="LightPink"
                                             Command="{Binding CopyTimeBeforeCommand}"
                                             CommandParameter="3"
+                                            SelectedColor="{Binding DayOfWeekCustomerBefore.Wednesday}"
                                             Text="{Binding DayOfWeekCustomerBefore.WednesdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
-                                        <Button
+
+                                        <controls:ButtonColorsFromBool
                                             Grid.Row="4"
+                                            BackgroundColorFirst="LightGreen"
+                                            BackgroundColorSecond="LightPink"
                                             Command="{Binding CopyTimeBeforeCommand}"
                                             CommandParameter="4"
+                                            SelectedColor="{Binding DayOfWeekCustomerBefore.Thursday}"
                                             Text="{Binding DayOfWeekCustomerBefore.ThursdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
-                                        <Button
+
+                                        <controls:ButtonColorsFromBool
                                             Grid.Row="5"
+                                            BackgroundColorFirst="LightGreen"
+                                            BackgroundColorSecond="LightPink"
                                             Command="{Binding CopyTimeBeforeCommand}"
                                             CommandParameter="5"
+                                            SelectedColor="{Binding DayOfWeekCustomerBefore.Friday}"
                                             Text="{Binding DayOfWeekCustomerBefore.FridayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
-                                        <Button
+
+                                        <controls:ButtonColorsFromBool
                                             Grid.Row="6"
+                                            BackgroundColorFirst="LightGreen"
+                                            BackgroundColorSecond="LightPink"
                                             Command="{Binding CopyTimeBeforeCommand}"
                                             CommandParameter="6"
+                                            SelectedColor="{Binding DayOfWeekCustomerBefore.Saturday}"
                                             Text="{Binding DayOfWeekCustomerBefore.SaturdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
 
                                         <Grid Grid.Row="7" ColumnDefinitions="*,*,*">
@@ -138,7 +170,7 @@
 
                                     <Grid
                                         Padding="5,2,5,2"
-                                        ColumnDefinitions="*"
+                                        ColumnDefinitions="80"
                                         RowSpacing="0">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*" />
@@ -152,35 +184,53 @@
                                         </Grid.RowDefinitions>
 
                                         <Label Grid.Row="0" Text="Następny &#10;przystanek" />
-                                        <Button
+                                        <controls:ButtonColorsFromBool
                                             Grid.Row="1"
+                                            BackgroundColorFirst="LightGreen"
+                                            BackgroundColorSecond="LightPink"
                                             Command="{Binding CopyTimeAfterCommand}"
                                             CommandParameter="1"
+                                            SelectedColor="{Binding DayOfWeekCustomerAfter.Monday}"
                                             Text="{Binding DayOfWeekCustomerAfter.MondayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
-                                        <Button
+                                        <controls:ButtonColorsFromBool
                                             Grid.Row="2"
+                                            BackgroundColorFirst="LightGreen"
+                                            BackgroundColorSecond="LightPink"
                                             Command="{Binding CopyTimeAfterCommand}"
                                             CommandParameter="2"
+                                            SelectedColor="{Binding DayOfWeekCustomerAfter.Tuesday}"
                                             Text="{Binding DayOfWeekCustomerAfter.TuesdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
-                                        <Button
+                                        <controls:ButtonColorsFromBool
                                             Grid.Row="3"
+                                            BackgroundColorFirst="LightGreen"
+                                            BackgroundColorSecond="LightPink"
                                             Command="{Binding CopyTimeAfterCommand}"
                                             CommandParameter="3"
+                                            SelectedColor="{Binding DayOfWeekCustomerAfter.Wednesday}"
                                             Text="{Binding DayOfWeekCustomerAfter.WednesdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
-                                        <Button
+                                        <controls:ButtonColorsFromBool
                                             Grid.Row="4"
+                                            BackgroundColorFirst="LightGreen"
+                                            BackgroundColorSecond="LightPink"
                                             Command="{Binding CopyTimeAfterCommand}"
                                             CommandParameter="4"
+                                            SelectedColor="{Binding DayOfWeekCustomerAfter.Thursday}"
                                             Text="{Binding DayOfWeekCustomerAfter.ThursdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
-                                        <Button
+                                        <controls:ButtonColorsFromBool
                                             Grid.Row="5"
+                                            BackgroundColorFirst="LightGreen"
+                                            BackgroundColorSecond="LightPink"
                                             Command="{Binding CopyTimeAfterCommand}"
                                             CommandParameter="5"
+                                            SelectedColor="{Binding DayOfWeekCustomerAfter.Friday}"
                                             Text="{Binding DayOfWeekCustomerAfter.FridayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
-                                        <Button
+                                        <controls:ButtonColorsFromBool
                                             Grid.Row="6"
+                                            BackgroundColorFirst="LightGreen"
+                                            BackgroundColorSecond="LightPink"
                                             Command="{Binding CopyTimeAfterCommand}"
                                             CommandParameter="6"
+                                            SelectedColor="{Binding DayOfWeekCustomerAfter.Saturday}"
                                             Text="{Binding DayOfWeekCustomerAfter.SaturdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
 
 
@@ -215,8 +265,6 @@
                                 </SwipeItemView>
                             </SwipeItems>
                         </SwipeView.RightItems>
-
-
 
                         <Grid
                             Padding="5,2,5,2"

@@ -6,7 +6,7 @@ namespace DataBase.CustomControls
     {
 
         public static readonly BindableProperty ButtonCommandProperty =
-            BindableProperty.Create(nameof(ButtonCommand), typeof(ICommand), typeof(DrawableButton), propertyChanged: async (bindable, oldValu, newValue) =>
+            BindableProperty.Create(nameof(ButtonCommand), typeof(ICommand), typeof(DrawableButton), propertyChanged:  (bindable, oldValu, newValue) =>
             {
             });
 

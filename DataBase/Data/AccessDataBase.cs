@@ -2,6 +2,9 @@
 
 using SQLite;
 
+#if DEBUG
+using System.Diagnostics;
+#endif
 namespace DataBase.Data
 {
     public class AccessDataBase : IDisposable
