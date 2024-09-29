@@ -27,7 +27,7 @@ namespace DataBase.Data.File
                     sb.Append(text);
                 }
 
-                var model = System.Text.Json.JsonSerializer.Deserialize<T>(sb.ToString(), JsonOptions.JsonSerializeOptions);
+                var model = System.Text.Json.JsonSerializer.Deserialize<T>(sb.ToString(), JsonOptions.JsonSerializeOptionsBoolAndDateTime);
                 return model;
             }
             catch (Exception)
@@ -41,7 +41,7 @@ namespace DataBase.Data.File
             {
                 var text = System.IO.File.ReadAllText(path, Encoding.Unicode);
 
-                var model = System.Text.Json.JsonSerializer.Deserialize<T>(text, JsonOptions.JsonSerializeOptions);
+                var model = System.Text.Json.JsonSerializer.Deserialize<T>(text, JsonOptions.JsonSerializeOptionsBoolAndDateTime);
                 return model;
             }
             catch (Exception)

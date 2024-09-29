@@ -36,19 +36,19 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         List<SelectedDayOfWeekRoutes> DayOfWeekCustomerAfterList;
 
         readonly Service.ISaveRoutes _saveRoutes;
-        readonly Service.IDownloadAddress _downloadAddress;
+        readonly Data.GoogleApi.IAddressFromCoordinates _IAddressFromCoordinates;
         readonly DataBase.Data.AccessDataBase _db;
         ResidentialAddress[] _address = [];
         #endregion
 
-        public AddCustomerVM(Service.ISaveRoutes saveRoutes, DataBase.Data.AccessDataBase db, Service.IDownloadAddress downloadAddress)
+        public AddCustomerVM(Service.ISaveRoutes saveRoutes, DataBase.Data.AccessDataBase db, Data.GoogleApi.IAddressFromCoordinates IAddressFromCoordinates)
         {
             AddCustomer ??= new();
             Customer ??= new();
             Customer.Name = NewPoint;
             _saveRoutes = saveRoutes;
             _db = db;
-            _downloadAddress = downloadAddress;
+            _IAddressFromCoordinates = IAddressFromCoordinates;
         }
 
 
@@ -172,7 +172,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
 
                 if (_address.Length < 1)
                 {
-                    var response = await _downloadAddress.FindAddressFromCoordinates(Customer.Latitude, Customer.Longitude);
+                    var response = await _IAddressFromCoordinates.FindGoogleApiAddress(Customer.Latitude, Customer.Longitude);
                     _address = new ResidentialAddress[response.Results.Count];
 
                     for (int i = 0; i < response.Results.Count; i++)

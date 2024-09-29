@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SzarotkaBlazor", "SzarotkaB
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmark", "Benchmark\Benchmark.csproj", "{434ECECB-3C90-4C3D-ACA1-3A81273BDD70}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBaseUnitTest", "DataBaseUnitTest\DataBaseUnitTest.csproj", "{F2092B70-BF4F-4270-B7D7-6BC98B457155}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataBaseUnitTest", "DataBaseUnitTest\DataBaseUnitTest.csproj", "{F2092B70-BF4F-4270-B7D7-6BC98B457155}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

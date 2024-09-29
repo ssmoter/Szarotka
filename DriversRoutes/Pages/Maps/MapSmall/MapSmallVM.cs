@@ -20,18 +20,26 @@ public partial class MapSmallVM : ObservableObject
     public Func<Microsoft.Maui.Devices.Sensors.Location> GetCurrentLocation;
     public Action<Microsoft.Maui.Devices.Sensors.Location> EditCustomerLocation;
 
-    readonly DataBase.Data.AccessDataBase _db;
-    Pin _pin;
-    public MapSmallVM(DataBase.Data.AccessDataBase db)
+    private readonly DataBase.Data.AccessDataBase _db;
+    private Pin _pin;
+    private readonly Data.GoogleApi.IRoutes _routes;
+    public MapSmallVM(DataBase.Data.AccessDataBase db, Data.GoogleApi.IRoutes routes)
     {
         MapSmallM = new();
         _db = db;
+        _routes = routes;
         _pin = new Pin()
         {
             Label = "Nowa lokalizacja"
         };
+    }
+
+    private async Task ComputeRoute(CancellationToken token = default)
+    {
+        var result = _routes.GetOnlyRouteStepsDurationDistance(null, token);
 
     }
+
     public void OnAddPin(Microsoft.Maui.Controls.Maps.Pin pin)
     {
         AddPin?.Invoke(pin);
@@ -81,7 +89,7 @@ public partial class MapSmallVM : ObservableObject
     {
         try
         {
-            var result = await Shell.Current.DisplayAlert("Nowa lokalizacja", "Czy chcesz nadpisać lokalizace", "Tak", "Nie");
+            var result = await Shell.Current.DisplayAlert("Nowa lokalizacja", "Czy chcesz nadpisać lokalizacje", "Tak", "Nie");
             if (!result)
             {
                 return;

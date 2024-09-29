@@ -93,10 +93,10 @@ public partial class MapSmallV : ContentView, IDisposable
     }
 
 
-    public MapSmallV()
+    public MapSmallV(DataBase.Data.AccessDataBase db, Data.GoogleApi.IRoutes routes)
     {
         InitializeComponent();
-        MapSmallVM = new(new DataBase.Data.AccessDataBase());
+        MapSmallVM = new(db, routes);
         MapSmallVM.MoveToRegion += this.Map.MoveToRegion;
         MapSmallVM.AddPin += this.Map.Pins.Add;
         MapSmallVM.RemovePin += this.Map.Pins.Remove;

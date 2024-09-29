@@ -17,7 +17,6 @@
             Spacing="25"
             VerticalOptions="Center">
 
-
             <!--<Grid
                             HorizontalOptions="Center"
                             IsVisible="False"
