@@ -1,5 +1,4 @@
-﻿
-using DataBase.Data;
+﻿using DataBase.Data;
 using DataBase.Model;
 
 using SzarotkaBlazor.Pages.Options.Main;
@@ -16,8 +15,9 @@ namespace SzarotkaBlazor
             InitializeComponent();
             _db = new();
             _createdDataBase = new CreatedDataBase(_db);
-
         }
+
+
 
         protected override async void OnNavigatedTo(NavigatedToEventArgs args)
         {
@@ -37,7 +37,6 @@ namespace SzarotkaBlazor
             }
         }
 
-
         private async void Options_Clicked(object sender, EventArgs e)
         {
             await Shell.Current.GoToAsync(nameof(MainOptionsV));
@@ -52,6 +51,7 @@ namespace SzarotkaBlazor
         {
             await Shell.Current.GoToAsync(nameof(DriversRoutes.Pages.Main.MainVDriversRoutesV));
         }
+
 
         //private void Button_Clicked(object sender, EventArgs e)
         //{

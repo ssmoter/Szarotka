@@ -2,6 +2,8 @@
 
 using DriversRoutes.Service;
 
+using GoogleMapsComponents;
+
 using Inventory.Service;
 
 using SzarotkaBlazor.Pages.Options.Main;
@@ -15,9 +17,8 @@ namespace SzarotkaBlazor.Service
             services.AddMyServiceDataBase();
 
             services.AddMyServiceInventory();
-
-#if ANDROID
             services.AddMyServiceDriversRoutes();
+#if ANDROID
 #endif
 
             services.AddSingleton<MainOptionsV>();

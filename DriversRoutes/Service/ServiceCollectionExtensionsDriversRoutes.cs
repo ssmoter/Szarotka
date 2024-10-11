@@ -1,4 +1,7 @@
 ﻿using DriversRoutes.Data.GoogleApi;
+using DriversRoutes.Pages.Maps.Controls;
+
+using GoogleMapsComponents;
 
 namespace DriversRoutes.Service
 {
@@ -33,6 +36,9 @@ namespace DriversRoutes.Service
 
             services.AddScoped<Pages.Maps.MapSmall.MapSmallV>();
             services.AddScoped<Pages.Maps.MapSmall.MapSmallVM>();
+            services.AddScoped<HttpClient>();
+
+            services.AddSingleton<BlazorMap>();
 
             return services;
         }

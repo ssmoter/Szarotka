@@ -10,9 +10,10 @@ namespace DataBase.Helper
             Android.Content.Context context = Android.App.Application.Context;
             var applicationInfo = context.PackageManager.GetApplicationInfo(context.PackageName, Android.Content.PM.PackageInfoFlags.MetaData);
             var bundle = applicationInfo.MetaData;
-            return bundle.GetString(key);
+            var value = bundle.GetString(key);
+            return value;
 #else
-            return "";
+            return "AIzaSyDMfTC47bnsNBAK8S4xKk7Mhb_aiSqnCYU";
 #endif
         }
 

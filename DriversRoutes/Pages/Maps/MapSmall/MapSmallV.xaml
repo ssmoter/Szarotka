@@ -5,11 +5,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:Symbols="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
     xmlns:VM="clr-namespace:DriversRoutes.Pages.Maps.MapSmall"
+    xmlns:controlsMaps="clr-namespace:DriversRoutes.Pages.Maps.Controls"
     xmlns:maps="http://schemas.microsoft.com/dotnet/2021/maui/maps"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:Name="this">
 
-    <!--xmlns:mapBlazor="clr-namespace:DriversRoutes.Pages.Maps.Controls"-->
+    <!--  xmlns:mapBlazor="clr-namespace:DriversRoutes.Pages.Maps.Controls"  -->
 
     <Border
         x:DataType="VM:MapSmallV"
@@ -95,21 +96,22 @@
 
             <Grid Grid.Row="1" RowDefinitions="*,42">
 
-                <!--<BlazorWebView
+                <BlazorWebView
                     Grid.Row="0"
+                    x:Name="blazorMap"
                     Grid.RowSpan="2"
                     HostPage="wwwroot/index.html">
                     <BlazorWebView.RootComponents>
-                        <RootComponent ComponentType="{x:Type mapBlazor:Map}" Selector="#app" />
+                        <RootComponent ComponentType="{x:Type controlsMaps:BlazorMap}" Selector="#app" />
                     </BlazorWebView.RootComponents>
-                </BlazorWebView>-->
-
+                </BlazorWebView>
 
                 <maps:Map
                     x:Name="Map"
                     Grid.Row="0"
                     Grid.RowSpan="2"
                     IsShowingUser="True"
+                    IsVisible="False"
                     MapType="Street" />
 
                 <Image

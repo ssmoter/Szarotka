@@ -1,4 +1,4 @@
-﻿@* @implements IDisposable *@
+﻿@implements IDisposable
 
 @using Inventory.Pages.RangeDay
 @using DataBase.Helper
@@ -202,8 +202,8 @@
 
     public void Dispose()
     {
-        // SetRangeDayMs -= setRange;
-        // GC.SuppressFinalize(this);
+        SetRangeDayMs -= setRange;
+        GC.SuppressFinalize(this);
     }
 
     public void Calculate(IList<RangeDayM> value)

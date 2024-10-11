@@ -19,7 +19,7 @@
 
 
     <FlyoutItem Title="Inwentarz" Icon="{AppThemeBinding Light={Static img:TabBarImg.InventoryBlack}, Dark={Static img:TabBarImg.InventoryWhite}}">
-        <ShellContent  ContentTemplate="{DataTemplate inventory:MainV}"/>
+        <ShellContent ContentTemplate="{DataTemplate inventory:MainV}" />
     </FlyoutItem>
 
     <FlyoutItem
@@ -28,11 +28,11 @@
                                Dark={Static img:TabBarImg.MapWhite}}"
         IsVisible="{OnPlatform Android=true,
                                Default=false}">
-        <ShellContent  ContentTemplate="{DataTemplate routes:MainVDriversRoutesV}"/>
+        <ShellContent ContentTemplate="{DataTemplate routes:MainVDriversRoutesV}" />
     </FlyoutItem>
 
     <FlyoutItem Title="Opcje" Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack}, Dark={Static img:TabBarImg.OptionWhite}}">
-        <ShellContent  ContentTemplate="{DataTemplate options:MainOptionsV}"/>
+        <ShellContent ContentTemplate="{DataTemplate options:MainOptionsV}" />
     </FlyoutItem>
 
 </Shell>

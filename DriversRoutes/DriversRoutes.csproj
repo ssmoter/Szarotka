@@ -18,6 +18,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="BlazorGoogleMaps" Version="4.7.12" />
 	  <PackageReference Include="Microsoft.Maui.Controls.Maps" Version="8.0.80" />
 	</ItemGroup>
 
@@ -56,6 +57,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\Maps\MapSmall\MapSmallV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\Maps\Navigate\NavigateV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\Options\CreateTable\CreateTableRoutesV.xaml">

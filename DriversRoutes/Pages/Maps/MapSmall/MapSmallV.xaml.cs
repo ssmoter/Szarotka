@@ -14,9 +14,8 @@ public partial class MapSmallV : ContentView, IDisposable
         , typeof(CustomerRoutes)
         , typeof(MapSmallV)
         , defaultBindingMode: BindingMode.TwoWay
-        , propertyChanged: (bindable, oldValu, newValue) =>
+        , propertyChanged: async (bindable, oldValu, newValue) =>
     {
-
         if (bindable is MapSmallV view)
         {
             if (newValue is CustomerRoutes customer)
@@ -32,7 +31,8 @@ public partial class MapSmallV : ContentView, IDisposable
                 view.Map.Pins.Add(pin);
                 view.MapSmallVM.MapSmallM.OldLatitude = customer.Latitude;
                 view.MapSmallVM.MapSmallM.OldLongitude = customer.Longitude;
-                view.mapSmallVM.OnGoToLocation(new Microsoft.Maui.Maps.MapSpan(pin.Location, 0.01, 0.01));
+                view.MapSmallVM.OnGoToLocation(new Microsoft.Maui.Maps.MapSpan(pin.Location, 0.01, 0.01));
+                Controls.BlazorMap.OnSetCustomer(customer);
             }
         }
     });
@@ -79,6 +79,7 @@ public partial class MapSmallV : ContentView, IDisposable
         set => SetValue(MapSmallVIsVisibleProperty, value);
     }
 
+
     #endregion
 
     private MapSmallVM mapSmallVM;
@@ -91,12 +92,11 @@ public partial class MapSmallV : ContentView, IDisposable
             OnPropertyChanged(nameof(MapSmallVM));
         }
     }
-
-
-    public MapSmallV(DataBase.Data.AccessDataBase db, Data.GoogleApi.IRoutes routes)
+    public MapSmallV()
     {
+        var service = DataBase.Service.AppServiceProvider.Current.GetService(typeof(MapSmallVM)) as MapSmallVM;
         InitializeComponent();
-        MapSmallVM = new(db, routes);
+        MapSmallVM = service;
         MapSmallVM.MoveToRegion += this.Map.MoveToRegion;
         MapSmallVM.AddPin += this.Map.Pins.Add;
         MapSmallVM.RemovePin += this.Map.Pins.Remove;

@@ -1,8 +1,7 @@
 ﻿using Microsoft.Maui.Graphics.Skia;
 
-using SkiaSharp;
 
-using System.Reflection.Metadata.Ecma335;
+using SkiaSharp;
 
 namespace DriversRoutes.Data
 {
@@ -20,7 +19,7 @@ namespace DriversRoutes.Data
         {
             ColorFill = null;
             ColorBackground = null;
-            Image.Dispose();
+            Image?.Dispose();
             GC.SuppressFinalize(this);
         }
 
@@ -88,7 +87,7 @@ namespace DriversRoutes.Data
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
-            canvas.SaveState();       
+            canvas.SaveState();
             canvas.StrokeSize = 1;
             canvas.FontSize = 20;
             canvas.FontColor = ColorFill;
@@ -100,7 +99,7 @@ namespace DriversRoutes.Data
             canvas.Translate(dirtyRect.Center.X, 0);
             canvas.Scale(ScaleX, ScaleY);
 
-            canvas.Translate(0,3);
+            canvas.Translate(0, 3);
             canvas.DrawString(Number.ToString(), 0f, 15, HorizontalAlignment.Center);
             canvas.SaveState();
 
@@ -108,13 +107,13 @@ namespace DriversRoutes.Data
 
             DrawPoint(canvas, dirtyRect);
             canvas.ResetState();
-       
+
         }
 
 
         private void DrawPoint(ICanvas canvas, RectF dirtyRect)
         {
-            canvas.Translate(-23,0);
+            canvas.Translate(-23, 0);
             PathF path = new(11, 24);
             path.LineTo(23, 42);
             path.LineTo(24, 42);
@@ -131,5 +130,43 @@ namespace DriversRoutes.Data
             canvas.FillColor = ColorBackground;
             canvas.FillCircle(0, 0, 9 / 2);
         }
+
+
+        public static string GenerateHtmlImgFromBase64String(string base64String)
+        {
+            return @$"<img src='data:image/png;base64, {base64String}'/>";
+        }
+        public static string[] GenerateBase64StringPin(int length)
+        {
+            var pins = new string[length];
+            int scaleX = (int)DeviceDisplay.Current.MainDisplayInfo.Density;
+            int scaleY = scaleX;
+
+            var width = 40 * scaleX;
+            var height = 58 * scaleY;
+
+            for (int i = 0; i < length; i++)
+            {
+                using SkiaBitmapExportContext skiaBitmapExportContext = new(width, height, 1);
+                ICanvas canvas = skiaBitmapExportContext.Canvas;
+                using DrawIconOnMap drawIconOnMap = new()
+                {
+                    Number = i + 1,
+                    ScaleX = scaleX,
+                    ScaleY = scaleY,
+                };
+                drawIconOnMap.Draw(canvas, new RectF(0, 0, skiaBitmapExportContext.Width, skiaBitmapExportContext.Height));
+
+                var stream = skiaBitmapExportContext.Image.AsStream();
+
+                using var memory = new MemoryStream();
+                stream.CopyTo(memory);
+                var pin = Convert.ToBase64String(memory.ToArray());
+
+                pins[i] = pin;
+            }
+            return pins;
+        }
+
     }
 }

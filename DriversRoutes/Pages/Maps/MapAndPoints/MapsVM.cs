@@ -5,12 +5,10 @@ using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Model.EntitiesRoutes;
 
-using DriversRoutes.Data;
 using DriversRoutes.Helper;
 using DriversRoutes.Pages.Popups.MoveTimeOnCustomers;
 
 using Microsoft.Maui.Controls.Maps;
-using Microsoft.Maui.Graphics.Skia;
 using Microsoft.Maui.Maps;
 
 using MudBlazor;
@@ -67,7 +65,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
         public Action<MapSpan> GoToLocation;
         public Microsoft.Maui.Controls.Maps.Map GetMap { get; set; }
 
-        public readonly MapSpan szarotka = new(new Location(49.74918622300343, 20.40891067705071), 0.1, 0.1);
+        public readonly MapSpan szarotka = CurrentLocation.Szarotka;
 
         readonly DataBase.Data.AccessDataBase _db;
         readonly Service.ISelectRoutes _selectRoutes;
@@ -108,18 +106,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
         {
             try
             {
-                GeolocationRequest request = new(GeolocationAccuracy.Best, TimeSpan.FromSeconds(10));
-
-                var _cancelTokenSource = new CancellationTokenSource();
-                var location = await Geolocation.Default.GetLocationAsync(request, _cancelTokenSource.Token);
-                location ??= await Geolocation.Default.GetLastKnownLocationAsync();
-                if (location is null || location.IsFromMockProvider)
-                {
-                    return szarotka;
-                }
-
-                MapSpan mapSpan = new(location, 0.01, 0.01);
-                return mapSpan;
+                return await CurrentLocation.Get();
             }
             catch (Exception ex)
             {
