@@ -4,93 +4,187 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:VM="clr-namespace:DriversRoutes.Pages.Maps.MapAndPoints"
+    xmlns:controls="clr-namespace:DataBase.CustomControls;assembly=DataBase"
     xmlns:customPin="clr-namespace:DriversRoutes.Model"
     xmlns:customer="clr-namespace:DriversRoutes.Pages.Customer.CustomerSmall"
     xmlns:img="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
     xmlns:maps="http://schemas.microsoft.com/dotnet/2021/maui/maps"
     xmlns:sensors="clr-namespace:Microsoft.Maui.Devices.Sensors;assembly=Microsoft.Maui.Essentials"
-    xmlns:views="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     Title="{Binding DriversRoutesName}"
     x:DataType="VM:MapsVM">
 
-    <!--  xmlns:customPin="clr-namespace:DriversRoutes.Platforms.Android"  -->
 
 
-    <Grid ColumnDefinitions="1.25*,*" RowDefinitions=".7*,*">
+    <Grid RowDefinitions="*,auto">
 
-        <Border
+        <Grid
+            Grid.Row="1"
+            BackgroundColor="{AppThemeBinding Light=AliceBlue,
+                                              Dark=Grey}"
+            ColumnDefinitions="*,auto">
+            <VerticalStackLayout>
+
+                <Label FontSize="Title">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding SelectedPoint.CustomerRoutes.QueueNumber}" />
+                            <Span Text=":" />
+                            <Span Text="{Binding SelectedPoint.CustomerRoutes.Name}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+                <Label Text="{Binding SelectedPoint.CustomerRoutes.Description}" />
+
+                <VerticalStackLayout.GestureRecognizers>
+                    <SwipeGestureRecognizer Command="{Binding ShowMovingViewCommand}" Direction="Up" />
+                    <SwipeGestureRecognizer Command="{Binding HideMovingViewCommand}" Direction="Down" />
+                </VerticalStackLayout.GestureRecognizers>
+            </VerticalStackLayout>
+            <ImageButton
+                Grid.Column="1"
+                Command="{Binding DisplayDescriptionOfNextPointCommand}"
+                HorizontalOptions="End"
+                Rotation="-90"
+                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+        </Grid>
+
+        <controls:MovingViewInSteps
             Grid.Row="0"
-            Grid.Column="0"
-            BackgroundColor="Transparent"
-            HorizontalOptions="Start"
-            ZIndex="101">
-            <Border.GestureRecognizers>
-                <SwipeGestureRecognizer Command="{Binding SwipeViewGestureCommand}" Direction="Right" />
-            </Border.GestureRecognizers>
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10" />
-            </Border.StrokeShape>
-
-        </Border>
-
-
-        <Border
-            Grid.Row="0"
-            Grid.Column="0"
-            Padding="2"
-            BackgroundColor="{AppThemeBinding Light=White,
-                                              Dark=Black}"
-            IsVisible="{Binding IsVisibleList}"
+            Grid.RowSpan="3"
+            Direction="Up"
+            StepStart="{Binding StepSelected}"
             ZIndex="102">
-
-            <Border.GestureRecognizers>
-                <SwipeGestureRecognizer Command="{Binding SwipeViewGestureCommand}" Direction="Left" />
-            </Border.GestureRecognizers>
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="10" />
-            </Border.StrokeShape>
-
-            <ScrollView>
-
+            <controls:MovingViewInSteps.Header>
+                <StackLayout IsVisible="False" />
+            </controls:MovingViewInSteps.Header>
+            <controls:MovingViewInSteps.ContentView>
                 <Border BackgroundColor="{AppThemeBinding Light=AliceBlue, Dark=Grey}">
 
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="10" />
                     </Border.StrokeShape>
 
-                    <Grid RowDefinitions="auto,*">
+                    <Grid ColumnDefinitions="50,*,50" RowDefinitions="auto,*">
 
-                        <Grid RowDefinitions="*,auto">
 
-                            <Grid
+                        <Grid
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Grid.Column="0"
+                            RowDefinitions="auto,auto,*,auto">
+
+                            <ImageButton
                                 Grid.Row="0"
-                                ColumnDefinitions="*,*"
-                                RowDefinitions="*,*,*">
+                                Grid.Column="0"
+                                Command="{Binding DisplayDescriptionOfPreviousPointCommand}"
+                                Rotation="90"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                            <Image
+                                Grid.Row="1"
+                                InputTransparent="True"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowUpwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowUpwardWhite}}" />
+                            <Border
+                                Grid.Row="2"
+                                HorizontalOptions="Center"
+                                StrokeThickness="5"
+                                VerticalOptions="Fill" />
+                            <Image
+                                Grid.Row="2"
+                                Rotation="90"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
+                                                         Dark={Static img:ImgArrow.LineWhite}}" />
+                            <Image
+                                Grid.Row="3"
+                                InputTransparent="True"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                        </Grid>
+                        <Grid
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Grid.Column="2"
+                            RowDefinitions="auto,auto,*,auto">
 
-                                <Border
+                            <ImageButton
+                                Grid.Column="0"
+                                Command="{Binding DisplayDescriptionOfNextPointCommand}"
+                                Rotation="-90"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+
+                            <Image
+                                Grid.Row="1"
+                                InputTransparent="True"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowUpwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowUpwardWhite}}" />
+                            <Border
+                                Grid.Row="2"
+                                HorizontalOptions="Center"
+                                StrokeThickness="5"
+                                VerticalOptions="Fill" />
+                            <Image
+                                Grid.Row="2"
+                                Rotation="90"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
+                                                         Dark={Static img:ImgArrow.LineWhite}}" />
+                            <Image
+                                Grid.Row="3"
+                                InputTransparent="True"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                        </Grid>
+
+                        <VerticalStackLayout Grid.Column="1">
+                            <Grid
+                                ColumnDefinitions="*"
+                                HorizontalOptions="Center"
+                                RowDefinitions="auto,auto,auto">
+
+                                <Button
+                                    x:Name="YourLocation"
                                     Grid.Row="0"
-                                    Grid.Column="0"
-                                    StrokeThickness="0">
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="30,30,0,0" />
-                                    </Border.StrokeShape>
+                                    Padding="5"
+                                    Command="{Binding CurrentLocationNewPinCommand}"
+                                    HorizontalOptions="Fill"
+                                    Text="Dodaj z twoją lokalizacją" />
 
+
+                                <Label
+                                    Grid.Row="1"
+                                    HorizontalOptions="Center"
+                                    Text="Dodaj z mapy:" />
+                                <Button
+                                    Grid.Row="2"
+                                    Padding="0"
+                                    Command="{Binding ChangeAddLocationIsCommand}"
+                                    HorizontalOptions="Fill"
+                                    Text="{Binding AddLocationIsText}" />
+                            </Grid>
+
+
+                            <toolkit:Expander>
+                                <toolkit:Expander.Header>
                                     <Button
                                         Padding="0"
-                                        Command="{Binding DisplayTypeOfMapCommand}"
-                                        HorizontalOptions="Fill"
-                                        Text="Typ mapy" />
-                                </Border>
+                                        x:DataType="VM:MapsV"
+                                        BindingContext="{x:Reference YourLocation}"
+                                        HorizontalOptions="Center"
+                                        Text="Opcje mapy"
+                                        WidthRequest="{Binding Width}" />
+                                    <!--  Command="{Binding DisplayTypeOfMapCommand}"  -->
+                                </toolkit:Expander.Header>
+                                <toolkit:Expander.Content>
+                                    <Border Margin="5" StrokeThickness="2">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10" />
+                                        </Border.StrokeShape>
+                                        <!--  IsVisible="{Binding IsVisibleTypeOfMap}"  -->
 
-                                <VerticalStackLayout
-                                    Grid.Row="1"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="2">
-
-                                    <Border
-                                        Margin="5"
-                                        IsVisible="{Binding IsVisibleTypeOfMap}"
-                                        StrokeThickness="2">
                                         <VerticalStackLayout Padding="0">
                                             <VerticalStackLayout>
                                                 <RadioButton
@@ -108,7 +202,6 @@
                                                     Value="2" />
                                             </VerticalStackLayout>
 
-
                                             <Border />
 
                                             <Grid Margin="5" ColumnDefinitions="*,*">
@@ -125,137 +218,53 @@
                                         </VerticalStackLayout>
                                     </Border>
 
-                                </VerticalStackLayout>
+                                </toolkit:Expander.Content>
 
-                                <Border
-                                    Grid.Row="0"
-                                    Grid.Column="1"
-                                    StrokeThickness="0">
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="30,30,0,0" />
-                                    </Border.StrokeShape>
+                            </toolkit:Expander>
 
-                                    <Button
-                                        Grid.Row="0"
-                                        Grid.Column="1"
-                                        Padding="0"
-                                        Command="{Binding SwipeViewGestureCommand}"
-                                        Text="Schowaj" />
-                                </Border>
+                        </VerticalStackLayout>
 
-
-                                <Border
-                                    Grid.Row="2"
-                                    Grid.Column="0"
-                                    Padding="5">
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="0,0,30,30" />
-                                    </Border.StrokeShape>
-                                    <VerticalStackLayout HorizontalOptions="Center">
-
-                                        <Label Text="Dodaj z mapy:" />
-                                        <Button
-                                            Padding="0"
-                                            Command="{Binding ChangeAddLocationIsCommand}"
-                                            CornerRadius="50"
-                                            Text="{Binding AddLocationIsText}" />
-                                    </VerticalStackLayout>
-                                </Border>
-
-                                <!--  &#10;  -->
-                                <Border
-                                    Grid.Row="2"
-                                    Grid.Column="1"
-                                    Padding="5">
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="0,0,30,30" />
-                                    </Border.StrokeShape>
-                                    <VerticalStackLayout HorizontalOptions="Center">
-                                        <Label Text="Lokalizacja" />
-                                        <Button
-                                            Padding="0"
-                                            Command="{Binding CurrentLocationNewPinCommand}"
-                                            CornerRadius="50"
-                                            HorizontalOptions="Fill"
-                                            Text="Dodaj" />
-                                    </VerticalStackLayout>
-                                </Border>
-
-                            </Grid>
-                            <Grid Grid.Row="1" ColumnDefinitions="*,*">
-
-                                <ImageButton
-                                    Grid.Column="0"
-                                    Command="{Binding DisplayDescriptionOfPreviousPointCommand}"
-                                    HorizontalOptions="Start"
-                                    Rotation="90"
-                                    Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
-                                                             Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
-                                <ImageButton
-                                    Grid.Column="1"
-                                    Command="{Binding DisplayDescriptionOfNextPointCommand}"
-                                    HorizontalOptions="End"
-                                    Rotation="-90"
-                                    Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
-                                                             Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
-                            </Grid>
-
-                        </Grid>
-
-
-                        <CollectionView
+                        <ScrollView
                             Grid.Row="1"
+                            Grid.Column="1"
                             HorizontalOptions="Center"
-                            ItemsSource="{Binding MapsPoint}"
-                            SelectionMode="None">
+                            VerticalOptions="Start">
 
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <customer:CustomerSmallV
-                                        Name="{Binding Name}"
-                                        x:DataType="VM:MapsM"
-                                        CreatedDate="{Binding Created}"
-                                        DayOfWeek="{Binding SelectedDayOfWeek}"
-                                        Description="{Binding Description}"
-                                        DisplayButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:MapsVM}}, Path=DisplayDescriptionPinCommand}"
-                                        DisplayButtonCommandParameter="{Binding .}"
-                                        DisplayIsVisible="True"
-                                        LocationButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:MapsVM}}, Path=LocationOfPinCommand}"
-                                        LocationButtonCommandParameter="{Binding .}"
-                                        LocationIsVisible="True"
-                                        MoveTimeButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:MapsVM}}, Path=MoveTimeOnPointsCommand}"
-                                        MoveTimeButtonCommandParameter="{Binding SelectedDayOfWeek}"
-                                        MoveTimeIsVisible="True"
-                                        PhoneNumber="{Binding PhoneNumber}"
-                                        QueueNumber="{Binding Index}"
-                                        ResidentialAddress="{Binding ResidentialAddress}" />
-                                    <!--
-                                        Longitude="{Binding Longitude}"
-                                        Latitude="{Binding Latitude}"
-                                    -->
+                            <Grid ColumnDefinitions="*">
 
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-
-                        </CollectionView>
-
-
+                                <customer:CustomerSmallV
+                                    Name="{Binding SelectedPoint.CustomerRoutes.Name}"
+                                    CreatedDate="{Binding SelectedPoint.CustomerRoutes.Created}"
+                                    DayOfWeek="{Binding SelectedPoint.CustomerRoutes.DayOfWeek}"
+                                    Description="{Binding SelectedPoint.CustomerRoutes.Description}"
+                                    DisplayButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:MapsVM}}, Path=DisplayDescriptionPinCommand}"
+                                    DisplayButtonCommandParameter="{Binding SelectedPoint}"
+                                    DisplayIsVisible="True"
+                                    LocationButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:MapsVM}}, Path=LocationOfPinCommand}"
+                                    LocationButtonCommandParameter="{Binding SelectedPoint}"
+                                    LocationIsVisible="True"
+                                    MoveTimeButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:MapsVM}}, Path=MoveTimeOnPointsCommand}"
+                                    MoveTimeButtonCommandParameter="{Binding SelectedPoint.CustomerRoutes.DayOfWeek}"
+                                    MoveTimeIsVisible="True"
+                                    PhoneNumber="{Binding SelectedPoint.CustomerRoutes.PhoneNumber}"
+                                    QueueNumber="{Binding SelectedPoint.CustomerRoutes.QueueNumber}"
+                                    ResidentialAddress="{Binding SelectedPoint.CustomerRoutes.ResidentialAddress}"
+                                    RoutesButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:MapsVM}}, Path=NavigationToRoutesCommand}"
+                                    RoutesButtonCommandParameter="{Binding SelectedPoint.CustomerRoutes}"
+                                    RoutesIsVisible="True" />
+                            </Grid>
+                        </ScrollView>
 
                     </Grid>
 
-
-
                 </Border>
-            </ScrollView>
 
+            </controls:MovingViewInSteps.ContentView>
+        </controls:MovingViewInSteps>
 
-        </Border>
 
 
         <VerticalStackLayout
-            Grid.Row="0"
-            Grid.RowSpan="2"
-            Grid.Column="0"
             HorizontalOptions="Start"
             VerticalOptions="Start"
             ZIndex="101">
@@ -267,20 +276,12 @@
                 LineBreakMode="WordWrap"
                 Text="{Binding SelectedDayName}" />
 
-            <Button
-                Margin="5,5,0,0"
-                Command="{Binding SwipeViewGestureCommand}"
-                CornerRadius="50"
-                Text="Opcje" />
-
         </VerticalStackLayout>
 
 
 
         <maps:Map
             x:Name="Map"
-            Grid.RowSpan="10"
-            Grid.ColumnSpan="10"
             IsShowingUser="True"
             IsTrafficEnabled="{Binding IsTrafficEnabled}"
             ItemsSource="{Binding AllPoints}"
@@ -294,19 +295,12 @@
                     <customPin:CustomPin
                         Address="{Binding Pin.Address}"
                         ImageSource="{Binding Pin.ImageSource}"
-                        InfoWindowClicked="Pin_InfoWindowClicked"
+                        InfoWindowClicked="CustomPin_InfoWindowClicked"
                         Label="{Binding Pin.Label}"
                         Location="{Binding Pin.Location}"
                         MarkerClicked="Pin_InfoWindowClicked" />
 
 
-                    <!--<maps:Pin
-                        Address="{Binding Pin.Address}"
-                        InfoWindowClicked="Pin_InfoWindowClicked"
-                        MarkerClicked="Pin_InfoWindowClicked"
-                        Label="{Binding Pin.Label}"
-                        Location="{Binding Pin.Location}"
-                        MarkerClicked="Pin_InfoWindowClicked" />-->
 
                 </DataTemplate>
             </maps:Map.ItemTemplate>

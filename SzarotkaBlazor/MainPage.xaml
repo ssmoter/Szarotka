@@ -12,83 +12,7 @@
     xmlns:routes="clr-namespace:DriversRoutes.Pages.Main;assembly=DriversRoutes"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
 
-
-    <Grid>
-
-        <VerticalStackLayout>
-            <BoxView
-                Margin="5"
-                HeightRequest="50"
-                Color="Red" />
-            <BoxView
-                Margin="5"
-                HeightRequest="50"
-                Color="Green" />
-            <BoxView
-                Margin="5"
-                HeightRequest="50"
-                Color="Pink" />
-            <BoxView
-                Margin="5"
-                HeightRequest="50"
-                Color="PaleGoldenrod" />
-            <BoxView
-                Margin="5"
-                HeightRequest="50"
-                Color="AliceBlue" />
-            <BoxView
-                Margin="5"
-                HeightRequest="50"
-                Color="DeepSkyBlue" />
-            <BoxView
-                Margin="5"
-                HeightRequest="50"
-                Color="Salmon" />
-        </VerticalStackLayout>
-
-        <controls:MovingViewInSteps Direction="Down" StepStart="One">
-            <controls:MovingViewInSteps.Header>
-                <BoxView
-                    Margin="5"
-                    HeightRequest="50"
-                    Color="Salmon" />
-            </controls:MovingViewInSteps.Header>
-            <controls:MovingViewInSteps.ContentView>
-                <VerticalStackLayout>
-                    <BoxView
-                        Margin="5"
-                        HeightRequest="50"
-                        Color="Blue" />
-                    <BoxView
-                        Margin="5"
-                        HeightRequest="50"
-                        Color="Blue" />
-                    <BoxView
-                        Margin="5"
-                        HeightRequest="50"
-                        Color="Blue" />
-                    <BoxView
-                        Margin="5"
-                        HeightRequest="50"
-                        Color="Blue" />
-                    <BoxView
-                        Margin="5"
-                        HeightRequest="50"
-                        Color="Blue" />
-                    <BoxView
-                        Margin="5"
-                        HeightRequest="50"
-                        Color="Blue" />
-                </VerticalStackLayout>
-            </controls:MovingViewInSteps.ContentView>
-        </controls:MovingViewInSteps>
-
-    </Grid>
-
-
-
-
-    <!--<Grid RowDefinitions="auto,*">
+    <Grid RowDefinitions="auto,*">
 
         <ScrollView Grid.Row="1">
 
@@ -98,8 +22,9 @@
                 VerticalOptions="Center">
 
 
-    -->
-    <!--<Grid
+
+
+                <!--<Grid
                     HorizontalOptions="Center"
                     IsVisible="False"
                     RowDefinitions="*,auto"
@@ -110,7 +35,8 @@
                         Clicked="Button_Clicked"
                         Text="test" />
                 </Grid>-->
-    <!--
+
+
 
                 <Image
                     HeightRequest="100"
@@ -138,6 +64,6 @@
             </VerticalStackLayout>
         </ScrollView>
 
-    </Grid>-->
+    </Grid>
 
 </ContentPage>

@@ -8,9 +8,11 @@
 @inject DataBase.Data.AccessDataBase _db
 @implements IDisposable
 
+@* 
 <GoogleMap CssClass="vh-100 vw-100" @ref="@_map" Id="map" Options="_mapOptions" OnAfterInit="@AfterMapRender"></GoogleMap>
+ *@
 
-<MudBlazor.MudStack Wrap="@MudBlazor.Wrap.Wrap" Class="p-2" Spacing="1" Style="position: fixed;   top: 0; right: 0;" Justify="@MudBlazor.Justify.FlexEnd" Row="true">
+@* <MudBlazor.MudStack Wrap="@MudBlazor.Wrap.Wrap" Class="p-2" Spacing="1" Style="position: fixed;   top: 0; right: 0;" Justify="@MudBlazor.Justify.FlexEnd" Row="true">
 
     @if (AppInfo.Current.RequestedTheme == AppTheme.Dark)
     {
@@ -51,7 +53,7 @@
         }
     }
 
-</MudBlazor.MudStack>
+</MudBlazor.MudStack> *@
 
 
 

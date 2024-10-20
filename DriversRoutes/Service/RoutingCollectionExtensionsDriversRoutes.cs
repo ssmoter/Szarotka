@@ -9,6 +9,7 @@
             Routing.RegisterRoute(nameof(Pages.ListOfPoints.ListOfPointsV), typeof(Pages.ListOfPoints.ListOfPointsV));
             Routing.RegisterRoute(nameof(Pages.Customer.AddCustomer.AddCustomerV), typeof(Pages.Customer.AddCustomer.AddCustomerV));
             Routing.RegisterRoute(nameof(Pages.Customer.DisplayCustomer.DisplayCustomerV), typeof(Pages.Customer.DisplayCustomer.DisplayCustomerV));
+            Routing.RegisterRoute(nameof(Pages.Maps.Navigate.NavigateV), typeof(Pages.Maps.Navigate.NavigateV));
 
         }
     }

@@ -36,6 +36,10 @@ namespace DriversRoutes.Service
 
             services.AddScoped<Pages.Maps.MapSmall.MapSmallV>();
             services.AddScoped<Pages.Maps.MapSmall.MapSmallVM>();
+
+            services.AddScoped<Pages.Maps.Navigate.NavigateV>();
+            services.AddScoped<Pages.Maps.Navigate.NavigateVM>();
+
             services.AddScoped<HttpClient>();
 
             services.AddSingleton<BlazorMap>();

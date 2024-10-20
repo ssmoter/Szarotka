@@ -8,14 +8,12 @@
     xmlns:controlsMaps="clr-namespace:DriversRoutes.Pages.Maps.Controls"
     xmlns:maps="http://schemas.microsoft.com/dotnet/2021/maui/maps"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    x:Name="this">
+    x:Name="this"
+    x:DataType="VM:MapSmallV">
 
     <!--  xmlns:mapBlazor="clr-namespace:DriversRoutes.Pages.Maps.Controls"  -->
 
-    <Border
-        x:DataType="VM:MapSmallV"
-        HorizontalOptions="Fill"
-        VerticalOptions="Fill">
+    <Border HorizontalOptions="Fill" VerticalOptions="Fill">
 
         <Border.StrokeShape>
             <RoundRectangle CornerRadius="10" />
@@ -57,13 +55,6 @@
                     Source="{AppThemeBinding Light={Static Symbols:ImgMapsSymbols.SavedSearchBlack},
                                              Dark={Static Symbols:ImgMapsSymbols.SavedSearchBlack}}"
                     VerticalOptions="StartAndExpand" />
-                <!--<Button
-                    Command="{Binding MapSmallVM.CenterOldLocationCommand}"
-                    CommandParameter="{Binding Customer}"
-                    CornerRadius="10"
-                    HorizontalOptions="StartAndExpand"
-                    Text="O"
-                    VerticalOptions="StartAndExpand" />-->
 
             </VerticalStackLayout>
 
@@ -96,22 +87,11 @@
 
             <Grid Grid.Row="1" RowDefinitions="*,42">
 
-                <BlazorWebView
-                    Grid.Row="0"
-                    x:Name="blazorMap"
-                    Grid.RowSpan="2"
-                    HostPage="wwwroot/index.html">
-                    <BlazorWebView.RootComponents>
-                        <RootComponent ComponentType="{x:Type controlsMaps:BlazorMap}" Selector="#app" />
-                    </BlazorWebView.RootComponents>
-                </BlazorWebView>
-
                 <maps:Map
                     x:Name="Map"
                     Grid.Row="0"
                     Grid.RowSpan="2"
                     IsShowingUser="True"
-                    IsVisible="False"
                     MapType="Street" />
 
                 <Image

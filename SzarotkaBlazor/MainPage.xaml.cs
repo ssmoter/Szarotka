@@ -52,6 +52,11 @@ namespace SzarotkaBlazor
             await Shell.Current.GoToAsync(nameof(DriversRoutes.Pages.Main.MainVDriversRoutesV));
         }
 
+        private void Button_Clicked(object sender, EventArgs e)
+        {
+
+        }
+
 
         //private void Button_Clicked(object sender, EventArgs e)
         //{

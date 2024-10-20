@@ -14,7 +14,7 @@ public partial class MapSmallV : ContentView, IDisposable
         , typeof(CustomerRoutes)
         , typeof(MapSmallV)
         , defaultBindingMode: BindingMode.TwoWay
-        , propertyChanged: async (bindable, oldValu, newValue) =>
+        , propertyChanged: (bindable, oldValu, newValue) =>
     {
         if (bindable is MapSmallV view)
         {
@@ -81,7 +81,6 @@ public partial class MapSmallV : ContentView, IDisposable
 
 
     #endregion
-
     private MapSmallVM mapSmallVM;
     public MapSmallVM MapSmallVM
     {

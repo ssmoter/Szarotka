@@ -391,6 +391,28 @@ namespace DriversRoutes.Pages.ListOfPoints
             await Toast.Make("Wczytany plik usunięto").Show();
         }
 
+        [RelayCommand]
+        async Task NavigationToRoutes(CustomerRoutes customer)
+        {
+            try
+            {
+                if (customer is null)
+                {
+                    return;
+                }
+
+                await Shell.Current.GoToAsync($"{nameof(Pages.Maps.Navigate.NavigateV)}?",
+                    new Dictionary<string, object>()
+                    {
+                        [nameof(ObservableCollection<CustomerRoutes>)] = CustomerRoutes,
+                        [nameof(DataBase.Model.EntitiesRoutes.CustomerRoutes)] = customer
+                    });
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
         #endregion
 
     }

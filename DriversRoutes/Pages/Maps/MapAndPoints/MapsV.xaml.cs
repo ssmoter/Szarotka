@@ -39,7 +39,7 @@ public partial class MapsV : ContentPage, IDisposable
 
         if (BindingContext is MapsVM vm)
         {
-            vm.StartListeningLocation(this.Map);
+            vm.StartListeningLocation();
 
             if (vm.Routes is null)
                 return;
@@ -108,6 +108,18 @@ public partial class MapsV : ContentPage, IDisposable
             {
                 var value = radio.Value;
                 vm.ChangeTypeOfMapCommand.Execute(value);
+            }
+        }
+    }
+
+    private void CustomPin_InfoWindowClicked(object sender, PinClickedEventArgs e)
+    {
+        if (BindingContext is MapsVM vm)
+        {
+            if (sender is Pin pin)
+            {
+                vm.OpenMoreDetail(pin);
+                vm.StepSelected = DataBase.CustomControls.StepSelected.Full;
             }
         }
     }

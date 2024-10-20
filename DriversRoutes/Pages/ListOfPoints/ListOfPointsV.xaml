@@ -92,7 +92,10 @@
                                 MoveTimeIsVisible="True"
                                 PhoneNumber="{Binding PhoneNumber}"
                                 QueueNumber="{Binding QueueNumber}"
-                                ResidentialAddress="{Binding ResidentialAddress}" />
+                                ResidentialAddress="{Binding ResidentialAddress}"
+                                RoutesButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListOfPointsVM}}, Path=NavigationToRoutesCommand}"
+                                RoutesButtonCommandParameter="{Binding .}"
+                                RoutesIsVisible="True" />
 
                         </StackLayout>
 

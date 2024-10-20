@@ -1,10 +1,9 @@
-﻿
-namespace DataBase.CustomControls
+﻿namespace DataBase.CustomControls
 {
     public class MovingViewInSteps : ContentView, IDisposable
     {
         public static readonly BindableProperty StepStartProperty =
-            BindableProperty.Create(nameof(StepStart), typeof(StepSelected), typeof(MovingViewInSteps), defaultValue: StepSelected.One, defaultBindingMode: BindingMode.TwoWay, propertyChanged: (bindable, oldValu, newValue) =>
+            BindableProperty.Create(nameof(StepStart), typeof(StepSelected), typeof(MovingViewInSteps), defaultValue: StepSelected.One, defaultBindingMode: BindingMode.TwoWay, propertyChanged: (bindable, oldValue, newValue) =>
             {
                 if (bindable is MovingViewInSteps view)
                 {
@@ -21,13 +20,13 @@ namespace DataBase.CustomControls
         }
 
         public static readonly BindableProperty HeaderProperty =
-             BindableProperty.Create(nameof(Header), typeof(IView), typeof(MovingViewInSteps), propertyChanged: (bindable, oldValu, newValue) =>
+             BindableProperty.Create(nameof(Header), typeof(IView), typeof(MovingViewInSteps), propertyChanged: (bindable, oldValue, newValue) =>
              {
                  if (bindable is MovingViewInSteps view)
                  {
                      if (newValue is not null)
                      {
-                         view._contenGrid.Remove(oldValu as IView);
+                         view._contenGrid.Remove(oldValue as IView);
                          int direction = (view.Direction == Direction.Up) ? 0 : 1;
                          view._contenGrid.Add(newValue as IView, column: 0, row: direction);
                      }
@@ -40,15 +39,15 @@ namespace DataBase.CustomControls
         }
 
         public static readonly BindableProperty ContentViewProperty =
-             BindableProperty.Create(nameof(ContentView), typeof(IView), typeof(MovingViewInSteps), propertyChanged: (bindable, oldValu, newValue) =>
+             BindableProperty.Create(nameof(ContentView), typeof(IView), typeof(MovingViewInSteps), propertyChanged: (bindable, oldValue, newValue) =>
              {
                  if (bindable is MovingViewInSteps view)
                  {
-                     if (newValue is not null)
+                     if (newValue is View value)
                      {
-                         view._contenGrid.Remove(oldValu as IView);
+                         view._contenGrid.Remove(value);
                          int direction = (view.Direction == Direction.Up) ? 1 : 0;
-                         view._contenGrid.Add(newValue as IView, column: 0, row: direction);
+                         view._contenGrid.Add(value, column: 0, row: direction);
                      }
                  }
              });
@@ -59,7 +58,7 @@ namespace DataBase.CustomControls
         }
 
         public static readonly BindableProperty DirectionProperty =
-            BindableProperty.Create(nameof(Direction), typeof(Direction), typeof(MovingViewInSteps), defaultValue: Direction.Up, defaultBindingMode: BindingMode.TwoWay, propertyChanged: (bindable, oldValu, newValue) =>
+            BindableProperty.Create(nameof(Direction), typeof(Direction), typeof(MovingViewInSteps), defaultValue: Direction.Up, defaultBindingMode: BindingMode.TwoWay, propertyChanged: (bindable, oldValue, newValue) =>
             {
                 if (bindable is MovingViewInSteps view)
                 {
@@ -74,6 +73,7 @@ namespace DataBase.CustomControls
             get => (Direction)GetValue(DirectionProperty);
             set => SetValue(DirectionProperty, value);
         }
+
 
 
 
@@ -96,6 +96,7 @@ namespace DataBase.CustomControls
             GestureRecognizers.Add(GetSwipeGestureRecognizerUp());
             GestureRecognizers.Add(GetSwipeGestureRecognizerDown());
         }
+
         public void Dispose()
         {
             GestureRecognizers.Clear();
@@ -103,6 +104,7 @@ namespace DataBase.CustomControls
             _swipeDown -= MovingViewInStepsDown_Swipe;
             _animation.Dispose();
         }
+
 
         private SwipeGestureRecognizer GetSwipeGestureRecognizerUp()
         {
@@ -138,26 +140,14 @@ namespace DataBase.CustomControls
             {
                 return;
             }
-            var height = Application.Current?.Windows[0]?.Height;
+            var parent = (this.Parent as View);
+            var height = parent.Height;
 
-            var newHeight = (double)((height / 4) * (int)step);
-
-            _animation.Add(0, 1, new Animation(v => this.ContentView.MaximumHeightRequest = v, this.ContentView.Height, newHeight));
-            _animation.Commit(this, "GrowAnimation", 16, 1000, Easing.Linear);
+            var newHeight = (double)((height / 3) * (int)step);
+            _animation.Add(0, 1, new Animation(v => this.ContentView.HeightRequest = v, this.ContentView.Height, newHeight));
+            _animation.Commit(this, "GrowAnimation", 16, 250, Easing.Linear);
         }
-        private static StepSelected StepIsChange(StepSelected step, bool goUp)
-        {
-            if (goUp)
-            {
-                step = StepUp(step);
-            }
-            else
-            {
-                step = StepDown(step);
-            }
-            return step;
-        }
-        private static StepSelected StepUp(StepSelected step)
+        public static StepSelected StepUp(StepSelected step)
         {
             var newStep = ((int)step) + 1;
 
@@ -168,7 +158,7 @@ namespace DataBase.CustomControls
 
             return (StepSelected)newStep;
         }
-        private static StepSelected StepDown(StepSelected step)
+        public static StepSelected StepDown(StepSelected step)
         {
             var newStep = ((int)step) - 1;
 
@@ -179,40 +169,40 @@ namespace DataBase.CustomControls
 
             return (StepSelected)newStep;
         }
-        private static void SetDirection(MovingViewInSteps view, Direction direction)
+        private static void SetDirection(MovingViewInSteps mainView, Direction direction)
         {
-            view._swipeUp -= view.MovingViewInStepsUp_Swipe;
-            view._swipeDown -= view.MovingViewInStepsDown_Swipe;
-            view._contenGrid.Remove(view.Header);
-            view._contenGrid.Remove(view.ContentView);
+            mainView._swipeUp -= mainView.MovingViewInStepsUp_Swipe;
+            mainView._swipeDown -= mainView.MovingViewInStepsDown_Swipe;
+            mainView._contenGrid.Remove(mainView.Header);
+            mainView._contenGrid.Remove(mainView.ContentView);
 
             if (direction == Direction.Up)
             {
-                if (view.Header is not null)
+                if (mainView.Header is not null)
                 {
-                    view._contenGrid.Add(view.Header, column: 0, row: 0);
+                    mainView._contenGrid.Add(mainView.Header, column: 0, row: 0);
                 }
-                if (view.ContentView is not null)
+                if (mainView.ContentView is not null)
                 {
-                    view._contenGrid.Add(view.ContentView, column: 0, row: 1);
+                    mainView._contenGrid.Add(mainView.ContentView, column: 0, row: 1);
                 }
-                view.VerticalOptions = LayoutOptions.End;
-                view._swipeUp += view.MovingViewInStepsUp_Swipe;
-                view._swipeDown += view.MovingViewInStepsDown_Swipe;
+                mainView.VerticalOptions = LayoutOptions.End;
+                mainView._swipeUp += mainView.MovingViewInStepsUp_Swipe;
+                mainView._swipeDown += mainView.MovingViewInStepsDown_Swipe;
             }
             else if (direction == Direction.Down)
             {
-                if (view.Header is not null)
+                if (mainView.Header is not null)
                 {
-                    view._contenGrid.Add(view.Header, column: 0, row: 1);
+                    mainView._contenGrid.Add(mainView.Header, column: 0, row: 1);
                 }
-                if (view.ContentView is not null)
+                if (mainView.ContentView is not null)
                 {
-                    view._contenGrid.Add(view.ContentView, column: 0, row: 0);
+                    mainView._contenGrid.Add(mainView.ContentView, column: 0, row: 0);
                 }
-                view.VerticalOptions = LayoutOptions.Start;
-                view._swipeUp += view.MovingViewInStepsDown_Swipe;
-                view._swipeDown += view.MovingViewInStepsUp_Swipe;
+                mainView.VerticalOptions = LayoutOptions.Start;
+                mainView._swipeUp += mainView.MovingViewInStepsDown_Swipe;
+                mainView._swipeDown += mainView.MovingViewInStepsUp_Swipe;
             }
         }
     }
@@ -222,7 +212,6 @@ namespace DataBase.CustomControls
         None = 0,
         One,
         Half,
-        Three,
         Full,
     }
     public enum Direction

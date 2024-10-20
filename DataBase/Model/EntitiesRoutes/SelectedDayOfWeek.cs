@@ -410,8 +410,25 @@ namespace DataBase.Model.EntitiesRoutes
 
             return sb.ToString();
         }
-
-
+        public string TodayTime(DayOfWeek dayOfWeek)
+        {
+            return dayOfWeek switch
+            {
+                DayOfWeek.Sunday => SundayTimeSpan.ToString("hh\\:mm"),
+                DayOfWeek.Monday => MondayTimeSpan.ToString("hh\\:mm"),
+                DayOfWeek.Tuesday => TuesdayTimeSpan.ToString("hh\\:mm"),
+                DayOfWeek.Wednesday => WednesdayTimeSpan.ToString("hh\\:mm"),
+                DayOfWeek.Thursday => ThursdayTimeSpan.ToString("hh\\:mm"),
+                DayOfWeek.Friday => FridayTimeSpan.ToString("hh\\:mm"),
+                DayOfWeek.Saturday => SaturdayTimeSpan.ToString("hh\\:mm"),
+                _ => "",
+            };
+        }
+        public string TodayTime()
+        {
+            var today = DateTime.Today.DayOfWeek;
+            return TodayTime(today);
+        }
         public SelectedDayOfWeekRoutes()
         {
             var timeSpan = DateTime.Now.TimeOfDay;

@@ -1,13 +1,230 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="DriversRoutes.Pages.Maps.Navigate.NavigateV"
-             Shell.PresentationMode="ModalAnimated"
-             Title="NavigateV">
+<ContentPage
+    x:Class="DriversRoutes.Pages.Maps.Navigate.NavigateV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:DataBase.CustomControls;assembly=DataBase"
+    xmlns:controlsMaps="clr-namespace:DriversRoutes.Pages.Maps.Controls"
+    xmlns:customer="clr-namespace:DriversRoutes.Pages.Customer.CustomerSmall"
+    xmlns:img="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:DriversRoutes.Pages.Maps.Navigate"
+    x:DataType="vm:NavigateVM"
+    Shell.PresentationMode="Animated">
 
-    <Grid>
+    <Grid RowDefinitions="*,auto">
+
+        <Grid
+            Grid.Row="1"
+            BackgroundColor="{AppThemeBinding Light=AliceBlue,
+                                              Dark=Grey}"
+            ColumnDefinitions="*,auto">
+            <VerticalStackLayout>
+
+                <Label FontSize="Title">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding SelectedPoint.QueueNumber}" />
+                            <Span Text=":" />
+                            <Span Text="{Binding SelectedPoint.Name}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+                <Label Text="{Binding SelectedPoint.Description}" />
+
+                <VerticalStackLayout.GestureRecognizers>
+                    <SwipeGestureRecognizer Command="{Binding ShowMovingViewCommand}" Direction="Up" />
+                    <SwipeGestureRecognizer Command="{Binding HideMovingViewCommand}" Direction="Down" />
+                </VerticalStackLayout.GestureRecognizers>
+            </VerticalStackLayout>
+            <ImageButton
+                Grid.Column="1"
+                Command="{Binding DisplayDescriptionOfNextPointCommand}"
+                HorizontalOptions="End"
+                Rotation="-90"
+                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+        </Grid>
+
+        <controls:MovingViewInSteps
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Direction="Up"
+            StepStart="{Binding StepSelected}"
+            ZIndex="102">
+            <controls:MovingViewInSteps.Header>
+                <StackLayout IsVisible="False" />
+            </controls:MovingViewInSteps.Header>
+            <controls:MovingViewInSteps.ContentView>
+                <Border BackgroundColor="{AppThemeBinding Light=AliceBlue, Dark=Grey}">
+
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+
+                    <Grid ColumnDefinitions="50,*,50" RowDefinitions="auto,*">
 
 
+                        <Grid
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Grid.Column="0"
+                            RowDefinitions="auto,auto,*,auto">
+
+                            <ImageButton
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Command="{Binding DisplayDescriptionOfPreviousPointCommand}"
+                                Rotation="90"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                            <Image
+                                Grid.Row="1"
+                                InputTransparent="True"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowUpwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowUpwardWhite}}" />
+                            <Border
+                                Grid.Row="2"
+                                HorizontalOptions="Center"
+                                StrokeThickness="5"
+                                VerticalOptions="Fill" />
+                            <Image
+                                Grid.Row="2"
+                                Rotation="90"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
+                                                         Dark={Static img:ImgArrow.LineWhite}}" />
+                            <Image
+                                Grid.Row="3"
+                                InputTransparent="True"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                        </Grid>
+                        <Grid
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Grid.Column="2"
+                            RowDefinitions="auto,auto,*,auto">
+
+                            <ImageButton
+                                Grid.Column="0"
+                                Command="{Binding DisplayDescriptionOfNextPointCommand}"
+                                Rotation="-90"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+
+                            <Image
+                                Grid.Row="1"
+                                InputTransparent="True"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowUpwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowUpwardWhite}}" />
+                            <Border
+                                Grid.Row="2"
+                                HorizontalOptions="Center"
+                                StrokeThickness="5"
+                                VerticalOptions="Fill" />
+                            <Image
+                                Grid.Row="2"
+                                Rotation="90"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
+                                                         Dark={Static img:ImgArrow.LineWhite}}" />
+                            <Image
+                                Grid.Row="3"
+                                InputTransparent="True"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                        </Grid>
+
+
+                        <toolkit:Expander Grid.Column="1">
+                            <toolkit:Expander.Header>
+                                <Button
+                                    Padding="0"
+                                    CornerRadius="50"
+                                    HorizontalOptions="Fill"
+                                    Text="Opcje mapy" />
+                            </toolkit:Expander.Header>
+                            <toolkit:Expander.Content>
+                                <Border Margin="5" StrokeThickness="2">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10" />
+                                    </Border.StrokeShape>
+
+                                    <VerticalStackLayout Padding="0">
+                                        <VerticalStackLayout>
+                                            <RadioButton
+                                                
+                                                CheckedChanged="RadioButton_CheckedChanged"
+                                                Content="Ulica"
+                                                IsChecked="True"
+                                                Value="0" />
+                                            <RadioButton
+                                                CheckedChanged="RadioButton_CheckedChanged"
+                                                Content="Satelita"
+                                                Value="1" />
+                                            <RadioButton
+                                                CheckedChanged="RadioButton_CheckedChanged"
+                                                Content="Hybryda"
+                                                Value="2" />
+                                        </VerticalStackLayout>
+
+                                        <Border />
+
+                                        <Grid Margin="5" ColumnDefinitions="*,*">
+                                            <Label
+                                                Grid.Column="1"
+                                                LineBreakMode="WordWrap"
+                                                Text="Natężenie ruchu"
+                                                VerticalOptions="Center" />
+                                            <Switch
+                                                Grid.Column="0"
+                                                HorizontalOptions="Start"
+                                                IsToggled="{Binding IsTrafficEnabled}" />
+                                        </Grid>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                            </toolkit:Expander.Content>
+
+                        </toolkit:Expander>
+
+
+
+                        <ScrollView
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Start">
+
+                            <Grid ColumnDefinitions="*">
+
+                                <customer:CustomerSmallV
+                                    Name="{Binding SelectedPoint.Name}"
+                                    CreatedDate="{Binding SelectedPoint.Created}"
+                                    DayOfWeek="{Binding SelectedPoint.DayOfWeek}"
+                                    Description="{Binding SelectedPoint.Description}"
+                                    DisplayButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type vm:NavigateVM}}, Path=DisplayDescriptionPinCommand}"
+                                    DisplayButtonCommandParameter="{Binding SelectedPoint}"
+                                    DisplayIsVisible="True"
+                                    PhoneNumber="{Binding SelectedPoint.PhoneNumber}"
+                                    QueueNumber="{Binding SelectedPoint.QueueNumber}"
+                                    ResidentialAddress="{Binding SelectedPoint.ResidentialAddress}" />
+                            </Grid>
+                        </ScrollView>
+
+                    </Grid>
+
+                </Border>
+
+            </controls:MovingViewInSteps.ContentView>
+        </controls:MovingViewInSteps>
+
+
+        <BlazorWebView x:Name="blazorMap" HostPage="wwwroot/index.html">
+            <BlazorWebView.RootComponents>
+                <RootComponent ComponentType="{x:Type controlsMaps:BlazorMap}" Selector="#app" />
+            </BlazorWebView.RootComponents>
+        </BlazorWebView>
 
     </Grid>
 

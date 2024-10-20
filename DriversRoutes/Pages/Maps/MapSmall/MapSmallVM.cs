@@ -3,8 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Model.EntitiesRoutes;
 
-using DriversRoutes.Model.Route;
-
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 
@@ -21,7 +19,6 @@ public partial class MapSmallVM : ObservableObject
     public Func<Microsoft.Maui.Controls.Maps.Pin, bool> RemovePin;
     public Func<Microsoft.Maui.Devices.Sensors.Location> GetCurrentLocation;
     public Action<Microsoft.Maui.Devices.Sensors.Location> EditCustomerLocation;
-    public ComputeRoutesRequest ComputeRoutesRequest { get; set; }
 
     private readonly DataBase.Data.AccessDataBase _db;
     private Pin _pin;
