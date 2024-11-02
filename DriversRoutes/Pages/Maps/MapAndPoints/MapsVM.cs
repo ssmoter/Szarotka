@@ -91,9 +91,11 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             AllPoints.Clear();
             Geolocation.LocationChanged -= StartListening;
             _db.Dispose();
+            for (int i = 0; i < pinImage.Count; i++)
+            {
+                //pinImage[i].discpose
+            }
             pinImage.Clear();
-
-            GC.SuppressFinalize(this);
         }
 
         #region Method
@@ -101,7 +103,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
         {
             try
             {
-                return await CurrentLocation.Get();
+                return await CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(10));
             }
             catch (Exception ex)
             {

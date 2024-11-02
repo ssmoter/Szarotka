@@ -85,7 +85,8 @@
                                 Latitude="{Binding Latitude}"
                                 LocationButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListOfPointsVM}}, Path=LocationOfPinCommand}"
                                 LocationButtonCommandParameter="{Binding .}"
-                                LocationIsVisible="True"
+                                LocationIsVisible="{OnPlatform Android=true,
+                                                               Default=false}"
                                 Longitude="{Binding Longitude}"
                                 MoveTimeButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListOfPointsVM}}, Path=MoveTimeOnPointsCommand}"
                                 MoveTimeButtonCommandParameter="{Binding DayOfWeek}"

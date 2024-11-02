@@ -6,14 +6,13 @@ namespace DriversRoutes.Helper
     {
         public static readonly MapSpan Szarotka = new(new Location(49.74918622300343, 20.40891067705071), 0.1, 0.1);
 
-        public static async Task<MapSpan> Get()
+        public static async Task<MapSpan> Get(GeolocationAccuracy geolocationAccuracy, TimeSpan timeout, CancellationToken token = default)
         {
             try
             {
-                GeolocationRequest request = new(GeolocationAccuracy.Best, TimeSpan.FromSeconds(10));
+                GeolocationRequest request = new(geolocationAccuracy, timeout);
 
-                var _cancelTokenSource = new CancellationTokenSource();
-                var location = await Geolocation.Default.GetLocationAsync(request, _cancelTokenSource.Token);
+                var location = await Geolocation.Default.GetLocationAsync(request, token);
                 location ??= await Geolocation.Default.GetLastKnownLocationAsync();
                 if (location is null || location.IsFromMockProvider)
                 {

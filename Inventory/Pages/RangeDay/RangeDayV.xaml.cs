@@ -1,3 +1,7 @@
+using Inventory.Pages.RangeDay.Table;
+
+using Microsoft.AspNetCore.Components.WebView.Maui;
+
 namespace Inventory.Pages.RangeDay;
 
 public partial class RangeDayV : ContentPage
@@ -9,9 +13,23 @@ public partial class RangeDayV : ContentPage
         this._vm = vm;
         BindingContext = vm;
     }
+    BlazorWebView _rangeTable;
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
+        _rangeTable = new Microsoft.AspNetCore.Components.WebView.Maui.BlazorWebView()
+        {
+            HostPage = "wwwroot/index.html",
+        };
+        _rangeTable.RootComponents.Add(new RootComponent() { ComponentType = typeof(RangeTable), Selector = "#app" });
+
+        this.TableGrid.Add(_rangeTable);
+    }
+
+    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
+    {
+        base.OnNavigatedFrom(args);
+        TableGrid.Remove(_rangeTable);
     }
 
     private void SwipeItem_Invoked_OpenDay(object sender, EventArgs e)

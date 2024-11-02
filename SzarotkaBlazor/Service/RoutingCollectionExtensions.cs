@@ -8,11 +8,7 @@
 
             Inventory.Service.RoutingCollectionExtensionsInventory.AddRoutings();
             DataBase.Service.RoutingCollectionExtensionsDataBase.AddRoutings();
-
-#if ANDROID
             DriversRoutes.Service.RoutingCollectionExtensionsDriversRoutes.AddRoutings();
-#endif
-
         }
     }
 }

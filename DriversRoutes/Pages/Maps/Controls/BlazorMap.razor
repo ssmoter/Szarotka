@@ -1,499 +1,201 @@
 ﻿@using DataBase.Model.EntitiesRoutes
-@using GoogleMapsComponents
-@using GoogleMapsComponents.Maps
 @using Microsoft.JSInterop
 @using DataBase.Helper
 
 @inject IJSRuntime JsRuntime
 @inject DataBase.Data.AccessDataBase _db
-@implements IDisposable
+@inject Data.GoogleApi.IRoutes _routes;
+@inject NavigationManager _navigation;
 
-@* 
-<GoogleMap CssClass="vh-100 vw-100" @ref="@_map" Id="map" Options="_mapOptions" OnAfterInit="@AfterMapRender"></GoogleMap>
- *@
+@implements IDisposable;
 
-@* <MudBlazor.MudStack Wrap="@MudBlazor.Wrap.Wrap" Class="p-2" Spacing="1" Style="position: fixed;   top: 0; right: 0;" Justify="@MudBlazor.Justify.FlexEnd" Row="true">
+<MudBlazor.MudThemeProvider @bind-IsDarkMode="@DataBase.Helper.MudBlazorTheme.IsDarkMode" Theme="@DataBase.Helper.MudBlazorTheme.Theme" />
 
-    @if (AppInfo.Current.RequestedTheme == AppTheme.Dark)
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMfTC47bnsNBAK8S4xKk7Mhb_aiSqnCYU&callback=initMap" async defer></script>
+
+<div id="map" style="height:100vh;width:100%;"></div>
+
+
+
+<MudBlazor.MudStack Wrap="@MudBlazor.Wrap.Wrap" Class="p-2" Spacing="1" Style="position: fixed;   top: 0; right: 0;" Justify="@MudBlazor.Justify.FlexEnd" Row="true">
+
+    @if (_customer is not null)
     {
-        if (_customer is not null)
-        {
-            <MudBlazor.MudPaper MaxWidth="40px" MaxHeight="40px" Class="" Style="background:rgb(68, 68, 68);">
-                <MudBlazor.MudIconButton Class="p-2" OnClick="@NativeMapDriveTo" Icon="@DataBase.Helper.Img.Svg.HtmlMap.AssistanceDirectionWhite"></MudBlazor.MudIconButton>
-            </MudBlazor.MudPaper>
-            <MudBlazor.MudPaper MaxWidth="40px" MaxHeight="40px" Class="" Style="background:rgb(68, 68, 68);">
-                <MudBlazor.MudIconButton Class="p-2" OnClick="@NativeMapNavigateTo" Icon="@DataBase.Helper.Img.Svg.HtmlMap.MapWhite"></MudBlazor.MudIconButton>
-            </MudBlazor.MudPaper>
-        }
-        if (DeviceInfo.Platform != DevicePlatform.WinUI)
-        {
-            <MudBlazor.MudFlexBreak />
-            <MudBlazor.MudPaper MaxWidth="40px" MaxHeight="40px" Class="" Style="background:rgb(68, 68, 68);">
-                <MudBlazor.MudIconButton Class="p-2" OnClick="@MyLocation" Icon="@DataBase.Helper.Img.Svg.HtmlMap.MyLocationWhite"></MudBlazor.MudIconButton>
-            </MudBlazor.MudPaper>
-        }
+        <MudBlazor.MudPaper MaxWidth="40px" MaxHeight="40px">
+            <MudBlazor.MudIconButton Class="p-2" OnClick="@NativeMapDispalyPin" Icon="@_nativeMapDispalyPin"></MudBlazor.MudIconButton>
+        </MudBlazor.MudPaper>
+        <MudBlazor.MudPaper MaxWidth="40px" MaxHeight="40px">
+            <MudBlazor.MudIconButton Class="p-2" OnClick="@NativeMapNavigateTo" Icon="@_nativeMapNavigateTo"></MudBlazor.MudIconButton>
+        </MudBlazor.MudPaper>
     }
-    else
+    @if (DeviceInfo.Platform != DevicePlatform.WinUI)
     {
-        if (_customer is not null)
-        {
-            <MudBlazor.MudPaper MaxWidth="40px" MaxHeight="40px" Class="" Style="background:rgb(255, 255, 255);">
-                <MudBlazor.MudIconButton Class="p-2" OnClick="@NativeMapDriveTo" Icon="@DataBase.Helper.Img.Svg.HtmlMap.AssistanceDirectionDark"></MudBlazor.MudIconButton>
-            </MudBlazor.MudPaper>
-            <MudBlazor.MudPaper MaxWidth="40px" MaxHeight="40px" Class="" Style="background:rgb(255, 255, 255);">
-                <MudBlazor.MudIconButton Class="p-2" OnClick="@NativeMapNavigateTo" Icon="@DataBase.Helper.Img.Svg.HtmlMap.MapDark"></MudBlazor.MudIconButton>
-            </MudBlazor.MudPaper>
-        }
-        if (DeviceInfo.Platform != DevicePlatform.WinUI)
-        {
-            <MudBlazor.MudFlexBreak />
-            <MudBlazor.MudPaper MaxWidth="40px" MaxHeight="40px" Class="" Style="background:rgb(255, 255, 255);">
-                <MudBlazor.MudIconButton Class="p-2" OnClick="@MyLocation" Icon="@DataBase.Helper.Img.Svg.HtmlMap.MyLocationDark"></MudBlazor.MudIconButton>
-            </MudBlazor.MudPaper>
-        }
+        <MudBlazor.MudFlexBreak />
+        <MudBlazor.MudPaper MaxWidth="40px" MaxHeight="40px">
+            <MudBlazor.MudIconButton Class="p-2" OnClick="@(()=>MyLocation(CancellationToken.None))" Icon="@_myLocationIcon"></MudBlazor.MudIconButton>
+        </MudBlazor.MudPaper>
     }
 
-</MudBlazor.MudStack> *@
-
-
-
+</MudBlazor.MudStack>
 
 
 @code {
-
     #region Variables
 
-    private GoogleMap _map = null!;
-
-    private MapOptions _mapOptions;
-    private AdvancedMarkerElement _marker, _center;
-    private LatLngBounds _bounds;
-
-    private DirectionsRenderer _dirRend;
-    private string _durationTotalString;
-    private string _distanceTotalString;
-    private DirectionsResult _directionsResult;
-
-    private int _second = 0;
-    private double _lastCurse = 0;
+    private double _lastCourse = 0;
     private bool _listeningLocation = true;
+    private string _userIconId = "_userIconId";
 
-    private CustomerRoutes _customer;
-    private static event Action<CustomerRoutes> _customerAction;
-    private void _setCustomer(CustomerRoutes customer)
-    {
-        _customer = customer;
-        Task.Run(async () => await MakePin(customer));
-    }
-    public static void OnSetCustomer(CustomerRoutes customer)
-    {
-        _customerAction?.Invoke(customer);
-    }
+    private IJSObjectReference _module;
+    private string _myLocationIcon, _nativeMapNavigateTo, _nativeMapDispalyPin;
 
-    private static event Func<Task> MarkerEvent;
 
-    private static event Func<Task> addDirectionsEvent;
-    private async Task _addDirectionsEvent()
+
+    private event Action<Location, CancellationToken> SetCenter;
+    private void _setCenter(Location location, CancellationToken token = default)
     {
-        await AddDirections();
-    }
-    public static async Task OnAddDirections()
-    {
-        await addDirectionsEvent?.Invoke();
+        SetCenter?.Invoke(location, token);
     }
 
     #endregion
 
-    public BlazorMap()
+    protected override async Task OnInitializedAsync()
     {
-        _customerAction += _setCustomer;
-        addDirectionsEvent += _addDirectionsEvent;
-        if (_mapOptions is null)
-        {
-            var mapSpan = Helper.CurrentLocation.Szarotka;
-            _mapOptions = new MapOptions()
-                {
-                    Zoom = 13,
-                    Center = new LatLngLiteral()
-                    {
-                        Lat = mapSpan.Center.Latitude,
-                        Lng = mapSpan.Center.Longitude,
-                    },
-                    MapTypeId = MapTypeId.Roadmap,
-                    DisableDefaultUI = false,
-                    FullscreenControl = false,
-                    MapId = "mapId",
-                    ZoomControl = true,
-                    CameraControl = true,
-                    StreetViewControl = true,
-                    KeyboardShortcuts = false,
-                    ClickableIcons = false,
-                    ApiLoadOptions = new("AIzaSyDMfTC47bnsNBAK8S4xKk7Mhb_aiSqnCYU")
-                    {
-                        Language = "pl-pl",
-                        Version = "beta",
-                        Libraries = "places,visualization,drawing,marker",
-                    },
-                    ColorScheme = ColorScheme.FollowSystem
-                };
-        }
+        _routes.SetKey("AIzaSyDMfTC47bnsNBAK8S4xKk7Mhb_aiSqnCYU");
+
+        var currentLocation = await Helper.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(1));
+        await GetModule(currentLocation);
+
+#if !WINDOWS
+        var name = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+        AddListener("dragstart", nameof(OnMapDragStart), name);
+        Helper.MapGeolocation.OnStopListeningLocation();
+        await Helper.MapGeolocation.OnStartListeningLocation(SetCenter, GeolocationAccuracy.Best, TimeSpan.FromSeconds(1));
+
+        AddAdvancedMarker(_userIconId,
+                               currentLocation.Center.Latitude,
+                               currentLocation.Center.Longitude,
+                               DataBase.Helper.Img.Svg.HtmlMap.Orion);
+#endif
+
+        AfterOnInitializedAsync = true;
     }
-    public void Dispose()
-    {
-        _customerAction -= _setCustomer;
-        addDirectionsEvent -= _addDirectionsEvent;
-        if (_dirRend is not null)
-        {
-            Task.FromResult(async () =>
-            {
-                await _dirRend.SetMap(null);
-                await _map.InteropObject.ClearListeners("dragstart");
-                await _marker.ClearListeners("click");
-            });
-            _dirRend.Dispose();
-        }
-
-        _marker.Dispose();
-        _center.Dispose();
-        _map.Dispose();
-
-        GC.SuppressFinalize(this);
-    }
-
 
     #region Method
+    #region JsMethod
 
-    private async Task MakePin(CustomerRoutes customer)
+    public static event Action MapDragStart;
+    [JSInvokable]
+    public static void OnMapDragStart()
     {
-        _marker?.SetMap(null);
-        var pin = Data.DrawIconOnMap.GenerateBase64StringPin(1);
-        LatLngLiteral location = new()
+        MapDragStart?.Invoke();
+    }
+    private void StopLisiningLocation()
+    {
+        _listeningLocation = false;
+    }
+
+    private async Task GetModule(Microsoft.Maui.Maps.MapSpan currentLocation)
+    {
+        try
+        {
+            var jsArgs = _navigation.ToAbsoluteUri("./Pages/Maps/Controls/BlazorMap.razor.js");
+            _module = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Pages/Maps/Controls/BlazorMap.razor.js");
+            if (_module is not null)
             {
-                Lat = customer.Latitude,
-                Lng = customer.Longitude
+                await InitMat("map", currentLocation.Center.Latitude, currentLocation.Center.Longitude);
+                StateHasChanged();
+            }
+        }
+        catch (Microsoft.JSInterop.JSException)
+        {
+            await GetModule(currentLocation);
+        }
+    }
+
+    private async Task MyLocation(CancellationToken token = default)
+    {
+        _listeningLocation = true;
+        var current = await Helper.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(10), token);
+        SetMyLocation(current.Center, token);
+    }
+    private void SetMyLocation(Location location, CancellationToken token = default)
+    {
+        var lat = location.Latitude;
+        var lng = location.Longitude;
+        double course = (double)location.Course;
+        bool isMoving = false;
+
+        if (_lastCourse == course)
+        {
+            isMoving = false;
+        }
+        else
+        {
+            isMoving = true;
+        }
+        SetPositonAdvancedMarker(_userIconId, lat, lng, token);
+        if (isMoving)
+        {
+            SetIconAdvancedMarker(_userIconId,
+                                     DataBase.Helper.Img.Svg.HtmlMap.NavigationRotation((int)course), token);
+        }
+        else
+        {
+            SetIconAdvancedMarker(_userIconId,
+                         DataBase.Helper.Img.Svg.HtmlMap.Orion, token);
+        }
+        if (_listeningLocation)
+        {
+            SetMapCenter(lat, lng, token);
+        }
+        _lastCourse = (double)location.Course;
+    }
+
+    #endregion
+
+    private void SetIconTheme()
+    {
+        _myLocationIcon = FromtTheme(DataBase.Helper.Img.Svg.HtmlMap.MyLocationDark, DataBase.Helper.Img.Svg.HtmlMap.MyLocationWhite);
+        _nativeMapNavigateTo = FromtTheme(DataBase.Helper.Img.Svg.HtmlMap.AssistanceDirectionDark, DataBase.Helper.Img.Svg.HtmlMap.AssistanceDirectionWhite);
+        _nativeMapDispalyPin = FromtTheme(DataBase.Helper.Img.Svg.HtmlMap.MapDark, DataBase.Helper.Img.Svg.HtmlMap.MapWhite);
+    }
+    private string FromtTheme(string light, string dark)
+    {
+        string theme = "";
+        if (DataBase.Helper.MudBlazorTheme.IsDarkMode)
+        {
+            theme = dark;
+        }
+        else
+        {
+            theme = light;
+        }
+
+        return theme;
+    }
+
+    private async Task NativeMapNavigateTo()
+    {
+        var location = new Location()
+            {
+                Latitude = _customer.Latitude,
+                Longitude = _customer.Longitude
             };
-
-        _marker = await AdvancedMarkerElement.CreateAsync(_map.JsRuntime, new AdvancedMarkerElementOptions()
+        var options = new MapLaunchOptions
             {
-                Content = Data.DrawIconOnMap.GenerateHtmlImgFromBase64String(pin[0]),
-                Map = _map.InteropObject,
-                Position = location,
-                Title = customer.Name,
-            });
-
-        var infoWindowContent = $@"
-                        <table class='table table-striped table-dark'><tbody>
-                        <tr>
-                             <td>Name</td>
-                             <td>{customer.Name}</td>
-                        </tr>
-                        <tr>
-                            <td>Opis</td>
-                            <td class='w-50'>{customer.Description}</td>
-                        </tr>
-                            <tr>
-                            <td colspan='2'>Czas</td>
-                            </tr>
-                            <tr>
-                            <td colspan='2'>
-                                  <table class='table table-striped table-dark'><tbody>
-<tr>
-{getDayAsString(customer.DayOfWeek.Sunday, 0)}
-{getTimeAsString(customer.DayOfWeek.Sunday, customer.DayOfWeek.SundayTimeSpan)}
-</tr>
-<tr>
-{getDayAsString(customer.DayOfWeek.Monday, 1)}
-{getTimeAsString(customer.DayOfWeek.Monday, customer.DayOfWeek.MondayTimeSpan)}
-</tr>
-<tr>
-{getDayAsString(customer.DayOfWeek.Tuesday, 2)}
-{getTimeAsString(customer.DayOfWeek.Tuesday, customer.DayOfWeek.TuesdayTimeSpan)}
-</tr>
-<tr>
-{getDayAsString(customer.DayOfWeek.Wednesday, 3)}
-{getTimeAsString(customer.DayOfWeek.Wednesday, customer.DayOfWeek.WednesdayTimeSpan)}
-</tr>
-<tr>
-{getDayAsString(customer.DayOfWeek.Thursday, 4)}
-{getTimeAsString(customer.DayOfWeek.Thursday, customer.DayOfWeek.ThursdayTimeSpan)}
-</tr>
-<tr>
-{getDayAsString(customer.DayOfWeek.Friday, 5)}
-{getTimeAsString(customer.DayOfWeek.Friday, customer.DayOfWeek.FridayTimeSpan)}
-</tr>
-<tr>
-{getDayAsString(customer.DayOfWeek.Saturday, 6)}
-{getTimeAsString(customer.DayOfWeek.Saturday, customer.DayOfWeek.SaturdayTimeSpan)}
-</tr>
-                                  </tbody></table>
-                        </td>
-                      </tr>
-                        </tbody>
-                        </table>";
-
-        string getDayAsString(bool isEnable, int dayOfWeek)
-        {
-            if (isEnable)
-            {
-                return $@"
-<td>
-{((DayOfWeek)dayOfWeek).TranslateSelectedDay()}
-</td>
-";
-            }
-            return "";
-        }
-        string getTimeAsString(bool isEnable, TimeSpan dayOfWeek)
-        {
-            if (isEnable)
-            {
-                return $@"
-<td>
-{dayOfWeek.Hours}:{dayOfWeek.Minutes}
-</td>
-";
-            }
-            return "";
-        }
-
-        // var infoWindow = await InfoWindow.CreateAsync(_map.JsRuntime, new InfoWindowOptions()
-        //     {
-        //         Position = location,
-        //         Content = infoWindowContent
-        //     });
-        await _marker.AddListener("click", () =>
-        {
-            // await infoWindow.SetContent(infoWindowContent);
-            // await infoWindow.SetPosition(location);
-            // await infoWindow.Open(_map.InteropObject);
-            MarkerEvent?.Invoke();
-        });
-
-        await _bounds.Extend(location);
-
-        if (await this._bounds.IsEmpty())
-        {
-            return;
-        }
-
-        var boundsLiteral = await _bounds.ToJson();
-        await _map.InteropObject.FitBounds(boundsLiteral,10);
-
-        StateHasChanged();
-    }
-
-    private async Task AfterMapRender()
-    {
+                NavigationMode = NavigationMode.Driving
+            };
         try
         {
-            _bounds = await LatLngBounds.CreateAsync(_map.JsRuntime);
-            _dirRend = await DirectionsRenderer.CreateAsync(_map.JsRuntime, new DirectionsRendererOptions()
-                {
-                    Map = _map.InteropObject,
-                });
-
-#if !WINDOWS
-            Helper.MapGeolocation.OnStopListeningLocation();
-            await Helper.MapGeolocation.OnStartListeningLocation(SetCenter);
-            await _map.InteropObject.AddListener
-            (
-                "dragstart",
-            () =>
-                _listeningLocation = false
-            );
-
-            if (_center is not null)
-            {
-                _center.Dispose();
-                _center = null;
-            }
-#endif
+            await Microsoft.Maui.ApplicationModel.Map.Default.OpenAsync(location, options);
         }
         catch (Exception ex)
         {
             _db.SaveLog(ex);
         }
     }
-
-    private async void SetCenter(Location setLocation)
-    {
-        try
-        {
-            var location = new LatLngLiteral
-                {
-                    Lat = setLocation.Latitude,
-                    Lng = setLocation.Longitude
-                };
-
-            var content = DataBase.Helper.Img.Svg.HtmlMap.Orion;
-            if (_center is null)
-            {
-                _center = await AdvancedMarkerElement.CreateAsync(_map.JsRuntime, new AdvancedMarkerElementOptions()
-                    {
-                        Content = content,
-                        Map = _map.InteropObject,
-                        Position = location,
-                    });
-            }
-
-            if (_lastCurse != setLocation.Course)
-            {
-                content = DataBase.Helper.Img.Svg.HtmlMap.NavigationRotation((int)setLocation.Course);
-                _lastCurse = (double)setLocation.Course;
-            }
-
-            await Task.WhenAll
-            (
-                _center.SetContent(content),
-                _center.SetPosition(location),
-                _bounds.Extend(location)
-            );
-
-
-            if (_second > 10 && _listeningLocation)
-            {
-                await _map.InteropObject.SetCenter(location);
-                _second = 0;
-            }
-            _second++;
-        }
-        catch (Exception ex)
-        {
-            _db.SaveLog(ex);
-        }
-    }
-
-    private async Task AddDirections()
-    {
-        try
-        {
-            _durationTotalString = null;
-            _distanceTotalString = null;
-            if (await _dirRend.GetMap() is null)
-            {
-                await _dirRend.SetMap(_map!.InteropObject);
-            }
-
-            //Adding a waypoint
-            //var waypoints = new List<DirectionsWaypoint>();
-            //waypoints.Add(new DirectionsWaypoint() { Location = "Bethlehem, PA", Stopover = true });
-
-            var center = new LatLngLiteral()
-                {
-                    Lat = Helper.CurrentLocation.Szarotka.Center.Latitude,
-                    Lng = Helper.CurrentLocation.Szarotka.Center.Longitude
-                };
-#if !WINDOWS
-            center = await _center?.GetPosition();
-#endif
-            //Direction Request
-            var dr = new DirectionsRequest();
-            dr.Origin = center;
-            dr.Destination = new LatLngLiteral()
-                {
-                    Lat = _customer.Latitude,
-                    Lng = _customer.Longitude,
-                };
-            //dr.Waypoints = waypoints;
-            dr.TravelMode = TravelMode.Driving;
-            dr.DrivingOptions = new DrivingOptions()
-                {
-                    DepartureTime = DateTime.Now,
-                };
-
-            //Calculate Route
-            _directionsResult = await _dirRend.Route(dr, new DirectionsRequestOptions()
-                {
-                    StripLegsStepsLatLngs = false,
-                    StripOverviewPath = false,
-                    StripOverviewPolyline = false,
-                    StripLegsStepsPath = false,
-                    StripLegsSteps = false,
-                });
-
-            if (_directionsResult is null)
-            {
-                return;
-            }
-
-            var routes = _directionsResult.Routes.SelectMany(x => x.Legs).ToList();
-
-            foreach (var route in routes)
-            {
-                _durationTotalString += route.DurationInTraffic?.Text;
-                _distanceTotalString += route.Distance.Text;
-            }
-        }
-        catch (Exception ex)
-        {
-            _db.SaveLog(ex);
-        }
-    }
-    private async Task AddDirections(LatLngLiteral destination)
-    {
-        try
-        {
-            _durationTotalString = null;
-            _distanceTotalString = null;
-            if (await _dirRend.GetMap() is null)
-            {
-                await _dirRend.SetMap(_map!.InteropObject);
-            }
-
-            //Adding a waypoint
-            //var waypoints = new List<DirectionsWaypoint>();
-            //waypoints.Add(new DirectionsWaypoint() { Location = "Bethlehem, PA", Stopover = true });
-
-            var center = new LatLngLiteral()
-                {
-                    Lat = Helper.CurrentLocation.Szarotka.Center.Latitude,
-                    Lng = Helper.CurrentLocation.Szarotka.Center.Longitude
-                };
-#if !WINDOWS
-            center = await _center?.GetPosition();
-#endif
-            //Direction Request
-            var dr = new DirectionsRequest();
-            dr.Origin = center;
-            dr.Destination = destination;
-            //dr.Waypoints = waypoints;
-            dr.TravelMode = TravelMode.Driving;
-            dr.DrivingOptions = new DrivingOptions()
-                {
-                    DepartureTime = DateTime.Now,
-                };
-
-            //Calculate Route
-            _directionsResult = await _dirRend.Route(dr, new DirectionsRequestOptions()
-                {
-                    StripLegsStepsLatLngs = false,
-                    StripOverviewPath = false,
-                    StripOverviewPolyline = false,
-                    StripLegsStepsPath = false,
-                    StripLegsSteps = false,
-                });
-
-            if (_directionsResult is null)
-            {
-                return;
-            }
-
-            var routes = _directionsResult.Routes.SelectMany(x => x.Legs).ToList();
-
-            foreach (var route in routes)
-            {
-                _durationTotalString += route.DurationInTraffic?.Text;
-                _distanceTotalString += route.Distance.Text;
-            }
-        }
-        catch (Exception ex)
-        {
-            _db.SaveLog(ex);
-        }
-    }
-
-
-    public async Task NativeMapNavigateTo()
+    private async Task NativeMapDispalyPin()
     {
         var location = new Location()
             {
@@ -502,25 +204,6 @@
             };
         var options = new MapLaunchOptions();
 
-        try
-        {
-            await Microsoft.Maui.ApplicationModel.Map.Default.OpenAsync(location, options);
-        }
-        catch (Exception ex)
-        {
-            _db.SaveLog(ex);
-        }
-    }
-    public async Task NativeMapDriveTo()
-    {
-        var location = new Location()
-            {
-                Latitude = _customer.Latitude,
-                Longitude = _customer.Longitude
-            }; var options = new MapLaunchOptions
-            {
-                NavigationMode = NavigationMode.Driving
-            };
 
         try
         {
@@ -532,22 +215,6 @@
         }
     }
 
-    public async Task MyLocation()
-    {
-        if (_center is null)
-        {
-            return;
-        }
-        var setLocation = await _center?.GetPosition();
-        double zoom = 16;
-
-        //zoom = await _map.InteropObject.GetZoom();
-        await Task.WhenAll(
-            _map.InteropObject.SetZoom(zoom),
-            _map.InteropObject.SetCenter(setLocation)
-        );
-        _listeningLocation = true;
-    }
     #endregion
 
 

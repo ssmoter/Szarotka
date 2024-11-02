@@ -1,5 +1,8 @@
-﻿using DataBase.Data;
+﻿
+using DataBase.Data;
 using DataBase.Model;
+
+using DriversRoutes.Pages.Maps.Controls;
 
 using SzarotkaBlazor.Pages.Options.Main;
 
@@ -17,7 +20,15 @@ namespace SzarotkaBlazor
             _createdDataBase = new CreatedDataBase(_db);
         }
 
-
+        int n = 0;
+        private void Button_Clicked(object sender, EventArgs e)
+        {
+            var customer = _db.DataBase.Table<DataBase.Model.EntitiesRoutes.CustomerRoutes>().Skip(n).FirstOrDefault();
+            n++;
+            BlazorMap.OnRemoveAdvancedMarker();
+            BlazorMap.OnSetCustomer(customer);
+            BlazorMap.OnSetAdvancedMarker();
+        }
 
         protected override async void OnNavigatedTo(NavigatedToEventArgs args)
         {
@@ -52,10 +63,7 @@ namespace SzarotkaBlazor
             await Shell.Current.GoToAsync(nameof(DriversRoutes.Pages.Main.MainVDriversRoutesV));
         }
 
-        private void Button_Clicked(object sender, EventArgs e)
-        {
 
-        }
 
 
         //private void Button_Clicked(object sender, EventArgs e)

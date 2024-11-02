@@ -12,7 +12,7 @@
     x:DataType="vm:NavigateVM"
     Shell.PresentationMode="Animated">
 
-    <Grid RowDefinitions="*,auto">
+    <Grid x:Name="mGrid" RowDefinitions="*,auto">
 
         <Grid
             Grid.Row="1"
@@ -38,13 +38,18 @@
                     <SwipeGestureRecognizer Command="{Binding HideMovingViewCommand}" Direction="Down" />
                 </VerticalStackLayout.GestureRecognizers>
             </VerticalStackLayout>
-            <ImageButton
-                Grid.Column="1"
-                Command="{Binding DisplayDescriptionOfNextPointCommand}"
-                HorizontalOptions="End"
-                Rotation="-90"
-                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
-                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+            <HorizontalStackLayout Grid.Column="1">
+
+                <ImageButton Command="{Binding CalculateRouteCommand}" Source="{AppThemeBinding Light={Static img:ImgMapsSymbols.NavigationBlack},
+                                                      Dark={Static img:ImgMapsSymbols.NavigationWhite}}" />
+
+                <ImageButton
+                    Command="{Binding DisplayDescriptionOfNextPointCommand}"
+                    HorizontalOptions="End"
+                    Rotation="-90"
+                    Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                             Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+            </HorizontalStackLayout>
         </Grid>
 
         <controls:MovingViewInSteps
@@ -135,61 +140,6 @@
                                                          Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
                         </Grid>
 
-
-                        <toolkit:Expander Grid.Column="1">
-                            <toolkit:Expander.Header>
-                                <Button
-                                    Padding="0"
-                                    CornerRadius="50"
-                                    HorizontalOptions="Fill"
-                                    Text="Opcje mapy" />
-                            </toolkit:Expander.Header>
-                            <toolkit:Expander.Content>
-                                <Border Margin="5" StrokeThickness="2">
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="10" />
-                                    </Border.StrokeShape>
-
-                                    <VerticalStackLayout Padding="0">
-                                        <VerticalStackLayout>
-                                            <RadioButton
-                                                
-                                                CheckedChanged="RadioButton_CheckedChanged"
-                                                Content="Ulica"
-                                                IsChecked="True"
-                                                Value="0" />
-                                            <RadioButton
-                                                CheckedChanged="RadioButton_CheckedChanged"
-                                                Content="Satelita"
-                                                Value="1" />
-                                            <RadioButton
-                                                CheckedChanged="RadioButton_CheckedChanged"
-                                                Content="Hybryda"
-                                                Value="2" />
-                                        </VerticalStackLayout>
-
-                                        <Border />
-
-                                        <Grid Margin="5" ColumnDefinitions="*,*">
-                                            <Label
-                                                Grid.Column="1"
-                                                LineBreakMode="WordWrap"
-                                                Text="Natężenie ruchu"
-                                                VerticalOptions="Center" />
-                                            <Switch
-                                                Grid.Column="0"
-                                                HorizontalOptions="Start"
-                                                IsToggled="{Binding IsTrafficEnabled}" />
-                                        </Grid>
-                                    </VerticalStackLayout>
-                                </Border>
-
-                            </toolkit:Expander.Content>
-
-                        </toolkit:Expander>
-
-
-
                         <ScrollView
                             Grid.Row="1"
                             Grid.Column="1"
@@ -206,6 +156,10 @@
                                     DisplayButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type vm:NavigateVM}}, Path=DisplayDescriptionPinCommand}"
                                     DisplayButtonCommandParameter="{Binding SelectedPoint}"
                                     DisplayIsVisible="True"
+                                    RoutesIsVisible="True"
+                                    LocationIsVisible="True"
+                                    LocationButtonCommand="{Binding FitMapToMarkersCommand}"
+                                    RoutesButtonCommand="{Binding CalculateRouteCommand}"
                                     PhoneNumber="{Binding SelectedPoint.PhoneNumber}"
                                     QueueNumber="{Binding SelectedPoint.QueueNumber}"
                                     ResidentialAddress="{Binding SelectedPoint.ResidentialAddress}" />
@@ -220,11 +174,11 @@
         </controls:MovingViewInSteps>
 
 
-        <BlazorWebView x:Name="blazorMap" HostPage="wwwroot/index.html">
+        <!--<BlazorWebView x:Name="blazorMap" HostPage="wwwroot/index.html">
             <BlazorWebView.RootComponents>
                 <RootComponent ComponentType="{x:Type controlsMaps:BlazorMap}" Selector="#app" />
             </BlazorWebView.RootComponents>
-        </BlazorWebView>
+        </BlazorWebView>-->
 
     </Grid>
 

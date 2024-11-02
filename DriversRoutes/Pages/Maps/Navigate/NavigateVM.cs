@@ -5,6 +5,8 @@ using DataBase.CustomControls;
 using DataBase.Data;
 using DataBase.Model.EntitiesRoutes;
 
+using DriversRoutes.Pages.Maps.Controls;
+
 using Microsoft.Maui.Maps;
 
 using System.Collections.ObjectModel;
@@ -48,17 +50,17 @@ namespace DriversRoutes.Pages.Maps.Navigate
             {
                 index = AllPoints.Count;
             }
-
+            BlazorMap.OnRemoveAdvancedMarker(SelectedPoint);
             SelectedPoint = AllPoints.FirstOrDefault(x => x.QueueNumber == index);
             if (SelectedPoint is null)
             {
                 return;
             }
-            //var mapSpan = new MapSpan(SelectedPoint.Pin.Location, 0.05, 0.05);
-            //OnGoToLocation(mapSpan);
+            BlazorMap.OnSetCustomer(SelectedPoint);
+            BlazorMap.OnSetAdvancedMarker();
+            BlazorMap.OnRemoveDrirections();
+            BlazorMap.OnFitMapToAdvancedMarkers();
         }
-
-
 
 
 
@@ -114,5 +116,25 @@ namespace DriversRoutes.Pages.Maps.Navigate
                 _db.SaveLog(ex);
             }
         }
+
+        [RelayCommand]
+        void CalculateRoute()
+        {
+            if (SelectedPoint is null)
+            {
+                return;
+            }
+            Task.Run(async () =>
+            {
+                await BlazorMap.OnAddDirections();
+            });
+        }
+
+        [RelayCommand]
+        void FitMapToMarkers()
+        {
+            BlazorMap.OnFitMapToAdvancedMarkers();
+        }
+
     }
 }

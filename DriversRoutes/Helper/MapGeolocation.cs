@@ -3,13 +3,14 @@
     public static class MapGeolocation
     {
 
-        private static Action<Location> _setLocation;
+        private static Action<Location, CancellationToken> _setLocation;
         private static Location _LastKnownLocation;
-
-        public static async Task OnStartListeningLocation(Action<Location> setLocation)
+        private static CancellationToken _token;
+        public static async Task OnStartListeningLocation(Action<Location, CancellationToken> setLocation, GeolocationAccuracy geolocationAccuracy, TimeSpan timeout, CancellationToken token = default)
         {
             _setLocation = setLocation;
-            var result = await Geolocation.StartListeningForegroundAsync(new GeolocationListeningRequest(GeolocationAccuracy.High, TimeSpan.FromMicroseconds(100)));
+            _token = token;
+            var result = await Geolocation.StartListeningForegroundAsync(new GeolocationListeningRequest(geolocationAccuracy, timeout));
             if (!result)
             {
                 throw new Exception("Can't Start Listening Foreground Async");
@@ -25,7 +26,7 @@
             }
 
             _LastKnownLocation = e.Location;
-            _setLocation.Invoke(e.Location);
+            _setLocation.Invoke(e.Location, _token);
         }
         public static void OnStopListeningLocation()
         {

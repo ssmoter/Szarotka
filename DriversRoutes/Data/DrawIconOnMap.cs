@@ -3,6 +3,8 @@
 
 using SkiaSharp;
 
+using System.Xml.Linq;
+
 namespace DriversRoutes.Data
 {
     public class DrawIconOnMap : IDisposable, IDrawable
@@ -134,39 +136,103 @@ namespace DriversRoutes.Data
 
         public static string GenerateHtmlImgFromBase64String(string base64String)
         {
-            return @$"<img src='data:image/png;base64, {base64String}'/>";
+            return $"<img src=\"data:image/png;base64, {base64String}\"/>";
         }
-        public static string[] GenerateBase64StringPin(int length)
+        public static string[] GenerateBase64StringPins(int length)
         {
             var pins = new string[length];
-            int scaleX = (int)DeviceDisplay.Current.MainDisplayInfo.Density;
-            int scaleY = scaleX;
-
-            var width = 40 * scaleX;
-            var height = 58 * scaleY;
+            GetScale(out int scaleX, out int scaleY, out int width, out int height);
 
             for (int i = 0; i < length; i++)
             {
-                using SkiaBitmapExportContext skiaBitmapExportContext = new(width, height, 1);
-                ICanvas canvas = skiaBitmapExportContext.Canvas;
-                using DrawIconOnMap drawIconOnMap = new()
-                {
-                    Number = i + 1,
-                    ScaleX = scaleX,
-                    ScaleY = scaleY,
-                };
-                drawIconOnMap.Draw(canvas, new RectF(0, 0, skiaBitmapExportContext.Width, skiaBitmapExportContext.Height));
-
-                var stream = skiaBitmapExportContext.Image.AsStream();
-
-                using var memory = new MemoryStream();
-                stream.CopyTo(memory);
-                var pin = Convert.ToBase64String(memory.ToArray());
+                var pin = GetNewPin(i + 1, scaleX, scaleY, width, height, out SkiaBitmapExportContext skiaBitmapExportContext, out DrawIconOnMap drawIconOnMap, out MemoryStream memory);
 
                 pins[i] = pin;
             }
             return pins;
         }
+        public static string GenerateBase64StringPin(int number)
+        {
+            GetScale(out int scaleX, out int scaleY, out int width, out int height);
 
+            var pin = GetNewPin(number, scaleX, scaleY, width, height, out SkiaBitmapExportContext skiaBitmapExportContext, out DrawIconOnMap drawIconOnMap, out MemoryStream memory);
+
+            return pin;
+        }
+
+
+        private static string GetNewPin(int number, int scaleX, int scaleY, int width, int height, out SkiaBitmapExportContext skiaBitmapExportContext, out DrawIconOnMap drawIconOnMap, out MemoryStream memory)
+        {
+            skiaBitmapExportContext = new(width, height, 1);
+            ICanvas canvas = skiaBitmapExportContext.Canvas;
+            drawIconOnMap = new()
+            {
+                Number = number,
+                ScaleX = scaleX,
+                ScaleY = scaleY,
+            };
+            drawIconOnMap.Draw(canvas, new RectF(0, 0, skiaBitmapExportContext.Width, skiaBitmapExportContext.Height));
+
+            var stream = skiaBitmapExportContext.Image.AsStream();
+            memory = new MemoryStream();
+            stream.CopyTo(memory);
+            var pin = Convert.ToBase64String(memory.ToArray());
+            return pin;
+        }
+
+        private static void GetScale(out int scaleX, out int scaleY, out int width, out int height)
+        {
+            scaleX = (int)DeviceDisplay.Current.MainDisplayInfo.Density;
+            scaleY = scaleX;
+            width = 40 * scaleX;
+            height = 58 * scaleY;
+        }
+
+
+
+        public static string CreatePinSvg(string text)
+        {
+            XElement svg = CreatedSvg(text);
+
+            // Konwertowanie SVG do string
+            return svg.ToString();
+        }
+        public static string CreatePinSvg(int text)
+        {
+            XElement svg = CreatedSvg(text.ToString());
+
+            // Konwertowanie SVG do string
+            return svg.ToString();
+        }
+        private static XElement CreatedSvg(string text)
+        {
+            XNamespace ns = "http://www.w3.org/2000/svg";
+
+            var svg = new XElement(ns + "svg",
+                new XAttribute("xmlns", ns),
+                new XAttribute("viewBox", "0 0 24 24"),
+                new XAttribute("width", "24"),
+                new XAttribute("height", "48"),
+                new XElement(ns + "path",
+                    new XAttribute("d", "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"),
+                    new XAttribute("fill", "#ea4335") // Czerwony kolor pinu
+                ),
+                new XElement(ns + "circle",
+                    new XAttribute("cx", "12"),
+                    new XAttribute("cy", "9"),
+                    new XAttribute("r", "2.5"),
+                    new XAttribute("fill", "#ffffff") // Biały kolor wewnętrznego koła
+                ),
+                new XElement(ns + "text",
+                    new XAttribute("x", "12"),
+                    new XAttribute("y", "2"), // Pozycja tekstu nad pinem
+                    new XAttribute("text-anchor", "middle"),
+                    new XAttribute("font-size", "15"),
+                    new XAttribute("fill", "#ea4335"), // Czarny kolor tekstu
+                    text // Przekazany parametr tekstowy
+                )
+            );
+            return svg;
+        }
     }
 }

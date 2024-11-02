@@ -13,6 +13,18 @@
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
 
     <Grid RowDefinitions="auto,*">
+        
+        <!--<BlazorWebView
+            x:Name="blazorMap"
+            Grid.Row="0"
+            HostPage="wwwroot/index.html"
+            MaximumWidthRequest="500"
+            HeightRequest="300"
+            MinimumWidthRequest="300">
+            <BlazorWebView.RootComponents>
+                <RootComponent ComponentType="{x:Type controlsMaps:BlazorMap}" Selector="#app" />
+            </BlazorWebView.RootComponents>
+        </BlazorWebView>-->
 
         <ScrollView Grid.Row="1">
 
@@ -21,8 +33,7 @@
                 Spacing="25"
                 VerticalOptions="Center">
 
-
-
+                <!--<Button Clicked="Button_Clicked" Text="set customer" />-->
 
                 <!--<Grid
                     HorizontalOptions="Center"

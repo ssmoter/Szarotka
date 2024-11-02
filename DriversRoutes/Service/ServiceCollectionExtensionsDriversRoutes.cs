@@ -1,8 +1,6 @@
 ﻿using DriversRoutes.Data.GoogleApi;
 using DriversRoutes.Pages.Maps.Controls;
 
-using GoogleMapsComponents;
-
 namespace DriversRoutes.Service
 {
     public static class ServiceCollectionExtensionsDriversRoutes
