@@ -20,7 +20,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <EnableDefaultCssItems>false</EnableDefaultCssItems>
         <Nullable>enable</Nullable>
-
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		
         <!-- Display name -->
         <ApplicationTitle>SzarotkaBlazor</ApplicationTitle>
 
@@ -129,6 +130,11 @@
 
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Resources\Images\Icon\remove_road_black.png" />
+      <None Remove="Resources\Images\Icon\remove_road_white.png" />
     </ItemGroup>
 
     <ItemGroup>

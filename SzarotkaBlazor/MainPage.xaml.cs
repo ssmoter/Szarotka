@@ -20,15 +20,15 @@ namespace SzarotkaBlazor
             _createdDataBase = new CreatedDataBase(_db);
         }
 
-        int n = 0;
-        private void Button_Clicked(object sender, EventArgs e)
-        {
-            var customer = _db.DataBase.Table<DataBase.Model.EntitiesRoutes.CustomerRoutes>().Skip(n).FirstOrDefault();
-            n++;
-            BlazorMap.OnRemoveAdvancedMarker();
-            BlazorMap.OnSetCustomer(customer);
-            BlazorMap.OnSetAdvancedMarker();
-        }
+        //int n = 0;
+        //private void Button_Clicked(object sender, EventArgs e)
+        //{
+        //    var customer = _db.DataBase.Table<DataBase.Model.EntitiesRoutes.CustomerRoutes>().Skip(n).FirstOrDefault();
+        //    n++;
+        //    BlazorMap.OnRemoveAdvancedMarker();
+        //    BlazorMap.OnSetCustomer(customer);
+        //    BlazorMap.OnSetAdvancedMarker();
+        //}
 
         protected override async void OnNavigatedTo(NavigatedToEventArgs args)
         {

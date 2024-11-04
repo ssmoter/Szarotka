@@ -12,6 +12,7 @@ public partial class NavigateV : ContentPage
         BindingContext = vm;
     }
     BlazorWebView _blazorMap;
+    RootComponent rootComponent;
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
@@ -19,25 +20,26 @@ public partial class NavigateV : ContentPage
         {
             HostPage = "wwwroot/index.html",
         };
-        _blazorMap.RootComponents.Add(new RootComponent() { ComponentType = typeof(BlazorMap), Selector = "#app" });
+        rootComponent ??= new RootComponent() { ComponentType = typeof(BlazorMap), Selector = "#app" };
+
+
+        _blazorMap.RootComponents.Add(rootComponent);
+
+        //_blazorMap.RootComponents.Add(new RootComponent() { ComponentType = typeof(BlazorMap), Selector = "#app" });
+
 
         this.mGrid.Add(_blazorMap, row: 0);
 
         if (BindingContext is NavigateVM vm)
         {
-            Task.Run(async () =>
+            BlazorMap.AfterOnInitializedAsync = () =>
             {
-                do
-                {
-                    await Task.Delay(TimeSpan.FromSeconds(1));
-                }
-                while (!BlazorMap.AfterOnInitializedAsync);
                 BlazorMap.OnRemoveAdvancedMarker();
                 BlazorMap.OnSetCustomer(vm.SelectedPoint);
                 BlazorMap.OnSetAdvancedMarker();
                 BlazorMap.OnRemoveDrirections();
                 BlazorMap.OnFitMapToAdvancedMarkers();
-            });
+            };
         }
     }
 
@@ -46,18 +48,5 @@ public partial class NavigateV : ContentPage
         base.OnNavigatedFrom(args);
 
         this.mGrid.Remove(_blazorMap);
-    }
-
-
-    private void RadioButton_CheckedChanged(object sender, CheckedChangedEventArgs e)
-    {
-        if (BindingContext is NavigateVM vm)
-        {
-            if (sender is RadioButton radio)
-            {
-                var value = radio.Value;
-                vm.ChangeTypeOfMapCommand.Execute(value);
-            }
-        }
     }
 }

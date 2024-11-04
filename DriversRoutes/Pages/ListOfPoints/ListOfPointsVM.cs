@@ -101,6 +101,15 @@ namespace DriversRoutes.Pages.ListOfPoints
         }
 
         #region Method
+
+        public void GetPointsFireAndForget(Routes routes, SelectedDayOfWeekRoutes week)
+        {
+            Task.Run(async () =>
+            {
+                CustomerRoutes = await GetPointsAsync(routes, week);
+            });
+        }
+
         public ObservableCollection<CustomerRoutes> GetPoints(Routes routes, SelectedDayOfWeekRoutes week)
         {
             try
@@ -243,8 +252,7 @@ namespace DriversRoutes.Pages.ListOfPoints
                 }
                 if (response is SelectedDayOfWeekRoutes day)
                 {
-                    //CustomerRoutes.Clear();
-                    CustomerRoutes = await GetPointsAsync(Route, day);
+                    GetPointsFireAndForget(Route, day);
                 }
             }
             catch (Exception ex)
@@ -254,25 +262,14 @@ namespace DriversRoutes.Pages.ListOfPoints
         }
 
         [RelayCommand]
-        async Task Refresh()
+        void Refresh()
         {
-            try
+            if (RangeIsVisible)
             {
-                if (RangeIsVisible)
+                if (lastSelectedDayOfWeekRoutes is not null)
                 {
-                    if (lastSelectedDayOfWeekRoutes is not null)
-                    {
-                        CustomerRoutes = await GetPointsAsync(Route, lastSelectedDayOfWeekRoutes);
-                    }
+                    GetPointsFireAndForget(Route, lastSelectedDayOfWeekRoutes);
                 }
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLog(ex);
-            }
-            finally
-            {
-                CustomerListRefresh = false;
             }
         }
 
@@ -374,7 +371,7 @@ namespace DriversRoutes.Pages.ListOfPoints
                 var result = await MoveTimeOnCustomersV.ShowPopUp(Route, selectDayMs, _selectRoutes, _saveRoutes);
                 if (result)
                 {
-                    await Refresh();
+                    Refresh();
                 }
             }
             catch (Exception ex)
@@ -386,7 +383,7 @@ namespace DriversRoutes.Pages.ListOfPoints
         [RelayCommand]
         async Task DiscardFromFile()
         {
-            await Refresh();
+            Refresh();
             SetSaveData(false);
             await Toast.Make("Wczytany plik usunięto").Show();
         }

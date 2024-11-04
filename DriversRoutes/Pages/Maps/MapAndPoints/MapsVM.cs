@@ -52,8 +52,11 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
         [ObservableProperty]
         StepSelected stepSelected = StepSelected.One;
 
+        [ObservableProperty]
+        bool isRefreshing;
 
-
+        [ObservableProperty]
+        bool routeIsVisible = false;
 
         public SelectedDayOfWeekRoutes LastSelectedDayOfWeek { get; set; }
         public SelectedDayOfWeekRoutes LastSelectedDayOfWeekWhenNavigation { get; set; }
@@ -64,26 +67,29 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
         const string enable = "Dostępne";
         const string block = "Zablokowane";
 
-        public Action<MapSpan> GoToLocation;
+
+        public Action<MapSpan> GoToLocationAction;
+        public Action<Polyline> AddRoutesPolilineAction;
+        public Action ClearRoutesPolilineAction;
         public Microsoft.Maui.Controls.Maps.Map GetMap { get; set; }
 
         public readonly MapSpan szarotka = CurrentLocation.Szarotka;
 
-        readonly DataBase.Data.AccessDataBase _db;
-        readonly Service.ISelectRoutes _selectRoutes;
-        readonly Service.ISaveRoutes _saveRoutes;
-
+        private readonly DataBase.Data.AccessDataBase _db;
+        private readonly Service.ISelectRoutes _selectRoutes;
+        private readonly Service.ISaveRoutes _saveRoutes;
+        private readonly Data.GoogleApi.IRoutes _routes;
         private static List<ImageSource> pinImage = [];
 
         #endregion
-        public MapsVM(DataBase.Data.AccessDataBase db, Service.ISelectRoutes selectRoutes, Service.ISaveRoutes saveRoutes)
+        public MapsVM(DataBase.Data.AccessDataBase db, Service.ISelectRoutes selectRoutes, Service.ISaveRoutes saveRoutes, Data.GoogleApi.IRoutes routes)
         {
             _db = db;
             MapType = MapType.Street;
             AllPoints ??= [];
             _selectRoutes = selectRoutes;
             _saveRoutes = saveRoutes;
-
+            _routes = routes;
         }
 
         public void Dispose()
@@ -93,7 +99,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             _db.Dispose();
             for (int i = 0; i < pinImage.Count; i++)
             {
-                //pinImage[i].discpose
+                pinImage[i] = null;
             }
             pinImage.Clear();
         }
@@ -177,7 +183,11 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
 
         public void OnGoToLocation(MapSpan mapSpan)
         {
-            GoToLocation?.Invoke(mapSpan);
+            GoToLocationAction?.Invoke(mapSpan);
+        }
+        public void OnSetRoutesPolyline(Polyline poluline)
+        {
+            AddRoutesPolilineAction?.Invoke(poluline);
         }
         public void OpenMoreDetail(Pin pin)
         {
@@ -331,6 +341,10 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
         }
         private void DescriptionOfPreviousPoint(int direction)
         {
+            if (SelectedPoint is null)
+            {
+                return;
+            }
             int index;
             index = SelectedPoint.CustomerRoutes.QueueNumber + direction;
             if (index > AllPoints.Count)
@@ -350,6 +364,90 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             var mapSpan = new MapSpan(SelectedPoint.Pin.Location, 0.05, 0.05);
             OnGoToLocation(mapSpan);
         }
+
+        private void RefreshingStart()
+        {
+            Task.Run(() =>
+            {
+                IsRefreshing = true;
+            });
+        }
+        private void RefreshingEnd()
+        {
+            Task.Run(() =>
+            {
+                IsRefreshing = false;
+            });
+        }
+        private async Task CalculateRoutes(CustomerRoutes customer, CancellationToken token = default)
+        {
+            try
+            {
+                RefreshingStart();
+                ClearRoutesPolilineAction?.Invoke();
+                var current = await Helper.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(1), token);
+
+                var request = new Model.Route.ComputeRoutesRequest()
+                {
+                    Origin = new Model.Route.Waypoint()
+                    {
+                        Location = new Model.Route.Location()
+                        {
+                            LatLng = new Model.Route.LatLng()
+                            {
+                                Latitude = customer.Latitude,
+                                Longitude = customer.Longitude
+                            }
+                        }
+                    },
+                    Destination = new Model.Route.Waypoint()
+                    {
+                        Location = new Model.Route.Location()
+                        {
+                            LatLng = new Model.Route.LatLng()
+                            {
+                                Longitude = current.Center.Longitude,
+                                Latitude = current.Center.Latitude
+                            }
+                        }
+                    }
+                };
+
+                var response = await _routes.Compute("*", request, token);
+
+                for (int i = 0; i < response.Routes.Length; i++)
+                {
+                    for (int j = 0; j < response.Routes[i].Legs.Length; j++)
+                    {
+                        for (int k = 0; k < response.Routes[i].Legs[j].Steps.Length; k++)
+                        {
+                            var decode = DriversRoutes.Data.GoogleApi.DecodeRoutes.DecodePolyline(response.Routes[i].Legs[j].Steps[k].Polyline.EncodedPolyline);
+                            var poly = new Polyline()
+                            {
+                                StrokeColor = Colors.Blue,
+                                StrokeWidth = 5,
+                            };
+                            for (int l = 0; l < decode.Count; l++)
+                            {
+                                poly.Geopath.Add(decode[l]);
+                            }
+                            OnSetRoutesPolyline(poly);
+                        }
+                    }
+                }
+                RouteIsVisible = true;
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+            finally
+            {
+                RefreshingEnd();
+            }
+        }
+
+
         #endregion
 
 
@@ -382,7 +480,6 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 _db.SaveLog(ex);
             }
         }
-
 
         [RelayCommand]
         void DisplayTypeOfMap() => IsVisibleTypeOfMap = !IsVisibleTypeOfMap;
@@ -494,7 +591,6 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             DescriptionOfPreviousPoint(-1);
         }
 
-
         [RelayCommand]
         async Task MoveTimeOnPoints(SelectedDayOfWeekRoutes selectDayMs)
         {
@@ -543,6 +639,40 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             {
                 _db.SaveLog(ex);
             }
+        }
+
+        [RelayCommand]
+        void RefreshView()
+        {
+            RefreshingEnd();
+        }
+
+        [RelayCommand]
+        async Task GetRoutes(CustomerRoutes customer)
+        {
+            if (customer is null)
+            {
+                return;
+            }
+
+            await CalculateRoutes(customer);
+
+        }
+        [RelayCommand]
+        async Task GetRoutesMapsM(MapsM customer)
+        {
+            if (customer is null)
+            {
+                return;
+            }
+            await CalculateRoutes(customer.CustomerRoutes);
+        }
+
+        [RelayCommand]
+        void ClearRoutes()
+        {
+            ClearRoutesPolilineAction?.Invoke();
+            RouteIsVisible = false;
         }
 
         #endregion

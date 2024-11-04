@@ -9,16 +9,34 @@ public partial class MapsV : ContentPage, IDisposable
     public MapsV(MapsVM vm)
     {
         InitializeComponent();
-        vm.GoToLocation += Map.MoveToRegion;
+        vm.GoToLocationAction += Map.MoveToRegion;
+        vm.AddRoutesPolilineAction += SetPolyline;
+        vm.ClearRoutesPolilineAction += ClearPolyline;
         vm.GetMap = Map;
         BindingContext = vm;
     }
     public void Dispose()
     {
         if (BindingContext is MapsVM vm)
-            vm.GoToLocation -= Map.MoveToRegion;
+        {
+            vm.GoToLocationAction -= Map.MoveToRegion;
+            vm.AddRoutesPolilineAction -= SetPolyline;
+            vm.ClearRoutesPolilineAction -= ClearPolyline;
+        }
         GC.SuppressFinalize(this);
     }
+
+    private void SetPolyline(Polyline polyline)
+    {
+        Map.MapElements.Add(polyline);
+    }
+    private void ClearPolyline()
+    {
+        Map.MapElements.Clear();
+    }
+
+
+
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
@@ -123,4 +141,7 @@ public partial class MapsV : ContentPage, IDisposable
             }
         }
     }
+
 }
+
+

@@ -6,7 +6,7 @@ namespace DriversRoutes.Pages.Maps.Controls
 {
     public partial class BlazorMap
     {
-        public static bool AfterOnInitializedAsync { get; private set; } = false;
+        public static Action AfterOnInitializedAsync { get; set; }
         public void Dispose()
         {
             _setCustomerAction -= _setCustomer;
@@ -24,8 +24,8 @@ namespace DriversRoutes.Pages.Maps.Controls
 
             DataBase.Helper.MudBlazorTheme.ActionThemeChanged -= SetIconTheme;
             RemoveListener("dragstart");
-            AfterOnInitializedAsync = false;
         }
+
         public BlazorMap()
         {
             _setCustomerAction += _setCustomer;
@@ -45,6 +45,7 @@ namespace DriversRoutes.Pages.Maps.Controls
             DataBase.Helper.MudBlazorTheme.ActionThemeChanged += SetIconTheme;
             DataBase.Helper.MudBlazorTheme.SetCurrentTheme(AppInfo.Current.RequestedTheme);
             DataBase.Helper.MudBlazorTheme.ActionThemeChanged?.Invoke();
+
         }
 
 

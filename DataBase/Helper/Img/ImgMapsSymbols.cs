@@ -20,6 +20,7 @@
         public static string TripOriginBlack { get => "baseline_trip_origin_black_24.png"; }
         public static string TripOriginWhite { get => "baseline_trip_origin_white_24.png"; }
 
-
+        public static string RemoveRoadBlack { get => "remove_road_black.png"; }
+        public static string RemoveRoadWhite { get => "remove_road_white.png"; }
     }
 }

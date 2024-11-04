@@ -40,8 +40,7 @@
             </VerticalStackLayout>
             <HorizontalStackLayout Grid.Column="1">
 
-                <ImageButton Command="{Binding CalculateRouteCommand}" Source="{AppThemeBinding Light={Static img:ImgMapsSymbols.NavigationBlack},
-                                                      Dark={Static img:ImgMapsSymbols.NavigationWhite}}" />
+                <ImageButton Command="{Binding CalculateRouteCommand}" Source="{AppThemeBinding Light={Static img:ImgMapsSymbols.NavigationBlack}, Dark={Static img:ImgMapsSymbols.NavigationWhite}}" />
 
                 <ImageButton
                     Command="{Binding DisplayDescriptionOfNextPointCommand}"
@@ -72,72 +71,97 @@
 
 
                         <Grid
-                            Grid.Row="0"
+                            Grid.Row="1"
                             Grid.RowSpan="2"
                             Grid.Column="0"
-                            RowDefinitions="auto,auto,*,auto">
+                            Opacity="0.5"
+                            RowDefinitions="auto,*,auto">
 
-                            <ImageButton
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Command="{Binding DisplayDescriptionOfPreviousPointCommand}"
-                                Rotation="90"
-                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
-                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+
                             <Image
-                                Grid.Row="1"
+                                Grid.Row="0"
                                 InputTransparent="True"
                                 Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowUpwardBlack},
                                                          Dark={Static img:ImgArrow.ArrowUpwardWhite}}" />
                             <Border
-                                Grid.Row="2"
+                                Grid.Row="1"
                                 HorizontalOptions="Center"
                                 StrokeThickness="5"
                                 VerticalOptions="Fill" />
                             <Image
-                                Grid.Row="2"
+                                Grid.Row="1"
                                 Rotation="90"
                                 Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
                                                          Dark={Static img:ImgArrow.LineWhite}}" />
                             <Image
-                                Grid.Row="3"
+                                Grid.Row="2"
                                 InputTransparent="True"
                                 Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
                                                          Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
                         </Grid>
                         <Grid
-                            Grid.Row="0"
+                            Grid.Row="1"
                             Grid.RowSpan="2"
                             Grid.Column="2"
-                            RowDefinitions="auto,auto,*,auto">
+                            Opacity="0.5"
+                            RowDefinitions="auto,*,auto">
+
+
+
+                            <Image
+                                Grid.Row="0"
+                                InputTransparent="True"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowUpwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowUpwardWhite}}" />
+                            <Border
+                                Grid.Row="1"
+                                HorizontalOptions="Center"
+                                StrokeThickness="5"
+                                VerticalOptions="Fill" />
+                            <Image
+                                Grid.Row="1"
+                                Rotation="90"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
+                                                         Dark={Static img:ImgArrow.LineWhite}}" />
+                            <Image
+                                Grid.Row="2"
+                                InputTransparent="True"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                        </Grid>
+
+                        <Grid
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="3"
+                            ColumnDefinitions="50,*,50">
 
                             <ImageButton
                                 Grid.Column="0"
+                                Command="{Binding DisplayDescriptionOfPreviousPointCommand}"
+                                Rotation="90"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+
+                            <Border
+                                Grid.Column="1"
+                                HorizontalOptions="Fill"
+                                Opacity="0.5"
+                                StrokeThickness="5"
+                                VerticalOptions="Center" />
+                            <Image
+                                Grid.Column="1"
+                                Opacity="0.5"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
+                                                         Dark={Static img:ImgArrow.LineWhite}}" />
+
+                            <ImageButton
+                                Grid.Column="2"
                                 Command="{Binding DisplayDescriptionOfNextPointCommand}"
                                 Rotation="-90"
                                 Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
                                                          Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
 
-                            <Image
-                                Grid.Row="1"
-                                InputTransparent="True"
-                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowUpwardBlack},
-                                                         Dark={Static img:ImgArrow.ArrowUpwardWhite}}" />
-                            <Border
-                                Grid.Row="2"
-                                HorizontalOptions="Center"
-                                StrokeThickness="5"
-                                VerticalOptions="Fill" />
-                            <Image
-                                Grid.Row="2"
-                                Rotation="90"
-                                Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
-                                                         Dark={Static img:ImgArrow.LineWhite}}" />
-                            <Image
-                                Grid.Row="3"
-                                InputTransparent="True"
-                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
-                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
                         </Grid>
 
                         <ScrollView
@@ -156,13 +180,13 @@
                                     DisplayButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type vm:NavigateVM}}, Path=DisplayDescriptionPinCommand}"
                                     DisplayButtonCommandParameter="{Binding SelectedPoint}"
                                     DisplayIsVisible="True"
-                                    RoutesIsVisible="True"
-                                    LocationIsVisible="True"
                                     LocationButtonCommand="{Binding FitMapToMarkersCommand}"
-                                    RoutesButtonCommand="{Binding CalculateRouteCommand}"
+                                    LocationIsVisible="True"
                                     PhoneNumber="{Binding SelectedPoint.PhoneNumber}"
                                     QueueNumber="{Binding SelectedPoint.QueueNumber}"
-                                    ResidentialAddress="{Binding SelectedPoint.ResidentialAddress}" />
+                                    ResidentialAddress="{Binding SelectedPoint.ResidentialAddress}"
+                                    RoutesButtonCommand="{Binding CalculateRouteCommand}"
+                                    RoutesIsVisible="True" />
                             </Grid>
                         </ScrollView>
 

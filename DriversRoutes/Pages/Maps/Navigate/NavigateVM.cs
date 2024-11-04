@@ -7,8 +7,6 @@ using DataBase.Model.EntitiesRoutes;
 
 using DriversRoutes.Pages.Maps.Controls;
 
-using Microsoft.Maui.Maps;
-
 using System.Collections.ObjectModel;
 
 
@@ -27,10 +25,6 @@ namespace DriversRoutes.Pages.Maps.Navigate
         [ObservableProperty]
         StepSelected stepSelected = StepSelected.One;
 
-        [ObservableProperty]
-        bool isTrafficEnabled;
-        [ObservableProperty]
-        MapType mapType;
         private readonly DataBase.Data.AccessDataBase _db;
 
         public NavigateVM(AccessDataBase db)
@@ -63,18 +57,6 @@ namespace DriversRoutes.Pages.Maps.Navigate
         }
 
 
-
-        [RelayCommand]
-        void ChangeTypeOfMap(string type)
-        {
-            if (int.TryParse(type, result: out int result))
-            {
-                if (result >= 0 && result <= 2)
-                {
-                    MapType = (MapType)result;
-                }
-            }
-        }
         [RelayCommand]
         void ShowMovingView()
         {
@@ -116,7 +98,6 @@ namespace DriversRoutes.Pages.Maps.Navigate
                 _db.SaveLog(ex);
             }
         }
-
         [RelayCommand]
         void CalculateRoute()
         {
@@ -129,9 +110,8 @@ namespace DriversRoutes.Pages.Maps.Navigate
                 await BlazorMap.OnAddDirections();
             });
         }
-
         [RelayCommand]
-        void FitMapToMarkers()
+        static void FitMapToMarkers()
         {
             BlazorMap.OnFitMapToAdvancedMarkers();
         }

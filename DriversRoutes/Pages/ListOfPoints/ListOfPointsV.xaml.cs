@@ -8,7 +8,7 @@ public partial class ListOfPointsV : ContentPage
         BindingContext = vm;
     }
 
-    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
         if (BindingContext is ListOfPointsVM vm)
@@ -25,10 +25,7 @@ public partial class ListOfPointsV : ContentPage
                     return;
                 }
             }
-            var result = await vm.GetPointsAsync(vm.Route, new DataBase.Model.EntitiesRoutes.SelectedDayOfWeekRoutes());
-
-            vm.CustomerRoutes.Clear();
-            vm.CustomerRoutes = result;
+            vm.GetPointsFireAndForget(vm.Route, new DataBase.Model.EntitiesRoutes.SelectedDayOfWeekRoutes());
             vm.SetSaveData(false);
         }
     }

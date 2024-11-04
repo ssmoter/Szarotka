@@ -78,7 +78,9 @@
                                DataBase.Helper.Img.Svg.HtmlMap.Orion);
 #endif
 
-        AfterOnInitializedAsync = true;
+        
+        AfterOnInitializedAsync?.Invoke();
+        AfterOnInitializedAsync = null;
     }
 
     #region Method
