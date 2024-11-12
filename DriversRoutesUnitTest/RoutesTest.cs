@@ -46,7 +46,7 @@ namespace DriversRoutesUnitTest
 
         public RoutesTest()
         {
-            _routes = new DriversRoutes.Data.GoogleApi.Routes(new HttpClient(), "AIzaSyDMfTC47bnsNBAK8S4xKk7Mhb_aiSqnCYU");
+            _routes = new DriversRoutes.Data.GoogleApi.Routes(new HttpClient(), DataBase.Key.GoogleApi.Key);
         }
         [Fact]
         public async Task GetOnlyRouteStepsDurationDistanceTest()

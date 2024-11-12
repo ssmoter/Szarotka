@@ -12,7 +12,7 @@ namespace DriversRoutesUnitTest
 
         public GoogleApiAddressFromCoordinatesTest()
         {
-            _addressFromCoordinates = new AddressFromCoordinates(new HttpClient(), "AIzaSyDMfTC47bnsNBAK8S4xKk7Mhb_aiSqnCYU");
+            _addressFromCoordinates = new AddressFromCoordinates(new HttpClient(), DataBase.Key.GoogleApi.Key);
         }
 
         [Theory]

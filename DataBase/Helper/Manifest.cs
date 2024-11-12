@@ -12,9 +12,8 @@ namespace DataBase.Helper
             var bundle = applicationInfo.MetaData;
             var value = bundle.GetString(key);
             return value;
-#else
-            return "AIzaSyDMfTC47bnsNBAK8S4xKk7Mhb_aiSqnCYU";
 #endif
+            return "";
         }
 
     }

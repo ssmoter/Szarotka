@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /AppAndroid
+/DataBase/Key/GoogleApi.cs
+/DataBase/Key/GoogleApi.cs

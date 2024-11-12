@@ -10,8 +10,10 @@
 @implements IDisposable;
 
 <MudBlazor.MudThemeProvider @bind-IsDarkMode="@DataBase.Helper.MudBlazorTheme.IsDarkMode" Theme="@DataBase.Helper.MudBlazorTheme.Theme" />
-
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMfTC47bnsNBAK8S4xKk7Mhb_aiSqnCYU&callback=initMap" async defer></script>
+@{
+    string url = "https://maps.googleapis.com/maps/api/js?key=" + DataBase.Key.GoogleApi.Key + "&callback=initMap";
+    <script src="url" async defer></script>
+}
 
 <div id="map" style="height:100vh;width:100%;"></div>
 
@@ -61,7 +63,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _routes.SetKey("AIzaSyDMfTC47bnsNBAK8S4xKk7Mhb_aiSqnCYU");
+        _routes.SetKey(DataBase.Key.GoogleApi.Key);
 
         var currentLocation = await Data.ActionLocation.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(1));
         await GetModule(currentLocation);
@@ -78,7 +80,7 @@
                                DataBase.Helper.Img.Svg.HtmlMap.Orion);
 #endif
 
-        
+
         AfterOnInitializedAsync?.Invoke();
         AfterOnInitializedAsync = null;
     }
