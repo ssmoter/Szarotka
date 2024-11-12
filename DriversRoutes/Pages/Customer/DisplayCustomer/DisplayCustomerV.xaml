@@ -18,10 +18,10 @@
         <MapSmall:MapSmallV
             Customer="{Binding Customer}"
             EditIsVisible="False"
-            VerticalOptions="Start"
             HorizontalOptions="Center"
             IsVisible="{Binding DisplayCustomerM.ShowLocationThisCustomer}"
-            MapSmallVIsVisible="{Binding DisplayCustomerM.ShowLocationThisCustomer}" />
+            MapSmallVIsVisible="{Binding DisplayCustomerM.ShowLocationThisCustomer}"
+            VerticalOptions="Start" />
 
 
         <ScrollView Grid.Row="{Binding DisplayCustomerM.ShowLocationThisCustomerInt}" Grid.RowSpan="2">

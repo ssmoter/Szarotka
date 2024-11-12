@@ -16,5 +16,8 @@ public partial class AddCustomerV : ContentPage
         {
             vm.GetHelperDayOfWeek();
         }
+#if ANDROID || IOS
+        bTimeSize.WidthRequest = Microsoft.Maui.Devices.DeviceDisplay.MainDisplayInfo.Width;
+#endif
     }
 }

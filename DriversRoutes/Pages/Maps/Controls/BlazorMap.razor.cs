@@ -9,20 +9,20 @@ namespace DriversRoutes.Pages.Maps.Controls
         public static Action AfterOnInitializedAsync { get; set; }
         public void Dispose()
         {
-            _setCustomerAction -= _setCustomer;
-            _setAdvancedMarkerAction -= _setAdvancedMarker;
-            _setAdvancedMarkerIconAction -= _setAdvancedMarkerIcon;
-            _removeAdvancedMarkerAction -= _removeAdvancedMarker;
+            _setCustomerAction = null;
+            _setAdvancedMarkerAction = null;
+            _setAdvancedMarkerIconAction = null;
+            _removeAdvancedMarkerAction = null;
 
-            _addDirectionsAction -= _addDirections;
-            _removeDirectionsAction -= _removeDirections;
+            _addDirectionsAction = null;
+            _removeDirectionsAction = null;
 
-            SetCenter -= SetMyLocation;
-            MapDragStart -= StopLisiningLocation;
+            SetCenter = null;
+            MapDragStart = null;
 
-            _fitMapToAdvancedMarkersAction -= _fitMapToAdvancedMarkers;
+            _fitMapToAdvancedMarkersAction = null;
 
-            DataBase.Helper.MudBlazorTheme.ActionThemeChanged -= SetIconTheme;
+            DataBase.Helper.MudBlazorTheme.ActionThemeChanged = null;
             RemoveListener("dragstart");
         }
 
@@ -203,7 +203,7 @@ namespace DriversRoutes.Pages.Maps.Controls
                 customer = _customer;
             }
 
-            var currentLocation = await Data.ActionLocation.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(1),token);
+            var currentLocation = await Data.ActionLocation.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(1), token);
 
             var latLngStart = $"{currentLocation.Center.Latitude.ToString(dot)},{currentLocation.Center.Longitude.ToString(dot)}";
 

@@ -52,8 +52,7 @@
             HorizontalOptions="End"
             IsVisible="{Binding ShowLocationThisCustomer}"
             MapSmallVIsVisible="{Binding ShowLocationThisCustomer}"
-            VerticalOptions="Start"
-           />
+            VerticalOptions="Start" />
 
         <RefreshView
             Grid.Row="1"

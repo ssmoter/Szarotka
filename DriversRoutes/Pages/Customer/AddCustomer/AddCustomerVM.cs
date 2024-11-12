@@ -52,11 +52,14 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         }
 
 
-        public async void GetHelperDayOfWeek()
+        public void GetHelperDayOfWeek()
         {
             var before = GetDayOfWeekCustomerBefore();
             var after = GetDayOfWeekCustomerAfter();
-            await Task.WhenAll(before, after);
+            Task.Run(async () =>
+            {
+                await Task.WhenAll(before, after);
+            });
         }
 
         private async Task GetDayOfWeekCustomerBefore()

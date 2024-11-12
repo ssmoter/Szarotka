@@ -25,12 +25,12 @@
         <MapSmall:MapSmallV
             Grid.Row="0"
             Grid.Column="1"
-            HorizontalOptions="End"
-            VerticalOptions="Start"
             Customer="{Binding Customer}"
             EditIsVisible="True"
+            HorizontalOptions="End"
             IsVisible="{Binding AddCustomer.MapIsVisible}"
-            MapSmallVIsVisible="{Binding AddCustomer.MapIsVisible}" />
+            MapSmallVIsVisible="{Binding AddCustomer.MapIsVisible}"
+            VerticalOptions="Start" />
 
         <ScrollView
             Grid.RowSpan="2"
@@ -52,393 +52,393 @@
 
                     <Border />
 
-                    <SwipeView>
+                    <ScrollView HorizontalOptions="Center" Orientation="Horizontal">
 
-                        <SwipeView.LeftItems>
-                            <SwipeItems SwipeBehaviorOnInvoked="RemainOpen">
-                                <SwipeItemView IsVisible="{Binding DayOfWeekCustomerBeforeIsVisible}">
+                        <HorizontalStackLayout>
 
-                                    <Grid
-                                        Padding="5,2,5,2"
-                                        ColumnDefinitions="80"
-                                        ColumnSpacing="0"
-                                        RowSpacing="0">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
+                            <HorizontalStackLayout HorizontalOptions="Center">
+                                <Grid
+                                    Padding="5,2,5,2"
+                                    ColumnDefinitions="80"
+                                    ColumnSpacing="0"
+                                    IsVisible="{Binding DayOfWeekCustomerBeforeIsVisible}"
+                                    RowSpacing="0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
 
-                                        </Grid.RowDefinitions>
+                                    </Grid.RowDefinitions>
 
-                                        <Label
-                                            Grid.Row="0"
-                                            Grid.ColumnSpan="2"
-                                            LineBreakMode="CharacterWrap"
-                                            Text="Poprzedni przystanek" />
-                                        <controls:ButtonColorsFromBool
-                                            Grid.Row="1"
-                                            BackgroundColorFirst="LightGreen"
-                                            BackgroundColorSecond="LightPink"
-                                            Command="{Binding CopyTimeBeforeCommand}"
-                                            CommandParameter="1"
-                                            SelectedColor="{Binding DayOfWeekCustomerBefore.Monday}"
-                                            Text="{Binding DayOfWeekCustomerBefore.MondayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
+                                    <Label
+                                        Grid.Row="0"
+                                        Grid.ColumnSpan="2"
+                                        LineBreakMode="CharacterWrap"
+                                        Text="Poprzedni przystanek" />
+                                    <controls:ButtonColorsFromBool
+                                        Grid.Row="1"
+                                        BackgroundColorFirst="LightGreen"
+                                        BackgroundColorSecond="LightPink"
+                                        Command="{Binding CopyTimeBeforeCommand}"
+                                        CommandParameter="1"
+                                        SelectedColor="{Binding DayOfWeekCustomerBefore.Monday}"
+                                        Text="{Binding DayOfWeekCustomerBefore.MondayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
 
-                                        <controls:ButtonColorsFromBool
-                                            Grid.Row="2"
-                                            BackgroundColorFirst="LightGreen"
-                                            BackgroundColorSecond="LightPink"
-                                            Command="{Binding CopyTimeBeforeCommand}"
-                                            CommandParameter="2"
-                                            SelectedColor="{Binding DayOfWeekCustomerBefore.Tuesday}"
-                                            Text="{Binding DayOfWeekCustomerBefore.TuesdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
+                                    <controls:ButtonColorsFromBool
+                                        Grid.Row="2"
+                                        BackgroundColorFirst="LightGreen"
+                                        BackgroundColorSecond="LightPink"
+                                        Command="{Binding CopyTimeBeforeCommand}"
+                                        CommandParameter="2"
+                                        SelectedColor="{Binding DayOfWeekCustomerBefore.Tuesday}"
+                                        Text="{Binding DayOfWeekCustomerBefore.TuesdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
 
-                                        <controls:ButtonColorsFromBool
-                                            Grid.Row="3"
-                                            BackgroundColorFirst="LightGreen"
-                                            BackgroundColorSecond="LightPink"
-                                            Command="{Binding CopyTimeBeforeCommand}"
-                                            CommandParameter="3"
-                                            SelectedColor="{Binding DayOfWeekCustomerBefore.Wednesday}"
-                                            Text="{Binding DayOfWeekCustomerBefore.WednesdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
+                                    <controls:ButtonColorsFromBool
+                                        Grid.Row="3"
+                                        BackgroundColorFirst="LightGreen"
+                                        BackgroundColorSecond="LightPink"
+                                        Command="{Binding CopyTimeBeforeCommand}"
+                                        CommandParameter="3"
+                                        SelectedColor="{Binding DayOfWeekCustomerBefore.Wednesday}"
+                                        Text="{Binding DayOfWeekCustomerBefore.WednesdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
 
-                                        <controls:ButtonColorsFromBool
-                                            Grid.Row="4"
-                                            BackgroundColorFirst="LightGreen"
-                                            BackgroundColorSecond="LightPink"
-                                            Command="{Binding CopyTimeBeforeCommand}"
-                                            CommandParameter="4"
-                                            SelectedColor="{Binding DayOfWeekCustomerBefore.Thursday}"
-                                            Text="{Binding DayOfWeekCustomerBefore.ThursdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
+                                    <controls:ButtonColorsFromBool
+                                        Grid.Row="4"
+                                        BackgroundColorFirst="LightGreen"
+                                        BackgroundColorSecond="LightPink"
+                                        Command="{Binding CopyTimeBeforeCommand}"
+                                        CommandParameter="4"
+                                        SelectedColor="{Binding DayOfWeekCustomerBefore.Thursday}"
+                                        Text="{Binding DayOfWeekCustomerBefore.ThursdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
 
-                                        <controls:ButtonColorsFromBool
-                                            Grid.Row="5"
-                                            BackgroundColorFirst="LightGreen"
-                                            BackgroundColorSecond="LightPink"
-                                            Command="{Binding CopyTimeBeforeCommand}"
-                                            CommandParameter="5"
-                                            SelectedColor="{Binding DayOfWeekCustomerBefore.Friday}"
-                                            Text="{Binding DayOfWeekCustomerBefore.FridayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
+                                    <controls:ButtonColorsFromBool
+                                        Grid.Row="5"
+                                        BackgroundColorFirst="LightGreen"
+                                        BackgroundColorSecond="LightPink"
+                                        Command="{Binding CopyTimeBeforeCommand}"
+                                        CommandParameter="5"
+                                        SelectedColor="{Binding DayOfWeekCustomerBefore.Friday}"
+                                        Text="{Binding DayOfWeekCustomerBefore.FridayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
 
-                                        <controls:ButtonColorsFromBool
-                                            Grid.Row="6"
-                                            BackgroundColorFirst="LightGreen"
-                                            BackgroundColorSecond="LightPink"
-                                            Command="{Binding CopyTimeBeforeCommand}"
-                                            CommandParameter="6"
-                                            SelectedColor="{Binding DayOfWeekCustomerBefore.Saturday}"
-                                            Text="{Binding DayOfWeekCustomerBefore.SaturdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
+                                    <controls:ButtonColorsFromBool
+                                        Grid.Row="6"
+                                        BackgroundColorFirst="LightGreen"
+                                        BackgroundColorSecond="LightPink"
+                                        Command="{Binding CopyTimeBeforeCommand}"
+                                        CommandParameter="6"
+                                        SelectedColor="{Binding DayOfWeekCustomerBefore.Saturday}"
+                                        Text="{Binding DayOfWeekCustomerBefore.SaturdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
 
-                                        <Grid Grid.Row="7" ColumnDefinitions="*,*,*">
-                                            <ImageButton
-                                                Grid.Column="0"
-                                                Command="{Binding ChangeTimeBeforeCommand}"
-                                                CommandParameter="left"
-                                                HorizontalOptions="Center"
-                                                Rotation="90"
-                                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
-                                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
-                                            <ImageButton
-                                                Grid.Column="1"
-                                                Command="{Binding ChangeTimeBeforeCommand}"
-                                                CommandParameter="zero"
-                                                HorizontalOptions="Center"
-                                                Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
-                                                                         Dark={Static img:ImgArrow.LineWhite}}" />
-                                            <ImageButton
-                                                Grid.Column="2"
-                                                Command="{Binding ChangeTimeBeforeCommand}"
-                                                CommandParameter="right"
-                                                HorizontalOptions="Center"
-                                                Rotation="-90"
-                                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
-                                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
-                                        </Grid>
-
+                                    <Grid Grid.Row="7" ColumnDefinitions="*,*,*">
+                                        <ImageButton
+                                            Grid.Column="0"
+                                            Command="{Binding ChangeTimeBeforeCommand}"
+                                            CommandParameter="left"
+                                            HorizontalOptions="Center"
+                                            Rotation="90"
+                                            Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                                     Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                                        <ImageButton
+                                            Grid.Column="1"
+                                            Command="{Binding ChangeTimeBeforeCommand}"
+                                            CommandParameter="zero"
+                                            HorizontalOptions="Center"
+                                            Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
+                                                                     Dark={Static img:ImgArrow.LineWhite}}" />
+                                        <ImageButton
+                                            Grid.Column="2"
+                                            Command="{Binding ChangeTimeBeforeCommand}"
+                                            CommandParameter="right"
+                                            HorizontalOptions="Center"
+                                            Rotation="-90"
+                                            Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                                     Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
                                     </Grid>
 
-                                </SwipeItemView>
-                            </SwipeItems>
-                        </SwipeView.LeftItems>
-                        <SwipeView.RightItems>
-                            <SwipeItems SwipeBehaviorOnInvoked="RemainOpen">
-                                <SwipeItemView IsVisible="{Binding DayOfWeekCustomerAfterIsVisible}">
+                                </Grid>
+                                <Border VerticalOptions="Fill" />
+                            </HorizontalStackLayout>
 
-                                    <Grid
-                                        Padding="5,2,5,2"
-                                        ColumnDefinitions="80"
-                                        RowSpacing="0">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="*" />
-                                        </Grid.RowDefinitions>
+                            <Border x:Name="bTimeSize" StrokeThickness="0">
+                                <Grid
+                                    Padding="5,2,5,2"
+                                    x:DataType="VM:AddCustomerVM"
+                                    ColumnDefinitions="*,*,*"
+                                    HorizontalOptions="Fill"
+                                    RowSpacing="0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
 
-                                        <Label Grid.Row="0" Text="Następny &#10;przystanek" />
-                                        <controls:ButtonColorsFromBool
-                                            Grid.Row="1"
-                                            BackgroundColorFirst="LightGreen"
-                                            BackgroundColorSecond="LightPink"
-                                            Command="{Binding CopyTimeAfterCommand}"
-                                            CommandParameter="1"
-                                            SelectedColor="{Binding DayOfWeekCustomerAfter.Monday}"
-                                            Text="{Binding DayOfWeekCustomerAfter.MondayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
-                                        <controls:ButtonColorsFromBool
-                                            Grid.Row="2"
-                                            BackgroundColorFirst="LightGreen"
-                                            BackgroundColorSecond="LightPink"
-                                            Command="{Binding CopyTimeAfterCommand}"
-                                            CommandParameter="2"
-                                            SelectedColor="{Binding DayOfWeekCustomerAfter.Tuesday}"
-                                            Text="{Binding DayOfWeekCustomerAfter.TuesdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
-                                        <controls:ButtonColorsFromBool
-                                            Grid.Row="3"
-                                            BackgroundColorFirst="LightGreen"
-                                            BackgroundColorSecond="LightPink"
-                                            Command="{Binding CopyTimeAfterCommand}"
-                                            CommandParameter="3"
-                                            SelectedColor="{Binding DayOfWeekCustomerAfter.Wednesday}"
-                                            Text="{Binding DayOfWeekCustomerAfter.WednesdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
-                                        <controls:ButtonColorsFromBool
-                                            Grid.Row="4"
-                                            BackgroundColorFirst="LightGreen"
-                                            BackgroundColorSecond="LightPink"
-                                            Command="{Binding CopyTimeAfterCommand}"
-                                            CommandParameter="4"
-                                            SelectedColor="{Binding DayOfWeekCustomerAfter.Thursday}"
-                                            Text="{Binding DayOfWeekCustomerAfter.ThursdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
-                                        <controls:ButtonColorsFromBool
-                                            Grid.Row="5"
-                                            BackgroundColorFirst="LightGreen"
-                                            BackgroundColorSecond="LightPink"
-                                            Command="{Binding CopyTimeAfterCommand}"
-                                            CommandParameter="5"
-                                            SelectedColor="{Binding DayOfWeekCustomerAfter.Friday}"
-                                            Text="{Binding DayOfWeekCustomerAfter.FridayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
-                                        <controls:ButtonColorsFromBool
-                                            Grid.Row="6"
-                                            BackgroundColorFirst="LightGreen"
-                                            BackgroundColorSecond="LightPink"
-                                            Command="{Binding CopyTimeAfterCommand}"
-                                            CommandParameter="6"
-                                            SelectedColor="{Binding DayOfWeekCustomerAfter.Saturday}"
-                                            Text="{Binding DayOfWeekCustomerAfter.SaturdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
+                                    <Label
+                                        Grid.Row="0"
+                                        Grid.Column="0"
+                                        HorizontalOptions="Center"
+                                        HorizontalTextAlignment="Center"
+                                        Text="Dzień &#10;tygodnia" />
+                                    <Label
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        HorizontalOptions="Center"
+                                        HorizontalTextAlignment="Center"
+                                        Text="Czy &#10;przyjechać" />
+                                    <Label
+                                        Grid.Row="0"
+                                        Grid.Column="2"
+                                        HorizontalOptions="Center"
+                                        HorizontalTextAlignment="Center"
+                                        Text="Czas &#10;przyjazdu" />
 
 
-                                        <Grid Grid.Row="7" ColumnDefinitions="*,*,*">
-                                            <ImageButton
-                                                Grid.Column="0"
-                                                Command="{Binding ChangeTimeAfterCommand}"
-                                                CommandParameter="left"
-                                                HorizontalOptions="Center"
-                                                Rotation="90"
-                                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
-                                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
-                                            <ImageButton
-                                                Grid.Column="1"
-                                                Command="{Binding ChangeTimeAfterCommand}"
-                                                CommandParameter="zero"
-                                                HorizontalOptions="Center"
-                                                Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
-                                                                         Dark={Static img:ImgArrow.LineWhite}}" />
-                                            <ImageButton
-                                                Grid.Column="2"
-                                                Command="{Binding ChangeTimeAfterCommand}"
-                                                CommandParameter="right"
-                                                HorizontalOptions="Center"
-                                                Rotation="-90"
-                                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
-                                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
-                                        </Grid>
+                                    <Label
+                                        Grid.Row="1"
+                                        Grid.Column="0"
+                                        Text="Poniedziałek"
+                                        VerticalOptions="Center" />
+                                    <CheckBox
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        HorizontalOptions="Center"
+                                        IsChecked="{Binding Customer.DayOfWeek.Monday}"
+                                        VerticalOptions="Center" />
+                                    <TimePicker
+                                        Grid.Row="1"
+                                        Grid.Column="2"
+                                        Time="{Binding Customer.DayOfWeek.MondayTimeSpan}"
+                                        VerticalOptions="Center" />
 
+
+                                    <Label
+                                        Grid.Row="2"
+                                        Grid.Column="0"
+                                        Text="Wtorek"
+                                        VerticalOptions="Center" />
+                                    <CheckBox
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        HorizontalOptions="Center"
+                                        IsChecked="{Binding Customer.DayOfWeek.Tuesday}"
+                                        VerticalOptions="Center" />
+                                    <TimePicker
+                                        Grid.Row="2"
+                                        Grid.Column="2"
+                                        Time="{Binding Customer.DayOfWeek.TuesdayTimeSpan}"
+                                        VerticalOptions="Center" />
+
+
+
+                                    <Label
+                                        Grid.Row="3"
+                                        Grid.Column="0"
+                                        Text="Środa"
+                                        VerticalOptions="Center" />
+                                    <CheckBox
+                                        Grid.Row="3"
+                                        Grid.Column="1"
+                                        HorizontalOptions="Center"
+                                        IsChecked="{Binding Customer.DayOfWeek.Wednesday}"
+                                        VerticalOptions="Center" />
+                                    <TimePicker
+                                        Grid.Row="3"
+                                        Grid.Column="2"
+                                        Time="{Binding Customer.DayOfWeek.WednesdayTimeSpan}"
+                                        VerticalOptions="Center" />
+
+
+
+                                    <Label
+                                        Grid.Row="4"
+                                        Grid.Column="0"
+                                        Text="Czwartek"
+                                        VerticalOptions="Center" />
+                                    <CheckBox
+                                        Grid.Row="4"
+                                        Grid.Column="1"
+                                        HorizontalOptions="Center"
+                                        IsChecked="{Binding Customer.DayOfWeek.Thursday}"
+                                        VerticalOptions="Center" />
+                                    <TimePicker
+                                        Grid.Row="4"
+                                        Grid.Column="2"
+                                        Time="{Binding Customer.DayOfWeek.ThursdayTimeSpan}"
+                                        VerticalOptions="Center" />
+
+
+
+
+                                    <Label
+                                        Grid.Row="5"
+                                        Grid.Column="0"
+                                        Text="Piątek"
+                                        VerticalOptions="Center" />
+                                    <CheckBox
+                                        Grid.Row="5"
+                                        Grid.Column="1"
+                                        HorizontalOptions="Center"
+                                        IsChecked="{Binding Customer.DayOfWeek.Friday}"
+                                        VerticalOptions="Center" />
+                                    <TimePicker
+                                        Grid.Row="5"
+                                        Grid.Column="2"
+                                        Time="{Binding Customer.DayOfWeek.FridayTimeSpan}"
+                                        VerticalOptions="Center" />
+
+
+
+                                    <Label
+                                        Grid.Row="6"
+                                        Grid.Column="0"
+                                        Text="Sobota"
+                                        VerticalOptions="Center" />
+                                    <CheckBox
+                                        Grid.Row="6"
+                                        Grid.Column="1"
+                                        HorizontalOptions="Center"
+                                        IsChecked="{Binding Customer.DayOfWeek.Saturday}"
+                                        VerticalOptions="Center" />
+                                    <TimePicker
+                                        Grid.Row="6"
+                                        Grid.Column="2"
+                                        Time="{Binding Customer.DayOfWeek.SaturdayTimeSpan}"
+                                        VerticalOptions="Center" />
+
+
+
+                                    <Label
+                                        Grid.Row="7"
+                                        Grid.Column="0"
+                                        Text="Codziennie"
+                                        VerticalOptions="Center" />
+                                    <CheckBox
+                                        Grid.Row="7"
+                                        Grid.Column="1"
+                                        HorizontalOptions="Center"
+                                        IsChecked="{Binding Customer.DayOfWeek.SetAll}"
+                                        VerticalOptions="Center" />
+                                    <TimePicker
+                                        Grid.Row="7"
+                                        Grid.Column="2"
+                                        Time="{Binding Customer.DayOfWeek.SetAllTimeSpan}"
+                                        VerticalOptions="Center" />
+
+
+
+
+                                </Grid>
+                            </Border>
+
+                            <HorizontalStackLayout HorizontalOptions="Center">
+                                <Border VerticalOptions="Fill" />
+                                <Grid
+                                    Padding="5,2,5,2"
+                                    ColumnDefinitions="80"
+                                    IsVisible="{Binding DayOfWeekCustomerAfterIsVisible}"
+                                    RowSpacing="0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+
+                                    <Label Grid.Row="0" Text="Następny &#10;przystanek" />
+                                    <controls:ButtonColorsFromBool
+                                        Grid.Row="1"
+                                        BackgroundColorFirst="LightGreen"
+                                        BackgroundColorSecond="LightPink"
+                                        Command="{Binding CopyTimeAfterCommand}"
+                                        CommandParameter="1"
+                                        SelectedColor="{Binding DayOfWeekCustomerAfter.Monday}"
+                                        Text="{Binding DayOfWeekCustomerAfter.MondayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
+                                    <controls:ButtonColorsFromBool
+                                        Grid.Row="2"
+                                        BackgroundColorFirst="LightGreen"
+                                        BackgroundColorSecond="LightPink"
+                                        Command="{Binding CopyTimeAfterCommand}"
+                                        CommandParameter="2"
+                                        SelectedColor="{Binding DayOfWeekCustomerAfter.Tuesday}"
+                                        Text="{Binding DayOfWeekCustomerAfter.TuesdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
+                                    <controls:ButtonColorsFromBool
+                                        Grid.Row="3"
+                                        BackgroundColorFirst="LightGreen"
+                                        BackgroundColorSecond="LightPink"
+                                        Command="{Binding CopyTimeAfterCommand}"
+                                        CommandParameter="3"
+                                        SelectedColor="{Binding DayOfWeekCustomerAfter.Wednesday}"
+                                        Text="{Binding DayOfWeekCustomerAfter.WednesdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
+                                    <controls:ButtonColorsFromBool
+                                        Grid.Row="4"
+                                        BackgroundColorFirst="LightGreen"
+                                        BackgroundColorSecond="LightPink"
+                                        Command="{Binding CopyTimeAfterCommand}"
+                                        CommandParameter="4"
+                                        SelectedColor="{Binding DayOfWeekCustomerAfter.Thursday}"
+                                        Text="{Binding DayOfWeekCustomerAfter.ThursdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
+                                    <controls:ButtonColorsFromBool
+                                        Grid.Row="5"
+                                        BackgroundColorFirst="LightGreen"
+                                        BackgroundColorSecond="LightPink"
+                                        Command="{Binding CopyTimeAfterCommand}"
+                                        CommandParameter="5"
+                                        SelectedColor="{Binding DayOfWeekCustomerAfter.Friday}"
+                                        Text="{Binding DayOfWeekCustomerAfter.FridayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
+                                    <controls:ButtonColorsFromBool
+                                        Grid.Row="6"
+                                        BackgroundColorFirst="LightGreen"
+                                        BackgroundColorSecond="LightPink"
+                                        Command="{Binding CopyTimeAfterCommand}"
+                                        CommandParameter="6"
+                                        SelectedColor="{Binding DayOfWeekCustomerAfter.Saturday}"
+                                        Text="{Binding DayOfWeekCustomerAfter.SaturdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
+
+
+                                    <Grid Grid.Row="7" ColumnDefinitions="*,*,*">
+                                        <ImageButton
+                                            Grid.Column="0"
+                                            Command="{Binding ChangeTimeAfterCommand}"
+                                            CommandParameter="left"
+                                            HorizontalOptions="Center"
+                                            Rotation="90"
+                                            Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                                     Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                                        <ImageButton
+                                            Grid.Column="1"
+                                            Command="{Binding ChangeTimeAfterCommand}"
+                                            CommandParameter="zero"
+                                            HorizontalOptions="Center"
+                                            Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
+                                                                     Dark={Static img:ImgArrow.LineWhite}}" />
+                                        <ImageButton
+                                            Grid.Column="2"
+                                            Command="{Binding ChangeTimeAfterCommand}"
+                                            CommandParameter="right"
+                                            HorizontalOptions="Center"
+                                            Rotation="-90"
+                                            Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                                     Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
                                     </Grid>
 
-                                </SwipeItemView>
-                            </SwipeItems>
-                        </SwipeView.RightItems>
+                                </Grid>
+                            </HorizontalStackLayout>
 
-                        <Grid
-                            Padding="5,2,5,2"
-                            ColumnDefinitions="*,*,*"
-                            RowSpacing="0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-
-                            <Label
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                HorizontalOptions="Center"
-                                HorizontalTextAlignment="Center"
-                                Text="Dzień &#10;tygodnia" />
-                            <Label
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                HorizontalOptions="Center"
-                                HorizontalTextAlignment="Center"
-                                Text="Czy &#10;przyjechać" />
-                            <Label
-                                Grid.Row="0"
-                                Grid.Column="2"
-                                HorizontalOptions="Center"
-                                HorizontalTextAlignment="Center"
-                                Text="Czas &#10;przyjazdu" />
-
-
-                            <Label
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                Text="Poniedziałek"
-                                VerticalOptions="Center" />
-                            <CheckBox
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                HorizontalOptions="Center"
-                                IsChecked="{Binding Customer.DayOfWeek.Monday}"
-                                VerticalOptions="Center" />
-                            <TimePicker
-                                Grid.Row="1"
-                                Grid.Column="2"
-                                Time="{Binding Customer.DayOfWeek.MondayTimeSpan}"
-                                VerticalOptions="Center" />
-
-
-                            <Label
-                                Grid.Row="2"
-                                Grid.Column="0"
-                                Text="Wtorek"
-                                VerticalOptions="Center" />
-                            <CheckBox
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                HorizontalOptions="Center"
-                                IsChecked="{Binding Customer.DayOfWeek.Tuesday}"
-                                VerticalOptions="Center" />
-                            <TimePicker
-                                Grid.Row="2"
-                                Grid.Column="2"
-                                Time="{Binding Customer.DayOfWeek.TuesdayTimeSpan}"
-                                VerticalOptions="Center" />
-
-
-
-                            <Label
-                                Grid.Row="3"
-                                Grid.Column="0"
-                                Text="Środa"
-                                VerticalOptions="Center" />
-                            <CheckBox
-                                Grid.Row="3"
-                                Grid.Column="1"
-                                HorizontalOptions="Center"
-                                IsChecked="{Binding Customer.DayOfWeek.Wednesday}"
-                                VerticalOptions="Center" />
-                            <TimePicker
-                                Grid.Row="3"
-                                Grid.Column="2"
-                                Time="{Binding Customer.DayOfWeek.WednesdayTimeSpan}"
-                                VerticalOptions="Center" />
-
-
-
-                            <Label
-                                Grid.Row="4"
-                                Grid.Column="0"
-                                Text="Czwartek"
-                                VerticalOptions="Center" />
-                            <CheckBox
-                                Grid.Row="4"
-                                Grid.Column="1"
-                                HorizontalOptions="Center"
-                                IsChecked="{Binding Customer.DayOfWeek.Thursday}"
-                                VerticalOptions="Center" />
-                            <TimePicker
-                                Grid.Row="4"
-                                Grid.Column="2"
-                                Time="{Binding Customer.DayOfWeek.ThursdayTimeSpan}"
-                                VerticalOptions="Center" />
-
-
-
-
-                            <Label
-                                Grid.Row="5"
-                                Grid.Column="0"
-                                Text="Piątek"
-                                VerticalOptions="Center" />
-                            <CheckBox
-                                Grid.Row="5"
-                                Grid.Column="1"
-                                HorizontalOptions="Center"
-                                IsChecked="{Binding Customer.DayOfWeek.Friday}"
-                                VerticalOptions="Center" />
-                            <TimePicker
-                                Grid.Row="5"
-                                Grid.Column="2"
-                                Time="{Binding Customer.DayOfWeek.FridayTimeSpan}"
-                                VerticalOptions="Center" />
-
-
-
-                            <Label
-                                Grid.Row="6"
-                                Grid.Column="0"
-                                Text="Sobota"
-                                VerticalOptions="Center" />
-                            <CheckBox
-                                Grid.Row="6"
-                                Grid.Column="1"
-                                HorizontalOptions="Center"
-                                IsChecked="{Binding Customer.DayOfWeek.Saturday}"
-                                VerticalOptions="Center" />
-                            <TimePicker
-                                Grid.Row="6"
-                                Grid.Column="2"
-                                Time="{Binding Customer.DayOfWeek.SaturdayTimeSpan}"
-                                VerticalOptions="Center" />
-
-
-
-                            <Label
-                                Grid.Row="7"
-                                Grid.Column="0"
-                                Text="Codziennie"
-                                VerticalOptions="Center" />
-                            <CheckBox
-                                Grid.Row="7"
-                                Grid.Column="1"
-                                HorizontalOptions="Center"
-                                IsChecked="{Binding Customer.DayOfWeek.SetAll}"
-                                VerticalOptions="Center" />
-                            <TimePicker
-                                Grid.Row="7"
-                                Grid.Column="2"
-                                Time="{Binding Customer.DayOfWeek.SetAllTimeSpan}"
-                                VerticalOptions="Center" />
-
-
-
-
-                        </Grid>
-                    </SwipeView>
-
+                        </HorizontalStackLayout>
+                    </ScrollView>
 
                     <Border />
 

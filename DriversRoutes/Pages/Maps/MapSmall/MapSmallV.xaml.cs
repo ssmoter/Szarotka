@@ -38,7 +38,7 @@ public partial class MapSmallV : ContentView, IDisposable
     });
     public CustomerRoutes Customer
     {
-        get => GetValue(CustomerProperty) as CustomerRoutes;
+        get => (CustomerRoutes)GetValue(CustomerProperty);
         set => SetValue(CustomerProperty, value);
     }
 
@@ -97,6 +97,14 @@ public partial class MapSmallV : ContentView, IDisposable
         var service = DataBase.Service.AppServiceProvider.Current.GetService(typeof(MapSmallVM)) as MapSmallVM;
         InitializeComponent();
         MapSmallVM = service;
+
+        MapSmallVM.MoveToRegion = null;
+        MapSmallVM.AddPin = null;
+        MapSmallVM.RemovePin = null;
+        MapSmallVM.GetCurrentLocation = null;
+        MapSmallVM.EditCustomerLocation = null;
+
+
         MapSmallVM.MoveToRegion += this.Map.MoveToRegion;
         MapSmallVM.AddPin += this.Map.Pins.Add;
         MapSmallVM.RemovePin += this.Map.Pins.Remove;
@@ -111,13 +119,13 @@ public partial class MapSmallV : ContentView, IDisposable
     }
     public void Dispose()
     {
-        MapSmallVM.MoveToRegion -= this.Map.MoveToRegion;
-        MapSmallVM.AddPin -= this.Map.Pins.Add;
-        MapSmallVM.RemovePin -= this.Map.Pins.Remove;
-        MapSmallVM.GetCurrentLocation -= GetVisibleRegionCenter;
-        MapSmallVM.EditCustomerLocation -= OnEditCustomerLocation;
-        panGesture.PanUpdated -= OnPanUpdated;
+        MapSmallVM.MoveToRegion = null;
+        MapSmallVM.AddPin = null;
+        MapSmallVM.RemovePin = null;
+        MapSmallVM.GetCurrentLocation = null;
+        MapSmallVM.EditCustomerLocation = null;
 
+        panGesture.PanUpdated -= OnPanUpdated;
     }
 
 
@@ -138,6 +146,10 @@ public partial class MapSmallV : ContentView, IDisposable
 
     private void OnEditCustomerLocation(Microsoft.Maui.Devices.Sensors.Location location)
     {
+        if (Customer is null)
+        {
+            return;
+        }
         Customer.Latitude = location.Latitude;
         Customer.Longitude = location.Longitude;
         OnPropertyChanged(nameof(Customer.Latitude));
