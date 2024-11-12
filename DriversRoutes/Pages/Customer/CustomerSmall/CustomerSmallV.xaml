@@ -13,131 +13,139 @@
         <convert:DisplayDayAndHourFromOneWeek x:Key="DayAndHour" />
     </ContentView.Resources>
 
-    <Grid
-        Padding="2,2,2,5"
-        x:DataType="VM:CustomerSmallV"
-        ColumnDefinitions="*">
-        <ScrollView Padding="3">
+    <Grid Padding="2,2,2,5" x:DataType="VM:CustomerSmallV">
 
-            <Border Padding="5,0,5,0" StrokeThickness="3">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
+        <Border Padding="5,0,5,0" StrokeThickness="3">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10" />
+            </Border.StrokeShape>
 
-                <VerticalStackLayout BindingContext="{x:Reference this}">
+            <VerticalStackLayout BindingContext="{x:Reference this}">
 
-                    <Label LineBreakMode="WordWrap">
+                <Label LineBreakMode="WordWrap">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding QueueNumber}" />
+                            <Span Text=": " />
+                            <Span Text="{Binding Name}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Buttons="Primary"
+                            NumberOfTapsRequired="2"
+                            Tapped="TapGestureRecognizer_Tapped_CopyAll" />
+                    </Label.GestureRecognizers>
+                </Label>
+
+
+                <Border />
+
+                <Border StrokeThickness="0">
+                    <DayOfWeekControl:DayOfWeekV DayOfWeek="{Binding DayOfWeek}" />
+                </Border>
+
+                <Border IsVisible="{Binding CustomerSmallM.PhoneNumber}" />
+
+                <Grid ColumnDefinitions="*,auto" IsVisible="{Binding CustomerSmallM.PhoneNumber}">
+                    <Label Text="{Binding PhoneNumber}" VerticalOptions="Center" />
+                    <Button
+                        Grid.Column="1"
+                        Clicked="Button_Clicked_Call"
+                        HorizontalOptions="Center"
+                        Text="Zadzwoń"
+                        VerticalOptions="Center" />
+                </Grid>
+
+                <Border IsVisible="{Binding CustomerSmallM.Description}" />
+
+                <Label
+                    IsVisible="{Binding CustomerSmallM.Description}"
+                    LineBreakMode="WordWrap"
+                    Text="{Binding Description}" />
+
+                <Border IsVisible="{Binding CustomerSmallM.Address}" />
+
+                <ResidentialAddressCotrol:ResidentialAddressV AddressIsVisible="{Binding CustomerSmallM.Address}" ResidentialAddress="{Binding ResidentialAddress}" />
+
+                <Border />
+
+                <VerticalStackLayout IsVisible="{Binding CustomerSmallM.Coordinates}">
+
+                    <VerticalStackLayout.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Buttons="Primary"
+                            NumberOfTapsRequired="2"
+                            Tapped="TapGestureRecognizer_Tapped_CopyLocation" />
+                    </VerticalStackLayout.GestureRecognizers>
+
+                    <Label>
+
                         <Label.FormattedText>
                             <FormattedString>
-                                <Span Text="{Binding QueueNumber}" />
-                                <Span Text=": " />
-                                <Span Text="{Binding Name}" />
+                                <Span Text="Długość geograficzna &#10;" />
+                                <Span Text="{Binding Longitude}" />
                             </FormattedString>
                         </Label.FormattedText>
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer
-                                Buttons="Primary"
-                                NumberOfTapsRequired="2"
-                                Tapped="TapGestureRecognizer_Tapped_CopyAll" />
-                        </Label.GestureRecognizers>
                     </Label>
 
+                    <Label>
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Szerokość geograficzna &#10;" />
+                                <Span Text="{Binding Latitude}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                </VerticalStackLayout>
 
-                    <Border />
+                <FlexLayout
+                    AlignContent="SpaceBetween"
+                    AlignItems="Center"
+                    HorizontalOptions="Center"
+                    JustifyContent="Center"
+                    Wrap="Wrap">
+                    <Button
+                        Padding="5"
+                        Command="{Binding DeleteButtonCommand}"
+                        CommandParameter="{Binding DeleteButtonCommandParameter}"
+                        HorizontalOptions="Center"
+                        IsVisible="{Binding DeleteIsVisible}"
+                        Text="Usuń"
+                        VerticalOptions="Center" />
+                    <Button
+                        Padding="5"
+                        Command="{Binding DisplayButtonCommand}"
+                        CommandParameter="{Binding DisplayButtonCommandParameter}"
+                        HorizontalOptions="Center"
+                        IsVisible="{Binding DisplayIsVisible}"
+                        Text="Wyświetl"
+                        VerticalOptions="Center" />
+                    <Button
+                        Padding="5"
+                        Command="{Binding EditButtonCommand}"
+                        CommandParameter="{Binding EditButtonCommandParameter}"
+                        HorizontalOptions="Center"
+                        IsVisible="{Binding EditIsVisible}"
+                        Text="Edytuj"
+                        VerticalOptions="Center" />
+                    <Button
+                        Padding="5"
+                        Command="{Binding LocationButtonCommand}"
+                        CommandParameter="{Binding LocationButtonCommandParameter}"
+                        HorizontalOptions="Center"
+                        IsVisible="{Binding LocationIsVisible}"
+                        Text="Lokalizacja"
+                        VerticalOptions="Center" />
+                    <Button
+                        Padding="5"
+                        Command="{Binding RoutesButtonCommand}"
+                        CommandParameter="{Binding RoutesButtonCommandParameter}"
+                        HorizontalOptions="Center"
+                        IsVisible="{Binding RoutesIsVisible}"
+                        Text="Trasa"
+                        VerticalOptions="Center" />
 
-                    <Border StrokeThickness="0">
-                        <DayOfWeekControl:DayOfWeekV DayOfWeek="{Binding DayOfWeek}" />
-                    </Border>
-
-                    <Border IsVisible="{Binding CustomerSmallM.PhoneNumber}" />
-
-                    <Grid ColumnDefinitions="*,auto" IsVisible="{Binding CustomerSmallM.PhoneNumber}">
-                        <Label Text="{Binding PhoneNumber}" VerticalOptions="Center" />
-                        <Button
-                            Grid.Column="1"
-                            Clicked="Button_Clicked_Call"
-                            HorizontalOptions="Center"
-                            Text="Zadzwoń"
-                            VerticalOptions="Center" />
-                    </Grid>
-
-                    <Border IsVisible="{Binding CustomerSmallM.Description}" />
-
-                    <Label
-                        IsVisible="{Binding CustomerSmallM.Description}"
-                        LineBreakMode="WordWrap"
-                        Text="{Binding Description}" />
-
-                    <Border IsVisible="{Binding CustomerSmallM.Address}" />
-
-                    <ResidentialAddressCotrol:ResidentialAddressV AddressIsVisible="{Binding CustomerSmallM.Address}" ResidentialAddress="{Binding ResidentialAddress}" />
-
-                    <Border />
-
-                    <VerticalStackLayout IsVisible="{Binding CustomerSmallM.Coordinates}">
-
-                        <VerticalStackLayout.GestureRecognizers>
-                            <TapGestureRecognizer
-                                Buttons="Primary"
-                                NumberOfTapsRequired="2"
-                                Tapped="TapGestureRecognizer_Tapped_CopyLocation" />
-                        </VerticalStackLayout.GestureRecognizers>
-
-                        <Label>
-
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="Długość geograficzna &#10;" />
-                                    <Span Text="{Binding Longitude}" />
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-
-                        <Label>
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="Szerokość geograficzna &#10;" />
-                                    <Span Text="{Binding Latitude}" />
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-                    </VerticalStackLayout>
-
-                    <HorizontalStackLayout HorizontalOptions="Center">
-                        <Button
-                            Padding="5"
-                            Command="{Binding DeleteButtonCommand}"
-                            CommandParameter="{Binding DeleteButtonCommandParameter}"
-                            HorizontalOptions="Center"
-                            IsVisible="{Binding DeleteIsVisible}"
-                            Text="Usuń"
-                            VerticalOptions="Center" />
-                        <Button
-                            Padding="5"
-                            Command="{Binding DisplayButtonCommand}"
-                            CommandParameter="{Binding DisplayButtonCommandParameter}"
-                            HorizontalOptions="Center"
-                            IsVisible="{Binding DisplayIsVisible}"
-                            Text="Wyświetl"
-                            VerticalOptions="Center" />
-                        <Button
-                            Padding="5"
-                            Command="{Binding EditButtonCommand}"
-                            CommandParameter="{Binding EditButtonCommandParameter}"
-                            HorizontalOptions="Center"
-                            IsVisible="{Binding EditIsVisible}"
-                            Text="Edytuj"
-                            VerticalOptions="Center" />
-                        <Button
-                            Padding="5"
-                            Command="{Binding LocationButtonCommand}"
-                            CommandParameter="{Binding LocationButtonCommandParameter}"
-                            HorizontalOptions="Center"
-                            IsVisible="{Binding LocationIsVisible}"
-                            Text="Lokalizacja"
-                            VerticalOptions="Center" />
-
-                    </HorizontalStackLayout>
                     <Button
                         Command="{Binding MoveTimeButtonCommand}"
                         CommandParameter="{Binding MoveTimeButtonCommandParameter}"
@@ -146,11 +154,14 @@
                         LineBreakMode="WordWrap"
                         Text="Przesuń czas na pozostałych dniach"
                         VerticalOptions="Center" />
+                </FlexLayout>
+            </VerticalStackLayout>
 
-                </VerticalStackLayout>
 
-            </Border>
-        </ScrollView>
+        </Border>
 
     </Grid>
+
+
+
 </ContentView>

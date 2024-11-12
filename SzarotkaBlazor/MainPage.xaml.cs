@@ -1,4 +1,5 @@
-﻿using DataBase.Data;
+﻿
+using DataBase.Data;
 using DataBase.Model;
 
 using SzarotkaBlazor.Pages.Options.Main;
@@ -16,6 +17,7 @@ namespace SzarotkaBlazor
             _db = new();
             _createdDataBase = new CreatedDataBase(_db);
         }
+
 
         protected override async void OnNavigatedTo(NavigatedToEventArgs args)
         {
@@ -35,7 +37,6 @@ namespace SzarotkaBlazor
             }
         }
 
-
         private async void Options_Clicked(object sender, EventArgs e)
         {
             await Shell.Current.GoToAsync(nameof(MainOptionsV));
@@ -50,26 +51,5 @@ namespace SzarotkaBlazor
         {
             await Shell.Current.GoToAsync(nameof(DriversRoutes.Pages.Main.MainVDriversRoutesV));
         }
-
-        //private void Button_Clicked(object sender, EventArgs e)
-        //{
-        //    var width = 40 *10;
-        //    var height = 58 *10;
-
-        //    SkiaBitmapExportContext skiaBitmapExportContext = new(width, height, 1);
-        //    ICanvas canvas = skiaBitmapExportContext.Canvas;
-        //    DrawIconOnMap drawIconOnMap = new()
-        //    {
-        //        Number = 100
-        //    };
-        //    drawIconOnMap.Draw(canvas, new RectF(0, 0, skiaBitmapExportContext.Width, skiaBitmapExportContext.Height));
-        //    gv.MinimumWidthRequest = width;
-        //    gv.MinimumHeightRequest = height;
-        //    gv.Drawable = drawIconOnMap;
-        //    gv.Invalidate();
-        //    //= ImageSource.FromStream(() => skiaBitmapExportContext.Image.AsStream());
-
-
-        //}
     }
 }

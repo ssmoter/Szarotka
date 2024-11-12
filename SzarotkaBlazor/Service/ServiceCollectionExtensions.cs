@@ -15,9 +15,8 @@ namespace SzarotkaBlazor.Service
             services.AddMyServiceDataBase();
 
             services.AddMyServiceInventory();
-
-#if ANDROID
             services.AddMyServiceDriversRoutes();
+#if ANDROID
 #endif
 
             services.AddSingleton<MainOptionsV>();

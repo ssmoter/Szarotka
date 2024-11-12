@@ -1,4 +1,4 @@
-﻿namespace DriversRoutes.Model
+﻿namespace DriversRoutes.Model.Address
 {
     public class GoogleApiAddress
     {

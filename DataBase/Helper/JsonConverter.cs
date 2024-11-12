@@ -5,10 +5,20 @@ namespace DataBase.Helper
 {
     public static class JsonOptions
     {
-        public static JsonSerializerOptions JsonSerializeOptions = new()
+        public static JsonSerializerOptions JsonSerializeOptionsBoolAndDateTime => new()
         {
             Converters = { new BoolConverter(), new DateTimeConverter() }
         };
+        public static JsonSerializerOptions JsonSerializeOptionsIgnoreCapitalLetters => new()
+        {
+            PropertyNameCaseInsensitive = true
+        };
+        public static JsonSerializerOptions JsonSerializeOptionsJsonStringEnumConverter => new()
+        {
+            Converters = { new JsonStringEnumConverter() }
+        };
+
+
     }
 
     public class DateTimeConverter : JsonConverter<DateTime>

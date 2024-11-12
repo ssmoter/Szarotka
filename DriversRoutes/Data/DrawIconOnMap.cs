@@ -1,8 +1,10 @@
-﻿using Microsoft.Maui.Graphics.Skia;
+﻿using DriversRoutes.Model;
+
+using Microsoft.Maui.Graphics.Skia;
 
 using SkiaSharp;
 
-using System.Reflection.Metadata.Ecma335;
+using System.Xml.Linq;
 
 namespace DriversRoutes.Data
 {
@@ -20,7 +22,7 @@ namespace DriversRoutes.Data
         {
             ColorFill = null;
             ColorBackground = null;
-            Image.Dispose();
+            Image?.Dispose();
             GC.SuppressFinalize(this);
         }
 
@@ -88,7 +90,7 @@ namespace DriversRoutes.Data
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
-            canvas.SaveState();       
+            canvas.SaveState();
             canvas.StrokeSize = 1;
             canvas.FontSize = 20;
             canvas.FontColor = ColorFill;
@@ -100,7 +102,7 @@ namespace DriversRoutes.Data
             canvas.Translate(dirtyRect.Center.X, 0);
             canvas.Scale(ScaleX, ScaleY);
 
-            canvas.Translate(0,3);
+            canvas.Translate(0, 3);
             canvas.DrawString(Number.ToString(), 0f, 15, HorizontalAlignment.Center);
             canvas.SaveState();
 
@@ -108,13 +110,13 @@ namespace DriversRoutes.Data
 
             DrawPoint(canvas, dirtyRect);
             canvas.ResetState();
-       
+
         }
 
 
         private void DrawPoint(ICanvas canvas, RectF dirtyRect)
         {
-            canvas.Translate(-23,0);
+            canvas.Translate(-23, 0);
             PathF path = new(11, 24);
             path.LineTo(23, 42);
             path.LineTo(24, 42);
@@ -130,6 +132,146 @@ namespace DriversRoutes.Data
             canvas.DrawCircle(0, 0, 9 / 2);
             canvas.FillColor = ColorBackground;
             canvas.FillCircle(0, 0, 9 / 2);
+        }
+
+
+        public static string GenerateHtmlImgFromBase64String(string base64String)
+        {
+            return $"<img src=\"data:image/png;base64, {base64String}\"/>";
+        }
+        public static string[] GenerateBase64StringPins(int length)
+        {
+            var pins = new string[length];
+            var pinSize = GetScale();
+            DrawIconOnMap drawIconOnMap = new()
+            {
+                ScaleX = pinSize.ScaleX,
+                ScaleY = pinSize.ScaleY,
+            };
+            for (int i = 0; i < length; i++)
+            {
+                SkiaBitmapExportContext skiaBitmapExportContext = new(pinSize.Width, pinSize.Height, 1);
+                drawIconOnMap.Number = i + 1;
+                var pin = GetNewPin(skiaBitmapExportContext, drawIconOnMap);
+                pins[i] = pin;
+            }
+            return pins;
+        }
+        public static string GenerateBase64StringPin(int number)
+        {
+            var pinSize = GetScale();
+            SkiaBitmapExportContext skiaBitmapExportContext = new(pinSize.Width, pinSize.Height, 1);
+            DrawIconOnMap drawIconOnMap = new()
+            {
+                Number = number,
+                ScaleX = pinSize.ScaleX,
+                ScaleY = pinSize.ScaleY,
+            };
+            var pin = GetNewPin(skiaBitmapExportContext, drawIconOnMap);
+            return pin;
+        }
+        public static ImageSource GetImagePin(int number)
+        {
+            var pinSize = GetScale();
+            SkiaBitmapExportContext skiaBitmapExportContext = new(pinSize.Width, pinSize.Height, 1);
+            DrawIconOnMap drawIconOnMap = new()
+            {
+                Number = number,
+                ScaleX = pinSize.ScaleX,
+                ScaleY = pinSize.ScaleY,
+            };
+            var pin = ImageStream(skiaBitmapExportContext, drawIconOnMap);
+            return ImageSource.FromStream(() => skiaBitmapExportContext.Image.AsStream());
+        }
+        public static ImageSource GetImagePin(int number, Color colorFill, Color colorBackground)
+        {
+            var pinSize = GetScale();
+            SkiaBitmapExportContext skiaBitmapExportContext = new(pinSize.Width, pinSize.Height, 1);
+            DrawIconOnMap drawIconOnMap = new()
+            {
+                Number = number,
+                ScaleX = pinSize.ScaleX,
+                ScaleY = pinSize.ScaleY,
+                ColorFill = colorFill,
+                ColorBackground = colorBackground,
+
+            };
+            var pin = ImageStream(skiaBitmapExportContext, drawIconOnMap);
+            return ImageSource.FromStream(() => skiaBitmapExportContext.Image.AsStream());
+        }
+
+        private static string GetNewPin(SkiaBitmapExportContext skiaBitmapExportContext, DrawIconOnMap drawIconOnMap)
+        {
+            var stream = ImageStream(skiaBitmapExportContext, drawIconOnMap);
+            using var memory = new MemoryStream();
+            stream.CopyTo(memory);
+            var pin = Convert.ToBase64String(memory.ToArray());
+            return pin;
+        }
+
+        private static Stream ImageStream(SkiaBitmapExportContext skiaBitmapExportContext, DrawIconOnMap drawIconOnMap)
+        {
+            ICanvas canvas = skiaBitmapExportContext.Canvas;
+            drawIconOnMap.Draw(canvas, new RectF(0, 0, skiaBitmapExportContext.Width, skiaBitmapExportContext.Height));
+            var stream = skiaBitmapExportContext.Image.AsStream();
+            return stream;
+        }
+
+        private static PinSize GetScale()
+        {
+            var scaleX = (int)DeviceDisplay.Current.MainDisplayInfo.Density;
+            var scaleY = scaleX;
+            var width = 40 * scaleX;
+            var height = 58 * scaleY;
+
+            return new PinSize(scaleX, scaleY, width, height);
+        }
+
+
+
+        public static string CreatePinSvg(string text)
+        {
+            XElement svg = CreatedSvg(text);
+
+            // Konwertowanie SVG do string
+            return svg.ToString();
+        }
+        public static string CreatePinSvg(int text)
+        {
+            XElement svg = CreatedSvg(text.ToString());
+
+            // Konwertowanie SVG do string
+            return svg.ToString();
+        }
+        private static XElement CreatedSvg(string text)
+        {
+            XNamespace ns = "http://www.w3.org/2000/svg";
+
+            var svg = new XElement(ns + "svg",
+                new XAttribute("xmlns", ns),
+                new XAttribute("viewBox", "0 0 24 24"),
+                new XAttribute("width", "24"),
+                new XAttribute("height", "48"),
+                new XElement(ns + "path",
+                    new XAttribute("d", "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"),
+                    new XAttribute("fill", "#ea4335") // Czerwony kolor pinu
+                ),
+                new XElement(ns + "circle",
+                    new XAttribute("cx", "12"),
+                    new XAttribute("cy", "9"),
+                    new XAttribute("r", "2.5"),
+                    new XAttribute("fill", "#ffffff") // Biały kolor wewnętrznego koła
+                ),
+                new XElement(ns + "text",
+                    new XAttribute("x", "12"),
+                    new XAttribute("y", "2"), // Pozycja tekstu nad pinem
+                    new XAttribute("text-anchor", "middle"),
+                    new XAttribute("font-size", "15"),
+                    new XAttribute("fill", "#ea4335"), // Czarny kolor tekstu
+                    text // Przekazany parametr tekstowy
+                )
+            );
+            return svg;
         }
     }
 }

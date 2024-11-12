@@ -1,0 +1,223 @@
+﻿@using DataBase.Model.EntitiesRoutes
+@using Microsoft.JSInterop
+@using DataBase.Helper
+
+@inject IJSRuntime JsRuntime
+@inject DataBase.Data.AccessDataBase _db
+@inject Data.GoogleApi.IRoutes _routes;
+@inject NavigationManager _navigation;
+
+@implements IDisposable;
+
+<MudBlazor.MudThemeProvider @bind-IsDarkMode="@DataBase.Helper.MudBlazorTheme.IsDarkMode" Theme="@DataBase.Helper.MudBlazorTheme.Theme" />
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMfTC47bnsNBAK8S4xKk7Mhb_aiSqnCYU&callback=initMap" async defer></script>
+
+<div id="map" style="height:100vh;width:100%;"></div>
+
+
+
+<MudBlazor.MudStack Wrap="@MudBlazor.Wrap.Wrap" Class="p-2" Spacing="1" Style="position: fixed;   top: 0; right: 0;" Justify="@MudBlazor.Justify.FlexEnd" Row="true">
+
+    @if (_customer is not null)
+    {
+        <MudBlazor.MudPaper MaxWidth="40px" MaxHeight="40px">
+            <MudBlazor.MudIconButton Class="p-2" OnClick="@NativeMapDispalyPin" Icon="@_nativeMapDispalyPin"></MudBlazor.MudIconButton>
+        </MudBlazor.MudPaper>
+        <MudBlazor.MudPaper MaxWidth="40px" MaxHeight="40px">
+            <MudBlazor.MudIconButton Class="p-2" OnClick="@NativeMapNavigateTo" Icon="@_nativeMapNavigateTo"></MudBlazor.MudIconButton>
+        </MudBlazor.MudPaper>
+    }
+    @if (DeviceInfo.Platform != DevicePlatform.WinUI)
+    {
+        <MudBlazor.MudFlexBreak />
+        <MudBlazor.MudPaper MaxWidth="40px" MaxHeight="40px">
+            <MudBlazor.MudIconButton Class="p-2" OnClick="@(()=>MyLocation(CancellationToken.None))" Icon="@_myLocationIcon"></MudBlazor.MudIconButton>
+        </MudBlazor.MudPaper>
+    }
+
+</MudBlazor.MudStack>
+
+
+@code {
+    #region Variables
+
+    private double _lastCourse = 0;
+    private bool _listeningLocation = true;
+    private string _userIconId = "_userIconId";
+
+    private IJSObjectReference _module;
+    private string _myLocationIcon, _nativeMapNavigateTo, _nativeMapDispalyPin;
+
+
+
+    private event Action<Location, CancellationToken> SetCenter;
+    private void _setCenter(Location location, CancellationToken token = default)
+    {
+        SetCenter?.Invoke(location, token);
+    }
+
+    #endregion
+
+    protected override async Task OnInitializedAsync()
+    {
+        _routes.SetKey("AIzaSyDMfTC47bnsNBAK8S4xKk7Mhb_aiSqnCYU");
+
+        var currentLocation = await Data.ActionLocation.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(1));
+        await GetModule(currentLocation);
+
+#if !WINDOWS
+        var name = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+        AddListener("dragstart", nameof(OnMapDragStart), name);
+        Data.ActionLocation.MapGeolocation.OnStopListeningLocation();
+        await Data.ActionLocation.MapGeolocation.OnStartListeningLocation(SetCenter, GeolocationAccuracy.Best, TimeSpan.FromSeconds(1));
+
+        AddAdvancedMarker(_userIconId,
+                               currentLocation.Center.Latitude,
+                               currentLocation.Center.Longitude,
+                               DataBase.Helper.Img.Svg.HtmlMap.Orion);
+#endif
+
+        
+        AfterOnInitializedAsync?.Invoke();
+        AfterOnInitializedAsync = null;
+    }
+
+    #region Method
+    #region JsMethod
+
+    public static event Action MapDragStart;
+    [JSInvokable]
+    public static void OnMapDragStart()
+    {
+        MapDragStart?.Invoke();
+    }
+    private void StopLisiningLocation()
+    {
+        _listeningLocation = false;
+    }
+
+    private async Task GetModule(Microsoft.Maui.Maps.MapSpan currentLocation)
+    {
+        try
+        {
+            var jsArgs = _navigation.ToAbsoluteUri("./Pages/Maps/Controls/BlazorMap.razor.js");
+            _module = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./Pages/Maps/Controls/BlazorMap.razor.js");
+            if (_module is not null)
+            {
+                await InitMat("map", currentLocation.Center.Latitude, currentLocation.Center.Longitude);
+                StateHasChanged();
+            }
+        }
+        catch (Microsoft.JSInterop.JSException)
+        {
+            await GetModule(currentLocation);
+        }
+    }
+
+    private async Task MyLocation(CancellationToken token = default)
+    {
+        _listeningLocation = true;
+        var current = await Data.ActionLocation.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(10), token);
+        SetMyLocation(current.Center, token);
+    }
+    private void SetMyLocation(Location location, CancellationToken token = default)
+    {
+        var lat = location.Latitude;
+        var lng = location.Longitude;
+        double course = (double)location.Course;
+        bool isMoving = false;
+
+        if (_lastCourse == course)
+        {
+            isMoving = false;
+        }
+        else
+        {
+            isMoving = true;
+        }
+        SetPositonAdvancedMarker(_userIconId, lat, lng, token);
+        if (isMoving)
+        {
+            SetIconAdvancedMarker(_userIconId,
+                                     DataBase.Helper.Img.Svg.HtmlMap.NavigationRotation((int)course), token);
+        }
+        else
+        {
+            SetIconAdvancedMarker(_userIconId,
+                         DataBase.Helper.Img.Svg.HtmlMap.Orion, token);
+        }
+        if (_listeningLocation)
+        {
+            SetMapCenter(lat, lng, token);
+        }
+        _lastCourse = (double)location.Course;
+    }
+
+    #endregion
+
+    private void SetIconTheme()
+    {
+        _myLocationIcon = FromtTheme(DataBase.Helper.Img.Svg.HtmlMap.MyLocationDark, DataBase.Helper.Img.Svg.HtmlMap.MyLocationWhite);
+        _nativeMapNavigateTo = FromtTheme(DataBase.Helper.Img.Svg.HtmlMap.AssistanceDirectionDark, DataBase.Helper.Img.Svg.HtmlMap.AssistanceDirectionWhite);
+        _nativeMapDispalyPin = FromtTheme(DataBase.Helper.Img.Svg.HtmlMap.MapDark, DataBase.Helper.Img.Svg.HtmlMap.MapWhite);
+    }
+    private string FromtTheme(string light, string dark)
+    {
+        string theme = "";
+        if (DataBase.Helper.MudBlazorTheme.IsDarkMode)
+        {
+            theme = dark;
+        }
+        else
+        {
+            theme = light;
+        }
+
+        return theme;
+    }
+
+    private async Task NativeMapNavigateTo()
+    {
+        var location = new Location()
+            {
+                Latitude = _customer.Latitude,
+                Longitude = _customer.Longitude
+            };
+        var options = new MapLaunchOptions
+            {
+                NavigationMode = NavigationMode.Driving
+            };
+        try
+        {
+            await Microsoft.Maui.ApplicationModel.Map.Default.OpenAsync(location, options);
+        }
+        catch (Exception ex)
+        {
+            _db.SaveLog(ex);
+        }
+    }
+    private async Task NativeMapDispalyPin()
+    {
+        var location = new Location()
+            {
+                Latitude = _customer.Latitude,
+                Longitude = _customer.Longitude
+            };
+        var options = new MapLaunchOptions();
+
+
+        try
+        {
+            await Microsoft.Maui.ApplicationModel.Map.Default.OpenAsync(location, options);
+        }
+        catch (Exception ex)
+        {
+            _db.SaveLog(ex);
+        }
+    }
+
+    #endregion
+
+
+}

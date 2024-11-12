@@ -13,18 +13,19 @@ namespace DriversRoutes.Helper
                 return;
             }
             to ??= new();
+            to.CustomerRoutes ??= new();
 
-            to.Id = from.Id;
-            to.RoutesId = from.RoutesId;
-            to.Index = from.QueueNumber;
-            to.Name = from.Name;
-            to.Description = from.Description;
-            to.PhoneNumber = from.PhoneNumber;
-            to.Created = from.Created;
-            to.Longitude = from.Longitude;
-            to.Latitude = from.Latitude;
-            to.SelectedDayOfWeek = from.DayOfWeek;
-            to.ResidentialAddress = from.ResidentialAddress;
+            to.CustomerRoutes.Id = from.Id;
+            to.CustomerRoutes.RoutesId = from.RoutesId;
+            to.CustomerRoutes.QueueNumber = from.QueueNumber;
+            to.CustomerRoutes.Name = from.Name;
+            to.CustomerRoutes.Description = from.Description;
+            to.CustomerRoutes.PhoneNumber = from.PhoneNumber;
+            to.CustomerRoutes.Created = from.Created;
+            to.CustomerRoutes.Longitude = from.Longitude;
+            to.CustomerRoutes.Latitude = from.Latitude;
+            to.CustomerRoutes.DayOfWeek = from.DayOfWeek;
+            to.CustomerRoutes.ResidentialAddress = from.ResidentialAddress;
             to.SetPin();
             from.Dispose();
         }
@@ -36,17 +37,17 @@ namespace DriversRoutes.Helper
             }
             to ??= new();
 
-            to.Id = from.Id;
-            to.RoutesId = from.RoutesId;
-            to.QueueNumber = from.Index;
-            to.Name = from.Name;
-            to.Description = from.Description;
-            to.PhoneNumber = from.PhoneNumber;
-            to.Created = from.Created;
-            to.Longitude = from.Longitude;
-            to.Latitude = from.Latitude;
-            to.DayOfWeek = from.SelectedDayOfWeek;
-            to.ResidentialAddress = from.ResidentialAddress;
+            to.Id = from.CustomerRoutes.Id;
+            to.RoutesId = from.CustomerRoutes.RoutesId;
+            to.QueueNumber = from.CustomerRoutes.QueueNumber;
+            to.Name = from.CustomerRoutes.Name;
+            to.Description = from.CustomerRoutes.Description;
+            to.PhoneNumber = from.CustomerRoutes.PhoneNumber;
+            to.Created = from.CustomerRoutes.Created;
+            to.Longitude = from.CustomerRoutes.Longitude;
+            to.Latitude = from.CustomerRoutes.Latitude;
+            to.DayOfWeek = from.CustomerRoutes.DayOfWeek;
+            to.ResidentialAddress = from.CustomerRoutes.ResidentialAddress;
         }
 
 
@@ -58,17 +59,20 @@ namespace DriversRoutes.Helper
             }
             MapsM to = new()
             {
-                Id = from.Id,
-                RoutesId = from.RoutesId,
-                Index = from.QueueNumber,
-                Name = from.Name,
-                Description = from.Description,
-                PhoneNumber = from.PhoneNumber,
-                Created = from.Created,
-                Longitude = from.Longitude,
-                Latitude = from.Latitude,
-                SelectedDayOfWeek = from.DayOfWeek,
-                ResidentialAddress = from.ResidentialAddress,                
+                CustomerRoutes = new()
+                {
+                    Id = from.Id,
+                    RoutesId = from.RoutesId,
+                    QueueNumber = from.QueueNumber,
+                    Name = from.Name,
+                    Description = from.Description,
+                    PhoneNumber = from.PhoneNumber,
+                    Created = from.Created,
+                    Longitude = from.Longitude,
+                    Latitude = from.Latitude,
+                    DayOfWeek = from.DayOfWeek,
+                    ResidentialAddress = from.ResidentialAddress,
+                }
             };
             to.SetPin();
             from.Dispose();
@@ -82,17 +86,17 @@ namespace DriversRoutes.Helper
             }
             CustomerRoutes to = new()
             {
-                Id = from.Id,
-                RoutesId = from.RoutesId,
-                QueueNumber = from.Index,
-                Name = from.Name,
-                Description = from.Description,
-                PhoneNumber = from.PhoneNumber,
-                Created = from.Created,
-                Longitude = from.Longitude,
-                Latitude = from.Latitude,
-                DayOfWeek = from.SelectedDayOfWeek,
-                ResidentialAddress = from.ResidentialAddress
+                Id = from.CustomerRoutes.Id,
+                RoutesId = from.CustomerRoutes.RoutesId,
+                QueueNumber = from.CustomerRoutes.QueueNumber,
+                Name = from.CustomerRoutes.Name,
+                Description = from.CustomerRoutes.Description,
+                PhoneNumber = from.CustomerRoutes.PhoneNumber,
+                Created = from.CustomerRoutes.Created,
+                Longitude = from.CustomerRoutes.Longitude,
+                Latitude = from.CustomerRoutes.Latitude,
+                DayOfWeek = from.CustomerRoutes.DayOfWeek,
+                ResidentialAddress = from.CustomerRoutes.ResidentialAddress
             };
             return to;
         }

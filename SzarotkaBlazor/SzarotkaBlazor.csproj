@@ -20,7 +20,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <EnableDefaultCssItems>false</EnableDefaultCssItems>
         <Nullable>enable</Nullable>
-
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		
         <!-- Display name -->
         <ApplicationTitle>SzarotkaBlazor</ApplicationTitle>
 
@@ -42,58 +43,66 @@
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android|AnyCPU'">
       <ApplicationTitle>Szarotka</ApplicationTitle>
       <ApplicationId>com.szarotka.szarotka</ApplicationId>
-      <ApplicationDisplayVersion>1.2.6</ApplicationDisplayVersion>
-      <ApplicationVersion>6</ApplicationVersion>
+      <ApplicationDisplayVersion>1.2.7</ApplicationDisplayVersion>
+      <ApplicationVersion>7</ApplicationVersion>
+      <ApplicationIdGuid></ApplicationIdGuid>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
       <ApplicationTitle>Szarotka</ApplicationTitle>
       <ApplicationId>com.szarotka.szarotka</ApplicationId>
-      <ApplicationDisplayVersion>1.2.6</ApplicationDisplayVersion>
-      <ApplicationVersion>6</ApplicationVersion>
+      <ApplicationDisplayVersion>1.2.7</ApplicationDisplayVersion>
+      <ApplicationVersion>7</ApplicationVersion>
+      <ApplicationIdGuid></ApplicationIdGuid>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-maccatalyst|AnyCPU'">
       <ApplicationTitle>Szarotka</ApplicationTitle>
       <ApplicationId>com.szarotka.szarotka</ApplicationId>
-      <ApplicationDisplayVersion>1.2.6</ApplicationDisplayVersion>
-      <ApplicationVersion>6</ApplicationVersion>
+      <ApplicationDisplayVersion>1.2.7</ApplicationDisplayVersion>
+      <ApplicationVersion>7</ApplicationVersion>
+      <ApplicationIdGuid></ApplicationIdGuid>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.19041.0|AnyCPU'">
       <ApplicationTitle>Szarotka</ApplicationTitle>
       <ApplicationId>com.szarotka.szarotka</ApplicationId>
-      <ApplicationDisplayVersion>1.2.6</ApplicationDisplayVersion>
-      <ApplicationVersion>6</ApplicationVersion>
+      <ApplicationDisplayVersion>1.2.7</ApplicationDisplayVersion>
+      <ApplicationVersion>7</ApplicationVersion>
+      <ApplicationIdGuid></ApplicationIdGuid>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
       <ApplicationTitle>Szarotka</ApplicationTitle>
       <ApplicationId>com.szarotka.szarotka</ApplicationId>
-      <ApplicationDisplayVersion>1.2.6</ApplicationDisplayVersion>
-      <ApplicationVersion>6</ApplicationVersion>
+      <ApplicationDisplayVersion>1.2.7</ApplicationDisplayVersion>
+      <ApplicationVersion>7</ApplicationVersion>
       <AndroidPackageFormat>apk</AndroidPackageFormat>
+      <ApplicationIdGuid></ApplicationIdGuid>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-ios|AnyCPU'">
       <ApplicationTitle>Szarotka</ApplicationTitle>
       <ApplicationId>com.szarotka.szarotka</ApplicationId>
-      <ApplicationDisplayVersion>1.2.6</ApplicationDisplayVersion>
-      <ApplicationVersion>6</ApplicationVersion>
+      <ApplicationDisplayVersion>1.2.7</ApplicationDisplayVersion>
+      <ApplicationVersion>7</ApplicationVersion>
+      <ApplicationIdGuid></ApplicationIdGuid>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-maccatalyst|AnyCPU'">
       <ApplicationTitle>Szarotka</ApplicationTitle>
       <ApplicationId>com.szarotka.szarotka</ApplicationId>
-      <ApplicationDisplayVersion>1.2.6</ApplicationDisplayVersion>
-      <ApplicationVersion>6</ApplicationVersion>
+      <ApplicationDisplayVersion>1.2.7</ApplicationDisplayVersion>
+      <ApplicationVersion>7</ApplicationVersion>
+      <ApplicationIdGuid></ApplicationIdGuid>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.19041.0|AnyCPU'">
       <ApplicationTitle>Szarotka</ApplicationTitle>
       <ApplicationId>com.szarotka.szarotka</ApplicationId>
-      <ApplicationDisplayVersion>1.2.6</ApplicationDisplayVersion>
-      <ApplicationVersion>6</ApplicationVersion>
+      <ApplicationDisplayVersion>1.2.7</ApplicationDisplayVersion>
+      <ApplicationVersion>7</ApplicationVersion>
+      <ApplicationIdGuid></ApplicationIdGuid>
     </PropertyGroup>
 
     <ItemGroup>
@@ -124,10 +133,26 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.80" />
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.80" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.80" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+      <None Remove="Resources\Images\Icon\baseline_fullscreen_black_24.png" />
+      <None Remove="Resources\Images\Icon\baseline_fullscreen_exit_black_24.png" />
+      <None Remove="Resources\Images\Icon\baseline_fullscreen_exit_white_24.png" />
+      <None Remove="Resources\Images\Icon\baseline_fullscreen_white_24.png" />
+      <None Remove="Resources\Images\Icon\remove_road_black.png" />
+      <None Remove="Resources\Images\Icon\remove_road_white.png" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <MauiAsset Include="Resources\Images\Icon\baseline_trip_origin_black_24.png" />
+      <MauiAsset Include="Resources\Images\Icon\baseline_trip_origin_white_24.png" />
+    </ItemGroup>
+
+	
+	
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.92" />
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.92" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.92" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -166,5 +191,7 @@
         <Generator>MSBuild:Compile</Generator>
       </MauiXaml>
     </ItemGroup>
+
+    <ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionSzarotkaBlazorHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 
 </Project>

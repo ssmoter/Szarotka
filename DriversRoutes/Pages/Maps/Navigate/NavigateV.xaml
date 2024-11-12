@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="DriversRoutes.Pages.Maps.Navigate.NavigateV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:DataBase.CustomControls;assembly=DataBase"
+    xmlns:controlsMaps="clr-namespace:DriversRoutes.Pages.Maps.Controls"
+    xmlns:customer="clr-namespace:DriversRoutes.Pages.Customer.CustomerSmall"
+    xmlns:img="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:DriversRoutes.Pages.Maps.Navigate"
+    x:DataType="vm:NavigateVM"
+    Shell.PresentationMode="Animated">
+
+    <Grid x:Name="mGrid" RowDefinitions="*,auto">
+
+        <Grid
+            Grid.Row="1"
+            BackgroundColor="{AppThemeBinding Light=AliceBlue,
+                                              Dark=Grey}"
+            ColumnDefinitions="*,auto">
+            <VerticalStackLayout>
+
+                <Label FontSize="Title">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding SelectedPoint.QueueNumber}" />
+                            <Span Text=":" />
+                            <Span Text="{Binding SelectedPoint.Name}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+                <Label Text="{Binding SelectedPoint.Description}" />
+
+                <VerticalStackLayout.GestureRecognizers>
+                    <SwipeGestureRecognizer Command="{Binding ShowMovingViewCommand}" Direction="Up" />
+                    <SwipeGestureRecognizer Command="{Binding HideMovingViewCommand}" Direction="Down" />
+                </VerticalStackLayout.GestureRecognizers>
+            </VerticalStackLayout>
+            <HorizontalStackLayout Grid.Column="1">
+
+                <ImageButton Command="{Binding CalculateRouteCommand}" Source="{AppThemeBinding Light={Static img:ImgMapsSymbols.NavigationBlack}, Dark={Static img:ImgMapsSymbols.NavigationWhite}}" />
+
+                <ImageButton
+                    Command="{Binding DisplayDescriptionOfNextPointCommand}"
+                    HorizontalOptions="End"
+                    Rotation="-90"
+                    Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                             Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+            </HorizontalStackLayout>
+        </Grid>
+
+        <controls:MovingViewInSteps
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Direction="Up"
+            StepStart="{Binding StepSelected}"
+            ZIndex="102">
+            <controls:MovingViewInSteps.Header>
+                <StackLayout IsVisible="False" />
+            </controls:MovingViewInSteps.Header>
+            <controls:MovingViewInSteps.ContentView>
+                <Border BackgroundColor="{AppThemeBinding Light=AliceBlue, Dark=Grey}">
+
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+
+                    <Grid ColumnDefinitions="50,*,50" RowDefinitions="auto,*">
+
+
+                        <Grid
+                            Grid.Row="1"
+                            Grid.RowSpan="2"
+                            Grid.Column="0"
+                            Opacity="0.5"
+                            RowDefinitions="auto,*,auto">
+
+
+                            <Image
+                                Grid.Row="0"
+                                InputTransparent="True"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowUpwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowUpwardWhite}}" />
+                            <Border
+                                Grid.Row="1"
+                                HorizontalOptions="Center"
+                                StrokeThickness="5"
+                                VerticalOptions="Fill" />
+                            <Image
+                                Grid.Row="1"
+                                Rotation="90"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
+                                                         Dark={Static img:ImgArrow.LineWhite}}" />
+                            <Image
+                                Grid.Row="2"
+                                InputTransparent="True"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                        </Grid>
+                        <Grid
+                            Grid.Row="1"
+                            Grid.RowSpan="2"
+                            Grid.Column="2"
+                            Opacity="0.5"
+                            RowDefinitions="auto,*,auto">
+
+
+
+                            <Image
+                                Grid.Row="0"
+                                InputTransparent="True"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowUpwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowUpwardWhite}}" />
+                            <Border
+                                Grid.Row="1"
+                                HorizontalOptions="Center"
+                                StrokeThickness="5"
+                                VerticalOptions="Fill" />
+                            <Image
+                                Grid.Row="1"
+                                Rotation="90"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
+                                                         Dark={Static img:ImgArrow.LineWhite}}" />
+                            <Image
+                                Grid.Row="2"
+                                InputTransparent="True"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                        </Grid>
+
+                        <Grid
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="3"
+                            ColumnDefinitions="50,*,50">
+
+                            <ImageButton
+                                Grid.Column="0"
+                                Command="{Binding DisplayDescriptionOfPreviousPointCommand}"
+                                Rotation="90"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+
+                            <Border
+                                Grid.Column="1"
+                                HorizontalOptions="Fill"
+                                Opacity="0.5"
+                                StrokeThickness="5"
+                                VerticalOptions="Center" />
+                            <Image
+                                Grid.Column="1"
+                                Opacity="0.5"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
+                                                         Dark={Static img:ImgArrow.LineWhite}}" />
+
+                            <ImageButton
+                                Grid.Column="2"
+                                Command="{Binding DisplayDescriptionOfNextPointCommand}"
+                                Rotation="-90"
+                                Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
+                                                         Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+
+                        </Grid>
+
+                        <ScrollView
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Start">
+
+                            <Grid ColumnDefinitions="*">
+
+                                <customer:CustomerSmallV
+                                    Name="{Binding SelectedPoint.Name}"
+                                    CreatedDate="{Binding SelectedPoint.Created}"
+                                    DayOfWeek="{Binding SelectedPoint.DayOfWeek}"
+                                    Description="{Binding SelectedPoint.Description}"
+                                    DisplayButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type vm:NavigateVM}}, Path=DisplayDescriptionPinCommand}"
+                                    DisplayButtonCommandParameter="{Binding SelectedPoint}"
+                                    DisplayIsVisible="True"
+                                    LocationButtonCommand="{Binding FitMapToMarkersCommand}"
+                                    LocationIsVisible="True"
+                                    PhoneNumber="{Binding SelectedPoint.PhoneNumber}"
+                                    QueueNumber="{Binding SelectedPoint.QueueNumber}"
+                                    ResidentialAddress="{Binding SelectedPoint.ResidentialAddress}"
+                                    RoutesButtonCommand="{Binding CalculateRouteCommand}"
+                                    RoutesIsVisible="True" />
+                            </Grid>
+                        </ScrollView>
+
+                    </Grid>
+
+                </Border>
+
+            </controls:MovingViewInSteps.ContentView>
+        </controls:MovingViewInSteps>
+
+
+    </Grid>
+
+</ContentPage>

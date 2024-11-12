@@ -92,6 +92,9 @@ namespace DriversRoutes.Pages.ListOfPoints
         readonly AccessDataBase _db;
         readonly Service.ISelectRoutes _selectRoutes;
         readonly Service.ISaveRoutes _saveRoutes;
+
+        public Action CalculateRoute;
+
         public ListOfPointsVM(AccessDataBase db, Service.ISelectRoutes selectRoutes, Service.ISaveRoutes saveRoutes)
         {
             _db = db;
@@ -101,6 +104,15 @@ namespace DriversRoutes.Pages.ListOfPoints
         }
 
         #region Method
+
+        public void GetPointsFireAndForget(Routes routes, SelectedDayOfWeekRoutes week)
+        {
+            var task = Task.Run(async () =>
+             {
+                 CustomerRoutes = await GetPointsAsync(routes, week);
+             });
+        }
+
         public ObservableCollection<CustomerRoutes> GetPoints(Routes routes, SelectedDayOfWeekRoutes week)
         {
             try
@@ -119,7 +131,6 @@ namespace DriversRoutes.Pages.ListOfPoints
             {
                 CustomerListRefresh = false;
             }
-
         }
         public async Task<ObservableCollection<CustomerRoutes>> GetPointsAsync(Routes routes, SelectedDayOfWeekRoutes week)
         {
@@ -243,8 +254,7 @@ namespace DriversRoutes.Pages.ListOfPoints
                 }
                 if (response is SelectedDayOfWeekRoutes day)
                 {
-                    //CustomerRoutes.Clear();
-                    CustomerRoutes = await GetPointsAsync(Route, day);
+                    GetPointsFireAndForget(Route, day);
                 }
             }
             catch (Exception ex)
@@ -254,26 +264,16 @@ namespace DriversRoutes.Pages.ListOfPoints
         }
 
         [RelayCommand]
-        async Task Refresh()
+        void Refresh()
         {
-            try
+            if (RangeIsVisible)
             {
-                if (RangeIsVisible)
+                if (lastSelectedDayOfWeekRoutes is not null)
                 {
-                    if (lastSelectedDayOfWeekRoutes is not null)
-                    {
-                        CustomerRoutes = await GetPointsAsync(Route, lastSelectedDayOfWeekRoutes);
-                    }
+                    // GetPointsFireAndForget(Route, lastSelectedDayOfWeekRoutes);
                 }
             }
-            catch (Exception ex)
-            {
-                _db.SaveLog(ex);
-            }
-            finally
-            {
-                CustomerListRefresh = false;
-            }
+            CustomerListRefresh = false;
         }
 
         [RelayCommand]
@@ -374,7 +374,7 @@ namespace DriversRoutes.Pages.ListOfPoints
                 var result = await MoveTimeOnCustomersV.ShowPopUp(Route, selectDayMs, _selectRoutes, _saveRoutes);
                 if (result)
                 {
-                    await Refresh();
+                    Refresh();
                 }
             }
             catch (Exception ex)
@@ -386,11 +386,40 @@ namespace DriversRoutes.Pages.ListOfPoints
         [RelayCommand]
         async Task DiscardFromFile()
         {
-            await Refresh();
+            Refresh();
             SetSaveData(false);
             await Toast.Make("Wczytany plik usunięto").Show();
         }
 
+        [RelayCommand]
+        void NavigationToRoutes(CustomerRoutes customer)
+        {
+            try
+            {
+                if (customer is null)
+                {
+                    return;
+                }
+                ShowLocationThisCustomer = true;
+                LocationThisCustomer = customer;
+                CalculateRoute?.Invoke();
+                //if (customer is null)
+                //{
+                //    return;
+                //}
+
+                //await Shell.Current.GoToAsync($"{nameof(Pages.Maps.Navigate.NavigateV)}?",
+                //    new Dictionary<string, object>()
+                //    {
+                //        [nameof(ObservableCollection<CustomerRoutes>)] = CustomerRoutes,
+                //        [nameof(DataBase.Model.EntitiesRoutes.CustomerRoutes)] = customer
+                //    });
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+            }
+        }
         #endregion
 
     }

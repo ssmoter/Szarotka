@@ -1,6 +1,6 @@
 ﻿using DataBase.Model.EntitiesRoutes;
 
-using DriversRoutes.Model;
+using DriversRoutes.Model.Address;
 
 namespace DriversRoutes.Helper
 {

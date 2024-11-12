@@ -2,14 +2,7 @@
 
 using DataBase.Model.EntitiesRoutes;
 
-
-#if ANDROID
-using DriversRoutes.Platforms.Android;
-#endif
-
 using Microsoft.Maui.Controls.Maps;
-
-using SQLite;
 
 namespace DriversRoutes.Pages.Maps.MapAndPoints
 {
@@ -17,80 +10,23 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
     {
         [ObservableProperty]
         DriversRoutes.Model.CustomPin pin;
-#if ANDROID
-#else
-        //[ObservableProperty]
-       // Pin pin;
-#endif
 
         [ObservableProperty]
-        Guid id;
-
-        [ObservableProperty]
-        Guid routesId;
-
-        int index;
-        [Ignore]
-        public int Index
-        {
-            get => index;
-            set
-            {
-                if (SetProperty(ref index, value))
-                {
-                    OnPropertyChanged(nameof(Index));
-                }
-            }
-        }
-
-        [ObservableProperty]
-        string name;
-
-        [ObservableProperty]
-        string description;
-
-        [ObservableProperty]
-        string phoneNumber;
-
-        [ObservableProperty]
-        DateTime created;
-
-        [ObservableProperty]
-        double longitude;
-
-        [ObservableProperty]
-        double latitude;
-
-        [ObservableProperty]
-        SelectedDayOfWeekRoutes selectedDayOfWeek;
-        [ObservableProperty]
-        ResidentialAddress residentialAddress;
-
-        [ObservableProperty]
-        ImageSource imageSource;
+        CustomerRoutes customerRoutes;
 
         public MapsM()
         {
             Pin = new DriversRoutes.Model.CustomPin();
-#if ANDROID
-#else
-            //Pin = new Pin();
-#endif
-
-            SelectedDayOfWeek ??= new SelectedDayOfWeekRoutes();
+            CustomerRoutes ??= new CustomerRoutes();
         }
 
         public void SetPin()
         {
-            Pin = new DriversRoutes.Model.CustomPin();
-#if ANDROID
-#else
-            //Pin = new Pin();
-#endif
+            Pin ??= new DriversRoutes.Model.CustomPin();
 
-            Pin.Location = new Location(Latitude, Longitude);
-            Pin.Label = $"{Index}: {Name}";
-            Pin.Address = Description;
+            Pin.Location = new Location(CustomerRoutes.Latitude, CustomerRoutes.Longitude);
+            Pin.Label = $"{CustomerRoutes.QueueNumber}: {CustomerRoutes.Name}";
+            Pin.Address = CustomerRoutes.Description;
             Pin.Type = PinType.SavedPin;
         }
 
@@ -117,14 +53,14 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
 
         public MapsM CreateRandomPoint(int i)
         {
-            Index = i;
-            Id = Guid.NewGuid();
-            Name = RandomString(Index);
-            Description = RandomString(Index * 2);
+            CustomerRoutes.QueueNumber = i;
+            CustomerRoutes.Id = Guid.NewGuid();
+            CustomerRoutes.Name = RandomString(i);
+            CustomerRoutes.Description = RandomString(i * 2);
             //49.7488002173044, 20.408379427432106
-            Latitude = 49.7488002173044 + Random.Shared.NextDouble();
-            Longitude = 20.408379427432106 + Random.Shared.NextDouble();
-            SelectedDayOfWeek = RandomDay(Index);
+            CustomerRoutes.Latitude = 49.7488002173044 + Random.Shared.NextDouble();
+            CustomerRoutes.Longitude = 20.408379427432106 + Random.Shared.NextDouble();
+            CustomerRoutes.DayOfWeek = RandomDay(i);
             SetPin();
 
             return this;

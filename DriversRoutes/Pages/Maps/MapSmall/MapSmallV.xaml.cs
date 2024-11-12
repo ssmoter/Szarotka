@@ -1,6 +1,7 @@
 using DataBase.Model.EntitiesRoutes;
 
 using Microsoft.Maui.Controls.Maps;
+using Microsoft.Maui.Maps;
 
 namespace DriversRoutes.Pages.Maps.MapSmall;
 
@@ -16,7 +17,6 @@ public partial class MapSmallV : ContentView, IDisposable
         , defaultBindingMode: BindingMode.TwoWay
         , propertyChanged: (bindable, oldValu, newValue) =>
     {
-
         if (bindable is MapSmallV view)
         {
             if (newValue is CustomerRoutes customer)
@@ -32,13 +32,13 @@ public partial class MapSmallV : ContentView, IDisposable
                 view.Map.Pins.Add(pin);
                 view.MapSmallVM.MapSmallM.OldLatitude = customer.Latitude;
                 view.MapSmallVM.MapSmallM.OldLongitude = customer.Longitude;
-                view.mapSmallVM.OnGoToLocation(new Microsoft.Maui.Maps.MapSpan(pin.Location, 0.01, 0.01));
+                view.MapSmallVM.OnGoToLocation(new Microsoft.Maui.Maps.MapSpan(pin.Location, 0.01, 0.01));
             }
         }
     });
     public CustomerRoutes Customer
     {
-        get => GetValue(CustomerProperty) as CustomerRoutes;
+        get => (CustomerRoutes)GetValue(CustomerProperty);
         set => SetValue(CustomerProperty, value);
     }
 
@@ -70,6 +70,7 @@ public partial class MapSmallV : ContentView, IDisposable
                         new Microsoft.Maui.Devices.Sensors.Location(
                             view.Customer.Latitude
                             , view.Customer.Longitude), 0.01, 0.01));
+
                 }
             }
         });
@@ -79,8 +80,20 @@ public partial class MapSmallV : ContentView, IDisposable
         set => SetValue(MapSmallVIsVisibleProperty, value);
     }
 
-    #endregion
+    public static readonly BindableProperty PositionOfMapProperty
+        = BindableProperty.Create(nameof(PositionOfMap)
+            , typeof(DataBase.CustomControls.Direction), typeof(MapSmallV)
+            , defaultBindingMode: BindingMode.TwoWay
+            , propertyChanged: (bindable, oldValu, newValue) =>
+            {
+            });
+    public DataBase.CustomControls.Direction PositionOfMap
+    {
+        get => (DataBase.CustomControls.Direction)GetValue(PositionOfMapProperty);
+        set => SetValue(PositionOfMapProperty, value);
+    }
 
+    #endregion
     private MapSmallVM mapSmallVM;
     public MapSmallVM MapSmallVM
     {
@@ -91,44 +104,212 @@ public partial class MapSmallV : ContentView, IDisposable
             OnPropertyChanged(nameof(MapSmallVM));
         }
     }
-
-
     public MapSmallV()
     {
+        var service = DataBase.Service.AppServiceProvider.Current.GetService(typeof(MapSmallVM)) as MapSmallVM;
         InitializeComponent();
-        MapSmallVM = new(new DataBase.Data.AccessDataBase());
+        MapSmallVM = service;
+
+        //MapSmallVM.MoveToRegion = null;
+        //MapSmallVM.AddPin = null;
+        //MapSmallVM.RemovePin = null;
+        //MapSmallVM.GetCurrentLocation = null;
+        //MapSmallVM.EditCustomerLocation = null;
+
+
         MapSmallVM.MoveToRegion += this.Map.MoveToRegion;
         MapSmallVM.AddPin += this.Map.Pins.Add;
         MapSmallVM.RemovePin += this.Map.Pins.Remove;
         MapSmallVM.GetCurrentLocation += GetVisibleRegionCenter;
-        mapSmallVM.EditCustomerLocation += OnEditCustomerLocation;
+        MapSmallVM.EditCustomerLocation += OnEditCustomerLocation;
+        MapSmallVM.AddRoute += SetPolyline;
+        MapSmallVM.RemoveRoute += ClearPolyline;
+
+        panGesture = new PanGestureRecognizer();
+        panGesture.PanUpdated += OnPanUpdated;
+        this.GestureRecognizers.Add(panGesture);
+    }
+    public void Dispose()
+    {
+        MapSmallVM.MoveToRegion = null;
+        MapSmallVM.AddPin = null;
+        MapSmallVM.RemovePin = null;
+        MapSmallVM.GetCurrentLocation = null;
+        MapSmallVM.EditCustomerLocation = null;
+
+        panGesture.PanUpdated -= OnPanUpdated;
+    }
+
+
+    protected override Size ArrangeOverride(Rect bounds)
+    {
+        if (defaultXMax == 0)
+        {
+            defaultXMax = bounds.Width;
+        }
+        if (defaultYMax == 0)
+        {
+            defaultYMax = bounds.Height;
+        }
+
+        return base.ArrangeOverride(bounds);
     }
 
 
     private void OnEditCustomerLocation(Microsoft.Maui.Devices.Sensors.Location location)
     {
+        if (Customer is null)
+        {
+            return;
+        }
         Customer.Latitude = location.Latitude;
         Customer.Longitude = location.Longitude;
         OnPropertyChanged(nameof(Customer.Latitude));
         OnPropertyChanged(nameof(Customer.Longitude));
     }
-    private Microsoft.Maui.Devices.Sensors.Location GetVisibleRegionCenter()
+    private MapSpan GetVisibleRegionCenter()
     {
-        return this.Map.VisibleRegion.Center;
+        return this.Map.VisibleRegion;
     }
-
-    public void Dispose()
+    private void SetPolyline(Polyline polyline)
     {
-        MapSmallVM.MoveToRegion -= this.Map.MoveToRegion;
-        MapSmallVM.AddPin -= this.Map.Pins.Add;
-        MapSmallVM.RemovePin -= this.Map.Pins.Remove;
-        MapSmallVM.GetCurrentLocation -= GetVisibleRegionCenter;
-        mapSmallVM.EditCustomerLocation -= OnEditCustomerLocation;
+        Map.MapElements.Add(polyline);
+    }
+    private void ClearPolyline()
+    {
+        Map.MapElements.Clear();
     }
 
     private void Button_Clicked_Close(object sender, EventArgs e)
     {
         MapSmallVIsVisible = !MapSmallVIsVisible;
     }
+
+    public void CalculateRoute()
+    {
+        MapSmallVM.GetRoutesCommand.Execute(Customer);
+    }
+
+
+    #region Resize
+
+    private double initialWidth;
+    private double initialHeight;
+    private double startX;
+    private double startY;
+
+    private double parentXMax;
+    private double parentYMax;
+
+    private double defaultXMax = 0;
+    private double defaultYMax = 0;
+
+    private readonly PanGestureRecognizer panGesture;
+
+    void OnPanUpdated(object sender, PanUpdatedEventArgs e)
+    {
+        var parent = (this.Parent as View);
+        parentXMax = parent.Width;
+        parentYMax = parent.Height;
+
+        if (grid.MaximumWidthRequest == double.PositiveInfinity)
+        {
+            grid.WidthRequest = border.Width;
+        }
+        if (grid.MaximumHeightRequest == double.PositiveInfinity)
+        {
+            grid.WidthRequest = border.Height;
+        }
+
+
+        switch (e.StatusType)
+        {
+            case GestureStatus.Started:
+                {
+                    initialWidth = Width;
+                    initialHeight = Height;
+                    startX = e.TotalX;
+                    startY = e.TotalY;
+                }
+                break;
+            case GestureStatus.Running:
+
+                {
+                    double newWidth = initialWidth + (-e.TotalX - startX);
+                    double newHeight = initialHeight + (e.TotalY - startY);
+
+                    // Optional: Set a minimum size for the view
+                    var x = Math.Max(newWidth, 50);
+                    if (parentXMax > x)
+                    {
+                        //WidthRequest = x;
+                        border.WidthRequest = x;
+                    }
+                    var y = Math.Max(newHeight, 50);
+                    if (parentYMax > y)
+                    {
+                        //HeightRequest = y;
+                        border.HeightRequest = x;
+                    }
+                }
+                break;
+            case GestureStatus.Completed:
+                {
+                    grid.WidthRequest = border.WidthRequest - 20;
+                    grid.HeightRequest = border.HeightRequest - 21;
+
+                    hlLeftOptions.Margin = new Thickness(10);
+
+                    if (border.HeightRequest > (parentYMax / 2)
+                        || border.WidthRequest > (parentXMax / 2))
+                    {
+                        MapSmallVM.IsFullscreen = true;
+                    }
+                    else
+                    {
+                        MapSmallVM.IsFullscreen = false;
+                    }
+
+                }
+                break;
+        }
+    }
+
+
+    private void ImageButton_Clicked_Fullscreen(object sender, EventArgs e)
+    {
+        var parent = (this.Parent as View);
+        parentXMax = parent.Width;
+        parentYMax = parent.Height;
+        var bounds = this.Bounds;
+
+
+        if (MapSmallVM.IsFullscreen)
+        {
+            border.WidthRequest = defaultXMax;
+            border.HeightRequest = defaultYMax;
+            MapSmallVM.IsFullscreen = false;
+        }
+        else
+        {
+            border.WidthRequest = parentXMax;
+            if (PositionOfMap == DataBase.CustomControls.Direction.Up)
+            {
+                border.HeightRequest = parentYMax - bounds.Top;
+
+            }
+            if (PositionOfMap == DataBase.CustomControls.Direction.Down)
+            {
+                border.HeightRequest = parentYMax - (parentYMax - bounds.Bottom);
+            }
+
+            MapSmallVM.IsFullscreen = true;
+        }
+        grid.WidthRequest = border.WidthRequest - 20;
+        grid.HeightRequest = border.HeightRequest - 21;
+        hlLeftOptions.Margin = new Thickness(10);
+    }
+
+    #endregion
 
 }

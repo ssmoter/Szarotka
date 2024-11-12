@@ -6,18 +6,34 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints;
 
 public partial class MapsV : ContentPage, IDisposable
 {
+    private bool _moveRegion = true;
     public MapsV(MapsVM vm)
     {
         InitializeComponent();
-        vm.GoToLocation += Map.MoveToRegion;
+        vm.GoToLocationAction += Map.MoveToRegion;
+        vm.AddRoutesPolilineAction += SetPolyline;
+        vm.ClearRoutesPolilineAction += ClearPolyline;
         vm.GetMap = Map;
         BindingContext = vm;
     }
     public void Dispose()
     {
         if (BindingContext is MapsVM vm)
-            vm.GoToLocation -= Map.MoveToRegion;
+        {
+            vm.GoToLocationAction -= Map.MoveToRegion;
+            vm.AddRoutesPolilineAction -= SetPolyline;
+            vm.ClearRoutesPolilineAction -= ClearPolyline;
+        }
         GC.SuppressFinalize(this);
+    }
+
+    private void SetPolyline(Polyline polyline)
+    {
+        Map.MapElements.Add(polyline);
+    }
+    private void ClearPolyline()
+    {
+        Map.MapElements.Clear();
     }
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
@@ -25,7 +41,11 @@ public partial class MapsV : ContentPage, IDisposable
         base.OnNavigatedFrom(args);
         if (BindingContext is MapsVM vm)
         {
-            vm.StopListeningLocation();
+            vm.RoutesToken.Cancel();
+            vm.RoutesToken.Dispose();
+            vm.RouteIsVisible = false;
+            ClearPolyline();
+            Data.ActionLocation.MapGeolocation.OnStopListeningLocation();
             if (vm.LastSelectedDayOfWeek is not null)
             {
                 vm.LastSelectedDayOfWeekWhenNavigation = vm.LastSelectedDayOfWeek;
@@ -33,13 +53,14 @@ public partial class MapsV : ContentPage, IDisposable
         }
     }
 
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
+        Map.MoveToRegion(await Data.ActionLocation.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(5)));
 
         if (BindingContext is MapsVM vm)
         {
-            vm.StartListeningLocation(this.Map);
+            vm.RoutesToken = new();
 
             if (vm.Routes is null)
                 return;
@@ -111,4 +132,19 @@ public partial class MapsV : ContentPage, IDisposable
             }
         }
     }
+
+    private void CustomPin_InfoWindowClicked(object sender, PinClickedEventArgs e)
+    {
+        if (BindingContext is MapsVM vm)
+        {
+            if (sender is Pin pin)
+            {
+                vm.OpenMoreDetail(pin);
+                vm.StepSelected = DataBase.CustomControls.StepSelected.Full;
+            }
+        }
+    }
+
 }
+
+

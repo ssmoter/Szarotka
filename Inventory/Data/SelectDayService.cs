@@ -126,9 +126,9 @@ namespace Inventory.Data
                 {
                     day.Products.Add(new(products[i]));
                     day.Products[i].Name = System.Text.Json.JsonSerializer.Deserialize<ProductName>(products[i].JsonName
-                        , JsonOptions.JsonSerializeOptions);
+                        , JsonOptions.JsonSerializeOptionsBoolAndDateTime);
                     day.Products[i].Price = System.Text.Json.JsonSerializer.Deserialize<ProductPrice>(products[i].JsonPrice
-                        , JsonOptions.JsonSerializeOptions);
+                        , JsonOptions.JsonSerializeOptionsBoolAndDateTime);
                 }
                 var cakes = await _db.DataBaseAsync.Table<Cake>().Where(x => x.DayId == id).ToArrayAsync();
                 day.Cakes = new ObservableCollection<Cake>(cakes);
@@ -146,7 +146,7 @@ namespace Inventory.Data
                         continue;
 
                     var price = System.Text.Json.JsonSerializer.Deserialize<ProductPrice>(products[i].JsonPrice
-                        , JsonOptions.JsonSerializeOptions);
+                        , JsonOptions.JsonSerializeOptionsBoolAndDateTime);
                     day.Products.Add(new Product()
                     {
                         Name = products[i],

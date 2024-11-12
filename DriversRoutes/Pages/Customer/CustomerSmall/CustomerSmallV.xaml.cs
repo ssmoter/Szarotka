@@ -172,6 +172,15 @@ public partial class CustomerSmallV : ContentView
         get => (bool)GetValue(MoveTimeIsVisibleProperty);
         set => SetValue(MoveTimeIsVisibleProperty, value);
     }
+    public static readonly BindableProperty RoutesIsVisibleProperty
+    = BindableProperty.Create(nameof(RoutesIsVisible), typeof(bool), typeof(CustomerSmallV), propertyChanged: (bindable, oldValu, newValue) =>
+    {
+    });
+    public bool RoutesIsVisible
+    {
+        get => (bool)GetValue(RoutesIsVisibleProperty);
+        set => SetValue(RoutesIsVisibleProperty, value);
+    }
     #endregion
 
     #region Buttons
@@ -219,6 +228,14 @@ public partial class CustomerSmallV : ContentView
         set => SetValue(MoveTimeButtonCommandProperty, value);
     }
 
+    public static readonly BindableProperty RoutesButtonCommandProperty =
+    BindableProperty.Create(nameof(RoutesButtonCommand), typeof(ICommand), typeof(CustomerSmallV));
+
+    public ICommand RoutesButtonCommand
+    {
+        get => (ICommand)GetValue(RoutesButtonCommandProperty);
+        set => SetValue(RoutesButtonCommandProperty, value);
+    }
 
 
 
@@ -264,6 +281,15 @@ public partial class CustomerSmallV : ContentView
     {
         get => GetValue(MoveTimeButtonCommandParameterProperty);
         set => SetValue(MoveTimeButtonCommandParameterProperty, value);
+    }
+
+    public static readonly BindableProperty RoutesButtonCommandParameterProperty =
+    BindableProperty.Create(nameof(RoutesButtonCommandParameter), typeof(object), typeof(CustomerSmallV));
+
+    public object RoutesButtonCommandParameter
+    {
+        get => GetValue(RoutesButtonCommandParameterProperty);
+        set => SetValue(RoutesButtonCommandParameterProperty, value);
     }
     #endregion
 

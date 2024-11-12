@@ -1,4 +1,7 @@
-﻿namespace DriversRoutes.Service
+﻿using DriversRoutes.Data.GoogleApi;
+using DriversRoutes.Pages.Maps.Controls;
+
+namespace DriversRoutes.Service
 {
     public static class ServiceCollectionExtensionsDriversRoutes
     {
@@ -16,9 +19,9 @@
 
             services.AddScoped<ISelectRoutes, Data.SelectRoutes>();
             services.AddScoped<ISaveRoutes, Data.SaveRoutes>();
-#if ANDROID
-            services.AddScoped<IDownloadAddress, Platforms.Android.DownloadAddress>();
-#endif
+
+            services.AddScoped<IAddressFromCoordinates, AddressFromCoordinates>();
+            services.AddScoped<IRoutes, Routes>();
 
             services.AddScoped<Pages.ListOfPoints.ListOfPointsV>();
             services.AddScoped<Pages.ListOfPoints.ListOfPointsVM>();
@@ -29,6 +32,15 @@
             services.AddScoped<Pages.Customer.DisplayCustomer.DisplayCustomerV>();
             services.AddScoped<Pages.Customer.DisplayCustomer.DisplayCustomerVM>();
 
+            services.AddScoped<Pages.Maps.MapSmall.MapSmallV>();
+            services.AddScoped<Pages.Maps.MapSmall.MapSmallVM>();
+
+            services.AddScoped<Pages.Maps.Navigate.NavigateV>();
+            services.AddScoped<Pages.Maps.Navigate.NavigateVM>();
+
+            services.AddScoped<HttpClient>();
+
+            services.AddSingleton<BlazorMap>();
 
             return services;
         }
