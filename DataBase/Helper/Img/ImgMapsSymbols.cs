@@ -22,5 +22,11 @@
 
         public static string RemoveRoadBlack { get => "remove_road_black.png"; }
         public static string RemoveRoadWhite { get => "remove_road_white.png"; }
+
+        public static string FullscreenExitBlack { get => "baseline_fullscreen_exit_black_24.png"; }
+        public static string FullscreenExitWhite { get => "baseline_fullscreen_exit_white_24.png"; }
+
+        public static string FullscreenBlack { get => "baseline_fullscreen_black_24.png"; }
+        public static string FullscreenWhite { get => "baseline_fullscreen_white_24.png"; }
     }
 }

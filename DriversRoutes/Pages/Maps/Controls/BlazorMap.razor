@@ -63,14 +63,14 @@
     {
         _routes.SetKey("AIzaSyDMfTC47bnsNBAK8S4xKk7Mhb_aiSqnCYU");
 
-        var currentLocation = await Helper.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(1));
+        var currentLocation = await Data.ActionLocation.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(1));
         await GetModule(currentLocation);
 
 #if !WINDOWS
         var name = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
         AddListener("dragstart", nameof(OnMapDragStart), name);
-        Helper.MapGeolocation.OnStopListeningLocation();
-        await Helper.MapGeolocation.OnStartListeningLocation(SetCenter, GeolocationAccuracy.Best, TimeSpan.FromSeconds(1));
+        Data.ActionLocation.MapGeolocation.OnStopListeningLocation();
+        await Data.ActionLocation.MapGeolocation.OnStartListeningLocation(SetCenter, GeolocationAccuracy.Best, TimeSpan.FromSeconds(1));
 
         AddAdvancedMarker(_userIconId,
                                currentLocation.Center.Latitude,
@@ -118,7 +118,7 @@
     private async Task MyLocation(CancellationToken token = default)
     {
         _listeningLocation = true;
-        var current = await Helper.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(10), token);
+        var current = await Data.ActionLocation.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(10), token);
         SetMyLocation(current.Center, token);
     }
     private void SetMyLocation(Location location, CancellationToken token = default)

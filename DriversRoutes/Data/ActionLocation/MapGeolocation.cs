@@ -1,4 +1,4 @@
-﻿namespace DriversRoutes.Helper
+﻿namespace DriversRoutes.Data.ActionLocation
 {
     public static class MapGeolocation
     {

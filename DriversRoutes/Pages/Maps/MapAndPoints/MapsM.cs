@@ -14,9 +14,6 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
         [ObservableProperty]
         CustomerRoutes customerRoutes;
 
-        [ObservableProperty]
-        ImageSource imageSource;
-
         public MapsM()
         {
             Pin = new DriversRoutes.Model.CustomPin();

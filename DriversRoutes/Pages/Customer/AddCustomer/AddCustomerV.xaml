@@ -25,11 +25,12 @@
         <MapSmall:MapSmallV
             Grid.Row="0"
             Grid.Column="1"
+            HorizontalOptions="End"
+            VerticalOptions="Start"
             Customer="{Binding Customer}"
             EditIsVisible="True"
             IsVisible="{Binding AddCustomer.MapIsVisible}"
-            MapSmallVIsVisible="{Binding AddCustomer.MapIsVisible}"
-            ZIndex="102" />
+            MapSmallVIsVisible="{Binding AddCustomer.MapIsVisible}" />
 
         <ScrollView
             Grid.RowSpan="2"

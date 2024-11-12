@@ -1,6 +1,6 @@
 ﻿using Microsoft.Maui.Maps;
 
-namespace DriversRoutes.Helper
+namespace DriversRoutes.Data.ActionLocation
 {
     public class CurrentLocation
     {

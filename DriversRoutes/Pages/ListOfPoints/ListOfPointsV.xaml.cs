@@ -5,6 +5,7 @@ public partial class ListOfPointsV : ContentPage
     public ListOfPointsV(ListOfPointsVM vm)
     {
         InitializeComponent();
+        vm.CalculateRoute = Map.CalculateRoute;
         BindingContext = vm;
     }
 

@@ -92,6 +92,9 @@ namespace DriversRoutes.Pages.ListOfPoints
         readonly AccessDataBase _db;
         readonly Service.ISelectRoutes _selectRoutes;
         readonly Service.ISaveRoutes _saveRoutes;
+
+        public Action CalculateRoute;
+
         public ListOfPointsVM(AccessDataBase db, Service.ISelectRoutes selectRoutes, Service.ISaveRoutes saveRoutes)
         {
             _db = db;
@@ -104,10 +107,10 @@ namespace DriversRoutes.Pages.ListOfPoints
 
         public void GetPointsFireAndForget(Routes routes, SelectedDayOfWeekRoutes week)
         {
-            Task.Run(async () =>
-            {
-                CustomerRoutes = await GetPointsAsync(routes, week);
-            });
+            var task = Task.Run(async () =>
+             {
+                 CustomerRoutes = await GetPointsAsync(routes, week);
+             });
         }
 
         public ObservableCollection<CustomerRoutes> GetPoints(Routes routes, SelectedDayOfWeekRoutes week)
@@ -128,7 +131,6 @@ namespace DriversRoutes.Pages.ListOfPoints
             {
                 CustomerListRefresh = false;
             }
-
         }
         public async Task<ObservableCollection<CustomerRoutes>> GetPointsAsync(Routes routes, SelectedDayOfWeekRoutes week)
         {
@@ -268,9 +270,10 @@ namespace DriversRoutes.Pages.ListOfPoints
             {
                 if (lastSelectedDayOfWeekRoutes is not null)
                 {
-                    GetPointsFireAndForget(Route, lastSelectedDayOfWeekRoutes);
+                    // GetPointsFireAndForget(Route, lastSelectedDayOfWeekRoutes);
                 }
             }
+            CustomerListRefresh = false;
         }
 
         [RelayCommand]
@@ -389,7 +392,7 @@ namespace DriversRoutes.Pages.ListOfPoints
         }
 
         [RelayCommand]
-        async Task NavigationToRoutes(CustomerRoutes customer)
+        void NavigationToRoutes(CustomerRoutes customer)
         {
             try
             {
@@ -397,13 +400,20 @@ namespace DriversRoutes.Pages.ListOfPoints
                 {
                     return;
                 }
+                ShowLocationThisCustomer = true;
+                LocationThisCustomer = customer;
+                CalculateRoute?.Invoke();
+                //if (customer is null)
+                //{
+                //    return;
+                //}
 
-                await Shell.Current.GoToAsync($"{nameof(Pages.Maps.Navigate.NavigateV)}?",
-                    new Dictionary<string, object>()
-                    {
-                        [nameof(ObservableCollection<CustomerRoutes>)] = CustomerRoutes,
-                        [nameof(DataBase.Model.EntitiesRoutes.CustomerRoutes)] = customer
-                    });
+                //await Shell.Current.GoToAsync($"{nameof(Pages.Maps.Navigate.NavigateV)}?",
+                //    new Dictionary<string, object>()
+                //    {
+                //        [nameof(ObservableCollection<CustomerRoutes>)] = CustomerRoutes,
+                //        [nameof(DataBase.Model.EntitiesRoutes.CustomerRoutes)] = customer
+                //    });
             }
             catch (Exception ex)
             {

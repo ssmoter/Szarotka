@@ -198,12 +198,6 @@
         </controls:MovingViewInSteps>
 
 
-        <!--<BlazorWebView x:Name="blazorMap" HostPage="wwwroot/index.html">
-            <BlazorWebView.RootComponents>
-                <RootComponent ComponentType="{x:Type controlsMaps:BlazorMap}" Selector="#app" />
-            </BlazorWebView.RootComponents>
-        </BlazorWebView>-->
-
     </Grid>
 
 </ContentPage>

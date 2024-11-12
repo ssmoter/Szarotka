@@ -203,7 +203,7 @@ namespace DriversRoutes.Pages.Maps.Controls
                 customer = _customer;
             }
 
-            var currentLocation = await Helper.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(1));
+            var currentLocation = await Data.ActionLocation.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(1),token);
 
             var latLngStart = $"{currentLocation.Center.Latitude.ToString(dot)},{currentLocation.Center.Longitude.ToString(dot)}";
 

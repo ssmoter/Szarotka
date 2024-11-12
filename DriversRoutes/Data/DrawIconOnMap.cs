@@ -1,5 +1,6 @@
-﻿using Microsoft.Maui.Graphics.Skia;
+﻿using DriversRoutes.Model;
 
+using Microsoft.Maui.Graphics.Skia;
 
 using SkiaSharp;
 
@@ -141,51 +142,89 @@ namespace DriversRoutes.Data
         public static string[] GenerateBase64StringPins(int length)
         {
             var pins = new string[length];
-            GetScale(out int scaleX, out int scaleY, out int width, out int height);
-
+            var pinSize = GetScale();
+            DrawIconOnMap drawIconOnMap = new()
+            {
+                ScaleX = pinSize.ScaleX,
+                ScaleY = pinSize.ScaleY,
+            };
             for (int i = 0; i < length; i++)
             {
-                var pin = GetNewPin(i + 1, scaleX, scaleY, width, height, out SkiaBitmapExportContext skiaBitmapExportContext, out DrawIconOnMap drawIconOnMap, out MemoryStream memory);
-
+                SkiaBitmapExportContext skiaBitmapExportContext = new(pinSize.Width, pinSize.Height, 1);
+                drawIconOnMap.Number = i + 1;
+                var pin = GetNewPin(skiaBitmapExportContext, drawIconOnMap);
                 pins[i] = pin;
             }
             return pins;
         }
         public static string GenerateBase64StringPin(int number)
         {
-            GetScale(out int scaleX, out int scaleY, out int width, out int height);
-
-            var pin = GetNewPin(number, scaleX, scaleY, width, height, out SkiaBitmapExportContext skiaBitmapExportContext, out DrawIconOnMap drawIconOnMap, out MemoryStream memory);
-
-            return pin;
-        }
-
-
-        private static string GetNewPin(int number, int scaleX, int scaleY, int width, int height, out SkiaBitmapExportContext skiaBitmapExportContext, out DrawIconOnMap drawIconOnMap, out MemoryStream memory)
-        {
-            skiaBitmapExportContext = new(width, height, 1);
-            ICanvas canvas = skiaBitmapExportContext.Canvas;
-            drawIconOnMap = new()
+            var pinSize = GetScale();
+            SkiaBitmapExportContext skiaBitmapExportContext = new(pinSize.Width, pinSize.Height, 1);
+            DrawIconOnMap drawIconOnMap = new()
             {
                 Number = number,
-                ScaleX = scaleX,
-                ScaleY = scaleY,
+                ScaleX = pinSize.ScaleX,
+                ScaleY = pinSize.ScaleY,
             };
-            drawIconOnMap.Draw(canvas, new RectF(0, 0, skiaBitmapExportContext.Width, skiaBitmapExportContext.Height));
+            var pin = GetNewPin(skiaBitmapExportContext, drawIconOnMap);
+            return pin;
+        }
+        public static ImageSource GetImagePin(int number)
+        {
+            var pinSize = GetScale();
+            SkiaBitmapExportContext skiaBitmapExportContext = new(pinSize.Width, pinSize.Height, 1);
+            DrawIconOnMap drawIconOnMap = new()
+            {
+                Number = number,
+                ScaleX = pinSize.ScaleX,
+                ScaleY = pinSize.ScaleY,
+            };
+            var pin = ImageStream(skiaBitmapExportContext, drawIconOnMap);
+            return ImageSource.FromStream(() => skiaBitmapExportContext.Image.AsStream());
+        }
+        public static ImageSource GetImagePin(int number, Color colorFill, Color colorBackground)
+        {
+            var pinSize = GetScale();
+            SkiaBitmapExportContext skiaBitmapExportContext = new(pinSize.Width, pinSize.Height, 1);
+            DrawIconOnMap drawIconOnMap = new()
+            {
+                Number = number,
+                ScaleX = pinSize.ScaleX,
+                ScaleY = pinSize.ScaleY,
+                ColorFill = colorFill,
+                ColorBackground = colorBackground,
 
-            var stream = skiaBitmapExportContext.Image.AsStream();
-            memory = new MemoryStream();
+            };
+            var pin = ImageStream(skiaBitmapExportContext, drawIconOnMap);
+            return ImageSource.FromStream(() => skiaBitmapExportContext.Image.AsStream());
+        }
+
+        private static string GetNewPin(SkiaBitmapExportContext skiaBitmapExportContext, DrawIconOnMap drawIconOnMap)
+        {
+            var stream = ImageStream(skiaBitmapExportContext, drawIconOnMap);
+            using var memory = new MemoryStream();
             stream.CopyTo(memory);
             var pin = Convert.ToBase64String(memory.ToArray());
             return pin;
         }
 
-        private static void GetScale(out int scaleX, out int scaleY, out int width, out int height)
+        private static Stream ImageStream(SkiaBitmapExportContext skiaBitmapExportContext, DrawIconOnMap drawIconOnMap)
         {
-            scaleX = (int)DeviceDisplay.Current.MainDisplayInfo.Density;
-            scaleY = scaleX;
-            width = 40 * scaleX;
-            height = 58 * scaleY;
+            ICanvas canvas = skiaBitmapExportContext.Canvas;
+            drawIconOnMap.Draw(canvas, new RectF(0, 0, skiaBitmapExportContext.Width, skiaBitmapExportContext.Height));
+            var stream = skiaBitmapExportContext.Image.AsStream();
+            return stream;
+        }
+
+        private static PinSize GetScale()
+        {
+            var scaleX = (int)DeviceDisplay.Current.MainDisplayInfo.Density;
+            var scaleY = scaleX;
+            var width = 40 * scaleX;
+            var height = 58 * scaleY;
+
+            return new PinSize(scaleX, scaleY, width, height);
         }
 
 

@@ -133,6 +133,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Remove="Resources\Images\Icon\baseline_fullscreen_black_24.png" />
+      <None Remove="Resources\Images\Icon\baseline_fullscreen_exit_black_24.png" />
+      <None Remove="Resources\Images\Icon\baseline_fullscreen_exit_white_24.png" />
+      <None Remove="Resources\Images\Icon\baseline_fullscreen_white_24.png" />
       <None Remove="Resources\Images\Icon\remove_road_black.png" />
       <None Remove="Resources\Images\Icon\remove_road_white.png" />
     </ItemGroup>

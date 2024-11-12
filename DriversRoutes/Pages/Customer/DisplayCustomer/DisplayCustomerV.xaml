@@ -18,6 +18,8 @@
         <MapSmall:MapSmallV
             Customer="{Binding Customer}"
             EditIsVisible="False"
+            VerticalOptions="Start"
+            HorizontalOptions="Center"
             IsVisible="{Binding DisplayCustomerM.ShowLocationThisCustomer}"
             MapSmallVIsVisible="{Binding DisplayCustomerM.ShowLocationThisCustomer}" />
 

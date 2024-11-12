@@ -6,6 +6,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints;
 
 public partial class MapsV : ContentPage, IDisposable
 {
+    private bool _moveRegion = true;
     public MapsV(MapsVM vm)
     {
         InitializeComponent();
@@ -35,15 +36,16 @@ public partial class MapsV : ContentPage, IDisposable
         Map.MapElements.Clear();
     }
 
-
-
-
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
         base.OnNavigatedFrom(args);
         if (BindingContext is MapsVM vm)
         {
-            vm.StopListeningLocation();
+            vm.RoutesToken.Cancel();
+            vm.RoutesToken.Dispose();
+            vm.RouteIsVisible = false;
+            ClearPolyline();
+            Data.ActionLocation.MapGeolocation.OnStopListeningLocation();
             if (vm.LastSelectedDayOfWeek is not null)
             {
                 vm.LastSelectedDayOfWeekWhenNavigation = vm.LastSelectedDayOfWeek;
@@ -51,13 +53,14 @@ public partial class MapsV : ContentPage, IDisposable
         }
     }
 
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
+        Map.MoveToRegion(await Data.ActionLocation.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(5)));
 
         if (BindingContext is MapsVM vm)
         {
-            vm.StartListeningLocation();
+            vm.RoutesToken = new();
 
             if (vm.Routes is null)
                 return;

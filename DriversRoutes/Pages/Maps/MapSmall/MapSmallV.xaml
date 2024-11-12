@@ -9,57 +9,132 @@
     xmlns:maps="http://schemas.microsoft.com/dotnet/2021/maui/maps"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:Name="this"
-    x:DataType="VM:MapSmallV">
+    x:DataType="VM:MapSmallV"
+    ZIndex="111">
 
-    <!--  xmlns:mapBlazor="clr-namespace:DriversRoutes.Pages.Maps.Controls"  -->
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentView.Resources>
 
-    <Border HorizontalOptions="Fill" VerticalOptions="Fill">
+    <Border x:Name="border" StrokeThickness="10">
 
         <Border.StrokeShape>
-            <RoundRectangle CornerRadius="10" />
+            <RoundRectangle CornerRadius="0" />
         </Border.StrokeShape>
 
-
         <Grid
+            x:Name="grid"
             BindingContext="{x:Reference this}"
-            HorizontalOptions="Fill"
+            HorizontalOptions="End"
             RowDefinitions="auto,*"
-            VerticalOptions="Fill">
-            <VerticalStackLayout
+            VerticalOptions="Start">
+
+            <HorizontalStackLayout
+                x:Name="hlLeftOptions"
                 Grid.Row="1"
-                BackgroundColor="AliceBlue"
-                HorizontalOptions="StartAndExpand"
+                Margin="10,10,0,0"
+                HorizontalOptions="Start"
                 Opacity="0.8"
-                Scale="0.75"
-                VerticalOptions="StartAndExpand"
+                VerticalOptions="Start"
                 ZIndex="111">
 
-
-                <ImageButton
-                    Clicked="Button_Clicked_Close"
-                    Command="{Binding MapSmallVM.CloseMapCommand}"
-                    CommandParameter="{Binding Customer}"
-                    CornerRadius="10"
-                    HorizontalOptions="StartAndExpand"
-                    Opacity="1"
-                    Source="{AppThemeBinding Light={Static Symbols:ImgMapsSymbols.CloseBlack},
-                                             Dark={Static Symbols:ImgMapsSymbols.CloseBlack}}"
-                    VerticalOptions="StartAndExpand" />
+                <VerticalStackLayout
+                    BackgroundColor="{AppThemeBinding Light=AliceBlue,
+                                                      Dark=Grey}"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start">
 
 
-                <ImageButton
-                    Command="{Binding MapSmallVM.CenterOldLocationCommand}"
-                    CommandParameter="{Binding Customer}"
-                    CornerRadius="10"
-                    HorizontalOptions="StartAndExpand"
-                    Source="{AppThemeBinding Light={Static Symbols:ImgMapsSymbols.SavedSearchBlack},
-                                             Dark={Static Symbols:ImgMapsSymbols.SavedSearchBlack}}"
-                    VerticalOptions="StartAndExpand" />
+                    <ImageButton
+                        Clicked="Button_Clicked_Close"
+                        Command="{Binding MapSmallVM.CloseMapCommand}"
+                        CommandParameter="{Binding Customer}"
+                        CornerRadius="10"
+                        HeightRequest="36"
+                        HorizontalOptions="Start"
+                        Opacity="1"
+                        Source="{AppThemeBinding Light={Static Symbols:ImgMapsSymbols.CloseBlack},
+                                                 Dark={Static Symbols:ImgMapsSymbols.CloseWhite}}"
+                        VerticalOptions="Start"
+                        WidthRequest="36" />
 
-            </VerticalStackLayout>
+                    <Border />
 
+                    <ImageButton
+                        Command="{Binding MapSmallVM.CenterOldLocationCommand}"
+                        CommandParameter="{Binding Customer}"
+                        CornerRadius="10"
+                        HeightRequest="36"
+                        HorizontalOptions="Start"
+                        Source="{AppThemeBinding Light={Static Symbols:ImgMapsSymbols.SavedSearchBlack},
+                                                 Dark={Static Symbols:ImgMapsSymbols.SavedSearchWhite}}"
+                        VerticalOptions="Start"
+                        WidthRequest="36" />
+                    <Border />
+                    <ImageButton
+                        Command="{Binding MapSmallVM.GetRoutesCommand}"
+                        CommandParameter="{Binding Customer}"
+                        CornerRadius="10"
+                        HeightRequest="36"
+                        HorizontalOptions="Start"
+                        Source="{AppThemeBinding Light={Static Symbols:ImgMapsSymbols.NavigationBlack},
+                                                 Dark={Static Symbols:ImgMapsSymbols.NavigationWhite}}"
+                        VerticalOptions="Start"
+                        WidthRequest="36" />
+                    <Border IsVisible="{Binding MapSmallVM.RouteIsVisible}" />
+
+                    <ImageButton
+                        Command="{Binding MapSmallVM.ClearRoutesCommand}"
+                        CornerRadius="10"
+                        HeightRequest="36"
+                        HorizontalOptions="Start"
+                        IsVisible="{Binding MapSmallVM.RouteIsVisible}"
+                        Source="{AppThemeBinding Light={Static Symbols:ImgMapsSymbols.RemoveRoadBlack},
+                                                 Dark={Static Symbols:ImgMapsSymbols.RemoveRoadWhite}}"
+                        VerticalOptions="Start"
+                        WidthRequest="36" />
+
+
+                </VerticalStackLayout>
+                <HorizontalStackLayout
+                    BackgroundColor="{AppThemeBinding Light=AliceBlue,
+                                                      Dark=Grey}"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Start">
+                    <Border VerticalOptions="Fill" />
+
+                    <ImageButton
+                        Clicked="ImageButton_Clicked_Fullscreen"
+                        CornerRadius="10"
+                        HeightRequest="36"
+                        HorizontalOptions="Start"
+                        IsVisible="{Binding MapSmallVM.IsFullscreen, Converter={StaticResource InvertedBoolConverter}}"
+                        Opacity="1"
+                        Source="{AppThemeBinding Light={Static Symbols:ImgMapsSymbols.FullscreenBlack},
+                                                 Dark={Static Symbols:ImgMapsSymbols.FullscreenWhite}}"
+                        VerticalOptions="Start"
+                        WidthRequest="36" />
+
+                    <ImageButton
+                        Clicked="ImageButton_Clicked_Fullscreen"
+                        CornerRadius="10"
+                        HeightRequest="36"
+                        HorizontalOptions="Start"
+                        IsVisible="{Binding MapSmallVM.IsFullscreen}"
+                        Opacity="1"
+                        Source="{AppThemeBinding Light={Static Symbols:ImgMapsSymbols.FullscreenExitBlack},
+                                                 Dark={Static Symbols:ImgMapsSymbols.FullscreenExitWhite}}"
+                        VerticalOptions="Start"
+                        WidthRequest="36" />
+
+                </HorizontalStackLayout>
+
+            </HorizontalStackLayout>
             <VerticalStackLayout
                 Grid.Row="0"
+                Grid.ColumnSpan="3"
                 HorizontalOptions="Fill"
                 IsVisible="{Binding EditIsVisible}">
                 <Button
@@ -85,13 +160,18 @@
                 </Grid>
             </VerticalStackLayout>
 
-            <Grid Grid.Row="1" RowDefinitions="*,42">
+            <Grid
+                Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                RowDefinitions="*,42">
 
                 <maps:Map
                     x:Name="Map"
                     Grid.Row="0"
                     Grid.RowSpan="2"
                     IsShowingUser="True"
+                    IsTrafficEnabled="True"
                     MapType="Street" />
 
                 <Image
@@ -104,6 +184,7 @@
             </Grid>
 
         </Grid>
+
     </Border>
 
 </ContentView>
