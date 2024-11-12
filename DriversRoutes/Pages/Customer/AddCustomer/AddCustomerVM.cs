@@ -24,6 +24,9 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         CustomerRoutes customer;
 
         [ObservableProperty]
+        CustomerRoutes customerHelperMap;
+
+        [ObservableProperty]
         SelectedDayOfWeekRoutes dayOfWeekCustomerBefore;
         [ObservableProperty]
         bool dayOfWeekCustomerBeforeIsVisible;
@@ -155,7 +158,12 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         {
             try
             {
+                CustomerHelperMap = Customer;
                 AddCustomer.MapIsVisible = !AddCustomer.MapIsVisible;
+                if (AddCustomer.MapIsVisible)
+                {
+                    AddCustomer.MapIsVisibleHelperTime = false;
+                }
             }
             catch (Exception ex)
             {
@@ -279,7 +287,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         }
 
         [RelayCommand]
-        void ChangeTimeBefore(string direction)
+        async Task ChangeTimeBefore(string direction)
         {
             if (DayOfWeekCustomerBeforeList is null)
             {
@@ -322,9 +330,19 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             {
                 DayOfWeekCustomerBefore = DayOfWeekCustomerBeforeList.FirstOrDefault();
             }
+
+            if (AddCustomer.MapIsVisible)
+            {
+                CustomerHelperMap = await _db.DataBaseAsync.Table<CustomerRoutes>().FirstOrDefaultAsync(x => x.Id == DayOfWeekCustomerBefore.CustomerId);
+                if (CustomerHelperMap is null)
+                {
+                    AddCustomer.MapIsVisible = false;
+                }
+            }
+
         }
         [RelayCommand]
-        void ChangeTimeAfter(string direction)
+        async Task ChangeTimeAfter(string direction)
         {
             if (DayOfWeekCustomerAfterList is null)
             {
@@ -369,9 +387,50 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             {
                 DayOfWeekCustomerAfter = DayOfWeekCustomerAfterList.FirstOrDefault();
             }
+            if (AddCustomer.MapIsVisible)
+            {
+                CustomerHelperMap = await _db.DataBaseAsync.Table<CustomerRoutes>().FirstOrDefaultAsync(x => x.Id == DayOfWeekCustomerAfter.CustomerId);
+                if (CustomerHelperMap is null)
+                {
+                    AddCustomer.MapIsVisible = false;
+                }
+            }
         }
 
+        [RelayCommand]
+        async Task DisplayMapWitchHelperTime(Guid id)
+        {
+            if (CustomerHelperMap is not null)
+            {
+                if (AddCustomer.MapIsVisibleHelperTime && CustomerHelperMap.Id != id)
+                {
+                    CustomerHelperMap = await _db.DataBaseAsync.Table<CustomerRoutes>().FirstOrDefaultAsync(x => x.Id == id);
+                    if (CustomerHelperMap is not null)
+                    {
+                        if (AddCustomer.MapIsVisibleHelperTime)
+                        {
+                            AddCustomer.MapIsVisible = false;
+                        }
+                        return;
+                    }
+                }
+            }
 
+            AddCustomer.MapIsVisibleHelperTime = !AddCustomer.MapIsVisibleHelperTime;
+
+            if (AddCustomer.MapIsVisibleHelperTime)
+            {
+                CustomerHelperMap = await _db.DataBaseAsync.Table<CustomerRoutes>().FirstOrDefaultAsync(x => x.Id == id);
+            }
+            if (CustomerHelperMap is null)
+            {
+                AddCustomer.MapIsVisibleHelperTime = false;
+            }
+            if (AddCustomer.MapIsVisibleHelperTime)
+            {
+                AddCustomer.MapIsVisible = false;
+            }
+        }
         #endregion
 
     }

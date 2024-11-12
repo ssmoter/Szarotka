@@ -20,20 +20,21 @@
 
 
 
-    <Grid ColumnDefinitions="*,3*" RowDefinitions="*,*">
+    <Grid ColumnDefinitions="*,3*" RowDefinitions="*,*,*">
 
         <MapSmall:MapSmallV
             Grid.Row="0"
             Grid.Column="1"
-            Customer="{Binding Customer}"
+            Customer="{Binding CustomerHelperMap}"
             EditIsVisible="True"
             HorizontalOptions="End"
             IsVisible="{Binding AddCustomer.MapIsVisible}"
             MapSmallVIsVisible="{Binding AddCustomer.MapIsVisible}"
+            PositionOfMap="Up"
             VerticalOptions="Start" />
 
         <ScrollView
-            Grid.RowSpan="2"
+            Grid.RowSpan="3"
             Grid.ColumnSpan="2"
             HorizontalOptions="CenterAndExpand">
 
@@ -134,7 +135,10 @@
                                         SelectedColor="{Binding DayOfWeekCustomerBefore.Saturday}"
                                         Text="{Binding DayOfWeekCustomerBefore.SaturdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
 
-                                    <Grid Grid.Row="7" ColumnDefinitions="*,*,*">
+                                    <Grid
+                                        Grid.Row="7"
+                                        ColumnDefinitions="*,*,*"
+                                        RowDefinitions="*,*">
                                         <ImageButton
                                             Grid.Column="0"
                                             Command="{Binding ChangeTimeBeforeCommand}"
@@ -158,7 +162,15 @@
                                             Rotation="-90"
                                             Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
                                                                      Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                                        <ImageButton
+                                            Grid.Row="1"
+                                            Grid.ColumnSpan="3"
+                                            Command="{Binding DisplayMapWitchHelperTimeCommand}"
+                                            CommandParameter="{Binding DayOfWeekCustomerBefore.CustomerId}"
+                                            Source="{AppThemeBinding Light={Static img:TabBarImg.MapBlack},
+                                                                     Dark={Static img:TabBarImg.MapWhite}}" />
                                     </Grid>
+
 
                                 </Grid>
                                 <Border VerticalOptions="Fill" />
@@ -408,7 +420,10 @@
                                         Text="{Binding DayOfWeekCustomerAfter.SaturdayTimeSpan, Converter={StaticResource timeSpanTohhmm}}" />
 
 
-                                    <Grid Grid.Row="7" ColumnDefinitions="*,*,*">
+                                    <Grid
+                                        Grid.Row="7"
+                                        ColumnDefinitions="*,*,*"
+                                        RowDefinitions="*,*">
                                         <ImageButton
                                             Grid.Column="0"
                                             Command="{Binding ChangeTimeAfterCommand}"
@@ -432,6 +447,13 @@
                                             Rotation="-90"
                                             Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
                                                                      Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
+                                        <ImageButton
+                                            Grid.Row="1"
+                                            Grid.ColumnSpan="3"
+                                            Command="{Binding DisplayMapWitchHelperTimeCommand}"
+                                            CommandParameter="{Binding DayOfWeekCustomerAfter.CustomerId}"
+                                            Source="{AppThemeBinding Light={Static img:TabBarImg.MapBlack},
+                                                                     Dark={Static img:TabBarImg.MapWhite}}" />
                                     </Grid>
 
                                 </Grid>
@@ -613,6 +635,18 @@
             </Border>
 
         </ScrollView>
+        
+        <MapSmall:MapSmallV
+            Grid.Row="2"
+            Grid.Column="1"
+            Customer="{Binding CustomerHelperMap}"
+            EditIsVisible="False"
+            HorizontalOptions="End"
+            IsVisible="{Binding AddCustomer.MapIsVisibleHelperTime}"
+            MapSmallVIsVisible="{Binding AddCustomer.MapIsVisibleHelperTime}"
+            PositionOfMap="Down"
+            VerticalOptions="End" />
+
     </Grid>
 
 </ContentPage>

@@ -12,6 +12,9 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         [ObservableProperty]
         bool mapIsVisible;
 
+        [ObservableProperty]
+        bool mapIsVisibleHelperTime;
+
         public AddCustomerM()
         {
 

@@ -80,6 +80,18 @@ public partial class MapSmallV : ContentView, IDisposable
         set => SetValue(MapSmallVIsVisibleProperty, value);
     }
 
+    public static readonly BindableProperty PositionOfMapProperty
+        = BindableProperty.Create(nameof(PositionOfMap)
+            , typeof(DataBase.CustomControls.Direction), typeof(MapSmallV)
+            , defaultBindingMode: BindingMode.TwoWay
+            , propertyChanged: (bindable, oldValu, newValue) =>
+            {
+            });
+    public DataBase.CustomControls.Direction PositionOfMap
+    {
+        get => (DataBase.CustomControls.Direction)GetValue(PositionOfMapProperty);
+        set => SetValue(PositionOfMapProperty, value);
+    }
 
     #endregion
     private MapSmallVM mapSmallVM;
@@ -98,11 +110,11 @@ public partial class MapSmallV : ContentView, IDisposable
         InitializeComponent();
         MapSmallVM = service;
 
-        MapSmallVM.MoveToRegion = null;
-        MapSmallVM.AddPin = null;
-        MapSmallVM.RemovePin = null;
-        MapSmallVM.GetCurrentLocation = null;
-        MapSmallVM.EditCustomerLocation = null;
+        //MapSmallVM.MoveToRegion = null;
+        //MapSmallVM.AddPin = null;
+        //MapSmallVM.RemovePin = null;
+        //MapSmallVM.GetCurrentLocation = null;
+        //MapSmallVM.EditCustomerLocation = null;
 
 
         MapSmallVM.MoveToRegion += this.Map.MoveToRegion;
@@ -281,7 +293,16 @@ public partial class MapSmallV : ContentView, IDisposable
         else
         {
             border.WidthRequest = parentXMax;
-            border.HeightRequest = parentYMax - bounds.Top;
+            if (PositionOfMap == DataBase.CustomControls.Direction.Up)
+            {
+                border.HeightRequest = parentYMax - bounds.Top;
+
+            }
+            if (PositionOfMap == DataBase.CustomControls.Direction.Down)
+            {
+                border.HeightRequest = parentYMax - (parentYMax - bounds.Bottom);
+            }
+
             MapSmallVM.IsFullscreen = true;
         }
         grid.WidthRequest = border.WidthRequest - 20;
