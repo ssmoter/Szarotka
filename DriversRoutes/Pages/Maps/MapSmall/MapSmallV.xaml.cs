@@ -3,6 +3,8 @@ using DataBase.Model.EntitiesRoutes;
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 
+using System.Runtime.CompilerServices;
+
 namespace DriversRoutes.Pages.Maps.MapSmall;
 
 public partial class MapSmallV : ContentView, IDisposable
@@ -110,25 +112,61 @@ public partial class MapSmallV : ContentView, IDisposable
         InitializeComponent();
         MapSmallVM = service;
 
-        //MapSmallVM.MoveToRegion = null;
-        //MapSmallVM.AddPin = null;
-        //MapSmallVM.RemovePin = null;
-        //MapSmallVM.GetCurrentLocation = null;
-        //MapSmallVM.EditCustomerLocation = null;
+        MapSmallVM.MoveToRegion = null;
+        MapSmallVM.AddPin = null;
+        MapSmallVM.RemovePin = null;
+        MapSmallVM.GetCurrentLocation = null;
+        MapSmallVM.EditCustomerLocation = null;
 
 
-        MapSmallVM.MoveToRegion += this.Map.MoveToRegion;
-        MapSmallVM.AddPin += this.Map.Pins.Add;
-        MapSmallVM.RemovePin += this.Map.Pins.Remove;
-        MapSmallVM.GetCurrentLocation += GetVisibleRegionCenter;
-        MapSmallVM.EditCustomerLocation += OnEditCustomerLocation;
-        MapSmallVM.AddRoute += SetPolyline;
-        MapSmallVM.RemoveRoute += ClearPolyline;
+        MapSmallVM.MoveToRegion = this.Map.MoveToRegion;
+        MapSmallVM.AddPin = this.Map.Pins.Add;
+        MapSmallVM.RemovePin = this.Map.Pins.Remove;
+        MapSmallVM.GetCurrentLocation = GetVisibleRegionCenter;
+        MapSmallVM.EditCustomerLocation = OnEditCustomerLocation;
+        MapSmallVM.AddRoute = SetPolyline;
+        MapSmallVM.RemoveRoute = ClearPolyline;
 
         panGesture = new PanGestureRecognizer();
-        panGesture.PanUpdated += OnPanUpdated;
-        this.GestureRecognizers.Add(panGesture);
+        if (GestureRecognizers.Count == 0)
+        {
+            panGesture.PanUpdated += OnPanUpdated;
+            this.GestureRecognizers.Add(panGesture);
+        }
     }
+
+    protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        base.OnPropertyChanged(propertyName);
+        bool isVisible = false;
+
+        if (propertyName == nameof(Customer))
+        {
+            isVisible = true;
+        }
+        if (propertyName == nameof(MapSmallVIsVisible))
+        {
+            isVisible = true;
+        }
+
+        if (isVisible)
+        {
+            MapSmallVM.MoveToRegion = null;
+            MapSmallVM.AddPin = null;
+            MapSmallVM.RemovePin = null;
+            MapSmallVM.GetCurrentLocation = null;
+            MapSmallVM.EditCustomerLocation = null;
+
+            MapSmallVM.MoveToRegion = this.Map.MoveToRegion;
+            MapSmallVM.AddPin = this.Map.Pins.Add;
+            MapSmallVM.RemovePin = this.Map.Pins.Remove;
+            MapSmallVM.GetCurrentLocation = GetVisibleRegionCenter;
+            MapSmallVM.EditCustomerLocation = OnEditCustomerLocation;
+            MapSmallVM.AddRoute = SetPolyline;
+            MapSmallVM.RemoveRoute = ClearPolyline;
+        }
+    }
+
     public void Dispose()
     {
         MapSmallVM.MoveToRegion = null;

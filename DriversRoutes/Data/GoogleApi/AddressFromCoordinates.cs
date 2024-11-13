@@ -22,7 +22,8 @@ namespace DriversRoutes.Data.GoogleApi
         public AddressFromCoordinates(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            key = DataBase.Helper.Manifest.GetManifestValue("com.google.android.geo.API_KEY");
+            key = DataBase.Key.GoogleApi.Key;
+            //key = DataBase.Helper.Manifest.GetManifestValue("com.google.android.geo.API_KEY");
         }
         public AddressFromCoordinates(HttpClient httpClient, string _key)
         {

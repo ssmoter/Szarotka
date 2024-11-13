@@ -51,7 +51,7 @@
                         <Entry Placeholder="Nazwa" Text="{Binding Customer.Name}" />
                     </VerticalStackLayout>
 
-                    <Border />
+                    <Border x:Name="bFullSize" />
 
                     <ScrollView HorizontalOptions="Center" Orientation="Horizontal">
 
@@ -176,7 +176,10 @@
                                 <Border VerticalOptions="Fill" />
                             </HorizontalStackLayout>
 
-                            <Border x:Name="bTimeSize" StrokeThickness="0">
+                            <Border
+                                x:Name="bTimeSize"
+                                StrokeThickness="0"
+                                WidthRequest="{Binding FullSize.Width}">
                                 <Grid
                                     Padding="5,2,5,2"
                                     x:DataType="VM:AddCustomerVM"

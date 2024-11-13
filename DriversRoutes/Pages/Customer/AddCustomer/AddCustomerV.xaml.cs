@@ -6,6 +6,7 @@ public partial class AddCustomerV : ContentPage
     public AddCustomerV(AddCustomerVM vm)
     {
         InitializeComponent();
+        vm.FullSize = bFullSize;
         BindingContext = vm;
     }
 
@@ -16,8 +17,5 @@ public partial class AddCustomerV : ContentPage
         {
             vm.GetHelperDayOfWeek();
         }
-#if ANDROID || IOS
-        bTimeSize.WidthRequest = Microsoft.Maui.Devices.DeviceDisplay.MainDisplayInfo.Width;
-#endif
     }
 }

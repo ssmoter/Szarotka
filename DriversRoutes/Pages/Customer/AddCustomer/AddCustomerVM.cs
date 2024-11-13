@@ -35,6 +35,11 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         [ObservableProperty]
         bool dayOfWeekCustomerAfterIsVisible;
 
+        [ObservableProperty]
+        Border fullSize;
+        [ObservableProperty]
+        Border timeSize;
+
         List<SelectedDayOfWeekRoutes> DayOfWeekCustomerBeforeList;
         List<SelectedDayOfWeekRoutes> DayOfWeekCustomerAfterList;
 
@@ -331,7 +336,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
                 DayOfWeekCustomerBefore = DayOfWeekCustomerBeforeList.FirstOrDefault();
             }
 
-            if (AddCustomer.MapIsVisible)
+            if (AddCustomer.MapIsVisibleHelperTime)
             {
                 CustomerHelperMap = await _db.DataBaseAsync.Table<CustomerRoutes>().FirstOrDefaultAsync(x => x.Id == DayOfWeekCustomerBefore.CustomerId);
                 if (CustomerHelperMap is null)
@@ -387,7 +392,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             {
                 DayOfWeekCustomerAfter = DayOfWeekCustomerAfterList.FirstOrDefault();
             }
-            if (AddCustomer.MapIsVisible)
+            if (AddCustomer.MapIsVisibleHelperTime)
             {
                 CustomerHelperMap = await _db.DataBaseAsync.Table<CustomerRoutes>().FirstOrDefaultAsync(x => x.Id == DayOfWeekCustomerAfter.CustomerId);
                 if (CustomerHelperMap is null)
