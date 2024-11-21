@@ -197,7 +197,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 {
                     points.Add(result[i].ParseAsCustomerM());
 #if !DEBUG
-                    var image = Data.DrawIconOnMap.GetImagePin(i);
+                    var image = Data.DrawIconOnMap.GetImagePin(points[i].CustomerRoutes.QueueNumber);
                     points[i].Pin.ImageSource = image;
 #endif
                 }
@@ -371,8 +371,8 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                 if (customerPrevious is not null)
                 {
 #if !DEBUG
-                    var pin = Data.DrawIconOnMap.GetImagePin(_previousCustomerRoute);
-                    customerPrevious.Pin.ImageSource = pin;
+                    var pinPrevious = Data.DrawIconOnMap.GetImagePin(_previousCustomerRoute);
+                    customerPrevious.Pin.ImageSource = pinPrevious;
 #else
                     customerPrevious.Pin.ImageSource = null;
 #endif
@@ -384,8 +384,8 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             var customer = AllPoints.FirstOrDefault(x => x.CustomerRoutes.QueueNumber == current);
             if (customer is not null)
             {
-                var pin = Data.DrawIconOnMap.GetImagePin(current, Colors.Blue, Colors.AliceBlue);
-                customer.Pin.ImageSource = pin;
+                var pinCurrent = Data.DrawIconOnMap.GetImagePin(current, Colors.Blue, Colors.AliceBlue);
+                customer.Pin.ImageSource = pinCurrent;
                 _previousCustomerRoute = current;
                 AllPoints.Remove(customer);
                 AllPoints.Add(customer);

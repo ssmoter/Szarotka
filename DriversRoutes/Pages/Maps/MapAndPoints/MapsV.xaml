@@ -30,7 +30,7 @@
             Grid.Row="1"
             BackgroundColor="{AppThemeBinding Light=AliceBlue,
                                               Dark=Grey}"
-            ColumnDefinitions="*,auto,auto,auto">
+            ColumnDefinitions="*,auto,auto,auto,auto">
             <VerticalStackLayout>
 
                 <Label FontSize="Title">
@@ -70,8 +70,18 @@
                 MaximumWidthRequest="48"
                 Source="{AppThemeBinding Light={Static img:ImgMapsSymbols.NavigationBlack},
                                          Dark={Static img:ImgMapsSymbols.NavigationWhite}}" />
+
             <ImageButton
                 Grid.Column="3"
+                Command="{Binding LocationOfPinCommand}"
+                CommandParameter="{Binding SelectedPoint}"
+                HorizontalOptions="End"
+                MaximumHeightRequest="48"
+                MaximumWidthRequest="48"
+                Source="{AppThemeBinding Light={Static img:ImgMapsSymbols.SavedSearchBlack},
+                                         Dark={Static img:ImgMapsSymbols.SavedSearchWhite}}" />
+            <ImageButton
+                Grid.Column="4"
                 Command="{Binding DisplayDescriptionOfNextPointCommand}"
                 HorizontalOptions="End"
                 MaximumHeightRequest="48"

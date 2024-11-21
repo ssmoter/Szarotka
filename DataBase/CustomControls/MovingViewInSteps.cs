@@ -216,8 +216,23 @@
             var height = parent.Height;
 
             var newHeight = (double)((height / 3) * (int)step);
+            if (step != StepSelected.None)
+            {
+                ContentView.IsVisible = true;
+            }
+            if (step == StepSelected.None)
+            {
+                newHeight = 1;
+            }
+
             _animation.Add(0, 1, new Animation(v => this.ContentView.HeightRequest = v, this.ContentView.Height, newHeight));
             _animation.Commit(this, "GrowAnimation", 16, 250, Easing.Linear);
+
+            if (step == StepSelected.None)
+            {
+                ContentView.IsVisible = false;
+            }
+
         }
         public static StepSelected StepUp(StepSelected step)
         {
