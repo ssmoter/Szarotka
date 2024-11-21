@@ -25,7 +25,7 @@ namespace DriversRoutes.Data.GoogleApi
         public Routes(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _key = DataBase.Helper.Manifest.GetManifestValue("com.google.android.geo.API_KEY");
+            _key = DataBase.Key.GoogleApi.Key;
 
             if (!_httpClient.DefaultRequestHeaders.Contains("X-Goog-Api-Key"))
             {

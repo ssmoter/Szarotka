@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Szarotka", "Szarotka\Szarotka.csproj", "{FFBFAA73-2020-45DF-AD2E-1271969C86DE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataBase", "DataBase\DataBase.csproj", "{04125819-6CAD-47AD-9EEF-88FF74B92234}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DriversRoutes", "DriversRoutes\DriversRoutes.csproj", "{4244B982-F31D-4FF6-9BEF-3655ADEC0C0A}"
@@ -31,24 +29,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Debug|x64.Build.0 = Debug|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Debug|x64.Deploy.0 = Debug|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Debug|x86.Build.0 = Debug|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Debug|x86.Deploy.0 = Debug|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Release|x64.ActiveCfg = Release|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Release|x64.Build.0 = Release|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Release|x64.Deploy.0 = Release|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Release|x86.ActiveCfg = Release|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Release|x86.Build.0 = Release|Any CPU
-		{FFBFAA73-2020-45DF-AD2E-1271969C86DE}.Release|x86.Deploy.0 = Release|Any CPU
 		{04125819-6CAD-47AD-9EEF-88FF74B92234}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{04125819-6CAD-47AD-9EEF-88FF74B92234}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04125819-6CAD-47AD-9EEF-88FF74B92234}.Debug|x64.ActiveCfg = Debug|x64

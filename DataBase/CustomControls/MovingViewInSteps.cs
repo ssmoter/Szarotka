@@ -80,6 +80,7 @@
         private Animation _animation = [];
         private event EventHandler<SwipedEventArgs> _swipeUp;
         private event EventHandler<SwipedEventArgs> _swipeDown;
+        private event EventHandler<PanUpdatedEventArgs> _panUpdated;
         private Grid _contenGrid => this.Content as Grid;
         public MovingViewInSteps()
         {
@@ -93,8 +94,9 @@
             _swipeDown += MovingViewInStepsDown_Swipe;
             VerticalOptions = LayoutOptions.End;
 
-            GestureRecognizers.Add(GetSwipeGestureRecognizerUp());
-            GestureRecognizers.Add(GetSwipeGestureRecognizerDown());
+            //GestureRecognizers.Add(GetSwipeGestureRecognizerUp());
+            //GestureRecognizers.Add(GetSwipeGestureRecognizerDown());
+            GestureRecognizers.Add(GetPanGestureRecognizer());
         }
 
         public void Dispose()
@@ -105,6 +107,76 @@
             _animation.Dispose();
         }
 
+
+        private PanGestureRecognizer GetPanGestureRecognizer()
+        {
+            PanGestureRecognizer pan = new();
+            pan.PanUpdated += Pan_PanUpdated;
+            return pan;
+        }
+
+        private double initialHeight;
+        private double startY;
+        StepSelected newStep = StepSelected.None;
+        private void Pan_PanUpdated(object sender, PanUpdatedEventArgs e)
+        {
+            var parent = (this.Parent as View);
+            var height = parent.Height;
+            switch (e.StatusType)
+            {
+                case GestureStatus.Started:
+                    {
+                        // initialWidth = Width;
+                        initialHeight = Height;
+                        //  startX = e.TotalX;
+                        startY = e.TotalY;
+                    }
+                    break;
+                case GestureStatus.Running:
+                    {
+                        double newHeight = 0;
+
+                        if (Direction == Direction.Up)
+                        {
+                            newHeight = initialHeight + (-e.TotalY - startY);
+                        }
+                        if (Direction == Direction.Down)
+                        {
+                            newHeight = initialHeight + (e.TotalY - startY);
+                        }
+
+                        if (newHeight < 0
+                            || newHeight > height)
+                        {
+                            break;
+                        }
+                        //_animation = [];
+                        _animation.Add(0, 1, new Animation(v => this.ContentView.HeightRequest = v, this.ContentView.Height, newHeight));
+                        _animation.Commit(this, "GrowAnimation", 16, 250, Easing.Linear);
+
+                        var minimHeight = height / (int)StepSelected.Full;
+
+                        if (newHeight < minimHeight)
+                            newStep = StepSelected.None;
+                        if (newHeight > minimHeight && newHeight < 2 * minimHeight)
+                            newStep = StepSelected.One;
+                        if (newHeight > 2 * minimHeight)
+                            newStep = StepSelected.Full;
+                    }
+                    break;
+                case GestureStatus.Completed:
+                    {
+                        if (newStep >= StepSelected.None && newStep <= StepSelected.Full)
+                        {
+                            StepStart = StepSelected.None;
+                            StepStart = newStep;
+                        }
+                    }
+                    break;
+            }
+
+
+        }
 
         private SwipeGestureRecognizer GetSwipeGestureRecognizerUp()
         {

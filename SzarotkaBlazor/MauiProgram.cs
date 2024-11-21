@@ -35,6 +35,7 @@ namespace SzarotkaBlazor
 
 #if ANDROID
             builder.UseMauiMaps();
+            AppContext.SetSwitch("BlazorWebView.AndroidFireAndForgetAsync", true);
             builder.ConfigureMauiHandlers(handlers =>
             {
                 handlers.AddHandler<Microsoft.Maui.Controls.Maps.Map, CustomMapHandler>();

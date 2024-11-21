@@ -97,7 +97,7 @@
                         <RoundRectangle CornerRadius="10" />
                     </Border.StrokeShape>
 
-                    <Grid ColumnDefinitions="50,*,50" RowDefinitions="auto,*">
+                    <Grid ColumnDefinitions="30,*,30" RowDefinitions="auto,*">
 
 
                         <Grid

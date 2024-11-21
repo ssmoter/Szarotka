@@ -373,7 +373,10 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
 #if !DEBUG
                     var pin = Data.DrawIconOnMap.GetImagePin(_previousCustomerRoute);
                     customerPrevious.Pin.ImageSource = pin;
+#else
+                    customerPrevious.Pin.ImageSource = null;
 #endif
+
                     AllPoints.Remove(customerPrevious);
                     AllPoints.Add(customerPrevious);
                 }
@@ -600,11 +603,10 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             RefreshingStart();
             var task = CalculateRoutes(customer, RoutesToken.Token);
             await task;
-            if (task.IsCompleted)
+            if (task.IsCompletedSuccessfully)
             {
                 SetRoutePinColor(customer.QueueNumber);
             }
-
         }
         [RelayCommand]
         async Task GetRoutesMapsM(MapsM customer)
@@ -617,7 +619,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             RefreshingStart();
             var task = CalculateRoutes(customer.CustomerRoutes, RoutesToken.Token);
             await task;
-            if (task.IsCompleted)
+            if (task.IsCompletedSuccessfully)
             {
                 SetRoutePinColor(customer.CustomerRoutes.QueueNumber);
             }
