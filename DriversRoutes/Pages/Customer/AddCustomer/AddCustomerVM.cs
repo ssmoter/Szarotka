@@ -46,7 +46,8 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         readonly Service.ISaveRoutes _saveRoutes;
         readonly Data.GoogleApi.IAddressFromCoordinates _IAddressFromCoordinates;
         readonly DataBase.Data.AccessDataBase _db;
-        ResidentialAddress[] _address = [];
+        internal ResidentialAddress[] _address { get; set; } = [];
+        internal CustomerRoutes originCustomer {  get; set; }
         #endregion
 
         public AddCustomerVM(Service.ISaveRoutes saveRoutes, DataBase.Data.AccessDataBase db, Data.GoogleApi.IAddressFromCoordinates IAddressFromCoordinates)
@@ -149,7 +150,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
                 // await Shell.Current.GoToAsync("..");
                 await Shell.Current.GoToAsync($"..?", new Dictionary<string, object>()
                 {
-                    [nameof(CustomerRoutes)] = Customer,
+                    [nameof(CustomerRoutes)] = originCustomer,
                     [nameof(Routes)] = RouteId
                 });
             }

@@ -10,42 +10,39 @@
     Color="{AppThemeBinding Light={StaticResource White},
                             Dark={StaticResource Black}}">
 
-    <VerticalStackLayout Margin="20,0,20,0">
+
+    <Grid
+        Margin="20,0,20,0"
+        HorizontalOptions="Center"
+        RowDefinitions="*,*"
+        VerticalOptions="Center">
 
         <Border
+            Grid.Row="1"
             Padding="10,10,10,5"
             HorizontalOptions="Center"
             VerticalOptions="Center">
 
-            <Grid MaximumHeightRequest="500" RowDefinitions="auto,*">
+            <Grid RowDefinitions="auto,*">
 
                 <Button
                     Grid.Row="0"
                     Command="{Binding CancelAndReturCommand}"
                     Text="Anuluj" />
 
-                <ScrollView
-                    Grid.Row="1"
-                    HorizontalOptions="Center"
-                    HorizontalScrollBarVisibility="Always"
-                    Orientation="Vertical"
-                    VerticalOptions="Center">
+                <ScrollView Grid.Row="1">
 
 
-                    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                    <VerticalStackLayout>
 
-
-
-                        <CollectionView
-                            HorizontalOptions="Center"
-                            ItemsSource="{Binding ProbableAddressesM.ResidentialAddresses}"
-                            VerticalOptions="Center">
+                        <CollectionView ItemsSource="{Binding ProbableAddressesM.ResidentialAddresses}">
 
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
                                     <Border
+                                        Margin="5"
                                         Padding="5"
-                                        HorizontalOptions="Center"
+                                        HorizontalOptions="Fill"
                                         VerticalOptions="Center">
 
                                         <Grid
@@ -60,7 +57,7 @@
                                                 Grid.ColumnSpan="2"
                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ProbableAddressesVM}}, Path=SaveAndReturnCommand}"
                                                 CommandParameter="{Binding .}"
-                                                HorizontalOptions="Center"
+                                                HorizontalOptions="Fill"
                                                 Text="Wybierz" />
 
                                             <Label
@@ -132,5 +129,6 @@
 
             </Grid>
         </Border>
-    </VerticalStackLayout>
+    </Grid>
+
 </toolkit:Popup>

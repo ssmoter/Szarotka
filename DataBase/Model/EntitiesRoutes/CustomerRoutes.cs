@@ -81,6 +81,24 @@ namespace DataBase.Model.EntitiesRoutes
             ResidentialAddress ??= new();
         }
 
+        public CustomerRoutes(CustomerRoutes copy)
+        {
+            this.Id = copy.Id;
+            this.Created = copy.Created;
+            this.Updated = copy.Updated;
+            
+            this.Name = copy.Name;
+            this.RoutesId = copy.routesId;
+            this.Description = copy.Description;
+            this.PhoneNumber = copy.PhoneNumber;
+            this.Latitude = copy.Latitude;
+            this.Longitude = copy.Longitude;
+            this.QueueNumber = copy.QueueNumber;
+            
+            this.DayOfWeek = new SelectedDayOfWeekRoutes(copy.DayOfWeek);
+            this.ResidentialAddress = new ResidentialAddress(copy.residentialAddress);
+        }
+
         public void Dispose()
         {
             Id = Guid.Empty;

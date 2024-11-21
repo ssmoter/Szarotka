@@ -27,6 +27,22 @@ namespace DataBase.Model.EntitiesRoutes
         public ResidentialAddress()
         { }
 
+        public ResidentialAddress(ResidentialAddress copy)
+        {
+            this.CustomerId = copy.CustomerId;
+            this.Name = copy.Name;
+            this.Street = copy.Street;
+            this.HouseNumber = copy.HouseNumber;
+            this.ApartmentNumber = copy.ApartmentNumber;
+            this.PostalCode = copy.PostalCode;
+            this.City = copy.City;
+            this.Country = copy.Country;
+            this.Updated = copy.Updated;
+            this.Surname = copy.Surname;
+            this.Id = copy.Id;
+            this.Created = copy.Created;
+        }
+
         public override string ToString()
         {
             string to = $"{Name} {Surname}{Environment.NewLine}" +
