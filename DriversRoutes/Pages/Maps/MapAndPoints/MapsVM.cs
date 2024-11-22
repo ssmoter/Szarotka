@@ -321,6 +321,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                         return seconds;
                     }
 
+
                     for (int i = 0; i < response.Routes.Length; i++)
                     {
                         for (int j = 0; j < response.Routes[i].Legs.Length; j++)
@@ -348,6 +349,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
                              AutomaticUpdateLocation(location);
                          })
                          , GeolocationAccuracy.Best, TimeSpan.FromSeconds(1), token);
+                    await Toast.Make($"Droga:{RouteDistance}{Environment.NewLine}Czas:{RouteDuration}").Show(default);
                 }
             }
             catch (OperationCanceledException)

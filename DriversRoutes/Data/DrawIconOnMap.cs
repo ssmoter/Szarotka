@@ -18,6 +18,7 @@ namespace DriversRoutes.Data
         public float ScaleX { get; set; } = 0;
         public float ScaleY { get; set; } = 0;
 
+        private static List<Stream> ImagePinStreams = [];
         public void Dispose()
         {
             ColorFill = null;
@@ -199,7 +200,6 @@ namespace DriversRoutes.Data
             var pin = ImageStream(skiaBitmapExportContext, drawIconOnMap);
             return ImageSource.FromStream(() => skiaBitmapExportContext.Image.AsStream());
         }
-
         private static string GetNewPin(SkiaBitmapExportContext skiaBitmapExportContext, DrawIconOnMap drawIconOnMap)
         {
             var stream = ImageStream(skiaBitmapExportContext, drawIconOnMap);
@@ -208,12 +208,12 @@ namespace DriversRoutes.Data
             var pin = Convert.ToBase64String(memory.ToArray());
             return pin;
         }
-
         private static Stream ImageStream(SkiaBitmapExportContext skiaBitmapExportContext, DrawIconOnMap drawIconOnMap)
         {
             ICanvas canvas = skiaBitmapExportContext.Canvas;
             drawIconOnMap.Draw(canvas, new RectF(0, 0, skiaBitmapExportContext.Width, skiaBitmapExportContext.Height));
             var stream = skiaBitmapExportContext.Image.AsStream();
+            ImagePinStreams.Add(stream);
             return stream;
         }
 
@@ -272,6 +272,21 @@ namespace DriversRoutes.Data
                 )
             );
             return svg;
+        }
+
+
+        public static void DisposeImagePinStreams()
+        {
+            if (ImagePinStreams is null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < ImagePinStreams.Count; i++)
+            {
+                ImagePinStreams[i]?.Dispose();
+            }
+            ImagePinStreams?.Clear();
         }
     }
 }

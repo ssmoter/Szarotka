@@ -57,8 +57,8 @@
                 Command="{Binding ClearRoutesCommand}"
                 HorizontalOptions="End"
                 IsVisible="{Binding RouteIsVisible}"
-                MaximumHeightRequest="48"
-                MaximumWidthRequest="48"
+                MaximumHeightRequest="36"
+                MaximumWidthRequest="36"
                 Source="{AppThemeBinding Light={Static img:ImgMapsSymbols.RemoveRoadBlack},
                                          Dark={Static img:ImgMapsSymbols.RemoveRoadWhite}}" />
             <ImageButton
@@ -66,8 +66,8 @@
                 Command="{Binding GetRoutesMapsMCommand}"
                 CommandParameter="{Binding SelectedPoint}"
                 HorizontalOptions="End"
-                MaximumHeightRequest="48"
-                MaximumWidthRequest="48"
+                MaximumHeightRequest="36"
+                MaximumWidthRequest="36"
                 Source="{AppThemeBinding Light={Static img:ImgMapsSymbols.NavigationBlack},
                                          Dark={Static img:ImgMapsSymbols.NavigationWhite}}" />
 
@@ -76,16 +76,16 @@
                 Command="{Binding LocationOfPinCommand}"
                 CommandParameter="{Binding SelectedPoint}"
                 HorizontalOptions="End"
-                MaximumHeightRequest="48"
-                MaximumWidthRequest="48"
+                MaximumHeightRequest="36"
+                MaximumWidthRequest="36"
                 Source="{AppThemeBinding Light={Static img:ImgMapsSymbols.SavedSearchBlack},
                                          Dark={Static img:ImgMapsSymbols.SavedSearchWhite}}" />
             <ImageButton
                 Grid.Column="4"
                 Command="{Binding DisplayDescriptionOfNextPointCommand}"
                 HorizontalOptions="End"
-                MaximumHeightRequest="48"
-                MaximumWidthRequest="48"
+                MaximumHeightRequest="36"
+                MaximumWidthRequest="36"
                 Rotation="-90"
                 Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
                                          Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />

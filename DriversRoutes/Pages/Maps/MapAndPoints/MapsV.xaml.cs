@@ -50,6 +50,7 @@ public partial class MapsV : ContentPage, IDisposable
             {
                 vm.LastSelectedDayOfWeekWhenNavigation = vm.LastSelectedDayOfWeek;
             }
+            Data.DrawIconOnMap.DisposeImagePinStreams();
         }
     }
 
