@@ -1,3 +1,5 @@
+﻿using CommunityToolkit.Maui.Alerts;
+
 namespace DriversRoutes.Pages.Main;
 
 public partial class MainVDriversRoutesV : ContentPage
@@ -16,6 +18,14 @@ public partial class MainVDriversRoutesV : ContentPage
         {
             vm.Routes = await vm.GetRoutes();
         }
-
+#if __ANDROID_8__ || __ANDROID_7__    
+        var snack = new Snackbar()
+        {
+            Text = "Z daną wersję Androida (7,8) mapy google nie są kompatybilne",
+            ActionButtonText = "OK",
+            Duration= TimeSpan.FromSeconds(60),
+        };
+        await snack.Show();
+#endif
     }
 }
