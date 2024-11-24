@@ -150,6 +150,7 @@
                         {
                             break;
                         }
+                       // this.ContentView.HeightRequest = newHeight;
                         //_animation = [];
                         _animation.Add(0, 1, new Animation(v => this.ContentView.HeightRequest = v, this.ContentView.Height, newHeight));
                         _animation.Commit(this, "GrowAnimation", 16, 250, Easing.Linear);
