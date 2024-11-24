@@ -21,21 +21,26 @@ public partial class MainVDriversRoutesV : ContentPage
 
 #if ANDROID
 
-        var android = DeviceInfo.Current.VersionString;
-
-        if (double.TryParse(android, out double result))
+        try
         {
-            if (result < 9)
+            var android = DeviceInfo.Current.VersionString;
+
+            if (double.TryParse(android, out double result))
             {
-                var snack = new Snackbar()
+                if (result < 9)
                 {
-                    Text = "Z daną wersję Androida (7,8) mapy google nie są kompatybilne",
-                    ActionButtonText = "OK",
-                    Duration = TimeSpan.FromSeconds(60),
-                };
-                await snack.Show();
+                    var snack = new Snackbar()
+                    {
+                        Text = "Z daną wersję Androida (7,8) mapy google nie są kompatybilne",
+                        ActionButtonText = "OK",
+                        Duration = TimeSpan.FromSeconds(60),
+                    };
+                    await snack.Show();
+                }
             }
         }
+        catch (Exception) { }
+
 #endif
 
     }

@@ -115,7 +115,16 @@
                             Grid.RowSpan="2"
                             Grid.Column="0"
                             Opacity="0.5"
-                            RowDefinitions="auto,*,auto">
+                            RowDefinitions="auto,*,*,auto">
+
+                            <ImageButton
+                                Grid.Row="0"
+                                Grid.RowSpan="2"
+                                Command="{Binding ShowMovingViewCommand}" />
+                            <ImageButton
+                                Grid.Row="2"
+                                Grid.RowSpan="2"
+                                Command="{Binding HideMovingViewCommand}" />
 
 
                             <Image
@@ -125,16 +134,18 @@
                                                          Dark={Static img:ImgArrow.ArrowUpwardWhite}}" />
                             <Border
                                 Grid.Row="1"
+                                Grid.RowSpan="2"
                                 HorizontalOptions="Center"
                                 StrokeThickness="5"
                                 VerticalOptions="Fill" />
                             <Image
                                 Grid.Row="1"
+                                Grid.RowSpan="2"
                                 Rotation="90"
                                 Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
                                                          Dark={Static img:ImgArrow.LineWhite}}" />
                             <Image
-                                Grid.Row="2"
+                                Grid.Row="3"
                                 InputTransparent="True"
                                 Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
                                                          Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
@@ -144,7 +155,16 @@
                             Grid.RowSpan="2"
                             Grid.Column="2"
                             Opacity="0.5"
-                            RowDefinitions="auto,*,auto">
+                            RowDefinitions="auto,*,*,auto">
+
+                            <ImageButton
+                                Grid.Row="0"
+                                Grid.RowSpan="2"
+                                Command="{Binding ShowMovingViewCommand}" />
+                            <ImageButton
+                                Grid.Row="2"
+                                Grid.RowSpan="2"
+                                Command="{Binding HideMovingViewCommand}" />
 
                             <Image
                                 Grid.Row="0"
@@ -153,16 +173,18 @@
                                                          Dark={Static img:ImgArrow.ArrowUpwardWhite}}" />
                             <Border
                                 Grid.Row="1"
+                                Grid.RowSpan="2"
                                 HorizontalOptions="Center"
                                 StrokeThickness="5"
                                 VerticalOptions="Fill" />
                             <Image
                                 Grid.Row="1"
+                                Grid.RowSpan="2"
                                 Rotation="90"
                                 Source="{AppThemeBinding Light={Static img:ImgArrow.LineBlack},
                                                          Dark={Static img:ImgArrow.LineWhite}}" />
                             <Image
-                                Grid.Row="2"
+                                Grid.Row="3"
                                 InputTransparent="True"
                                 Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
                                                          Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
