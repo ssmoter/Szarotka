@@ -50,7 +50,8 @@ namespace DataBase.Data.File
             }
         }
 
-        public static async Task<string> SaveFileJson(object model, string name, string folderName = FileHelper.JsonFolder)
+        public static async Task<string> SaveFileJson(object model, string name, 
+            string folderName = FileHelper.JsonFolder, string fileTyp = FileHelper.txtTyp)
         {
             try
             {
@@ -61,7 +62,7 @@ namespace DataBase.Data.File
 
                 FileHelper.CreateFolder(path);
 
-                path = FileHelper.FileIsExist(path, name, FileHelper.jsonTyp);
+                path = FileHelper.FileIsExist(path, name, fileTyp);
 
                 using var stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true);
                 await stream.WriteAsync(encodedtext);
