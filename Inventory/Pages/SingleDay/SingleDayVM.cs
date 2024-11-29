@@ -261,7 +261,7 @@ namespace Inventory.Pages.SingleDay
         }
 
         [RelayCommand]
-        void DeleteCake(Cake cake)
+        async Task DeleteCake(Cake cake)
         {
             try
             {
@@ -275,7 +275,9 @@ namespace Inventory.Pages.SingleDay
                 }
 
                 Day.Cakes.Remove(cake);
+                await _db.DataBaseAsync.DeleteAsync(cake);
                 DataBase.Model.EntitiesInventory.ProductUpdatePriceService.OnUpdate();
+                await Toast.Make($"Ciasto zostało usunęcie {cake.PriceDecimal}", duration: CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
             }
             catch (Exception ex)
             {
