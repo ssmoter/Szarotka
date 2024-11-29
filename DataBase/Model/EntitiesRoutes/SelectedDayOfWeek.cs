@@ -285,7 +285,8 @@ namespace DataBase.Model.EntitiesRoutes
 
         public SelectedDayOfWeekRoutes(SelectedDayOfWeekRoutes copy)
         {
-            this.Id = copy.Id;
+            this.Id = new Guid(copy.Id.ToByteArray());
+            this.CustomerId = new Guid(copy.CustomerId.ToByteArray());
             this.Created = copy.Created;
             this.Updated = copy.Updated;
             this.Sunday = copy.Sunday;
@@ -303,7 +304,6 @@ namespace DataBase.Model.EntitiesRoutes
             this.Saturday = copy.Saturday;
             this.SaturdayTimeSpan = copy.SaturdayTimeSpan;
             this.Optional = copy.Optional;
-
         }
         public override string ToString()
         {

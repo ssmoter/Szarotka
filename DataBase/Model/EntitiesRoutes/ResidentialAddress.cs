@@ -29,7 +29,8 @@ namespace DataBase.Model.EntitiesRoutes
 
         public ResidentialAddress(ResidentialAddress copy)
         {
-            this.CustomerId = copy.CustomerId;
+            this.Id = new Guid(copy.Id.ToByteArray());
+            this.CustomerId = new Guid(copy.CustomerId.ToByteArray());
             this.Name = copy.Name;
             this.Street = copy.Street;
             this.HouseNumber = copy.HouseNumber;
@@ -39,7 +40,6 @@ namespace DataBase.Model.EntitiesRoutes
             this.Country = copy.Country;
             this.Updated = copy.Updated;
             this.Surname = copy.Surname;
-            this.Id = copy.Id;
             this.Created = copy.Created;
         }
 

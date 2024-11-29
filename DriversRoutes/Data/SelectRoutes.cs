@@ -16,7 +16,9 @@ namespace DriversRoutes.Data
             routes ??= _routesLast;
             _routesLast = routes;
 
-            var queryResult = await _db.DataBaseAsync.QueryAsync<FullModelForQuery>(Helper.SqlQuery.GetQueryForSelectedRoutes(routes.Id.ToString(), dayOf));
+            var sql = Helper.SqlQuery.GetQueryForSelectedRoutes(routes.Id.ToString(), dayOf);
+
+            var queryResult = await _db.DataBaseAsync.QueryAsync<FullModelForQuery>(sql);
             var customers = new CustomerRoutes[queryResult.Count];
 
 

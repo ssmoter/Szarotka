@@ -83,12 +83,12 @@ namespace DataBase.Model.EntitiesRoutes
 
         public CustomerRoutes(CustomerRoutes copy)
         {
-            this.Id = copy.Id;
+            this.Id = new Guid(copy.Id.ToByteArray());
             this.Created = copy.Created;
             this.Updated = copy.Updated;
             
             this.Name = copy.Name;
-            this.RoutesId = copy.routesId;
+            this.RoutesId = new Guid(copy.routesId.ToByteArray());
             this.Description = copy.Description;
             this.PhoneNumber = copy.PhoneNumber;
             this.Latitude = copy.Latitude;
