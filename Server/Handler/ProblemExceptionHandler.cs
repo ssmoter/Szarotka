@@ -33,7 +33,22 @@ namespace Server.Handler
                         ProblemDetails = problemDetails,
                     });
             }
-
+            if (exception is ValidationException validationException)
+            {
+                var problemDetails = new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Validation Error",
+                    Detail = validationException.GetError(),
+                    Type = "Bad Request",
+                };
+                return await _problemDetailsService.TryWriteAsync(
+                    new ProblemDetailsContext
+                    {
+                        HttpContext = httpContext,
+                        ProblemDetails = problemDetails,
+                    });
+            }
 
 
             return true;

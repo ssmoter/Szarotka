@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.Features;
 
 using Server.Model;
+using Server.Service;
 
 using System.Text.Json.Serialization;
 
@@ -24,6 +25,7 @@ builder.Services.AddProblemDetails(options =>
 });
 
 builder.Services.AddExceptionHandler<Server.Handler.ProblemExceptionHandler>();
+builder.Services.AddMyServiceServer();
 
 var app = builder.Build();
 
@@ -42,7 +44,7 @@ todosApi.MapGet("/", () => sampleTodos);
 todosApi.MapGet("/{id}", (int id) =>
     sampleTodos.FirstOrDefault(a => a.Id == id) is { } todo
         //? Results.Ok(todo)
-        ? throw new ErrorException("error","message")
+        ? throw new ErrorException("error", "message")
         : Results.NotFound());
 
 app.Run();
