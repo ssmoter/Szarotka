@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 
 using System.Collections.ObjectModel;
@@ -22,9 +23,9 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
         ObservableCollection<string> imgList;
 
 
-        readonly DataBase.Data.AccessDataBase _db;
+        readonly AccessDataBase _db;
 
-        public AddEditProductVM(DataBase.Data.AccessDataBase db)
+        public AddEditProductVM(AccessDataBase db)
         {
             AddEdit = new AddEditProductM();
             if (Product is null)
@@ -123,7 +124,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             {
                 var productName = new ProductName()
                 {
-                    Id = DataBase.Data.InventoryTables.GetGuidSed(),
+                    Id = Shared.Data.InventoryTables.GetGuidSed(),
                     Name = Product.Name.Name,
                     Description = Product.Name.Description,
                     Img = Product.Name.Img,
@@ -132,7 +133,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                 };
                 if (string.IsNullOrWhiteSpace(productName.Img))
                 {
-                    productName.Img = DataBase.Helper.Img.ImgPath.Logo;
+                    productName.Img = Shared.Helper.Img.ImgPath.Logo;
                 }
                 productName.Arrangement = _db.DataBase.Table<ProductName>().Count() + 1;
 
@@ -185,7 +186,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                 {
                     ProductPrice newPrice = new()
                     {
-                        Id = DataBase.Data.InventoryTables.GetGuidSed(),
+                        Id = Shared.Data.InventoryTables.GetGuidSed(),
                         Created = DateTime.Now,
                         Updated = DateTime.Now,
                         PriceDecimal = price,
@@ -213,26 +214,26 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                     break;
                 case FrameToDisplay.bread:
                     AddEdit.IsVisibleBread = !AddEdit.IsVisibleBread;
-                    ImgList = new ObservableCollection<string>(DataBase.Helper.Img.ImgPath.Bread);
+                    ImgList = new ObservableCollection<string>(Shared.Helper.Img.ImgPath.Bread);
                     break;
                 case FrameToDisplay.buns:
                     AddEdit.IsVisibleBuns = !AddEdit.IsVisibleBuns;
-                    ImgList = new ObservableCollection<string>(DataBase.Helper.Img.ImgPath.Buns);
+                    ImgList = new ObservableCollection<string>(Shared.Helper.Img.ImgPath.Buns);
                     break;
                 case FrameToDisplay.cake:
                     AddEdit.IsVisibleCake = !AddEdit.IsVisibleCake;
-                    ImgList = new ObservableCollection<string>(DataBase.Helper.Img.ImgPath.Cakes);
+                    ImgList = new ObservableCollection<string>(Shared.Helper.Img.ImgPath.Cakes);
                     break;
                 case FrameToDisplay.cookies:
                     AddEdit.IsVisibleCookies = !AddEdit.IsVisibleCookies;
-                    ImgList = new ObservableCollection<string>(DataBase.Helper.Img.ImgPath.Cookies);
+                    ImgList = new ObservableCollection<string>(Shared.Helper.Img.ImgPath.Cookies);
                     break;
                 case FrameToDisplay.other:
                     AddEdit.IsVisibleOther = !AddEdit.IsVisibleOther;
-                    ImgList = new ObservableCollection<string>(DataBase.Helper.Img.ImgPath.Other);
+                    ImgList = new ObservableCollection<string>(Shared.Helper.Img.ImgPath.Other);
                     break;
                 case FrameToDisplay.@default:
-                    Product.Name.Img = DataBase.Helper.Img.ImgPath.Logo;
+                    Product.Name.Img = Shared.Helper.Img.ImgPath.Logo;
                     ImgList.Clear();
                     break;
             }
@@ -241,7 +242,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
         [RelayCommand]
         async Task SelectImageFromDevice()
         {
-            if (!await DataBase.Service.AndroidPermissionService.CheckAllPermissionsAboutStorage())
+            if (!await Shared.Service.AndroidPermissionService.CheckAllPermissionsAboutStorage())
             {
                 return;
             }

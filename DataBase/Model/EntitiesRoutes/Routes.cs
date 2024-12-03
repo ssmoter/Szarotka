@@ -5,6 +5,6 @@ namespace DataBase.Model.EntitiesRoutes
     public partial class Routes : BaseEntities<Guid>
     {
         [ObservableProperty]
-        string name;
+        string name = "";
     }
 }

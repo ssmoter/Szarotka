@@ -3,7 +3,7 @@
     x:Class="DriversRoutes.Pages.Maps.MapSmall.MapSmallV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:Symbols="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
+    xmlns:Symbols="clr-namespace:Shared.Helper.Img;assembly=Shared"
     xmlns:VM="clr-namespace:DriversRoutes.Pages.Maps.MapSmall"
     xmlns:controlsMaps="clr-namespace:DriversRoutes.Pages.Maps.Controls"
     xmlns:maps="http://schemas.microsoft.com/dotnet/2021/maui/maps"

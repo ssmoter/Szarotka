@@ -8,16 +8,21 @@ using Server.Validation;
 
 namespace Server.Endpoints
 {
+    public interface IRegisterUserEndpoint
+    {
+        Task<IActionResult> InsertUser([FromBody] RegisterUser registerUser);
+    }
+
     [Route("api/v1/[controller]")]
-    public class RegisterUserEndpoint : ControllerBase
+    public class RegisterUserEndpoint : ControllerBase, IRegisterUserEndpoint
     {
         private readonly AccessDataBase _db;
         private readonly Service.IRegisterUserService _registerService;
-        private readonly UserValidation _userValidation;
+        private readonly IUserValidation _userValidation;
 
         public RegisterUserEndpoint(AccessDataBase db
                                     , Service.IRegisterUserService register
-                                    , UserValidation userValidation)
+                                    , IUserValidation userValidation)
         {
             _db = db;
             _registerService = register;
@@ -25,6 +30,7 @@ namespace Server.Endpoints
         }
 
         [Route("user")]
+        [HttpPost]
         public async Task<IActionResult> InsertUser(
             [FromBody] RegisterUser registerUser)
         {

@@ -15,7 +15,10 @@
                 Tapped="TapGestureRecognizer_Tapped_CopyDayOfWeek" />
         </VerticalStackLayout.GestureRecognizers>
 
-        <Grid ColumnDefinitions="*,*" RowDefinitions="*,*,*,*,*,*,*" x:DataType="VM:DayOfWeekV">
+        <Grid
+            x:DataType="VM:DayOfWeekV"
+            ColumnDefinitions="*,*"
+            RowDefinitions="*,*,*,*,*,*,*">
 
             <Label
                 Grid.Row="0"
@@ -111,8 +114,8 @@
         </Grid>
 
         <Label
-            HorizontalOptions="Center"
             x:DataType="VM:DayOfWeekV"
+            HorizontalOptions="Center"
             IsVisible="{Binding DayOfWeek.Optional}"
             Text="Klient Okazjonalny" />
 

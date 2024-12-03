@@ -22,7 +22,7 @@ namespace DriversRoutes.Pages.Maps.Controls
 
             _fitMapToAdvancedMarkersAction = null;
 
-            DataBase.Helper.MudBlazorTheme.ActionThemeChanged = null;
+            Shared.Helper.MudBlazorTheme.ActionThemeChanged = null;
             RemoveListener("dragstart");
         }
 
@@ -42,9 +42,9 @@ namespace DriversRoutes.Pages.Maps.Controls
             _fitMapToAdvancedMarkersAction += _fitMapToAdvancedMarkers;
 
 
-            DataBase.Helper.MudBlazorTheme.ActionThemeChanged += SetIconTheme;
-            DataBase.Helper.MudBlazorTheme.SetCurrentTheme(AppInfo.Current.RequestedTheme);
-            DataBase.Helper.MudBlazorTheme.ActionThemeChanged?.Invoke();
+            Shared.Helper.MudBlazorTheme.ActionThemeChanged += SetIconTheme;
+            Shared.Helper.MudBlazorTheme.SetCurrentTheme(AppInfo.Current.RequestedTheme);
+            Shared.Helper.MudBlazorTheme.ActionThemeChanged?.Invoke();
 
         }
 

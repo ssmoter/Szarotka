@@ -1,11 +1,10 @@
 ﻿using BenchmarkDotNet.Attributes;
 
-using DataBase.Model.EntitiesRoutes;
-
 using DriversRoutes.Data;
 using DriversRoutes.Service;
 
-using Microsoft.Maui.Platform;
+using DataBase.Model.EntitiesRoutes;
+using DataBase.Data;
 
 namespace Benchmark.DriversRoutes
 {
@@ -14,7 +13,7 @@ namespace Benchmark.DriversRoutes
     [MemoryDiagnoser]
     public class GetCustomersList
     {
-        private readonly DataBase.Data.AccessDataBase _db;
+        private readonly AccessDataBase _db;
         private readonly ISelectRoutes _selectRoutes;
 
         private readonly Routes _routes = new()

@@ -115,7 +115,7 @@ public partial class CustomerSmallV : ContentView
     = BindableProperty.Create(nameof(ResidentialAddress), typeof(ResidentialAddress), typeof(CustomerSmallV), propertyChanged: (bindable, oldValu, newValue) =>
     {
     });
-    public ResidentialAddress? ResidentialAddress
+    public ResidentialAddress ResidentialAddress
     {
         get => GetValue(ResidentialAddressProperty) as ResidentialAddress;
         set => SetValue(ResidentialAddressProperty, value);

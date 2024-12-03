@@ -1,5 +1,5 @@
-﻿using DataBase.Data;
-using DataBase.Helper;
+﻿using Shared.Data;
+using Shared.Helper;
 using DataBase.Model.EntitiesInventory;
 
 using Inventory.Helper;
@@ -7,6 +7,7 @@ using Inventory.Service;
 
 using System.Collections.ObjectModel;
 using System.Text;
+using DataBase.Data;
 
 namespace Inventory.Data
 {

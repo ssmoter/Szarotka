@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 
 namespace Inventory.Pages.Options.EditDriver
@@ -11,8 +12,8 @@ namespace Inventory.Pages.Options.EditDriver
         [ObservableProperty]
         Driver driver;
 
-        readonly DataBase.Data.AccessDataBase _db;
-        public EditDriverVM(DataBase.Data.AccessDataBase db)
+        readonly AccessDataBase _db;
+        public EditDriverVM(AccessDataBase db)
         {
             Driver = new();
             _db = db;

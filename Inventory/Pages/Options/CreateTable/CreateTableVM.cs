@@ -5,7 +5,6 @@ using DataBase.Data;
 using DataBase.Model;
 using DataBase.Model.EntitiesInventory;
 
-
 using Inventory.Pages.Options.EditDriver;
 
 using System.Collections.ObjectModel;

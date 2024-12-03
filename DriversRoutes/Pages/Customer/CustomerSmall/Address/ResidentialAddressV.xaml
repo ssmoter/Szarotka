@@ -10,8 +10,8 @@
 
 
         <Border
-            x:DataType="VM:ResidentialAddressV"
             Padding="5"
+            x:DataType="VM:ResidentialAddressV"
             IsVisible="{Binding AddressIsVisible}"
             Stroke="Transparent">
             <Border.StrokeShape>

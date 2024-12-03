@@ -1,14 +1,15 @@
-﻿using DataBase.Data;
+﻿using Shared.Data;
 
 using DataBase.Model.EntitiesRoutes;
 
 using DriversRoutes.Service;
+using DataBase.Data;
 
 namespace DriversRoutes.Data
 {
     public class SaveRoutes(AccessDataBase db) : ISaveRoutes
     {
-        readonly DataBase.Data.AccessDataBase _db = db;
+        readonly AccessDataBase _db = db;
 
         public async Task SaveCustomer(CustomerRoutes customer, byte[] idRoute)
         {

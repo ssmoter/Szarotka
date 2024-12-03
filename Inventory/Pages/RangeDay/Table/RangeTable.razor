@@ -1,11 +1,12 @@
 ﻿@implements IDisposable
 
 @using Inventory.Pages.RangeDay
-@using DataBase.Helper
+@using Shared.Helper
 @using MudBlazor
+@using DataBase.Model.EntitiesInventory
 
 
-<MudThemeProvider @bind-IsDarkMode="@DataBase.Helper.MudBlazorTheme.IsDarkMode" Theme="@DataBase.Helper.MudBlazorTheme.Theme" />
+<MudThemeProvider @bind-IsDarkMode="@Shared.Helper.MudBlazorTheme.IsDarkMode" Theme="@Shared.Helper.MudBlazorTheme.Theme" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
@@ -136,9 +137,9 @@
     public IList<RangeDayM> AveragesPerOfMonth { get; set; } = [];
 
 
-    public IList<DataBase.Model.EntitiesInventory.Product> ProductsAll { get; set; }
+    public IList<Product> ProductsAll { get; set; }
 
-    IList<DataBase.Model.EntitiesInventory.Driver> UniqueDriver = [];
+    IList<Driver> UniqueDriver = [];
 
     private static event Action<
         IList<RangeDayM>
@@ -149,8 +150,8 @@
     , IList<RangeDayM>
     , IList<RangeDayM>
     , IList<RangeDayM>
-    , IList<DataBase.Model.EntitiesInventory.Product>
-    , IList<DataBase.Model.EntitiesInventory.Driver>
+    , IList<Product>
+    , IList<Driver>
     > SetRangeDayMs;
     private void setRange(
         IList<RangeDayM> rangeDayMs
@@ -161,8 +162,8 @@
     , IList<RangeDayM> averagesPerOfWeek
     , IList<RangeDayM> sumPerOfMonth
     , IList<RangeDayM> averagesPerOfMonth
-    , IList<DataBase.Model.EntitiesInventory.Product> productsAll
-    , IList<DataBase.Model.EntitiesInventory.Driver> uniqueDriver
+    , IList<Product> productsAll
+    , IList<Driver> uniqueDriver
     )
     {
         RangeDayMs = rangeDayMs;
@@ -185,8 +186,8 @@
     , IList<RangeDayM> averagesPerOfWeek
     , IList<RangeDayM> sumPerOfMonth
     , IList<RangeDayM> averagesPerOfMonth
-    , IList<DataBase.Model.EntitiesInventory.Product> productsAll
-    , IList<DataBase.Model.EntitiesInventory.Driver> uniqueDriver)
+    , IList<Product> productsAll
+    , IList<Driver> uniqueDriver)
     {
         SetRangeDayMs?.Invoke(rangeDayMs, sum, sumDayOfWeek, averagesDayOfWeek, sumPerOfWeek, averagesPerOfWeek, sumPerOfMonth, averagesPerOfMonth, productsAll, uniqueDriver);
     }

@@ -7,7 +7,7 @@
             Routing.RegisterRoute(nameof(SzarotkaBlazor.Pages.Options.Main.MainOptionsV), typeof(SzarotkaBlazor.Pages.Options.Main.MainOptionsV));
 
             Inventory.Service.RoutingCollectionExtensionsInventory.AddRoutings();
-            DataBase.Service.RoutingCollectionExtensionsDataBase.AddRoutings();
+            Shared.Service.RoutingCollectionExtensionsShared.AddRoutings();
             DriversRoutes.Service.RoutingCollectionExtensionsDriversRoutes.AddRoutings();
         }
     }

@@ -8,6 +8,7 @@ using Inventory.Model;
 using Inventory.Pages.RangeDay.Graph.GraphOptions;
 
 using System.Collections.ObjectModel;
+using DataBase.Data;
 
 namespace Inventory.Pages.RangeDay.Graph
 {
@@ -37,8 +38,8 @@ namespace Inventory.Pages.RangeDay.Graph
         const string _szt = " _szt.";
         const string _zl = " zł";
         readonly Driver[] _allDrivers;
-        readonly DataBase.Data.AccessDataBase _db;
-        public GraphVM(DataBase.Data.AccessDataBase db)
+        readonly AccessDataBase _db;
+        public GraphVM(AccessDataBase db)
         {
             RangeDayMs ??= [];
             Legend ??= [];

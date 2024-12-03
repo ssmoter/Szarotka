@@ -1,11 +1,12 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using DataBase.CustomControls;
 using DataBase.Data;
 using DataBase.Model.EntitiesRoutes;
 
 using DriversRoutes.Pages.Maps.Controls;
+
+using Shared.CustomControls;
 
 using System.Collections.ObjectModel;
 
@@ -25,7 +26,7 @@ namespace DriversRoutes.Pages.Maps.Navigate
         [ObservableProperty]
         StepSelected stepSelected = StepSelected.One;
 
-        private readonly DataBase.Data.AccessDataBase _db;
+        private readonly AccessDataBase _db;
 
         public NavigateVM(AccessDataBase db)
         {

@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Data;
 using DataBase.Model.EntitiesRoutes;
 
 using DriversRoutes.Helper;
@@ -45,12 +46,12 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
 
         readonly Service.ISaveRoutes _saveRoutes;
         readonly Data.GoogleApi.IAddressFromCoordinates _IAddressFromCoordinates;
-        readonly DataBase.Data.AccessDataBase _db;
+        readonly AccessDataBase _db;
         internal ResidentialAddress[] _address { get; set; } = [];
         internal CustomerRoutes originCustomer {  get; set; }
         #endregion
 
-        public AddCustomerVM(Service.ISaveRoutes saveRoutes, DataBase.Data.AccessDataBase db, Data.GoogleApi.IAddressFromCoordinates IAddressFromCoordinates)
+        public AddCustomerVM(Service.ISaveRoutes saveRoutes, AccessDataBase db, Data.GoogleApi.IAddressFromCoordinates IAddressFromCoordinates)
         {
             AddCustomer ??= new();
             Customer ??= new();

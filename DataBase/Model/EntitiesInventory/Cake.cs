@@ -17,12 +17,13 @@ public partial class Cake : BaseEntities<Guid>
             if (SetProperty(ref isSell, value))
             {
                 OnPropertyChanged(nameof(IsSell));
-                SetColor();
+                OnSell?.Invoke();
                 ProductUpdatePriceService.OnUpdate();
             }
         }
     }
 
+    public Action? OnSell;
 
     private int index;
     [Ignore]
@@ -64,34 +65,13 @@ public partial class Cake : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(Price));
                 OnPropertyChanged(nameof(PriceDecimal));
-                SetColor();
                 ProductUpdatePriceService.OnUpdate();
             }
         }
     }
 
-    private Color color;
-    [Ignore]
-    public Color Color
-    {
-        get => color;
-        set
-        {
-            if (SetProperty(ref color, value))
-                OnPropertyChanged(nameof(Color));
-        }
-    }
 
-    public Cake()
-    {
-        SetColor();
-    }
-    public void SetColor()
-    {
-        if (IsSell)
-            Color = Colors.Green;
-        else
-            Color = Colors.Red;
-    }
+
+
 }
 

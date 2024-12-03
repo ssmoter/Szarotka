@@ -29,19 +29,19 @@ namespace DataBase.Model.EntitiesRoutes
         /// Nazwa
         /// </summary>
         [ObservableProperty]
-        string name;
+        string name = "";
         /// <summary>
         /// Opis
         /// </summary>
         [ObservableProperty]
-        string description;
+        string description = "";
         /// <summary>
         /// Numer telefonu
         /// </summary>
         [ObservableProperty]
-        string phoneNumber;
+        string phoneNumber = "";
 
-        SelectedDayOfWeekRoutes dayOfWeek;
+        SelectedDayOfWeekRoutes dayOfWeek = new();
         [Ignore]
         public SelectedDayOfWeekRoutes DayOfWeek
         {
@@ -53,7 +53,7 @@ namespace DataBase.Model.EntitiesRoutes
             }
         }
 
-        ResidentialAddress residentialAddress;
+        ResidentialAddress residentialAddress = new();
         [Ignore]
         public ResidentialAddress ResidentialAddress
         {
@@ -86,7 +86,7 @@ namespace DataBase.Model.EntitiesRoutes
             this.Id = copy.Id;
             this.Created = copy.Created;
             this.Updated = copy.Updated;
-            
+
             this.Name = copy.Name;
             this.RoutesId = copy.routesId;
             this.Description = copy.Description;
@@ -94,7 +94,7 @@ namespace DataBase.Model.EntitiesRoutes
             this.Latitude = copy.Latitude;
             this.Longitude = copy.Longitude;
             this.QueueNumber = copy.QueueNumber;
-            
+
             this.DayOfWeek = new SelectedDayOfWeekRoutes(copy.DayOfWeek);
             this.ResidentialAddress = new ResidentialAddress(copy.residentialAddress);
         }

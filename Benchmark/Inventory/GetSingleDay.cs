@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 
+using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 
 using Inventory.Data;
@@ -13,7 +14,7 @@ namespace Benchmark.Inventory
     [MemoryDiagnoser]
     public class GetSingleDay
     {
-        private readonly DataBase.Data.AccessDataBase _db;
+        private readonly AccessDataBase _db;
         private readonly ISelectDayService _selectDay;
 
         private readonly Guid _id = new Guid("98e3e70f-8ae9-4ff9-b045-a62a4444578c");

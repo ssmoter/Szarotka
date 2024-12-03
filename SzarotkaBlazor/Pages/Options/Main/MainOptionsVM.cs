@@ -1,7 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using DataBase.Helper;
+using DataBase.Data;
+using DataBase.Model;
+
+using Shared.Helper;
 
 using System.Collections.ObjectModel;
 using System.Reflection;
@@ -51,8 +54,8 @@ namespace SzarotkaBlazor.Pages.Options.Main
         [ObservableProperty]
         string? appVersion;
 
-        public DataBase.Data.AccessDataBase _db { get; private set; }
-        public MainOptionsVM(DataBase.Data.AccessDataBase db)
+        public AccessDataBase _db { get; private set; }
+        public MainOptionsVM(AccessDataBase db)
         {
             MainOptionsM ??= new();
             SelectTypOfOptions(ListOfEnums.TypOfOptions.Main);
@@ -77,7 +80,7 @@ namespace SzarotkaBlazor.Pages.Options.Main
                 [nameof(AppTheme.Dark)] = (int)AppTheme.Dark
             };
             _db = db;
-            MainOptionsM.Version = _db.DataBase.Table<DataBase.Model.DataBaseVersion>().FirstOrDefault();
+            MainOptionsM.Version = _db.DataBase.Table<DataBaseVersion>().FirstOrDefault();
         }
 
         #region Method
@@ -141,7 +144,7 @@ namespace SzarotkaBlazor.Pages.Options.Main
         [RelayCommand]
         async Task GoToLogs()
         {
-            await Shell.Current.GoToAsync(nameof(DataBase.Pages.Log.LogV));
+            await Shell.Current.GoToAsync(nameof(Shared.Pages.Log.LogV));
         }
         #endregion
 

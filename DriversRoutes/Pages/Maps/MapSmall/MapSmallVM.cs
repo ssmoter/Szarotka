@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Data;
 using DataBase.Model.EntitiesRoutes;
 
 using Microsoft.Maui.Controls.Maps;
@@ -36,11 +37,11 @@ public partial class MapSmallVM : ObservableObject
     public Action<Polyline> AddRoute;
     public Func<MapSpan> VisibleRegion;
 
-    private readonly DataBase.Data.AccessDataBase _db;
+    private readonly AccessDataBase _db;
     private readonly Data.GoogleApi.IRoutes _routes;
     private Pin _pin;
     CancellationTokenSource _tokenSource;
-    public MapSmallVM(DataBase.Data.AccessDataBase db, Data.GoogleApi.IRoutes routes)
+    public MapSmallVM(AccessDataBase db, Data.GoogleApi.IRoutes routes)
     {
         MapSmallM = new();
         _tokenSource = new();

@@ -3,7 +3,7 @@
     x:Class="DriversRoutes.Pages.ListOfPoints.ListOfPointsV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:Controls="clr-namespace:DataBase.CustomControls;assembly=DataBase"
+    xmlns:Controls="clr-namespace:Shared.CustomControls;assembly=Shared"
     xmlns:Customer="clr-namespace:DriversRoutes.Pages.Customer.CustomerSmall"
     xmlns:CustomeroModel="clr-namespace:DataBase.Model.EntitiesRoutes;assembly=DataBase"
     xmlns:MapSmall="clr-namespace:DriversRoutes.Pages.Maps.MapSmall"

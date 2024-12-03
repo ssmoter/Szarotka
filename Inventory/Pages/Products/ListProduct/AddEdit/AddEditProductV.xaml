@@ -3,7 +3,7 @@
     x:Class="Inventory.Pages.Products.ListProduct.AddEdit.AddEditProductV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:CustomControls="clr-namespace:DataBase.CustomControls;assembly=DataBase"
+    xmlns:CustomControls="clr-namespace:Shared.CustomControls;assembly=Shared"
     xmlns:MVVM="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
     xmlns:vm="clr-namespace:Inventory.Pages.Products.ListProduct.AddEdit"
     Title="{Binding Product.Name.Name}"

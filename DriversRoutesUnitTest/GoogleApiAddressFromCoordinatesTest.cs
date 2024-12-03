@@ -1,5 +1,4 @@
 ﻿using DriversRoutes.Data.GoogleApi;
-
 using FluentAssertions;
 
 using Xunit;
@@ -12,7 +11,7 @@ namespace DriversRoutesUnitTest
 
         public GoogleApiAddressFromCoordinatesTest()
         {
-            _addressFromCoordinates = new AddressFromCoordinates(new HttpClient(), DataBase.Key.GoogleApi.Key);
+            _addressFromCoordinates = new AddressFromCoordinates(new HttpClient(), Shared.Key.GoogleApi.Key);
         }
 
         [Theory]

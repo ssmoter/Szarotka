@@ -1,6 +1,10 @@
 ﻿using DataBase.Data;
+using DataBase.Helper;
+using DataBase.Model;
 
 using FluentAssertions;
+
+using Shared.Data;
 
 namespace DataBaseUnitTest.Created
 {
@@ -8,7 +12,7 @@ namespace DataBaseUnitTest.Created
     {
         private readonly AccessDataBase _db;
         private readonly CreatedDataBase _createdDataBase;
-        public static string Path => DataBase.Helper.Constants.GetPathFolder + "\\DataBaseSzarotkaSQLiteUnitTest.db3";
+        public static string Path => Constants.GetPathFolder + "\\DataBaseSzarotkaSQLiteUnitTest.db3";
         public CreatedDataBaseMain()
         {
             _db = new AccessDataBase(Path);
@@ -17,8 +21,8 @@ namespace DataBaseUnitTest.Created
         }
         public Task DisposeAsync()
         {
-            _db.DataBase.DropTable<DataBase.Model.DataBaseVersion>();
-            _db.DataBase.DropTable<DataBase.Model.LogsModel>();
+            _db.DataBase.DropTable<DataBaseVersion>();
+            _db.DataBase.DropTable<LogsModel>();
 
             _db.Dispose();
             return Task.CompletedTask;
@@ -36,7 +40,7 @@ namespace DataBaseUnitTest.Created
             var _createdDataBase = new CreatedDataBase(_db);
             var obj = _createdDataBase.GetCurrentVersion();
 
-            obj.Should().Be(new DataBase.Model.DataBaseVersion()
+            obj.Should().Be(new DataBaseVersion()
             {
                 DataBase = 0,
                 DriversRoutes = 0,
@@ -44,13 +48,16 @@ namespace DataBaseUnitTest.Created
             });
         }
         [Fact]
-        public async void CheckOnlyLogExist()
+        public void CheckOnlyLogExist()
         {
             var _db = new AccessDataBase(Path);
             var _createdDataBase = new CreatedDataBase(_db);
-            await _createdDataBase.Update(0, 1, null);
+            Task.Run(async () =>
+            {
+                await _createdDataBase.Update(0, 1, null);
+            });
 
-            var obj = _db.DataBase.GetTableInfo(nameof(DataBase.Model.LogsModel));
+            var obj = _db.DataBase.GetTableInfo(nameof(LogsModel));
 
             bool exist = obj.Count > 0;
 

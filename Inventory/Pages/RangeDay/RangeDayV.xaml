@@ -3,11 +3,11 @@
     x:Class="Inventory.Pages.RangeDay.RangeDayV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:Convert="clr-namespace:DataBase.Helper;assembly=DataBase"
+    xmlns:Convert="clr-namespace:Shared.Helper;assembly=Shared"
     xmlns:VM="clr-namespace:Inventory.Pages.RangeDay"
     xmlns:VMD="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
     xmlns:graph="clr-namespace:Inventory.Pages.RangeDay.Graph"
-    xmlns:img="clr-namespace:DataBase.Helper.Img;assembly=DataBase"
+    xmlns:img="clr-namespace:Shared.Helper.Img;assembly=Shared"
     xmlns:table="clr-namespace:Inventory.Pages.RangeDay.Table"
     x:DataType="VM:RangeDayVM"
     Shell.NavBarIsVisible="False">

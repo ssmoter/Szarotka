@@ -1,4 +1,4 @@
-﻿using DataBase.Helper;
+﻿using Shared.Helper;
 using DataBase.Model.EntitiesInventory;
 
 using Inventory.Pages.RangeDay;
@@ -9,7 +9,7 @@ namespace Inventory.Helper;
 
 public class RangeCalculations
 {
-    public static List<DataBase.Model.EntitiesInventory.Driver> UniqueDriver { get; set; } = [];
+    public static List<Driver> UniqueDriver { get; set; } = [];
 
     public static IList<RangeDayM> SumTotalOfRangeCalculateAverages(IList<RangeDayM> value, bool CalculateAverages = false)
     {

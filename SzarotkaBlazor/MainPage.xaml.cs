@@ -2,6 +2,8 @@
 using DataBase.Data;
 using DataBase.Model;
 
+using Shared.Data;
+
 using SzarotkaBlazor.Pages.Options.Main;
 
 
@@ -27,7 +29,7 @@ namespace SzarotkaBlazor
                 var old = _createdDataBase.GetCurrentVersion();
                 if (!old.Equals(new DataBaseVersion()))
                 {
-                    await Shell.Current.GoToAsync(nameof(DataBase.Pages.UpdateDataBase.UpdateDataBaseV));
+                    await Shell.Current.GoToAsync(nameof(Shared.Pages.UpdateDataBase.UpdateDataBaseV));
                 }
                 await _createdDataBase.CreateBackUp();
             }

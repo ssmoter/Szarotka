@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Data;
+
 using DataBase.Model.EntitiesInventory;
 
 using System.Collections.ObjectModel;
@@ -19,10 +21,10 @@ namespace Inventory.Pages.Products.ListProduct
         bool isGenerateDefaultEnable;
 
         readonly Random random = new(2137);
-        readonly DataBase.Data.AccessDataBase _db;
+        readonly AccessDataBase _db;
 
         public Action<int, int, ScrollToPosition, bool> ScrollTo;
-        public ListProductVM(DataBase.Data.AccessDataBase db)
+        public ListProductVM(AccessDataBase db)
         {
             ProductMs = [];
             this._db = db;
@@ -200,7 +202,7 @@ namespace Inventory.Pages.Products.ListProduct
         {
             try
             {
-                var products = DataBase.Data.InventoryTables.DefaultProducts;
+                var products = Shared.Data.InventoryTables.DefaultProducts;
                 for (int i = 0; i < products.Length; i++)
                 {
                     products[i].Name.Arrangement = i;

@@ -84,14 +84,14 @@ public partial class MapSmallV : ContentView, IDisposable
 
     public static readonly BindableProperty PositionOfMapProperty
         = BindableProperty.Create(nameof(PositionOfMap)
-            , typeof(DataBase.CustomControls.Direction), typeof(MapSmallV)
+            , typeof(Shared.CustomControls.Direction), typeof(MapSmallV)
             , defaultBindingMode: BindingMode.TwoWay
             , propertyChanged: (bindable, oldValu, newValue) =>
             {
             });
-    public DataBase.CustomControls.Direction PositionOfMap
+    public Shared.CustomControls.Direction PositionOfMap
     {
-        get => (DataBase.CustomControls.Direction)GetValue(PositionOfMapProperty);
+        get => (Shared.CustomControls.Direction)GetValue(PositionOfMapProperty);
         set => SetValue(PositionOfMapProperty, value);
     }
 
@@ -108,7 +108,7 @@ public partial class MapSmallV : ContentView, IDisposable
     }
     public MapSmallV()
     {
-        var service = DataBase.Service.AppServiceProvider.Current.GetService(typeof(MapSmallVM)) as MapSmallVM;
+        var service = Shared.Service.AppServiceProvider.Current.GetService(typeof(MapSmallVM)) as MapSmallVM;
         InitializeComponent();
         MapSmallVM = service;
 
@@ -331,12 +331,12 @@ public partial class MapSmallV : ContentView, IDisposable
         else
         {
             border.WidthRequest = parentXMax;
-            if (PositionOfMap == DataBase.CustomControls.Direction.Up)
+            if (PositionOfMap == Shared.CustomControls.Direction.Up)
             {
                 border.HeightRequest = parentYMax - bounds.Top;
 
             }
-            if (PositionOfMap == DataBase.CustomControls.Direction.Down)
+            if (PositionOfMap == Shared.CustomControls.Direction.Down)
             {
                 border.HeightRequest = parentYMax - (parentYMax - bounds.Bottom);
             }

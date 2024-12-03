@@ -1,6 +1,7 @@
 ﻿@using DataBase.Model.EntitiesRoutes
 @using Microsoft.JSInterop
-@using DataBase.Helper
+@using Shared.Helper
+@using Shared.Helper.Img.Svg
 
 @inject IJSRuntime JsRuntime
 @inject DataBase.Data.AccessDataBase _db
@@ -9,9 +10,9 @@
 
 @implements IDisposable;
 
-<MudBlazor.MudThemeProvider @bind-IsDarkMode="@DataBase.Helper.MudBlazorTheme.IsDarkMode" Theme="@DataBase.Helper.MudBlazorTheme.Theme" />
+<MudBlazor.MudThemeProvider @bind-IsDarkMode="@Shared.Helper.MudBlazorTheme.IsDarkMode" Theme="@Shared.Helper.MudBlazorTheme.Theme" />
 @{
-    string url = "https://maps.googleapis.com/maps/api/js?key=" + DataBase.Key.GoogleApi.Key + "&callback=initMap";
+    string url = "https://maps.googleapis.com/maps/api/js?key=" + Shared.Key.GoogleApi.Key + "&callback=initMap";
     <script src="url" async defer></script>
 }
 
@@ -63,21 +64,21 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _routes.SetKey(DataBase.Key.GoogleApi.Key);
+        _routes.SetKey(Shared.Key.GoogleApi.Key);
 
         var currentLocation = await Data.ActionLocation.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(1));
         await GetModule(currentLocation);
 
 #if !WINDOWS
         var name = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-        AddListener("dragstart", nameof(OnMapDragStart), name);
+        await AddListener("dragstart", nameof(OnMapDragStart), name);
         Data.ActionLocation.MapGeolocation.OnStopListeningLocation();
         await Data.ActionLocation.MapGeolocation.OnStartListeningLocation(SetCenter, GeolocationAccuracy.Best, TimeSpan.FromSeconds(1));
 
-        AddAdvancedMarker(_userIconId,
-                               currentLocation.Center.Latitude,
-                               currentLocation.Center.Longitude,
-                               DataBase.Helper.Img.Svg.HtmlMap.Orion);
+        await AddAdvancedMarker(_userIconId,
+                                currentLocation.Center.Latitude,
+                                currentLocation.Center.Longitude,
+                                Shared.Helper.Img.Svg.HtmlMap.Orion);
 #endif
 
 
@@ -142,12 +143,12 @@
         if (isMoving)
         {
             SetIconAdvancedMarker(_userIconId,
-                                     DataBase.Helper.Img.Svg.HtmlMap.NavigationRotation((int)course), token);
+                                     Shared.Helper.Img.Svg.HtmlMap.NavigationRotation((int)course), token);
         }
         else
         {
             SetIconAdvancedMarker(_userIconId,
-                         DataBase.Helper.Img.Svg.HtmlMap.Orion, token);
+                         Shared.Helper.Img.Svg.HtmlMap.Orion, token);
         }
         if (_listeningLocation)
         {
@@ -160,14 +161,14 @@
 
     private void SetIconTheme()
     {
-        _myLocationIcon = FromtTheme(DataBase.Helper.Img.Svg.HtmlMap.MyLocationDark, DataBase.Helper.Img.Svg.HtmlMap.MyLocationWhite);
-        _nativeMapNavigateTo = FromtTheme(DataBase.Helper.Img.Svg.HtmlMap.AssistanceDirectionDark, DataBase.Helper.Img.Svg.HtmlMap.AssistanceDirectionWhite);
-        _nativeMapDispalyPin = FromtTheme(DataBase.Helper.Img.Svg.HtmlMap.MapDark, DataBase.Helper.Img.Svg.HtmlMap.MapWhite);
+        _myLocationIcon = FromtTheme(HtmlMap.MyLocationDark, HtmlMap.MyLocationWhite);
+        _nativeMapNavigateTo = FromtTheme(HtmlMap.AssistanceDirectionDark, HtmlMap.AssistanceDirectionWhite);
+        _nativeMapDispalyPin = FromtTheme(HtmlMap.MapDark, HtmlMap.MapWhite);
     }
     private string FromtTheme(string light, string dark)
     {
         string theme = "";
-        if (DataBase.Helper.MudBlazorTheme.IsDarkMode)
+        if (Shared.Helper.MudBlazorTheme.IsDarkMode)
         {
             theme = dark;
         }

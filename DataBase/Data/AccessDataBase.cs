@@ -3,7 +3,6 @@
 using SQLite;
 
 #if DEBUG
-using System.Diagnostics;
 #endif
 namespace DataBase.Data
 {
@@ -14,8 +13,9 @@ namespace DataBase.Data
 
         public AccessDataBase()
         {
-            DataBaseAsync ??= new SQLiteAsyncConnection(Constants.DatabasePath, Constants.Flags);
-            DataBase ??= new SQLiteConnection(Constants.DatabasePath, Constants.Flags);
+            var path = Constants.DatabasePath;
+            DataBaseAsync ??= new SQLiteAsyncConnection(path, Constants.Flags);
+            DataBase ??= new SQLiteConnection(path, Constants.Flags);
         }
         /// <summary>
         /// Tylko dla testów
@@ -33,15 +33,12 @@ namespace DataBase.Data
             {
                 CreatedDateTime = DateTime.Now,
                 Message = ex.Message,
-                StackTrace = ex.StackTrace
+                StackTrace = ex.StackTrace is not null ? ex.StackTrace : ""
             };
 
             DataBase.Insert(log);
 
-            Shell.Current.CurrentPage.DisplayAlert("Error", ex.Message, "Ok");
-#if DEBUG
-            Debug.WriteLine($"Error{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
-#endif
+            Console.WriteLine($"Error{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
         }
 
         public async Task SaveLogAsync(Exception ex)
@@ -50,10 +47,11 @@ namespace DataBase.Data
             {
                 CreatedDateTime = DateTime.Now,
                 Message = ex.Message,
-                StackTrace = ex.StackTrace,
+                StackTrace = ex.StackTrace is not null ? ex.StackTrace : ""
             };
             await DataBaseAsync.InsertAsync(log);
-            await Shell.Current.CurrentPage.DisplayAlert("Error", ex.Message, "Ok");
+
+            Console.WriteLine($"Error{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
         }
 
         public void Dispose()

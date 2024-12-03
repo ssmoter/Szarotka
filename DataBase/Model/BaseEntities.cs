@@ -7,7 +7,7 @@ namespace DataBase.Model
     public partial class BaseEntities<T> : ObservableObject
     {
         [PrimaryKey]
-        public T Id { get; set; }
+        public T? Id { get; set; }
         [Ignore]
         public DateTime Created
         {

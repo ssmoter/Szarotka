@@ -11,7 +11,13 @@ using System.Text.RegularExpressions;
 
 namespace Server.Validation
 {
-    public class UserValidation
+    public interface IUserValidation
+    {
+        ServerEnums.ValidationResult EmailIsCorrent(RegisterUser user);
+        ServerEnums.ValidationResult EmailIsExist(RegisterUser user);
+    }
+
+    public class UserValidation : IUserValidation
     {
         private readonly AccessDataBase _db;
         public UserValidation(AccessDataBase db)

@@ -1,14 +1,17 @@
+using DataBase.Data;
+using DataBase.Model;
+
 namespace DriversRoutes.Pages.Options.CreateTable;
 
 public partial class CreateTableRoutesV : ContentView
 {
 
     public static readonly BindableProperty DataBaseVersionProperty
-    = BindableProperty.Create(nameof(DataBaseVersion), typeof(DataBase.Model.DataBaseVersion), typeof(CreateTableRoutesV), propertyChanged: (bindable, oldValue, newValue) =>
+    = BindableProperty.Create(nameof(DataBaseVersion), typeof(DataBaseVersion), typeof(CreateTableRoutesV), propertyChanged: (bindable, oldValue, newValue) =>
     { });
-    public DataBase.Model.DataBaseVersion DataBaseVersion
+    public DataBaseVersion DataBaseVersion
     {
-        get => GetValue(DataBaseVersionProperty) as DataBase.Model.DataBaseVersion;
+        get => GetValue(DataBaseVersionProperty) as DataBaseVersion;
         set => SetValue(DataBaseVersionProperty, value);
     }
 
@@ -20,7 +23,7 @@ public partial class CreateTableRoutesV : ContentView
     public CreateTableRoutesV()
     {
         InitializeComponent();
-        BindingContext = new CreateTableRoutesVM(new DataBase.Data.AccessDataBase());
+        BindingContext = new CreateTableRoutesVM(new AccessDataBase());
 
     }
 }

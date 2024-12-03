@@ -1,8 +1,10 @@
 ﻿using CsvHelper;
 
-using DataBase.Data.File;
+using DataBase.Helper;
 
 using Inventory.Pages.RangeDay;
+
+using Shared.Data.File;
 
 using System.Text;
 
@@ -17,7 +19,7 @@ namespace Inventory.Data.File
                 var model = new List<RangeDayM>();
 
                 using var reader = new StreamReader(path);
-                using var csv = new CsvReader(reader, DataBase.Helper.Constants.CultureInfo);
+                using var csv = new CsvReader(reader, Constants.CultureInfo);
                 csv.Read();
                 csv.Read();
 
@@ -143,7 +145,7 @@ namespace Inventory.Data.File
         {
             try
             {
-                var path = Path.Combine(DataBase.Helper.Constants.GetPathFolder, FileHelper.CsvFolder);
+                var path = Path.Combine(Constants.GetPathFolder, FileHelper.CsvFolder);
 
                 FileHelper.CreateFolder(path);
 
@@ -151,7 +153,7 @@ namespace Inventory.Data.File
 
                 using (var writer = new StreamWriter(path, false, Encoding.UTF8))
                 {
-                    using var csv = new CsvWriter(writer, DataBase.Helper.Constants.CultureInfo);
+                    using var csv = new CsvWriter(writer, Constants.CultureInfo);
 
 
                     csv.NextRecord();

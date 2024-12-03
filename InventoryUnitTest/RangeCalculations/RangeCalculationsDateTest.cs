@@ -1,4 +1,4 @@
-﻿using DataBase.Helper;
+﻿using Shared.Helper;
 using DataBase.Model.EntitiesInventory;
 
 using FluentAssertions;
@@ -69,6 +69,7 @@ namespace InventoryUnitTest.RangeCalculations
 
             var resultJson = Newtonsoft.Json.JsonConvert.SerializeObject(result);
 
+            var obs = 
 
             objJson.Should().Be(resultJson);
         }

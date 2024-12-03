@@ -3,7 +3,7 @@ using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using DataBase.CustomControls;
+using Shared.CustomControls;
 using DataBase.Model.EntitiesRoutes;
 
 using DriversRoutes.Helper;
@@ -13,10 +13,11 @@ using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 
 using System.Collections.ObjectModel;
+using DataBase.Data;
 
 namespace DriversRoutes.Pages.Maps.MapAndPoints
 {
-    [QueryProperty(nameof(Routes), nameof(DataBase.Model.EntitiesRoutes.Routes))]
+    [QueryProperty(nameof(Routes), nameof(Routes))]
     [QueryProperty(nameof(AllPoints), nameof(MapsM))]
     [QueryProperty(nameof(LastSelectedDayOfWeek), nameof(SelectedDayOfWeekRoutes))]
 
@@ -77,13 +78,13 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
         public Action<Polyline> AddRoutesPolilineAction;
         public Action ClearRoutesPolilineAction;
         public Microsoft.Maui.Controls.Maps.Map GetMap { get; set; }
-        private readonly DataBase.Data.AccessDataBase _db;
+        private readonly AccessDataBase _db;
         private readonly Service.ISelectRoutes _selectRoutes;
         private readonly Service.ISaveRoutes _saveRoutes;
         private readonly Data.GoogleApi.IRoutes _routes;
 
         #endregion
-        public MapsVM(DataBase.Data.AccessDataBase db, Service.ISelectRoutes selectRoutes, Service.ISaveRoutes saveRoutes, Data.GoogleApi.IRoutes routes)
+        public MapsVM(AccessDataBase db, Service.ISelectRoutes selectRoutes, Service.ISaveRoutes saveRoutes, Data.GoogleApi.IRoutes routes)
         {
             _db = db;
             MapType = MapType.Street;

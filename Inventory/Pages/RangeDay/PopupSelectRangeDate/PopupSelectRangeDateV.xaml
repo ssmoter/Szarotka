@@ -97,9 +97,7 @@
                 </VerticalStackLayout>
             </Border>
 
-            <Grid
-                ColumnDefinitions="*,*"
-                VerticalOptions="End">
+            <Grid ColumnDefinitions="*,*" VerticalOptions="End">
 
                 <Button
                     Grid.Column="0"

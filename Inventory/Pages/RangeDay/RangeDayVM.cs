@@ -2,14 +2,15 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using DataBase.Data.File;
+using Shared.Data.File;
 using DataBase.Model.EntitiesInventory;
-using DataBase.Pages.ExistingFiles;
-using DataBase.Service;
+using Shared.Pages.ExistingFiles;
+using Shared.Service;
 
 using Inventory.Data.File;
 using Inventory.Model;
 using Inventory.Service;
+using DataBase.Data;
 
 namespace Inventory.Pages.RangeDay
 {
@@ -28,8 +29,8 @@ namespace Inventory.Pages.RangeDay
         public IList<RangeDayM> AveragesPerOfWeek { get; set; } = [];
         public IList<RangeDayM> SumPerOfMonth { get; set; } = [];
         public IList<RangeDayM> AveragesPerOfMonth { get; set; } = [];
-        public IList<DataBase.Model.EntitiesInventory.Product> ProductsAll { get; set; }
-        IList<DataBase.Model.EntitiesInventory.Driver> UniqueDriver = [];
+        public IList<Product> ProductsAll { get; set; }
+        IList<Driver> UniqueDriver = [];
 
         readonly Driver[] _allDrivers;
 
@@ -71,10 +72,10 @@ namespace Inventory.Pages.RangeDay
 
 
         PopupDateModel PopupDate = new(DateTime.Today.Ticks, DateTime.Today.AddDays(1).Ticks, false, []);
-        readonly DataBase.Data.AccessDataBase _db;
+        readonly AccessDataBase _db;
         readonly ISelectDayService _selectDayService;
         readonly ISaveDayService _dayService;
-        public RangeDayVM(DataBase.Data.AccessDataBase db, ISelectDayService selectDay, ISaveDayService dayService)
+        public RangeDayVM(AccessDataBase db, ISelectDayService selectDay, ISaveDayService dayService)
         {
             sum = [];
             _db = db;

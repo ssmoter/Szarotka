@@ -12,7 +12,7 @@ public partial class Product : BaseEntities<Guid>
     private Guid productNameId;
     [ObservableProperty]
     private Guid productPriceId;
-    private ProductName name;
+    private ProductName name = new();
     [Ignore]
     public ProductName Name
     {
@@ -26,9 +26,9 @@ public partial class Product : BaseEntities<Guid>
         }
     }
     [ObservableProperty]
-    private string description;
+    private string description = "";
 
-    private ProductPrice price;
+    private ProductPrice price = new();
     [Ignore]
     public ProductPrice Price
     {

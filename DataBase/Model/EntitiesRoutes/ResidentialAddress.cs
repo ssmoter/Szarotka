@@ -8,21 +8,21 @@ namespace DataBase.Model.EntitiesRoutes
         public Guid customerId;
 
         [ObservableProperty]
-        string name;
+        string name = "";
         [ObservableProperty]
-        string surname;
+        string surname = "";
         [ObservableProperty]
-        string street;
+        string street = "";
         [ObservableProperty]
-        string houseNumber;
+        string houseNumber = "";
         [ObservableProperty]
-        string apartmentNumber;
+        string apartmentNumber = "";
         [ObservableProperty]
-        string postalCode;
+        string postalCode = "";
         [ObservableProperty]
-        string city;
+        string city = "";
         [ObservableProperty]
-        string country;
+        string country = "";
 
         public ResidentialAddress()
         { }

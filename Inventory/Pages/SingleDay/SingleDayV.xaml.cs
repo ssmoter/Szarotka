@@ -1,4 +1,4 @@
-﻿using DataBase.Helper;
+﻿using Shared.Helper;
 using DataBase.Model.EntitiesInventory;
 namespace Inventory.Pages.SingleDay;
 

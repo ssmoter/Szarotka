@@ -1,6 +1,8 @@
-﻿using DataBase.Data;
+﻿using FluentAssertions;
 
-using FluentAssertions;
+using Shared.Data;
+using DataBase.Model.EntitiesRoutes;
+using DataBase.Data;
 
 namespace DataBaseUnitTest.Created
 {
@@ -16,10 +18,10 @@ namespace DataBaseUnitTest.Created
 
         public Task DisposeAsync()
         {
-            _db.DataBase.DropTable<DataBase.Model.EntitiesRoutes.CustomerRoutes>();
-            _db.DataBase.DropTable<DataBase.Model.EntitiesRoutes.ResidentialAddress>();
-            _db.DataBase.DropTable<DataBase.Model.EntitiesRoutes.Routes>();
-            _db.DataBase.DropTable<DataBase.Model.EntitiesRoutes.SelectedDayOfWeekRoutes>();
+            _db.DataBase.DropTable<CustomerRoutes>();
+            _db.DataBase.DropTable<ResidentialAddress>();
+            _db.DataBase.DropTable<Routes>();
+            _db.DataBase.DropTable<SelectedDayOfWeekRoutes>();
 
             _db.Dispose();
             return Task.CompletedTask;
@@ -33,16 +35,16 @@ namespace DataBaseUnitTest.Created
         public void CreatedExist()
         {
             List<bool> list = [];
-            var obj = _db.DataBase.GetTableInfo(nameof(DataBase.Model.EntitiesRoutes.CustomerRoutes));
+            var obj = _db.DataBase.GetTableInfo(nameof(CustomerRoutes));
             var exist = obj.Count > 0;
             list.Add(exist);
-            obj = _db.DataBase.GetTableInfo(nameof(DataBase.Model.EntitiesRoutes.ResidentialAddress));
+            obj = _db.DataBase.GetTableInfo(nameof(ResidentialAddress));
             exist = obj.Count > 0;
             list.Add(exist);
-            obj = _db.DataBase.GetTableInfo(nameof(DataBase.Model.EntitiesRoutes.Routes));
+            obj = _db.DataBase.GetTableInfo(nameof(Routes));
             exist = obj.Count > 0;
             list.Add(exist);
-            obj = _db.DataBase.GetTableInfo(nameof(DataBase.Model.EntitiesRoutes.SelectedDayOfWeekRoutes));
+            obj = _db.DataBase.GetTableInfo(nameof(SelectedDayOfWeekRoutes));
             exist = obj.Count > 0;
             list.Add(exist);
 
@@ -53,7 +55,7 @@ namespace DataBaseUnitTest.Created
         [Fact]
         public void CreatedDefaultRoutes()
         {
-            var obj = _db.DataBase.Table<DataBase.Model.EntitiesRoutes.Routes>().ToArray();
+            var obj = _db.DataBase.Table<Routes>().ToArray();
 
             var length = DriversRoutesTables.GetDefaultRoutes().Length;
 

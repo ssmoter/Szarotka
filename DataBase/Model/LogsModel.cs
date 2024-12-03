@@ -7,9 +7,9 @@ namespace DataBase.Model
         [PrimaryKey]
         [AutoIncrement]
         public int Id { get; set; }
-        public string StackTrace { get; set; }
-        public string Message { get; set; }
-        public string Created { get; set; }
+        public string StackTrace { get; set; } = "";
+        public string Message { get; set; } = "";
+        public string Created { get; set; } = "";
         [Ignore]
         public DateTime CreatedDateTime
         {

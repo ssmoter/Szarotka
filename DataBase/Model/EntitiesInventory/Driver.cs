@@ -5,9 +5,9 @@ namespace DataBase.Model.EntitiesInventory;
 public partial class Driver : BaseEntities<Guid>
 {
     [ObservableProperty]
-    private string name;
+    private string name="";
     [ObservableProperty]
-    private string description;
+    private string description="";
 }
 public partial class SelectedDriver : BaseEntities<int>
 {

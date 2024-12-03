@@ -8,7 +8,7 @@ namespace InventoryUnitTest.ModelTest
         [Fact]
         public void ComparisonFromStaticValue()
         {
-            var defaultProduct = DataBase.Data.InventoryTables.DefaultProducts;
+            var defaultProduct = Shared.Data.InventoryTables.DefaultProducts;
             var defaultProductJson= System.Text.Json.JsonSerializer.Serialize(defaultProduct.OrderBy(x => x.Name.Name).Select(x => new
             {
                 name = x.Name.Name,

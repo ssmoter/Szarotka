@@ -1,4 +1,4 @@
-﻿using DataBase.Helper;
+﻿using Shared.Helper;
 
 using Inventory.Model;
 

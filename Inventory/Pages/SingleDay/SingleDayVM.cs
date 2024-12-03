@@ -3,6 +3,7 @@ using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 
 using Inventory.Service;
@@ -24,14 +25,14 @@ namespace Inventory.Pages.SingleDay
 
         const char signPlus = '+';
         //const char signMinus = '-';
-        readonly DataBase.Data.AccessDataBase _db;
+        readonly AccessDataBase _db;
         readonly ISaveDayService _saveDay;
         readonly ISelectDayService _selectDay;
 
         public Action<object, object, ScrollToPosition, bool> ProductScrollToObject;
         public Action<int, int, ScrollToPosition, bool> ProductScrollToInt;
 
-        public SingleDayVM(DataBase.Data.AccessDataBase db,
+        public SingleDayVM(AccessDataBase db,
             ISaveDayService saveDay,
             ISelectDayService selectDay)
         {
@@ -366,7 +367,7 @@ namespace Inventory.Pages.SingleDay
         [RelayCommand]
         static async Task PopupToAddValueFromList(Product product)
         {
-            var popup = new DataBase.Pages.Popups.SubAddLastValue.SubAddLastValueV(product.NumberEdit, product.Name.Name);
+            var popup = new Shared.Pages.Popups.SubAddLastValue.SubAddLastValueV(product.NumberEdit, product.Name.Name);
 
             var result = await Shell.Current.ShowPopupAsync(popup);
 
@@ -397,7 +398,8 @@ namespace Inventory.Pages.SingleDay
                     var listProduct = new Pages.Products.ListProduct.ListProductM()
                     {
                         Name = product.Name,
-                        Prices = new(await _db.DataBaseAsync.Table<ProductPrice>().Where(x => x.ProductNameId == product.ProductNameId).ToArrayAsync())
+                        Prices = new System.Collections.ObjectModel.ObservableCollection<ProductPrice>(
+                            await _db.DataBaseAsync.Table<ProductPrice>().Where(x => x.ProductNameId == product.ProductNameId).ToArrayAsync())
                     };
                     listProduct.SetActualPrice();
 

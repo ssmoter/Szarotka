@@ -1,10 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using DataBase.Helper;
+using Shared.Helper;
 using DataBase.Model.EntitiesInventory;
 
 using Inventory.Service;
+using DataBase.Data;
 
 
 namespace Inventory.Pages.Main
@@ -21,10 +22,10 @@ namespace Inventory.Pages.Main
 
         public Day Day { get; set; }
 
-        readonly DataBase.Data.AccessDataBase _db;
+        readonly AccessDataBase _db;
         readonly Service.ISelectDayService _selectDayService;
 
-        public MainVM(DataBase.Data.AccessDataBase db, ISelectDayService selectDay)
+        public MainVM(AccessDataBase db, ISelectDayService selectDay)
         {
             _db = db;
             _selectDayService = selectDay;

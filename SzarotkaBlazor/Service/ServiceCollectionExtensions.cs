@@ -1,10 +1,11 @@
-﻿using DataBase.Service;
+﻿using Shared.Service;
 
 using DriversRoutes.Service;
 
 using Inventory.Service;
 
 using SzarotkaBlazor.Pages.Options.Main;
+using DataBase.Service;
 
 namespace SzarotkaBlazor.Service
 {
@@ -13,7 +14,7 @@ namespace SzarotkaBlazor.Service
         public static IServiceCollection AddMyService(this IServiceCollection services)
         {
             services.AddMyServiceDataBase();
-
+            services.AddMyServiceShared();
             services.AddMyServiceInventory();
             services.AddMyServiceDriversRoutes();
 #if ANDROID

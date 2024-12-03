@@ -1,10 +1,10 @@
 ﻿@using Inventory.Pages.RangeDay
-@using DataBase.Helper
+@using Shared.Helper
 @using MudBlazor
 
 @implements IDisposable
 
-<MudThemeProvider @bind-IsDarkMode="@DataBase.Helper.MudBlazorTheme.IsDarkMode" Theme="@DataBase.Helper.MudBlazorTheme.Theme" />
+<MudThemeProvider @bind-IsDarkMode="@Shared.Helper.MudBlazorTheme.IsDarkMode" Theme="@Shared.Helper.MudBlazorTheme.Theme" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />

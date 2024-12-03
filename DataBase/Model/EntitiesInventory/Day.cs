@@ -9,10 +9,10 @@ namespace DataBase.Model.EntitiesInventory;
 public partial class Day : BaseEntities<Guid>, IDisposable
 {
     [ObservableProperty]
-    private string description;
+    private string description = "";
     [ObservableProperty]
     private Guid driverGuid;
-    private string selectedDateString;
+    private string selectedDateString = "";
     public string SelectedDateString
     {
         get => selectedDateString;
@@ -273,7 +273,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         }
     }
 
-    private ObservableCollection<Product> products;
+    private ObservableCollection<Product> products = [];
     [Ignore]
     public ObservableCollection<Product> Products
     {
@@ -287,7 +287,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             }
         }
     }
-    private ObservableCollection<Cake> cakes;
+    private ObservableCollection<Cake> cakes = [];
     [Ignore]
     public ObservableCollection<Cake> Cakes
     {
@@ -358,7 +358,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
 }
 public static class ProductUpdatePriceService
 {
-    public static event Action UpdatePrice;
+    public static event Action? UpdatePrice;
     /// <summary>
     /// Aktualizowanie utargu
     /// </summary>

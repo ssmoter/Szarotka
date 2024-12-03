@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http.Features;
 
+using Server.Endpoints;
 using Server.Model;
 using Server.Service;
 
@@ -38,6 +39,12 @@ var sampleTodos = new Todo[] {
     new(4, "Clean the bathroom"),
     new(5, "Clean the car", DateOnly.FromDateTime(DateTime.Now.AddDays(2)))
 };
+
+
+var userApi = app.MapGroup("/user");
+userApi.MapGet("/register", (IRegisterUserEndpoint endpoint) => endpoint.InsertUser);
+
+
 
 var todosApi = app.MapGroup("/todos");
 todosApi.MapGet("/", () => sampleTodos);

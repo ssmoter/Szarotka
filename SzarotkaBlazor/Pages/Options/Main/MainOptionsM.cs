@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
+using DataBase.Model;
+
 namespace SzarotkaBlazor.Pages.Options.Main
 {
     public partial class MainOptionsM : ObservableObject
@@ -12,12 +14,12 @@ namespace SzarotkaBlazor.Pages.Options.Main
         bool driversRoutes;
 
         [ObservableProperty]
-        DataBase.Model.DataBaseVersion version;
+        DataBaseVersion version;
 
 
         public MainOptionsM()
         {
-            Version = new DataBase.Model.DataBaseVersion();
+            Version = new DataBaseVersion();
         }
     }
 }

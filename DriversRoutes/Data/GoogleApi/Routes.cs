@@ -1,4 +1,4 @@
-﻿using DataBase.Helper;
+﻿using Shared.Helper;
 
 using DriversRoutes.Model.Route;
 
@@ -25,7 +25,7 @@ namespace DriversRoutes.Data.GoogleApi
         public Routes(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _key = DataBase.Key.GoogleApi.Key;
+            _key = Shared.Key.GoogleApi.Key;
 
             if (!_httpClient.DefaultRequestHeaders.Contains("X-Goog-Api-Key"))
             {

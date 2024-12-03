@@ -6,7 +6,6 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints;
 
 public partial class MapsV : ContentPage, IDisposable
 {
-    private bool _moveRegion = true;
     public MapsV(MapsVM vm)
     {
         InitializeComponent();
@@ -141,7 +140,7 @@ public partial class MapsV : ContentPage, IDisposable
             if (sender is Pin pin)
             {
                 vm.OpenMoreDetail(pin);
-                vm.StepSelected = DataBase.CustomControls.StepSelected.Full;
+                vm.StepSelected = Shared.CustomControls.StepSelected.Full;
             }
         }
     }

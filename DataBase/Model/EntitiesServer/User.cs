@@ -5,15 +5,15 @@ namespace DataBase.Model.EntitiesServer
     public partial class User : BaseEntities<Guid>
     {
         [ObservableProperty]
-        private string name;
+        private string name = "";
         [ObservableProperty]
-        private string description;
+        private string description = "";
 
         [ObservableProperty]
-        private string email;
+        private string email = "";
 
         [ObservableProperty]
-        private string phoneNumber;
+        private string phoneNumber = "";
 
         [ObservableProperty]
         private UserType userType;
@@ -26,16 +26,16 @@ namespace DataBase.Model.EntitiesServer
     public partial class RegisterUser : User
     {
         [ObservableProperty]
-        private string password;
+        private string password = "";
     }
 
 
     public partial class LoginUser : ObservableObject
     {
         [ObservableProperty]
-        private string email;
+        private string email = "";
         [ObservableProperty]
-        private string password;
+        private string password = "";
     }
 
     public enum UserType
