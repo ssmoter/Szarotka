@@ -1,8 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
 
-using Microsoft.AspNetCore.Mvc;
-
 using Server.Model;
 using Server.Validation;
 
@@ -10,11 +8,11 @@ namespace Server.Endpoints
 {
     public interface IRegisterUserEndpoint
     {
-        Task<IActionResult> InsertUser([FromBody] RegisterUser registerUser);
+        Task<IResult> InsertUser(RegisterUser registerUser);
     }
 
-    [Route("api/v1/[controller]")]
-    public class RegisterUserEndpoint : ControllerBase, IRegisterUserEndpoint
+
+    public class RegisterUserEndpoint : IRegisterUserEndpoint
     {
         private readonly AccessDataBase _db;
         private readonly Service.IRegisterUserService _registerService;
@@ -29,45 +27,54 @@ namespace Server.Endpoints
             _userValidation = userValidation;
         }
 
-        [Route("user")]
-        [HttpPost]
-        public async Task<IActionResult> InsertUser(
-            [FromBody] RegisterUser registerUser)
+        public async Task<IResult> InsertUser(RegisterUser registerUser)
         {
-            var validError = new ValidationException();
-            if (registerUser is null)
+            try
             {
-                validError.AddError($"{nameof(RegisterUser)} is required");
-                throw validError;
-            }
 
-            #region Email Validation
-            var emailIsCorrent = _userValidation.EmailIsCorrent(registerUser);
-            if (emailIsCorrent == ServerEnums.ValidationResult.Error)
-            {
-                validError.AddError("Email is not a valid format");
-            }
-            if (emailIsCorrent == ServerEnums.ValidationResult.Success)
-            {
-                var emailIsExist = _userValidation.EmailIsExist(registerUser);
 
-                if (emailIsExist == ServerEnums.ValidationResult.Error)
+                #region Validation
+                var validError = new ValidationException();
+                if (registerUser is null)
                 {
-                    validError.AddError("Email already exists");
+                    validError.AddError($"{nameof(RegisterUser)} is required", EnumsList.Validation.RegisterUserNull);
+                    throw validError;
                 }
+
+                var emailIsCorrent = _userValidation.EmailIsCorrent(registerUser);
+                if (emailIsCorrent == ServerEnums.ValidationResult.Error)
+                {
+                    validError.AddError("Email is not a valid format", EnumsList.Validation.EmailValidFormat);
+                }
+                if (emailIsCorrent == ServerEnums.ValidationResult.Success)
+                {
+                    var emailIsExist = _userValidation.EmailIsExist(registerUser);
+
+                    if (emailIsExist == ServerEnums.ValidationResult.Error)
+                    {
+                        validError.AddError("Email already exists", EnumsList.Validation.EmailExist);
+                    }
+                }
+
+                _userValidation.PasswordValid(registerUser, ref validError);
+
+                #endregion
+
+
+
+
+                if (validError.Count > 0)
+                {
+                    throw validError;
+                }
+
+                var result = await _registerService.InsertNewUser(registerUser);
+                return Results.Ok();
             }
-            #endregion
-
-
-
-
-            if (validError.Count > 0)
+            catch (Exception ex)
             {
-                throw validError;
+                throw new ErrorException(ex.Source, ex.Message);
             }
-
-            var result = await _registerService.InsertNewUser(registerUser);
-            return result;
         }
 
     }

@@ -1,3 +1,5 @@
+using DataBase.Model.EntitiesServer;
+
 using Microsoft.AspNetCore.Http.Features;
 
 using Server.Endpoints;
@@ -11,6 +13,7 @@ var builder = WebApplication.CreateSlimBuilder(args);
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
     options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
+    options.SerializerOptions.TypeInfoResolverChain.Insert(0, RegisterUserJsonSerializerContext.Default);
 });
 
 builder.Services.AddProblemDetails(options =>
@@ -40,10 +43,14 @@ var sampleTodos = new Todo[] {
     new(5, "Clean the car", DateOnly.FromDateTime(DateTime.Now.AddDays(2)))
 };
 
+app.UseRouting();
 
-var userApi = app.MapGroup("/user");
-userApi.MapGet("/register", (IRegisterUserEndpoint endpoint) => endpoint.InsertUser);
-
+var user = app.MapGroup("/user");
+user.MapPost("/register", (RegisterUser register,IRegisterUserEndpoint iRegisterUserEndpoint) 
+    => 
+    {
+        return iRegisterUserEndpoint.InsertUser(register); 
+    });
 
 
 var todosApi = app.MapGroup("/todos");

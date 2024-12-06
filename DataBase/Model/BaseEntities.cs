@@ -2,6 +2,8 @@
 
 using SQLite;
 
+using System.Text.Json.Serialization;
+
 namespace DataBase.Model
 {
     public partial class BaseEntities<T> : ObservableObject

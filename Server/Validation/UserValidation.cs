@@ -13,26 +13,28 @@ namespace Server.Validation
 {
     public interface IUserValidation
     {
-        ServerEnums.ValidationResult EmailIsCorrent(RegisterUser user);
-        ServerEnums.ValidationResult EmailIsExist(RegisterUser user);
+        ServerEnums.ValidationResult EmailIsCorrent(RegisterUser? user);
+        ServerEnums.ValidationResult EmailIsExist(RegisterUser? user);
+        ServerEnums.ValidationResult PasswordValid(RegisterUser? user, ref ValidationException error);
     }
 
     public class UserValidation : IUserValidation
     {
         private readonly AccessDataBase _db;
+        private readonly string _special = "!@#$%^&*()_+-=[]{}|;:'\",.<>?/\\`~";
         public UserValidation(AccessDataBase db)
         {
             _db = db;
         }
 
         //kod od microsoft
-        public ServerEnums.ValidationResult EmailIsCorrent(RegisterUser user)
+        public ServerEnums.ValidationResult EmailIsCorrent(RegisterUser? user)
         {
-            var email = user.Email;
 
             if (user is null)
                 return ServerEnums.ValidationResult.Error;
 
+            var email = user.Email;
 
             if (string.IsNullOrWhiteSpace(email))
                 return ServerEnums.ValidationResult.Error;
@@ -76,8 +78,7 @@ namespace Server.Validation
                 return ServerEnums.ValidationResult.Error;
             }
         }
-
-        public ServerEnums.ValidationResult EmailIsExist(RegisterUser user)
+        public ServerEnums.ValidationResult EmailIsExist(RegisterUser? user)
         {
             if (user is null)
                 return ServerEnums.ValidationResult.Error;
@@ -93,11 +94,81 @@ namespace Server.Validation
 
             return ServerEnums.ValidationResult.Success;
         }
+        public ServerEnums.ValidationResult PasswordValid(RegisterUser? user, ref ValidationException error)
+        {
+            ServerEnums.ValidationResult result = ServerEnums.ValidationResult.Success;
 
-        //public ServerEnums.ValidationResult PasswordValid(RegisterUser user)
-        //{
+            if (user is null)
+            {
+                string message = $"{nameof(RegisterUser)} is null";
+                Console.WriteLine(message);
+                error.AddError(message, EnumsList.Validation.PasswordNull);
+                return ServerEnums.ValidationResult.Error;
+            }
 
-        //}
+            var password = user.Password;
+
+            if (password.Length < 8)
+            {
+                string message = $"{nameof(RegisterUser.Password)} is shorter than 8 characters";
+                Console.WriteLine(message);
+                error.AddError(message, EnumsList.Validation.PasswordLenght);
+                result = ServerEnums.ValidationResult.Error;
+            }
+
+            bool upper = false;
+            bool lower = false;
+            bool digit = false;
+            bool special = false;
+            foreach (var item in password)
+            {
+                if (char.IsUpper(item))
+                    upper = true;
+                if (char.IsLower(item))
+                    lower = true;
+                if (char.IsDigit(item))
+                    digit = true;
+                if (_special.Contains(item))
+                    special = true;
+            }
+            if (!upper)
+            {
+                string message = $"{nameof(RegisterUser.Password)} don't have 1 upper characters";
+                Console.WriteLine(message);
+                error.AddError(message, EnumsList.Validation.PasswordNoUpper);
+                result = ServerEnums.ValidationResult.Error;
+            }
+            if (!lower)
+            {
+                string message = $"{nameof(RegisterUser.Password)} don't have 1 lower characters";
+                Console.WriteLine(message);
+                error.AddError(message, EnumsList.Validation.PasswordNoLower);
+                result = ServerEnums.ValidationResult.Error;
+            }
+            if (!digit)
+            {
+                string message = $"{nameof(RegisterUser.Password)} don't have 1 digit characters";
+                Console.WriteLine(message);
+                error.AddError(message, EnumsList.Validation.PasswordNoDigit);
+                result = ServerEnums.ValidationResult.Error;
+            }
+            if (!special)
+            {
+                string message = $"{nameof(RegisterUser.Password)} don't have 1 special characters";
+                Console.WriteLine(message);
+                error.AddError(message, EnumsList.Validation.PasswordNoSpecial);
+                result = ServerEnums.ValidationResult.Error;
+            }
+            if (password.Contains(user.Email))
+            {
+                string message = $"{nameof(RegisterUser.Password)} contains {nameof(RegisterUser.Email)}";
+                Console.WriteLine(message);
+                error.AddError(message, EnumsList.Validation.PassworContainEmail);
+                result = ServerEnums.ValidationResult.Error;
+            }
+            return result;
+        }
+
 
     }
 }

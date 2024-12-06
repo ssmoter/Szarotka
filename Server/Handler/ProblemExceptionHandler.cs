@@ -41,6 +41,7 @@ namespace Server.Handler
                     Title = "Validation Error",
                     Detail = validationException.GetError(),
                     Type = "Bad Request",
+                    Extensions = (IDictionary<string, object?>)validationException.ValidationErrors.ToDictionary(item => item.Message, item => (object)item.Validation)
                 };
                 return await _problemDetailsService.TryWriteAsync(
                     new ProblemDetailsContext

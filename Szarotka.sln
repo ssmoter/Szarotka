@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBase", "DataBase\DataBase.csproj", "{0517BD1A-17CC-4FA7-9DC4-FAB5B4CF6C8A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerUnitTest", "ServerUnitTest\ServerUnitTest.csproj", "{8E871742-9A0A-4795-AAED-C65B9C1EA424}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -159,6 +161,18 @@ Global
 		{0517BD1A-17CC-4FA7-9DC4-FAB5B4CF6C8A}.Release|x64.Build.0 = Release|Any CPU
 		{0517BD1A-17CC-4FA7-9DC4-FAB5B4CF6C8A}.Release|x86.ActiveCfg = Release|Any CPU
 		{0517BD1A-17CC-4FA7-9DC4-FAB5B4CF6C8A}.Release|x86.Build.0 = Release|Any CPU
+		{8E871742-9A0A-4795-AAED-C65B9C1EA424}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E871742-9A0A-4795-AAED-C65B9C1EA424}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E871742-9A0A-4795-AAED-C65B9C1EA424}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8E871742-9A0A-4795-AAED-C65B9C1EA424}.Debug|x64.Build.0 = Debug|Any CPU
+		{8E871742-9A0A-4795-AAED-C65B9C1EA424}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8E871742-9A0A-4795-AAED-C65B9C1EA424}.Debug|x86.Build.0 = Debug|Any CPU
+		{8E871742-9A0A-4795-AAED-C65B9C1EA424}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E871742-9A0A-4795-AAED-C65B9C1EA424}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E871742-9A0A-4795-AAED-C65B9C1EA424}.Release|x64.ActiveCfg = Release|Any CPU
+		{8E871742-9A0A-4795-AAED-C65B9C1EA424}.Release|x64.Build.0 = Release|Any CPU
+		{8E871742-9A0A-4795-AAED-C65B9C1EA424}.Release|x86.ActiveCfg = Release|Any CPU
+		{8E871742-9A0A-4795-AAED-C65B9C1EA424}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -8,7 +8,7 @@ namespace Server.SqlQuery
         {
             string sql = $@"
 SELECT {nameof(RegisterUser)}.{nameof(RegisterUser.Email)} FROM {nameof(RegisterUser)}
-WHERE {nameof(RegisterUser)}.{nameof(RegisterUser.Email)} == '?'
+WHERE {nameof(RegisterUser)}.{nameof(RegisterUser.Email)} == ?
 ";
             return sql;
         }

@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using DataBase.Model.EntitiesServer;
+
+using System.Text;
 
 namespace Server.Model
 {
@@ -15,13 +17,18 @@ namespace Server.Model
         }
     }
 
+    [Serializable]
     public class ValidationException : Exception
     {
-        public List<string> ValidationErrors { get; } = [];
+        public List<Valid> ValidationErrors { get; } = [];
 
-        public void AddError(string error)
+        public void AddError(Valid valid)
         {
-            ValidationErrors.Add(error);
+            ValidationErrors.Add(valid);
+        }
+        public void AddError(string message, EnumsList.Validation valid)
+        {
+            ValidationErrors.Add(new Valid(message, valid));
         }
 
         public int Count => ValidationErrors.Count;
@@ -40,5 +47,18 @@ namespace Server.Model
             return error.ToString();
         }
 
+        [Serializable]
+        public class Valid
+        {
+            public string Message { get; set; } = "";
+            public EnumsList.Validation Validation { get; set; }
+            public Valid(string message, EnumsList.Validation valid)
+            {
+                Message = message;
+                Validation = valid;
+            }
+            public Valid()
+            { }
+        }
     }
 }
