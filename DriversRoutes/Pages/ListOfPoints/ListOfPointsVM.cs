@@ -4,16 +4,16 @@ using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Shared.Data;
-using Shared.Data.File;
+using DataBase.Data;
 using DataBase.Model.EntitiesRoutes;
-using Shared.Pages.ExistingFiles;
-using Shared.Service;
 
 using DriversRoutes.Pages.Popups.MoveTimeOnCustomers;
 
+using Shared.Data.File;
+using Shared.Pages.ExistingFiles;
+using Shared.Service;
+
 using System.Collections.ObjectModel;
-using DataBase.Data;
 
 namespace DriversRoutes.Pages.ListOfPoints
 {
@@ -110,6 +110,12 @@ namespace DriversRoutes.Pages.ListOfPoints
         {
             var task = Task.Run(async () =>
              {
+                 var list = new ObservableCollection<CustomerRoutes>();
+                 // await foreach (var item in _selectRoutes.Test(routes, week))
+                 // {
+                 //     CustomerRoutes.Add(item);
+                 // }
+
                  CustomerRoutes = await GetPointsAsync(routes, week);
              });
         }

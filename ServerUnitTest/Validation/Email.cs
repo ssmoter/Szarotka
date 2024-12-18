@@ -20,7 +20,7 @@ namespace ServerUnitTest.Validation
 
             var obj = _valid.EmailIsCorrent(user);
 
-            obj.Should().Be(Server.Model.ServerEnums.ValidationResult.Error);
+            obj.Should().Be(Server.Model.ServerEnums.Result.Error);
         }
         [Fact]
         public void EmailIsCorrentEmptyEmail()
@@ -34,7 +34,7 @@ namespace ServerUnitTest.Validation
 
             var obj = _valid.EmailIsCorrent(user);
 
-            obj.Should().Be(Server.Model.ServerEnums.ValidationResult.Error);
+            obj.Should().Be(Server.Model.ServerEnums.Result.Error);
         }
         [Fact]
         public void EmailIsCorrentDontHaveAt()
@@ -48,7 +48,7 @@ namespace ServerUnitTest.Validation
 
             var obj = _valid.EmailIsCorrent(user);
 
-            obj.Should().Be(Server.Model.ServerEnums.ValidationResult.Error);
+            obj.Should().Be(Server.Model.ServerEnums.Result.Error);
         }
         [Fact]
         public void EmailIsCorrentDontHaveDot()
@@ -62,7 +62,7 @@ namespace ServerUnitTest.Validation
 
             var obj = _valid.EmailIsCorrent(user);
 
-            obj.Should().Be(Server.Model.ServerEnums.ValidationResult.Error);
+            obj.Should().Be(Server.Model.ServerEnums.Result.Error);
         }
         [Fact]
         public void EmailIsCorrentSuccess()
@@ -76,7 +76,7 @@ namespace ServerUnitTest.Validation
 
             var obj = _valid.EmailIsCorrent(user);
 
-            obj.Should().Be(Server.Model.ServerEnums.ValidationResult.Success);
+            obj.Should().Be(Server.Model.ServerEnums.Result.Success);
         }
         [Fact]
         public void EmailIsExistNull()
@@ -87,7 +87,7 @@ namespace ServerUnitTest.Validation
 
             var obj = _valid.EmailIsExist(user);
 
-            obj.Should().Be(Server.Model.ServerEnums.ValidationResult.Error);
+            obj.Should().Be(Server.Model.ServerEnums.Result.Error);
         }
         [Fact]
         public void EmailIsExistTrue()
@@ -110,7 +110,7 @@ namespace ServerUnitTest.Validation
 
             db.DataBase.DropTable<RegisterUser>();
 
-            obj.Should().Be(Server.Model.ServerEnums.ValidationResult.Error);
+            obj.Should().Be(Server.Model.ServerEnums.Result.Error);
 
         }
         [Fact]
@@ -132,7 +132,7 @@ namespace ServerUnitTest.Validation
 
             db.DataBase.DropTable<RegisterUser>();
 
-            obj.Should().Be(Server.Model.ServerEnums.ValidationResult.Success);
+            obj.Should().Be(Server.Model.ServerEnums.Result.Success);
         }
     }
 }

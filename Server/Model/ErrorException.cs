@@ -1,6 +1,7 @@
 ﻿using DataBase.Model.EntitiesServer;
 
-using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Server.Model
 {
@@ -10,9 +11,9 @@ namespace Server.Model
         public string Error { get; }
         public override string Message { get; }
 
-        public ErrorException(string error, string message) : base(message)
+        public ErrorException(string? error, string message) : base(message)
         {
-            Error = error;
+            Error = error is not null ? error : "";
             Message = message;
         }
     }
@@ -30,24 +31,13 @@ namespace Server.Model
         {
             ValidationErrors.Add(new Valid(message, valid));
         }
-
         public int Count => ValidationErrors.Count;
 
         public string GetError()
         {
-            StringBuilder error = new();
-            for (int i = 0; i < ValidationErrors.Count; i++)
-            {
-                error.Append(i + 1);
-                error.Append(':');
-                error.Append(' ');
-                error.Append(ValidationErrors[i]);
-                error.Append(Environment.NewLine);
-            }
-            return error.ToString();
+            string json = JsonSerializer.Serialize([.. ValidationErrors], ValidJsonSerializerContext.Default.ValidArray);
+            return json;
         }
-
-        [Serializable]
         public class Valid
         {
             public string Message { get; set; } = "";
@@ -59,6 +49,14 @@ namespace Server.Model
             }
             public Valid()
             { }
+
         }
+    }
+
+    [JsonSourceGenerationOptions(WriteIndented = true)]
+    [JsonSerializable(typeof(ValidationException.Valid[]))]
+    public partial class ValidJsonSerializerContext : JsonSerializerContext
+    {
+
     }
 }

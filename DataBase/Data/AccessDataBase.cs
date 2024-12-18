@@ -18,7 +18,7 @@ namespace DataBase.Data
             DataBase ??= new SQLiteConnection(path, Constants.Flags);
         }
         /// <summary>
-        /// Tylko dla testów
+        /// Tylko dla testów i serwera        
         /// </summary>
         /// <param name="path"></param>
         public AccessDataBase(string path)

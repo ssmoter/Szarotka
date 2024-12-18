@@ -1,4 +1,6 @@
-﻿@Server_HostAddress = http://localhost:32778
+﻿//@Server_HostAddress = http://localhost:32768
+@Server_HostAddress = http://localhost:5021
+@server_user=user
 
 GET {{Server_HostAddress}}/todos/
 Accept: application/json
@@ -10,10 +12,31 @@ Accept: application/json
 
 ###
 
-POST  {{Server_HostAddress}}/user/register
+POST  {{Server_HostAddress}}/{{server_user}}/register
 Content-Type: application/json 
+
 { 
-  "Email": "user@example.com"
+    "Email": "user@example.com",
+    "Name": "Name",
+    "Description": "Description",
+    "PhoneNumber": "123456789",
+    "Password": "Password1!"
 }
+
+###
+GET {{Server_HostAddress}}/{{server_user}}/confirm_email/30696
+Accept: application/json
+
+###
+POST {{Server_HostAddress}}/{{server_user}}/login
+Content-Type: application/json 
+
+{ 
+    "Email": "user@example.com",
+    "Password": "Password1!"
+}
+###
+GET {{Server_HostAddress}}/{{server_user}}/logout/
+Accept: application/json
 
 ###

@@ -1,9 +1,9 @@
-﻿using Shared.Data;
-using Shared.Helper;
+﻿using DataBase.Data;
 using DataBase.Model.EntitiesRoutes;
 
 using DriversRoutes.Service;
-using DataBase.Data;
+
+using Shared.Helper;
 
 namespace DriversRoutes.Data
 {
@@ -11,6 +11,36 @@ namespace DriversRoutes.Data
     {
         readonly AccessDataBase _db = db;
         private Routes _routesLast;
+
+        public async IAsyncEnumerable<CustomerRoutes> Test(Routes routes, SelectedDayOfWeekRoutes dayOf)
+        {
+            routes ??= _routesLast;
+            _routesLast = routes;
+
+            var queryResult = await _db.DataBaseAsync.QueryAsync<FullModelForQuery>(Helper.SqlQuery.GetQueryForSelectedRoutes(routes.Id.ToString(), dayOf));
+
+            for (int i = 0; i < queryResult.Count; i++)
+            {
+                var cust = new CustomerRoutes
+                {
+                    Id = queryResult[i].Id,
+                    RoutesId = queryResult[i].RoutesId,
+                    QueueNumber = i + 1,
+                    Name = queryResult[i].Name,
+                    Description = queryResult[i].Description,
+                    PhoneNumber = queryResult[i].PhoneNumber,
+                    Created = queryResult[i].Created,
+                    Longitude = queryResult[i].Longitude,
+                    Latitude = queryResult[i].Latitude,
+                    DayOfWeek = System.Text.Json.JsonSerializer.Deserialize<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek
+                    , JsonOptions.JsonSerializeOptionsBoolAndDateTime),
+                    ResidentialAddress = System.Text.Json.JsonSerializer.Deserialize<ResidentialAddress>(queryResult[i].JsonAddress
+                    , JsonOptions.JsonSerializeOptionsBoolAndDateTime)
+                };
+                yield return cust;
+            }
+            queryResult.Clear();
+        }
 
         public async Task<CustomerRoutes[]> GetCustomerRoutesQueryAsync(Routes routes, SelectedDayOfWeekRoutes dayOf)
         {

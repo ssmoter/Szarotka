@@ -1,9 +1,9 @@
 using DataBase.Model.EntitiesServer;
 
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 
 using Server.Endpoints;
-using Server.Model;
 using Server.Service;
 
 using System.Text.Json.Serialization;
@@ -12,8 +12,10 @@ var builder = WebApplication.CreateSlimBuilder(args);
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
-    options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
-    options.SerializerOptions.TypeInfoResolverChain.Insert(0, RegisterUserJsonSerializerContext.Default);
+    options.SerializerOptions.TypeInfoResolverChain.Add(AppJsonSerializerContext.Default);
+    options.SerializerOptions.TypeInfoResolverChain.Add(UserJsonSerializerContext.Default);
+    options.SerializerOptions.TypeInfoResolverChain.Add(RegisterUserJsonSerializerContext.Default);
+    options.SerializerOptions.TypeInfoResolverChain.Add(LoginUserJsonSerializerContext.Default);
 });
 
 builder.Services.AddProblemDetails(options =>
@@ -46,19 +48,33 @@ var sampleTodos = new Todo[] {
 app.UseRouting();
 
 var user = app.MapGroup("/user");
-user.MapPost("/register", (RegisterUser register,IRegisterUserEndpoint iRegisterUserEndpoint) 
-    => 
+user.MapPost("/register", async ([FromBody] RegisterUser user, IRegisterUserEndpoint registerUserEndpoint)
+    =>
     {
-        return iRegisterUserEndpoint.InsertUser(register); 
+        return await registerUserEndpoint.InsertUser(user);
     });
-
+user.MapGet("/confirm_email/{code}", async (int code, IRegisterUserEndpoint registerUserEndpoint)
+    =>
+    {
+        return await registerUserEndpoint.ConfirmEmail(code);
+    });
+user.MapPost("login", async ([FromBody]LoginUser user, ILoginUserEndpoint loginUserEndpoint)
+    =>
+    {
+        return await loginUserEndpoint.LogInUser(user);
+    });
+user.MapGet("logout", async (string user, ILoginUserEndpoint loginUserEndpoint)
+    =>
+{
+    return await loginUserEndpoint.LogOutUser(user);
+});
 
 var todosApi = app.MapGroup("/todos");
 todosApi.MapGet("/", () => sampleTodos);
 todosApi.MapGet("/{id}", (int id) =>
     sampleTodos.FirstOrDefault(a => a.Id == id) is { } todo
-        //? Results.Ok(todo)
-        ? throw new ErrorException("error", "message")
+        ? Results.Ok(todo)
+        //? throw new Server.Model.ErrorException("error", "message")
         : Results.NotFound());
 
 app.Run();
@@ -66,7 +82,7 @@ app.Run();
 public record Todo(int Id, string? Title, DateOnly? DueBy = null, bool IsComplete = false);
 
 [JsonSerializable(typeof(Todo[]))]
-internal partial class AppJsonSerializerContext : JsonSerializerContext
+public partial class AppJsonSerializerContext : JsonSerializerContext
 {
 
 }

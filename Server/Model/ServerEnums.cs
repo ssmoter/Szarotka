@@ -2,7 +2,7 @@
 {
     public static class ServerEnums
     {
-        public enum ValidationResult
+        public enum Result
         {
             Error = 0,
             Success = 1,

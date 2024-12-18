@@ -9,11 +9,11 @@ namespace DataBase.Helper
             get
             {
 #if WINDOWS 
-                return @"Szarotka\DataBaseSzarotkaSQLite.db3";
+                return Path.Combine("Szarotka", "DataBaseSzarotkaSQLite.db3");
 #elif ANDROID
                 return "DataBaseSzarotkaSQLite.db3";
 #else
-                return @"Szarotka\DataBaseSzarotkaSQLite.db3";
+                return Path.Combine("Szarotka", "DataBaseSzarotkaSQLite.db3");
 #endif
             }
         }
@@ -22,11 +22,11 @@ namespace DataBase.Helper
             get
             {
 #if WINDOWS
-                return @"Szarotka\BackupDataBaseSzarotkaSQLite.db3";
+                return Path.Combine("Szarotka","BackupDataBaseSzarotkaSQLite.db3");
 #elif ANDROID
                 return "BackupDataBaseSzarotkaSQLite.db3";
 #else
-                return @"Szarotka\BackupDataBaseSzarotkaSQLite.db3";
+                return Path.Combine("Szarotka", "BackupDataBaseSzarotkaSQLite.db3");
 
 #endif
             }

@@ -17,7 +17,7 @@ namespace ServerUnitTest.Validation
             IUserValidation _valid = new UserValidation(new());
             var valid = new ValidationException();
             var obj = _valid.PasswordValid(user, ref valid);
-            obj.Should().Be(Server.Model.ServerEnums.ValidationResult.Error);
+            obj.Should().Be(Server.Model.ServerEnums.Result.Error);
         }
         [Fact]
         public void ReturnValidLength7()
@@ -32,7 +32,7 @@ namespace ServerUnitTest.Validation
 
             var valid = new ValidationException();
             var obj = _valid.PasswordValid(user, ref valid);
-            obj.Should().Be(Server.Model.ServerEnums.ValidationResult.Error);
+            obj.Should().Be(Server.Model.ServerEnums.Result.Error);
         }
         [Fact]
         public void ReturnValidNoUpper()
@@ -47,7 +47,7 @@ namespace ServerUnitTest.Validation
             var valid = new ValidationException();
             var obj = _valid.PasswordValid(user, ref valid);
 
-            obj.Should().Be(Server.Model.ServerEnums.ValidationResult.Error);
+            obj.Should().Be(Server.Model.ServerEnums.Result.Error);
         }
         [Fact]
         public void ReturnValidNoLower()
@@ -62,7 +62,7 @@ namespace ServerUnitTest.Validation
             var valid = new ValidationException();
             var obj = _valid.PasswordValid(user, ref valid);
 
-            obj.Should().Be(Server.Model.ServerEnums.ValidationResult.Error);
+            obj.Should().Be(Server.Model.ServerEnums.Result.Error);
         }
         [Fact]
         public void ReturnValidNoSpecial()
@@ -77,7 +77,7 @@ namespace ServerUnitTest.Validation
             var valid = new ValidationException();
             var obj = _valid.PasswordValid(user, ref valid);
 
-            obj.Should().Be(Server.Model.ServerEnums.ValidationResult.Error);
+            obj.Should().Be(Server.Model.ServerEnums.Result.Error);
         }
         [Fact]
         public void ReturnValidContainEmail()
@@ -92,7 +92,7 @@ namespace ServerUnitTest.Validation
             var valid = new ValidationException();
             var obj = _valid.PasswordValid(user, ref valid);
 
-            obj.Should().Be(Server.Model.ServerEnums.ValidationResult.Error);
+            obj.Should().Be(Server.Model.ServerEnums.Result.Error);
         }
         [Fact]
         public void ReturnValidSuccess()
@@ -106,7 +106,7 @@ namespace ServerUnitTest.Validation
 
             var valid = new ValidationException();
             var obj = _valid.PasswordValid(user, ref valid);
-            obj.Should().Be(Server.Model.ServerEnums.ValidationResult.Success);
+            obj.Should().Be(Server.Model.ServerEnums.Result.Success);
         }
 
 
@@ -119,7 +119,7 @@ namespace ServerUnitTest.Validation
             IUserValidation _valid = new UserValidation(new());
             var valid = new ValidationException();
             var obj = _valid.PasswordValid(user, ref valid);
-            valid.ValidationErrors.Count(x => x.Validation == EnumsList.Validation.PasswordNull).Should().Be(1);
+            valid.ValidationErrors.Count(x => x.Validation == EnumsList.Validation.PasswordIsNull).Should().Be(1);
         }
         [Fact]
         public void RefValidLength7()

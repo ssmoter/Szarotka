@@ -16,7 +16,7 @@ namespace DataBase.Model
             get => new(_createdTicks, DateTimeKind.Local);
             set
             {
-                if (SetProperty(ref _createdTicks, value.ToLocalTime().Ticks))
+                if (SetProperty(ref _createdTicks, value.ToUniversalTime().Ticks))
                 {
                     OnPropertyChanged(nameof(Created));
                 }
@@ -28,7 +28,7 @@ namespace DataBase.Model
             get => new(_updatedTicks, DateTimeKind.Local);
             set
             {
-                if (SetProperty(ref _updatedTicks, value.ToLocalTime().Ticks))
+                if (SetProperty(ref _updatedTicks, value.ToUniversalTime().Ticks))
                 {
                     OnPropertyChanged(nameof(Updated));
                 }

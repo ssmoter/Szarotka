@@ -7,8 +7,8 @@ namespace Server.SqlQuery
         public static string SelectEmails()
         {
             string sql = $@"
-SELECT {nameof(RegisterUser)}.{nameof(RegisterUser.Email)} FROM {nameof(RegisterUser)}
-WHERE {nameof(RegisterUser)}.{nameof(RegisterUser.Email)} == ?
+SELECT {nameof(User)}.{nameof(User.Email)} FROM {nameof(User)}
+WHERE {nameof(User)}.{nameof(User.Email)} == ?
 ";
             return sql;
         }

@@ -13,9 +13,9 @@ namespace Server.Validation
 {
     public interface IUserValidation
     {
-        ServerEnums.ValidationResult EmailIsCorrent(RegisterUser? user);
-        ServerEnums.ValidationResult EmailIsExist(RegisterUser? user);
-        ServerEnums.ValidationResult PasswordValid(RegisterUser? user, ref ValidationException error);
+        ServerEnums.Result EmailIsCorrent(RegisterUser? user);
+        Task<ServerEnums.Result> EmailIsExist(RegisterUser? user);
+        ServerEnums.Result PasswordValid(RegisterUser? user, ref ValidationException error);
     }
 
     public class UserValidation : IUserValidation
@@ -28,16 +28,16 @@ namespace Server.Validation
         }
 
         //kod od microsoft
-        public ServerEnums.ValidationResult EmailIsCorrent(RegisterUser? user)
+        public ServerEnums.Result EmailIsCorrent(RegisterUser? user)
         {
 
             if (user is null)
-                return ServerEnums.ValidationResult.Error;
+                return ServerEnums.Result.Error;
 
             var email = user.Email;
 
             if (string.IsNullOrWhiteSpace(email))
-                return ServerEnums.ValidationResult.Error;
+                return ServerEnums.Result.Error;
 
             try
             {
@@ -59,11 +59,11 @@ namespace Server.Validation
             }
             catch (RegexMatchTimeoutException)
             {
-                return ServerEnums.ValidationResult.Error;
+                return ServerEnums.Result.Error;
             }
             catch (ArgumentException)
             {
-                return ServerEnums.ValidationResult.Error;
+                return ServerEnums.Result.Error;
             }
 
             try
@@ -71,39 +71,38 @@ namespace Server.Validation
                 var regexResult = Regex.IsMatch(email,
                     @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
                     RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
-                return regexResult ? ServerEnums.ValidationResult.Success : ServerEnums.ValidationResult.Error;
+                return regexResult ? ServerEnums.Result.Success : ServerEnums.Result.Error;
             }
             catch (RegexMatchTimeoutException)
             {
-                return ServerEnums.ValidationResult.Error;
+                return ServerEnums.Result.Error;
             }
         }
-        public ServerEnums.ValidationResult EmailIsExist(RegisterUser? user)
+        public async Task<ServerEnums.Result> EmailIsExist(RegisterUser? user)
         {
             if (user is null)
-                return ServerEnums.ValidationResult.Error;
+                return ServerEnums.Result.Error;
 
-            var emails = _db.DataBase.Query<User>(ValidationUserQuery.SelectEmails(), user.Email);
-
+            var emails =await _db.DataBaseAsync.QueryAsync<User>(ValidationUserQuery.SelectEmails(), user.Email);
             if (emails is null)
-                return ServerEnums.ValidationResult.Success;
+                return ServerEnums.Result.Success;
 
             if (emails.Count > 0)
-                return ServerEnums.ValidationResult.Error;
+                return ServerEnums.Result.Error;
 
 
-            return ServerEnums.ValidationResult.Success;
+            return ServerEnums.Result.Success;
         }
-        public ServerEnums.ValidationResult PasswordValid(RegisterUser? user, ref ValidationException error)
+        public ServerEnums.Result PasswordValid(RegisterUser? user, ref ValidationException error)
         {
-            ServerEnums.ValidationResult result = ServerEnums.ValidationResult.Success;
+            ServerEnums.Result result = ServerEnums.Result.Success;
 
             if (user is null)
             {
                 string message = $"{nameof(RegisterUser)} is null";
                 Console.WriteLine(message);
-                error.AddError(message, EnumsList.Validation.PasswordNull);
-                return ServerEnums.ValidationResult.Error;
+                error.AddError(message, EnumsList.Validation.PasswordIsNull);
+                return ServerEnums.Result.Error;
             }
 
             var password = user.Password;
@@ -113,7 +112,7 @@ namespace Server.Validation
                 string message = $"{nameof(RegisterUser.Password)} is shorter than 8 characters";
                 Console.WriteLine(message);
                 error.AddError(message, EnumsList.Validation.PasswordLenght);
-                result = ServerEnums.ValidationResult.Error;
+                result = ServerEnums.Result.Error;
             }
 
             bool upper = false;
@@ -136,35 +135,35 @@ namespace Server.Validation
                 string message = $"{nameof(RegisterUser.Password)} don't have 1 upper characters";
                 Console.WriteLine(message);
                 error.AddError(message, EnumsList.Validation.PasswordNoUpper);
-                result = ServerEnums.ValidationResult.Error;
+                result = ServerEnums.Result.Error;
             }
             if (!lower)
             {
                 string message = $"{nameof(RegisterUser.Password)} don't have 1 lower characters";
                 Console.WriteLine(message);
                 error.AddError(message, EnumsList.Validation.PasswordNoLower);
-                result = ServerEnums.ValidationResult.Error;
+                result = ServerEnums.Result.Error;
             }
             if (!digit)
             {
                 string message = $"{nameof(RegisterUser.Password)} don't have 1 digit characters";
                 Console.WriteLine(message);
                 error.AddError(message, EnumsList.Validation.PasswordNoDigit);
-                result = ServerEnums.ValidationResult.Error;
+                result = ServerEnums.Result.Error;
             }
             if (!special)
             {
                 string message = $"{nameof(RegisterUser.Password)} don't have 1 special characters";
                 Console.WriteLine(message);
                 error.AddError(message, EnumsList.Validation.PasswordNoSpecial);
-                result = ServerEnums.ValidationResult.Error;
+                result = ServerEnums.Result.Error;
             }
             if (password.Contains(user.Email))
             {
                 string message = $"{nameof(RegisterUser.Password)} contains {nameof(RegisterUser.Email)}";
                 Console.WriteLine(message);
                 error.AddError(message, EnumsList.Validation.PassworContainEmail);
-                result = ServerEnums.ValidationResult.Error;
+                result = ServerEnums.Result.Error;
             }
             return result;
         }
