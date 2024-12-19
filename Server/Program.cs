@@ -31,21 +31,18 @@ builder.Services.AddProblemDetails(options =>
 });
 
 builder.Services.AddExceptionHandler<Server.Handler.ProblemExceptionHandler>();
-builder.Services.AddMyServiceServer();
+builder.Services.AddMyServiceServer(builder.Configuration);
+builder.Services.AddSecurityServicesServer(builder.Configuration);
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
 app.UseExceptionHandler();
 
-var sampleTodos = new Todo[] {
-    new(1, "Walk the dog"),
-    new(2, "Do the dishes", DateOnly.FromDateTime(DateTime.Now)),
-    new(3, "Do the laundry", DateOnly.FromDateTime(DateTime.Now.AddDays(1))),
-    new(4, "Clean the bathroom"),
-    new(5, "Clean the car", DateOnly.FromDateTime(DateTime.Now.AddDays(2)))
-};
-
 app.UseRouting();
+app.UseAuthorization();
+
 
 var user = app.MapGroup("/user");
 user.MapPost("/register", async ([FromBody] RegisterUser user, IRegisterUserEndpoint registerUserEndpoint)
@@ -58,7 +55,7 @@ user.MapGet("/confirm_email/{code}", async (int code, IRegisterUserEndpoint regi
     {
         return await registerUserEndpoint.ConfirmEmail(code);
     });
-user.MapPost("login", async ([FromBody]LoginUser user, ILoginUserEndpoint loginUserEndpoint)
+user.MapPost("login", async ([FromBody] LoginUser user, ILoginUserEndpoint loginUserEndpoint)
     =>
     {
         return await loginUserEndpoint.LogInUser(user);
@@ -69,7 +66,29 @@ user.MapGet("logout", async (string user, ILoginUserEndpoint loginUserEndpoint)
     return await loginUserEndpoint.LogOutUser(user);
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+var sampleTodos = new Todo[] {
+    new(1, "Walk the dog"),
+    new(2, "Do the dishes", DateOnly.FromDateTime(DateTime.Now)),
+    new(3, "Do the laundry", DateOnly.FromDateTime(DateTime.Now.AddDays(1))),
+    new(4, "Clean the bathroom"),
+    new(5, "Clean the car", DateOnly.FromDateTime(DateTime.Now.AddDays(2)))
+};
+
 var todosApi = app.MapGroup("/todos");
+todosApi.RequireAuthorization();
 todosApi.MapGet("/", () => sampleTodos);
 todosApi.MapGet("/{id}", (int id) =>
     sampleTodos.FirstOrDefault(a => a.Id == id) is { } todo

@@ -109,12 +109,16 @@
                                 <HorizontalStackLayout HorizontalOptions="Center">
 
                                     <Image
+                                        x:DataType="vm:AddEditProductVM"
                                         HorizontalOptions="Center"
                                         Source="{Binding .}"
                                         WidthRequest="{OnPlatform Android=100,
                                                                   Default=300}">
                                         <Image.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AddEditProductVM}}, Path=SetCurrentImgCommand}" CommandParameter="{Binding .}" />
+                                            <TapGestureRecognizer
+                                                x:DataType="vm:AddEditProductVM"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AddEditProductVM}}, Path=SetCurrentImgCommand}"
+                                                CommandParameter="{Binding .}" />
                                         </Image.GestureRecognizers>
                                     </Image>
 

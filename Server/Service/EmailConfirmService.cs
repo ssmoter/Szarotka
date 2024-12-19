@@ -13,11 +13,11 @@ namespace Server.Service
     {
         private readonly Random _random;
         private readonly IEmailService _emailService;
-        private readonly Service.IRegisterUserService _registerService;
+        private readonly IRegisterUserService _registerService;
 
-        public EmailConfirmService(Random random, IEmailService emailService, IRegisterUserService registerService)
+        public EmailConfirmService(IEmailService emailService, IRegisterUserService registerService)
         {
-            _random = random;
+            _random = new();
             _emailService = emailService;
             _registerService = registerService;
         }

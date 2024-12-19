@@ -19,12 +19,11 @@ namespace Server.Endpoints
         private readonly AccessDataBase _db;
         private readonly IRegisterUserService _registerService;
         private readonly IUserValidation _userValidation;
-        private readonly Random _random;
         private readonly IEmailService _emailService;
         private readonly IEmailConfirmService _emailConfirmService;
 
         public RegisterUserEndpoint(AccessDataBase db
-                                    , Service.IRegisterUserService register
+                                    , IRegisterUserService register
                                     , IUserValidation userValidation
                                     , IEmailService emailService,
 IEmailConfirmService emailConfirmService)
@@ -32,7 +31,6 @@ IEmailConfirmService emailConfirmService)
             _db = db;
             _registerService = register;
             _userValidation = userValidation;
-            _random = new Random();
             _emailService = emailService;
             _emailConfirmService = emailConfirmService;
         }

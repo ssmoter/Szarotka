@@ -96,6 +96,7 @@
                                 VerticalOptions="Center">
 
                                 <ImageButton
+                                    x:DataType="VM:ListProductVM"
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=SetDownCommand}"
                                     CommandParameter="{Binding .}"
                                     HeightRequest="10"
@@ -103,6 +104,7 @@
                                                              Dark={Static ImgPath:ImgArrow.ArrowUpwardWhite}}"
                                     WidthRequest="10" />
                                 <ImageButton
+                                    x:DataType="VM:ListProductVM"
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=SetUpCommand}"
                                     CommandParameter="{Binding .}"
                                     HeightRequest="10"
@@ -118,6 +120,7 @@
                                 HorizontalOptions="End"
                                 VerticalOptions="Center">
                                 <Button
+                                    x:DataType="VM:ListProductVM"
                                     BackgroundColor="Green"
                                     Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=EditProductCommand}"
                                     CommandParameter="{Binding .}"

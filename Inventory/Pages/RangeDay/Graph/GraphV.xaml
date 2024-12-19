@@ -5,7 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:DrawGraph="clr-namespace:Inventory.Data.Draw"
     xmlns:VM="clr-namespace:Inventory.Pages.RangeDay.Graph"
-    x:Name="this">
+    x:Name="this"
+    x:DataType="VM:GraphV">
 
 
     <Grid
@@ -16,6 +17,7 @@
 
             <HorizontalStackLayout HorizontalOptions="Center">
                 <Button
+                    x:DataType="VM:GraphV"
                     Command="{Binding Vm.OpenOptonsGraphCommand}"
                     HorizontalOptions="Center"
                     Text="Opcje Wyświetlania"

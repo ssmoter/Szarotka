@@ -40,6 +40,7 @@
                                     TextDecorations="Underline">
                                     <Label.GestureRecognizers>
                                         <TapGestureRecognizer
+                                            x:DataType="VM:MainVDriversRoutesVM"
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=ChangeNameCommand}"
                                             CommandParameter="{Binding .}"
                                             NumberOfTapsRequired="2" />
@@ -49,12 +50,14 @@
                                 <HorizontalStackLayout HorizontalOptions="Center">
 
                                     <Button
+                                        x:DataType="VM:MainVDriversRoutesVM"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=NavigationToListOfPointsCommand}"
                                         CommandParameter="{Binding .}"
                                         HorizontalOptions="Center"
                                         Text="Lista" />
 
                                     <Button
+                                        x:DataType="VM:MainVDriversRoutesVM"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=NavigationToMapsSelectedCommand}"
                                         CommandParameter="{Binding .}"
                                         HorizontalOptions="Center"

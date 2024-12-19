@@ -18,9 +18,11 @@ namespace SzarotkaBlazor
 
             InitializeComponent();
             RoutingCollectionExtensions.AddRoutings();
-            MainPage = new AppShell();
         }
 
-
+        protected override Window CreateWindow(IActivationState? activationState)
+        {
+            return new Window(new AppShell());
+        }
     }
 }
