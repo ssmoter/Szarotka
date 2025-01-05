@@ -5,6 +5,8 @@ using DataBase.Data;
 
 using DataBase.Model.EntitiesInventory;
 
+using Shared.Data;
+
 using System.Collections.ObjectModel;
 
 namespace Inventory.Pages.Products.ListProduct
@@ -54,7 +56,7 @@ namespace Inventory.Pages.Products.ListProduct
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
         async Task<ProductPrice[]> SelectPricesAsync(Guid id)
@@ -87,7 +89,7 @@ namespace Inventory.Pages.Products.ListProduct
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
         ProductPrice[] SelectPrices(Guid id)
@@ -148,14 +150,14 @@ namespace Inventory.Pages.Products.ListProduct
                     }
                     catch (Exception ex)
                     {
-                        await _db.SaveLogAsync(ex);
+                        await _db.SaveLogAsyncExtension(ex);
                         await Shell.Current.DisplayAlert("Error", ex.Message, "Ok");
                     }
                 }
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -172,7 +174,7 @@ namespace Inventory.Pages.Products.ListProduct
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
         [RelayCommand]
@@ -192,7 +194,7 @@ namespace Inventory.Pages.Products.ListProduct
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
 
         }
@@ -216,7 +218,7 @@ namespace Inventory.Pages.Products.ListProduct
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 

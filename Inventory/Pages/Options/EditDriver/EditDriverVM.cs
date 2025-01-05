@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 
+using Shared.Data;
+
 namespace Inventory.Pages.Options.EditDriver
 {
     [QueryProperty(nameof(Driver), nameof(Driver))]
@@ -40,7 +42,7 @@ namespace Inventory.Pages.Options.EditDriver
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
 
         }

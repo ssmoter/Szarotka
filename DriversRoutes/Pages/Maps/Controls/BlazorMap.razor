@@ -2,6 +2,7 @@
 @using Microsoft.JSInterop
 @using Shared.Helper
 @using Shared.Helper.Img.Svg
+@using Shared.Data
 
 @inject IJSRuntime JsRuntime
 @inject DataBase.Data.AccessDataBase _db
@@ -197,7 +198,7 @@
         }
         catch (Exception ex)
         {
-            _db.SaveLog(ex);
+            _db.SaveLogExtension(ex);
         }
     }
     private async Task NativeMapDispalyPin()
@@ -216,7 +217,7 @@
         }
         catch (Exception ex)
         {
-            _db.SaveLog(ex);
+            _db.SaveLogExtension(ex);
         }
     }
 

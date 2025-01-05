@@ -134,7 +134,7 @@ namespace ServerUnitTest.Validation
 
             var valid = new ValidationException();
             var obj = _valid.PasswordValid(user, ref valid);
-            valid.ValidationErrors.Count(x => x.Validation == EnumsList.Validation.PasswordLenght).Should().Be(1);
+            valid.ValidationErrors.Count(x => x.Validation == EnumsList.Validation.PasswordLength8).Should().Be(1);
         }
         [Fact]
         public void RefValidNoUpper()
@@ -193,7 +193,7 @@ namespace ServerUnitTest.Validation
 
             var valid = new ValidationException();
             var obj = _valid.PasswordValid(user, ref valid);
-            valid.ValidationErrors.Count(x => x.Validation == EnumsList.Validation.PassworContainEmail).Should().Be(1);
+            valid.ValidationErrors.Count(x => x.Validation == EnumsList.Validation.PasswordsContainEmail).Should().Be(1);
 
         }
         [Fact]

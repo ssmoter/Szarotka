@@ -31,13 +31,14 @@ namespace Server.Service
             services.AddScoped<IEmailConfirmService, EmailConfirmService>();
             services.AddScoped<JSONWebTokensSettings>(options =>
             {
-                services.Configure<JSONWebTokensSettings>
-                 (configuration.GetSection("JSONWebTokensSettings"));
+                //services.Configure<JSONWebTokensSettings>
+                // (configuration.GetSection("JSONWebTokensSettings"));
                 return new JSONWebTokensSettings(
                     configuration["JSONWebTokensSettings:Key"],
                     configuration["JSONWebTokensSettings:Issuer"],
                     configuration["JSONWebTokensSettings:Audience"],
-                    configuration["JSONWebTokensSettings:DurationInMinutes"]
+                    configuration["JSONWebTokensSettings:DurationInMinutes"],
+                    configuration["JSONWebTokensSettings:DurationInDays"]
                     );
             });
 

@@ -9,5 +9,6 @@ CREATE TABLE "User" (
 "UserType"  integer ,
 "IsEmailConfirm" integer,
 "IsDelete" integer,
-"Password" varchar(36)
+"Password" varchar(36),
+"RememberMe" INTEGER
 )

@@ -7,6 +7,8 @@ using DataBase.Model.EntitiesInventory;
 
 using Inventory.Pages.Options.EditDriver;
 
+using Shared.Data;
+
 using System.Collections.ObjectModel;
 
 namespace Inventory.Pages.Options.CreateTable
@@ -67,7 +69,7 @@ namespace Inventory.Pages.Options.CreateTable
             }
             catch (Exception ex)
             {
-                db.SaveLog(ex);
+                db.SaveLogExtension(ex);
             }
         }
 
@@ -119,7 +121,7 @@ namespace Inventory.Pages.Options.CreateTable
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
 
         }
@@ -148,7 +150,7 @@ namespace Inventory.Pages.Options.CreateTable
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
 
         }
@@ -163,7 +165,7 @@ namespace Inventory.Pages.Options.CreateTable
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -218,7 +220,7 @@ namespace Inventory.Pages.Options.CreateTable
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -273,7 +275,7 @@ namespace Inventory.Pages.Options.CreateTable
             }
             catch (Exception ex)
             {
-                db.SaveLog(ex);
+                db.SaveLogExtension(ex);
             }
         }
         async Task<bool> CheckIsExist(string table)

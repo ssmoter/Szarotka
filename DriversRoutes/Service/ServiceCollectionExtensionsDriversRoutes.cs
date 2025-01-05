@@ -38,8 +38,6 @@ namespace DriversRoutes.Service
             services.AddScoped<Pages.Maps.Navigate.NavigateV>();
             services.AddScoped<Pages.Maps.Navigate.NavigateVM>();
 
-            services.AddScoped<HttpClient>();
-
             services.AddSingleton<BlazorMap>();
 
             return services;

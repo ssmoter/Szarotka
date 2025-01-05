@@ -35,7 +35,7 @@ namespace DriversRoutes.Pages.Main
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
                 return [];
             }
         }
@@ -79,7 +79,7 @@ namespace DriversRoutes.Pages.Main
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -110,7 +110,7 @@ namespace DriversRoutes.Pages.Main
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
     }

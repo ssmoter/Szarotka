@@ -9,6 +9,7 @@ using DataBase.Model.EntitiesRoutes;
 
 using DriversRoutes.Pages.Popups.MoveTimeOnCustomers;
 
+using Shared.Data;
 using Shared.Data.File;
 using Shared.Pages.ExistingFiles;
 using Shared.Service;
@@ -82,7 +83,7 @@ namespace DriversRoutes.Pages.ListOfPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
             finally
             {
@@ -131,7 +132,7 @@ namespace DriversRoutes.Pages.ListOfPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
                 throw;
             }
             finally
@@ -150,7 +151,7 @@ namespace DriversRoutes.Pages.ListOfPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
                 throw;
             }
             finally
@@ -208,7 +209,7 @@ namespace DriversRoutes.Pages.ListOfPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -244,7 +245,7 @@ namespace DriversRoutes.Pages.ListOfPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -266,7 +267,7 @@ namespace DriversRoutes.Pages.ListOfPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -302,7 +303,7 @@ namespace DriversRoutes.Pages.ListOfPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
             finally
             {
@@ -342,7 +343,7 @@ namespace DriversRoutes.Pages.ListOfPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -368,7 +369,7 @@ namespace DriversRoutes.Pages.ListOfPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -386,7 +387,7 @@ namespace DriversRoutes.Pages.ListOfPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -424,7 +425,7 @@ namespace DriversRoutes.Pages.ListOfPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
         #endregion

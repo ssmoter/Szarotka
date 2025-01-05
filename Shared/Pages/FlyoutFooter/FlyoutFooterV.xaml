@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="Shared.Pages.FlyoutFooter.FlyoutFooterV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:sys="clr-namespace:System;assembly=netstandard"
+    xmlns:vm="clr-namespace:Shared.Pages.FlyoutFooter"
+    x:DataType="vm:FlyoutFooterVM">
+
+    <StackLayout>
+
+        <Border HorizontalOptions="Fill" />
+
+        <VerticalStackLayout
+            Margin="10"
+            Padding="10"
+            HorizontalOptions="Center">
+
+
+            <VerticalStackLayout IsVisible="{Binding IsLogin}">
+
+                <Label
+                    FontSize="Large"
+                    HorizontalOptions="Center"
+                    Text="Wyloguj">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding LogOutCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+
+
+            </VerticalStackLayout>
+
+            <Label HorizontalOptions="Center" Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{}{0:dddd, MMMM}'}" />
+            <Label HorizontalOptions="Center" Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{}{0:dd.MM.yyyy}'}" />
+
+        </VerticalStackLayout>
+
+    </StackLayout>
+</ContentView>

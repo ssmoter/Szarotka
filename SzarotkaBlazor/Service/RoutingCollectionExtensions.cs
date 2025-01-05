@@ -1,10 +1,13 @@
-﻿namespace SzarotkaBlazor.Service
+﻿using SzarotkaBlazor.Pages.Options.Main;
+
+namespace SzarotkaBlazor.Service
 {
     public static class RoutingCollectionExtensions
     {
         public static void AddRoutings()
         {
-            Routing.RegisterRoute(nameof(SzarotkaBlazor.Pages.Options.Main.MainOptionsV), typeof(SzarotkaBlazor.Pages.Options.Main.MainOptionsV));
+            Routing.RegisterRoute(nameof(MainOptionsV), typeof(MainOptionsV));
+            Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
 
             Inventory.Service.RoutingCollectionExtensionsInventory.AddRoutings();
             Shared.Service.RoutingCollectionExtensionsShared.AddRoutings();

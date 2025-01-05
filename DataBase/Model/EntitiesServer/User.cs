@@ -6,7 +6,9 @@ namespace DataBase.Model.EntitiesServer
 {
     [JsonSerializable(typeof(User))]
     [JsonSourceGenerationOptions(WriteIndented = true,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+
+        PropertyNameCaseInsensitive = true)]
     public partial class UserJsonSerializerContext : JsonSerializerContext
     { }
     public partial class User : BaseEntities<Guid>
@@ -87,8 +89,22 @@ namespace DataBase.Model.EntitiesServer
             }
         }
 
+        private bool rememberMe;
+        public bool RememberMe
+        {
+            get => rememberMe;
+            set
+            {
+                if (SetProperty(ref rememberMe, value))
+                {
+                    OnPropertyChanged(nameof(RememberMe));
+                }
+            }
+        }
+
         [SQLite.Ignore]
         public string Token { get; set; } = "";
+
     }
     [JsonSerializable(typeof(RegisterUser))]
     [JsonSourceGenerationOptions(WriteIndented = true,
@@ -140,6 +156,18 @@ namespace DataBase.Model.EntitiesServer
                 }
             }
         }
+        private bool rememberMe;
+        public bool RememberMe
+        {
+            get => rememberMe;
+            set
+            {
+                if (SetProperty(ref rememberMe, value))
+                {
+                    OnPropertyChanged(nameof(RememberMe));
+                }
+            }
+        }
     }
 
     public class RegisterConfirmEmailUser : BaseEntities<int>
@@ -156,7 +184,7 @@ namespace DataBase.Model.EntitiesServer
         }
         public RegisterConfirmEmailUser()
         {
-            
+
         }
     }
 

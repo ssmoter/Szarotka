@@ -1,8 +1,8 @@
-﻿
-using DataBase.Data;
+﻿using DataBase.Data;
 using DataBase.Model;
 
 using Shared.Data;
+using Shared.Helper;
 
 using SzarotkaBlazor.Pages.Options.Main;
 
@@ -13,17 +13,33 @@ namespace SzarotkaBlazor
     {
         private readonly CreatedDataBase _createdDataBase;
         private readonly AccessDataBase _db;
-        public MainPage()
+        public MainPage(AccessDataBase db)
         {
             InitializeComponent();
-            _db = new();
-            _createdDataBase = new CreatedDataBase(_db);
+            _db = db;
+            _createdDataBase = new(db);
+
         }
 
 
         protected override async void OnNavigatedTo(NavigatedToEventArgs args)
         {
             base.OnNavigatedTo(args);
+
+            var log = GotToLogin();
+            var db = UpdateDataBase();
+
+            await Task.WhenAll(log, db);
+        }
+        private async Task GotToLogin()
+        {
+            if (!UserAfterLogin.IsLogin)
+            {
+                await Shell.Current.GoToAsync($"{nameof(Shared.Pages.LogIn.LogInV)}");
+            }
+        }
+        private async Task UpdateDataBase()
+        {
             try
             {
                 var old = _createdDataBase.GetCurrentVersion();
@@ -35,7 +51,7 @@ namespace SzarotkaBlazor
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 

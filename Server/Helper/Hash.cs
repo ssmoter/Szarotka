@@ -5,7 +5,7 @@ namespace Server.Helper
 {
     public class Hash
     {
-        private const string _salt = "";
+        private const string _salt = " ";
         public static string PasswordSHA256(string password)
         {
             password += _salt;

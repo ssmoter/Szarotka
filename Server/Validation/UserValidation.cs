@@ -111,7 +111,7 @@ namespace Server.Validation
             {
                 string message = $"{nameof(RegisterUser.Password)} is shorter than 8 characters";
                 Console.WriteLine(message);
-                error.AddError(message, EnumsList.Validation.PasswordLenght);
+                error.AddError(message, EnumsList.Validation.PasswordLength8);
                 result = ServerEnums.Result.Error;
             }
 
@@ -162,7 +162,7 @@ namespace Server.Validation
             {
                 string message = $"{nameof(RegisterUser.Password)} contains {nameof(RegisterUser.Email)}";
                 Console.WriteLine(message);
-                error.AddError(message, EnumsList.Validation.PassworContainEmail);
+                error.AddError(message, EnumsList.Validation.PasswordsContainEmail);
                 result = ServerEnums.Result.Error;
             }
             return result;

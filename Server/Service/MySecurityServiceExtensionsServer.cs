@@ -12,9 +12,6 @@ namespace Server.Service
         public static void AddSecurityServicesServer(this IServiceCollection services,
                                             IConfiguration configuration)
         {
-            services.Configure<JSONWebTokensSettings>
-                (configuration.GetSection("JSONWebTokensSettings"));
-
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -26,7 +23,8 @@ namespace Server.Service
                     configuration["JSONWebTokensSettings:Key"],
                     configuration["JSONWebTokensSettings:Issuer"],
                     configuration["JSONWebTokensSettings:Audience"],
-                    configuration["JSONWebTokensSettings:DurationInMinutes"]
+                    configuration["JSONWebTokensSettings:DurationInMinutes"],
+                    configuration["JSONWebTokensSettings:DurationInDays"]
                     );
 
                 var bytes = Encoding.UTF8.GetBytes(config.Key);
@@ -48,10 +46,11 @@ namespace Server.Service
                 {
                     OnAuthenticationFailed = c =>
                     {
-                        c.NoResult();
-                        c.Response.StatusCode = 500;
-                        c.Response.ContentType = "text/plain";
-                        return c.Response.WriteAsync(c.Exception.ToString());
+                        //c.NoResult();
+                        //c.Response.StatusCode = 500;
+                        //c.Response.ContentType = "text/plain";
+                        //c.Response.WriteAsync(c.Exception.ToString());
+                        return Task.CompletedTask;
                     },
                     OnChallenge = context =>
                     {

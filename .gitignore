@@ -365,3 +365,4 @@ FodyWeavers.xsd
 /DataBase/Key/GoogleApi.cs
 /DataBase/Key/GoogleApi.cs
 /Server/Development/Szarotka/DataBaseSzarotkaSQLite.db3
+/Shared/Key/GoogleApi.cs

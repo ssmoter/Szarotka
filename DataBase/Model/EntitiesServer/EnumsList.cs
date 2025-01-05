@@ -4,28 +4,28 @@
     {
         public enum Validation
         {
-            PasswordIsNull = 0,
-            PasswordLenght = 1,
-            PasswordNoUpper = 2,
-            PasswordNoLower = 3,
-            PasswordNoDigit = 4,
-            PasswordNoSpecial = 5,
-            PassworContainEmail = 6,
+            RegisterUserNull = 0,
 
-            RegisterUserNull = 7,
+            PasswordIsNull = 1,
+            PasswordLength8 = 2,
+            PasswordNoUpper = 3,
+            PasswordNoLower = 4,
+            PasswordNoDigit = 5,
+            PasswordNoSpecial = 6,
+            PasswordsContainEmail = 10,
 
-            EmailValidFormat = 8,
-            EmailExist = 9,
+            EmailValidFormat = 11,
+            EmailExist = 12,
+            EmailIsNull = 20,
 
-            EmailCodeIsExpire = 10,
-            EmailCodeNotExist = 11,
+            EmailCodeIsExpire = 21,
+            EmailCodeNotExist = 30,
 
-            LoginIsNull = 12,
-            EmailIsNull = 13,
+            LoginIsNull = 31,
 
-            AccountNotFound = 14,
-            AccountWasDelete = 15,
-            AccountEmailIsNotConfirm = 16,
+            AccountNotFound = 41,
+            AccountWasDelete = 42,
+            AccountEmailIsNotConfirm = 50,
         }
     }
 }

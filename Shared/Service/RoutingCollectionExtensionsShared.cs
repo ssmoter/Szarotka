@@ -1,17 +1,29 @@
-﻿namespace Shared.Service
+﻿using Shared.Pages.ConfirmEmail;
+using Shared.Pages.ExistingFiles;
+using Shared.Pages.Log;
+using Shared.Pages.Log.LogData;
+using Shared.Pages.LogIn;
+using Shared.Pages.Register;
+using Shared.Pages.UpdateDataBase;
+
+namespace Shared.Service
 {
     public static class RoutingCollectionExtensionsShared
     {
         public static void AddRoutings()
         {
-            Routing.RegisterRoute(nameof(Pages.Log.LogData.LogDataV), typeof(Pages.Log.LogData.LogDataV));
+            Routing.RegisterRoute(nameof(LogDataV), typeof(LogDataV));
 #if WINDOWS
-            Routing.RegisterRoute(nameof(Pages.Log.LogV), typeof(Pages.Log.LogVWindows));
+            Routing.RegisterRoute(nameof(LogV), typeof(LogVWindows));
 #else
-            Routing.RegisterRoute(nameof(Pages.Log.LogV), typeof(Pages.Log.LogV));
+            Routing.RegisterRoute(nameof(LogV), typeof(LogV));
 #endif
-            Routing.RegisterRoute(nameof(Pages.ExistingFiles.ExistingFilesV), typeof(Pages.ExistingFiles.ExistingFilesV));
-            Routing.RegisterRoute(nameof(Pages.UpdateDataBase.UpdateDataBaseV), typeof(Pages.UpdateDataBase.UpdateDataBaseV));
+            Routing.RegisterRoute(nameof(ExistingFilesV), typeof(ExistingFilesV));
+            Routing.RegisterRoute(nameof(UpdateDataBaseV), typeof(UpdateDataBaseV));
+            Routing.RegisterRoute(nameof(RegisterV), typeof(RegisterV));
+            Routing.RegisterRoute(nameof(ConfirmEmailV), typeof(ConfirmEmailV));
+            Routing.RegisterRoute(nameof(LogInV), typeof(LogInV));
+
 
         }
     }

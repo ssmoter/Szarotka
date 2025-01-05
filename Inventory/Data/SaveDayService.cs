@@ -6,6 +6,8 @@ using DataBase.Model.EntitiesInventory;
 
 using Inventory.Service;
 
+using Shared.Data;
+
 using System.Collections.ObjectModel;
 
 namespace Inventory.Data
@@ -68,7 +70,7 @@ namespace Inventory.Data
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
             return value;
         }

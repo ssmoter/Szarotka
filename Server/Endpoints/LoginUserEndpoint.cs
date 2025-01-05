@@ -1,8 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
 
-using Server.Model;
-
 using Server.Service;
 
 namespace Server.Endpoints
@@ -11,20 +9,22 @@ namespace Server.Endpoints
     {
         Task<IResult> LogInUser(LoginUser user);
         Task<IResult> LogOutUser(string user);
+        Task<IResult> RefreshToken(string token);
     }
 
     public class LoginUserEndpoint : ILoginUserEndpoint
     {
         private readonly AccessDataBase _db;
         private readonly ILoginService _loginService;
-        private readonly IEmailService _emailService;
         private readonly IEmailConfirmService _emailConfirmService;
-        public LoginUserEndpoint(AccessDataBase db, ILoginService loginService, IEmailService emailService, IEmailConfirmService emailConfirmService)
+        private readonly IAuthenticationService _authenticationService;
+
+        public LoginUserEndpoint(AccessDataBase db, ILoginService loginService, IEmailConfirmService emailConfirmService, IAuthenticationService authenticationService)
         {
             _db = db;
             _loginService = loginService;
-            _emailService = emailService;
             _emailConfirmService = emailConfirmService;
+            _authenticationService = authenticationService;
         }
 
 
@@ -55,6 +55,7 @@ namespace Server.Endpoints
             }
             catch (Exception ex)
             {
+                Console.WriteLine(valid.GetError());
                 Console.WriteLine(ex.Message);
                 throw;
             }
@@ -78,20 +79,43 @@ namespace Server.Endpoints
                     throw valid;
                 }
 
+                var token = await _authenticationService.AuthenticateAsync(dbUser);
 
-
-
-                return Results.Ok("token");
+                return Results.Ok(new User() { Token = token.Token });
             }
             catch (Exception ex)
             {
+                _db.SaveLog(ex);
+                Console.WriteLine(valid.GetError());
                 Console.WriteLine(ex.Message);
                 throw;
             }
-
         }
+
+        public async Task<IResult> RefreshToken(string token)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    throw new ArgumentNullException(nameof(token));
+                }
+                var newToken = await _authenticationService.AuthenticateAsync(token);
+
+                return Results.Ok(newToken);
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
+
+
         public async Task<IResult> LogOutUser(string user)
         {
+            await Task.Delay(1);
             return Results.Ok();
         }
 

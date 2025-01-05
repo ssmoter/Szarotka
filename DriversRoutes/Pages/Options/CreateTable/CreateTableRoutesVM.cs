@@ -43,7 +43,7 @@ namespace DriversRoutes.Pages.Options.CreateTable
                 }
                 catch (Exception ex)
                 {
-                    _db.SaveLog(ex);
+                    _db.SaveLogExtension(ex);
                 }
             });
         }
@@ -88,7 +88,7 @@ namespace DriversRoutes.Pages.Options.CreateTable
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
 
         }
@@ -115,7 +115,7 @@ namespace DriversRoutes.Pages.Options.CreateTable
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
 
         }

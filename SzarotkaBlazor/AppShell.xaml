@@ -3,36 +3,101 @@
     x:Class="SzarotkaBlazor.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:emailConfirm="clr-namespace:Shared.Pages.ConfirmEmail;assembly=Shared"
+    xmlns:footer="clr-namespace:Shared.Pages.FlyoutFooter;assembly=Shared"
+    xmlns:header="clr-namespace:Shared.Pages.FlyoutHeader;assembly=Shared"
     xmlns:img="clr-namespace:Shared.Helper.Img;assembly=Shared"
     xmlns:inventory="clr-namespace:Inventory.Pages.Main;assembly=Inventory"
     xmlns:local="clr-namespace:SzarotkaBlazor"
+    xmlns:login="clr-namespace:Shared.Pages.LogIn;assembly=Shared"
     xmlns:options="clr-namespace:SzarotkaBlazor.Pages.Options.Main"
+    xmlns:register="clr-namespace:Shared.Pages.Register;assembly=Shared"
     xmlns:routes="clr-namespace:DriversRoutes.Pages.Main;assembly=DriversRoutes"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:SzarotkaBlazor"
     Title="Szarotka"
+    x:DataType="vm:AppShellVM"
     Shell.FlyoutBehavior="Flyout">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        FlyoutItemIsVisible="False"
-        Route="MainPage" />
 
 
-    <FlyoutItem Title="Inwentarz" Icon="{AppThemeBinding Light={Static img:TabBarImg.InventoryBlack}, Dark={Static img:TabBarImg.InventoryWhite}}">
-        <ShellContent ContentTemplate="{DataTemplate inventory:MainV}" />
+    <Shell.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+
+    </Shell.Resources>
+
+
+    <Shell.FlyoutHeader>
+        <header:FlyoutHeaderV />
+    </Shell.FlyoutHeader>
+
+    <Shell.FlyoutFooter>
+        <footer:FlyoutFooterV />
+    </Shell.FlyoutFooter>
+
+
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems" IsVisible="{Binding IsLogin}">
+
+        <ShellContent Title="Home" ContentTemplate="{DataTemplate local:MainPage}" />
+
+        <ShellContent
+            Title="Inwentarz"
+            ContentTemplate="{DataTemplate inventory:MainV}"
+            Icon="{AppThemeBinding Light={Static img:TabBarImg.InventoryBlack},
+                                   Dark={Static img:TabBarImg.InventoryWhite}}"
+            Shell.TabBarIsVisible="{OnPlatform Android=true,
+                                               Default=false}" />
+
+        <ShellContent
+            Title="Mapy"
+            ContentTemplate="{DataTemplate routes:MainVDriversRoutesV}"
+            FlyoutItem.IsVisible="True"
+            Icon="{AppThemeBinding Light={Static img:TabBarImg.MapBlack},
+                                   Dark={Static img:TabBarImg.MapWhite}}"
+            IsVisible="{OnPlatform Android=true,
+                                   Default=false}"
+            Shell.TabBarIsVisible="{OnPlatform Android=true,
+                                               Default=false}" />
+
+        <ShellContent
+            Title="Opcje"
+            ContentTemplate="{DataTemplate options:MainOptionsV}"
+            Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
+                                   Dark={Static img:TabBarImg.OptionWhite}}"
+            Shell.TabBarIsVisible="{OnPlatform Android=true,
+                                               Default=false}" />
     </FlyoutItem>
 
-    <FlyoutItem
-        Title="Mapy"
-        Icon="{AppThemeBinding Light={Static img:TabBarImg.MapBlack},
-                               Dark={Static img:TabBarImg.MapWhite}}"
-        IsVisible="{OnPlatform Android=true,
-                               Default=false}">
-        <ShellContent ContentTemplate="{DataTemplate routes:MainVDriversRoutesV}" />
-    </FlyoutItem>
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems" IsVisible="{Binding IsLogin, Converter={StaticResource InvertedBoolConverter}}">
 
-    <FlyoutItem Title="Opcje" Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack}, Dark={Static img:TabBarImg.OptionWhite}}">
-        <ShellContent ContentTemplate="{DataTemplate options:MainOptionsV}" />
+
+        <ShellContent Title="Home" ContentTemplate="{DataTemplate local:MainPage}" />
+
+        <ShellContent
+            Title="Zaloguj się"
+            ContentTemplate="{DataTemplate login:LogInV}"
+            Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
+                                   Dark={Static img:TabBarImg.OptionWhite}}"
+            Shell.TabBarIsVisible="{OnPlatform Android=true,
+                                               Default=false}" />
+
+        <ShellContent
+            Title="Rejestracja"
+            ContentTemplate="{DataTemplate register:RegisterV}"
+            Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
+                                   Dark={Static img:TabBarImg.OptionWhite}}"
+            Shell.TabBarIsVisible="{OnPlatform Android=true,
+                                               Default=false}" />
+
+        <ShellContent
+            Title="Potwierdź email"
+            ContentTemplate="{DataTemplate emailConfirm:ConfirmEmailV}"
+            Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
+                                   Dark={Static img:TabBarImg.OptionWhite}}"
+            Shell.TabBarIsVisible="{OnPlatform Android=true,
+                                               Default=false}" />
     </FlyoutItem>
 
 </Shell>

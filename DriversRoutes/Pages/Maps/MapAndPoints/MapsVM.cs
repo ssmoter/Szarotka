@@ -14,6 +14,7 @@ using Microsoft.Maui.Maps;
 
 using System.Collections.ObjectModel;
 using DataBase.Data;
+using Shared.Data;
 
 namespace DriversRoutes.Pages.Maps.MapAndPoints
 {
@@ -178,7 +179,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
         public async Task<ObservableCollection<MapsM>> GetSelectedDays(SelectedDayOfWeekRoutes week)
@@ -206,7 +207,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
             return points;
         }
@@ -359,7 +360,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
             finally
             {
@@ -424,7 +425,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -487,7 +488,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -524,7 +525,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -552,7 +553,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
         [RelayCommand]
@@ -585,7 +586,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 

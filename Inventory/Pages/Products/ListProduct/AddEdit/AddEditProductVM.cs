@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 
+using Shared.Data;
+
 using System.Collections.ObjectModel;
 
 using static Inventory.Pages.Products.ListProduct.AddEdit.AddEditProductM;
@@ -80,7 +82,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -112,7 +114,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -153,7 +155,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
             finally
             {
@@ -197,7 +199,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 

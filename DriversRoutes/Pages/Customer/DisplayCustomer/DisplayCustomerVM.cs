@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 using DataBase.Data;
 using DataBase.Model.EntitiesRoutes;
 
+using Shared.Data;
+
 namespace DriversRoutes.Pages.Customer.DisplayCustomer
 {
     [QueryProperty(nameof(Customer), nameof(CustomerRoutes))]
@@ -52,7 +54,7 @@ namespace DriversRoutes.Pages.Customer.DisplayCustomer
 
                 var taskReady = await Task.WhenAll(taskDay, taskAddress, taskCustomer);
 
-                result = await Shell.Current.DisplayAlert("Usunięto", "Obiekt został usunięty. Czy chesz przywrócić", "Przywróć", "Nie");
+                result = await Shell.Current.DisplayAlert("Usunięto", "Obiekt został usunięty. Czy chcesz przywrócić", "Przywróć", "Nie");
 
                 if (!result)
                     await Shell.Current.GoToAsync("..");
@@ -63,7 +65,7 @@ namespace DriversRoutes.Pages.Customer.DisplayCustomer
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -76,7 +78,7 @@ namespace DriversRoutes.Pages.Customer.DisplayCustomer
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -113,7 +115,7 @@ namespace DriversRoutes.Pages.Customer.DisplayCustomer
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 

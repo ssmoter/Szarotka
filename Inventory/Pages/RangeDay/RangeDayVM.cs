@@ -11,6 +11,7 @@ using Inventory.Data.File;
 using Inventory.Model;
 using Inventory.Service;
 using DataBase.Data;
+using Shared.Data;
 
 namespace Inventory.Pages.RangeDay
 {
@@ -192,7 +193,7 @@ namespace Inventory.Pages.RangeDay
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -258,7 +259,7 @@ namespace Inventory.Pages.RangeDay
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -323,7 +324,7 @@ namespace Inventory.Pages.RangeDay
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -340,7 +341,7 @@ namespace Inventory.Pages.RangeDay
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -364,7 +365,7 @@ namespace Inventory.Pages.RangeDay
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -387,7 +388,7 @@ namespace Inventory.Pages.RangeDay
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 

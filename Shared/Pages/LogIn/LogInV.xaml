@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Shared.Pages.LogIn.LogInV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:userLogin="clr-namespace:Shared.Helper;assembly=Shared"
+    xmlns:vm="clr-namespace:Shared.Pages.LogIn"
+    Title="Zaloguj się"
+    x:DataType="vm:LogInVM">
+
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" />
+    </Shell.BackButtonBehavior>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding GotoToRegisterCommand}" Text="Rejestracja" />
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+
+        <VerticalStackLayout
+            Margin="10"
+            Padding="10"
+            HorizontalOptions="Fill"
+            MaximumWidthRequest="300">
+
+            <Label Margin="10" Text="Email:" />
+            <Border>
+                <Entry Placeholder="Email" Text="{Binding User.Email}" />
+            </Border>
+
+            <Label Margin="10" Text="Hasło:" />
+
+            <Border Margin="0" Padding="0">
+                <Grid ColumnDefinitions="*,auto">
+                    <Entry
+                        IsPassword="{Binding IsPassword, Converter={StaticResource InvertedBoolConverter}}"
+                        Placeholder="Hasło"
+                        Text="{Binding User.Password}" />
+                    <CheckBox
+                        Grid.Column="1"
+                        Margin="0"
+                        HorizontalOptions="Center"
+                        IsChecked="{Binding IsPassword}"
+                        VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <Label Text="{Binding Errors}" TextColor="Red" />
+
+            <HorizontalStackLayout>
+                <CheckBox IsChecked="{Binding User.RememberMe}" />
+                <Label Text="Zapamiętaj mnie" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+
+            <Button Command="{Binding LogInCommand}" Text="Zaloguj" />
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+</ContentPage>

@@ -1,4 +1,4 @@
-using DataBase.Model.EntitiesServer;
+﻿using DataBase.Model.EntitiesServer;
 
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -60,11 +60,36 @@ user.MapPost("login", async ([FromBody] LoginUser user, ILoginUserEndpoint login
     {
         return await loginUserEndpoint.LogInUser(user);
     });
-user.MapGet("logout", async (string user, ILoginUserEndpoint loginUserEndpoint)
+user.MapGet("logout", ( /*ILoginUserEndpoint loginUserEndpoint*/)
     =>
 {
-    return await loginUserEndpoint.LogOutUser(user);
-});
+    throw new NotImplementedException();
+    //return await loginUserEndpoint.LogOutUser("user");
+}).RequireAuthorization();
+user.MapGet("refresh_token", async (HttpContext context, ILoginUserEndpoint loginUserEndpoint)
+    =>
+{
+    // Pobierz wartość nagłówka Authorization
+    var authorizationHeader = context.Request.Headers["Authorization"].ToString();
+    if (string.IsNullOrEmpty(authorizationHeader))
+    {
+        return Results.Unauthorized();
+    }
+    // Sprawdź, czy nagłówek zaczyna się od "Bearer "
+    if (!authorizationHeader.StartsWith("Bearer "))
+    {
+        return Results.Unauthorized();
+    }
+    // Pobierz token
+    var token = authorizationHeader.Substring("Bearer ".Length).Trim();
+
+    if (token is null)
+    {
+        return Results.Unauthorized();
+    }
+    return await loginUserEndpoint.RefreshToken(token);
+}).RequireAuthorization();
+
 
 
 

@@ -3,15 +3,25 @@ using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
 
+using Shared.Data;
 using Shared.Service;
 
 namespace Shared.Pages.UpdateDataBase
 {
     public partial class UpdateDataBaseVM : ObservableObject
     {
-
-        [ObservableProperty]
         UpdateDataBaseM updateDataBaseM;
+        public UpdateDataBaseM UpdateDataBaseM
+        {
+            get => updateDataBaseM;
+            set
+            {
+                if (SetProperty(ref updateDataBaseM, value))
+                {
+                    OnPropertyChanged(nameof(UpdateDataBaseM));
+                }
+            }
+        }
 
 
         readonly ICreatedDataBase _createdDataBase;
@@ -29,37 +39,37 @@ namespace Shared.Pages.UpdateDataBase
             {
                 UpdateDataBaseM.FromVersion = _createdDataBase.GetCurrentVersion();
                 UpdateDataBaseM.UppdateVersion = UpdateDataBaseM.FromVersion;
-                var resutl = await _createdDataBase.UpdateDataBase(UppdateDataBase, UppdateInventory, UppdateDriverRoutes);
+                var result = await _createdDataBase.UpdateDataBase(UpdateDataBase, UpdateInventory, UpdateDriverRoutes);
 
-                if (resutl)
+                if (result)
                 {
                     UpdateDataBaseM.BackIsVisible = true;
                 }
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
-        private void UppdateDataBase(double progressBar, int version)
+        private void UpdateDataBase(double progressBar, int version)
         {
             UpdateDataBaseM.DataBaseProgresBar = progressBar;
             UpdateDataBaseM.UppdateVersion.DataBase = version;
         }
-        private void UppdateInventory(double progressBar, int version)
+        private void UpdateInventory(double progressBar, int version)
         {
             UpdateDataBaseM.InventioryProgresBar = progressBar;
             UpdateDataBaseM.UppdateVersion.Inventory = version;
         }
-        private void UppdateDriverRoutes(double progressBar, int version)
+        private void UpdateDriverRoutes(double progressBar, int version)
         {
             UpdateDataBaseM.DriverRoutesProgresBar = progressBar;
             UpdateDataBaseM.UppdateVersion.DriversRoutes = version;
         }
 
         [RelayCommand]
-        async Task Back()
+        async static Task Back()
         {
             await Shell.Current.GoToAsync("..");
         }

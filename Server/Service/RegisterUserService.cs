@@ -27,9 +27,15 @@ namespace Server.Service
             registerUser.IsDelete = false;
             registerUser.IsEmailConfirm = false;
             var time = DateTime.UtcNow;
-            registerUser.Created = time;
+            if (registerUser.Created == new DateTime())
+            {
+                registerUser.Created = time;
+            }
             registerUser.Updated = time;
-            registerUser.Id = Guid.NewGuid();
+            if (registerUser.Id == Guid.Empty)
+            {
+                registerUser.Id = Guid.NewGuid();
+            }
             registerUser.Password = Hash.PasswordSHA256(registerUser.Password);
 
             var query = RegisterUserQuery.RegisterNewUser(registerUser);
@@ -83,7 +89,7 @@ namespace Server.Service
             {
                 await Task.WhenAll(userTask, codeTask, emailTask);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -97,9 +103,5 @@ namespace Server.Service
 
             return email;
         }
-
-
-
-
     }
 }

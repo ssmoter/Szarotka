@@ -72,6 +72,11 @@ IEmailConfirmService emailConfirmService)
                     throw validError;
                 }
             }
+            catch (ValidationException ex)
+            {
+                Console.WriteLine(ex.GetError());
+                throw;
+            }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
@@ -88,7 +93,8 @@ IEmailConfirmService emailConfirmService)
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                throw new ErrorException(ex.StackTrace is not null ? ex.StackTrace : "", ex.Message);
+                _db.SaveLog(ex);
+                throw;
             }
         }
         public async Task<IResult> ConfirmEmail(int code)
@@ -110,6 +116,7 @@ IEmailConfirmService emailConfirmService)
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                _db.SaveLog(ex);
                 throw;
             }
             static int CountDigits(int number)

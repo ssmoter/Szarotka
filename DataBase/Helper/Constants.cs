@@ -47,6 +47,10 @@ namespace DataBase.Helper
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Szarotka");
 #elif ANDROID
                 var doc = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDocuments);
+                if (doc is null)
+                {
+                    throw new ArgumentNullException(nameof(doc));
+                }
                 return Path.Combine(doc.Path);
 #else
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Szarotka");
@@ -61,6 +65,10 @@ namespace DataBase.Helper
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), DatabaseName);
 #elif ANDROID
                 var doc = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDocuments);
+                if (doc is null)
+                {
+                    throw new ArgumentNullException(nameof(doc));
+                }
                 return Path.Combine(doc.Path, DatabaseName);
 #else
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), DatabaseName);
@@ -76,6 +84,10 @@ namespace DataBase.Helper
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), BackupName);
 #elif ANDROID
                 var doc = Android.App.Application.Context.GetExternalFilesDir(Android.OS.Environment.DirectoryDocuments);
+                if (doc is null)
+                {
+                    throw new ArgumentNullException(nameof(doc));
+                }
                 return Path.Combine(doc.Path, BackupName);
 #else
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), BackupName);
@@ -84,5 +96,9 @@ namespace DataBase.Helper
         }
 
         public static CultureInfo CultureInfo => new("pl");
+
+        public static string ServerUrl => "http://10.0.2.2:5021";
+        //public static string ServerUrl => "http://localhost:5021";
+        //public static string ServerUrl => "http://localhost:32783";
     }
 }

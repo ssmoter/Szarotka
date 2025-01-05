@@ -8,6 +8,8 @@ using DataBase.Model.EntitiesInventory;
 
 using Inventory.Service;
 
+using Shared.Data;
+
 namespace Inventory.Pages.SingleDay
 {
     [QueryProperty(nameof(Day), nameof(Day))]
@@ -257,7 +259,7 @@ namespace Inventory.Pages.SingleDay
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -280,7 +282,7 @@ namespace Inventory.Pages.SingleDay
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
         [RelayCommand]
@@ -314,7 +316,7 @@ namespace Inventory.Pages.SingleDay
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
         [RelayCommand]
@@ -330,7 +332,7 @@ namespace Inventory.Pages.SingleDay
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -360,7 +362,7 @@ namespace Inventory.Pages.SingleDay
                 }
                 Day.UpdateTotalPrice();
             }
-            catch (Exception ex) { _db.SaveLog(ex); }
+            catch (Exception ex) { _db.SaveLogExtension(ex); }
             finally { SingleDayM.ProductIsRefreshing = false; }
         }
 
@@ -423,7 +425,7 @@ namespace Inventory.Pages.SingleDay
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -443,7 +445,7 @@ namespace Inventory.Pages.SingleDay
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
 
         }
@@ -492,7 +494,7 @@ namespace Inventory.Pages.SingleDay
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
 
         }

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="Shared.Pages.FlyoutHeader.FlyoutHeaderV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:Shared.Pages.FlyoutHeader"
+    x:DataType="vm:FlyoutHeaderVM">
+
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <StackLayout>
+
+        <VerticalStackLayout
+            Margin="10"
+            Padding="10"
+            HorizontalOptions="Center">
+            <VerticalStackLayout IsVisible="{Binding IsLogin}">
+                <Label
+                    FontSize="Large"
+                    HorizontalOptions="Center"
+                    Text="{Binding User.Name}" />
+            </VerticalStackLayout>
+            <VerticalStackLayout IsVisible="{Binding IsLogin, Converter={StaticResource InvertedBoolConverter}}">
+
+                <Label
+                    FontSize="Large"
+                    HorizontalOptions="Center"
+                    Text="Zaloguj się">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToLoginCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+
+        <Border HorizontalOptions="Fill" />
+
+    </StackLayout>
+</ContentView>

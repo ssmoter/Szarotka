@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Shared.Pages.Register.RegisterV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:modelInverntory="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
+    xmlns:modelServer="clr-namespace:DataBase.Model.EntitiesServer;assembly=DataBase"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:Shared.Pages.Register"
+    Title="Rejestracja"
+    x:DataType="vm:RegisterVM">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:IsNotEqualConverter x:Key="NotEqualConverter" />
+            <x:Guid x:Key="EmptyGuid">00000000-0000-0000-0000-000000000000</x:Guid>
+            <toolkit:IsListNotNullOrEmptyConverter x:Key="IsListNotNullOrEmptyConverter" />
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+
+    <ScrollView>
+
+        <VerticalStackLayout
+            Padding="10"
+            HorizontalOptions="Fill"
+            MaximumWidthRequest="400"
+            Spacing="10">
+
+            <Label IsVisible="{Binding RegisterUser.Id, Converter={StaticResource NotEqualConverter}, ConverterParameter={StaticResource Key=EmptyGuid}}">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Id" />
+                        <Span Text=" - " />
+                        <Span Text="{Binding RegisterUser.Id}" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+            <Entry
+                x:Name="EntryName"
+                Placeholder="Nazwa"
+                Text="{Binding RegisterUser.Name}" />
+
+            <Label Text="Nazwa jest wymagana">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Setter Property="IsVisible" Value="False" />
+                        <Style.Triggers>
+                            <DataTrigger
+                                Binding="{Binding Source={x:Reference EntryName}, Path=Text.Length}"
+                                TargetType="Label"
+                                Value="0">
+                                <Setter Property="TextColor" Value="Red" />
+                                <Setter Property="IsVisible" Value="True" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Label.Style>
+            </Label>
+
+            <Entry Placeholder="Email" Text="{Binding RegisterUser.Email}" />
+
+            <Label x:Name="LabelEmailError" Text="{Binding RegisterM.EmailError}">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Setter Property="IsVisible" Value="True" />
+                        <Setter Property="TextColor" Value="Red" />
+                        <Style.Triggers>
+                            <DataTrigger
+                                Binding="{Binding Source={x:Reference LabelEmailError}, Path=Text.Length}"
+                                TargetType="Label"
+                                Value="0">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Label.Style>
+            </Label>
+
+            <Entry
+                IsPassword="{Binding RegisterM.IsPassword, Converter={StaticResource InvertedBoolConverter}}"
+                Placeholder="Hasło"
+                Text="{Binding RegisterUser.Password}"
+                TextChanged="Entry_TextChanged_Password" />
+
+            <Entry
+                IsPassword="{Binding RegisterM.IsPassword, Converter={StaticResource InvertedBoolConverter}}"
+                Placeholder="Powtórz hasło"
+                Text="{Binding RegisterM.ConfirmPassword}"
+                TextChanged="Entry_TextChanged_Password" />
+
+            <Label x:Name="LabelPasswordError" Text="{Binding RegisterM.PasswordError}">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Setter Property="IsVisible" Value="True" />
+                        <Setter Property="TextColor" Value="Red" />
+                        <Style.Triggers>
+                            <DataTrigger
+                                Binding="{Binding Source={x:Reference LabelPasswordError}, Path=Text.Length}"
+                                TargetType="Label"
+                                Value="0">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Label.Style>
+            </Label>
+
+            <Label
+                IsVisible="{Binding RegisterM.PasswordEquels}"
+                Text="Hasła się różnia"
+                TextColor="Red" />
+
+            <HorizontalStackLayout>
+                <CheckBox IsChecked="{Binding RegisterM.IsPassword}" />
+                <Label Text="Pokaż hasła" VerticalOptions="Center" />
+            </HorizontalStackLayout>
+
+
+            <Button Command="{Binding CreatedNewAccountCommand}" Text="Zarejestruj" />
+
+
+            <toolkit:Expander IsVisible="{Binding Drivers, Converter={StaticResource IsListNotNullOrEmptyConverter}}" VerticalOptions="End">
+                <toolkit:Expander.Header>
+                    <Border Margin="5" Padding="10">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10" />
+                        </Border.StrokeShape>
+                        <Label Text="Wczytaj istniejące konto lokalne" />
+                    </Border>
+                </toolkit:Expander.Header>
+                <toolkit:Expander.Content>
+                    <Grid ColumnDefinitions="auto,*,auto">
+                        <Border Grid.Column="0" />
+
+                        <CollectionView
+                            Grid.Column="1"
+                            Margin="5"
+                            ItemsSource="{Binding Drivers}"
+                            MaximumHeightRequest="200"
+                            SelectionMode="Single">
+
+                            <CollectionView.EmptyView>
+                                <VerticalStackLayout>
+                                    <Label Text="Brak lokalnych kont" />
+                                </VerticalStackLayout>
+                            </CollectionView.EmptyView>
+
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="modelInverntory:Driver">
+                                    <Border Padding="5">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10" />
+                                        </Border.StrokeShape>
+                                        <VerticalStackLayout>
+
+                                            <Label>
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span FontAttributes="Bold" Text="Id" />
+                                                        <Span Text=" - " />
+                                                        <Span Text="{Binding Id}" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                            <Label>
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span FontAttributes="Bold" Text="Nazwa" />
+                                                        <Span Text=" - " />
+                                                        <Span Text="{Binding Name}" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                            <Label>
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span FontAttributes="Bold" Text="Opis" />
+                                                        <Span Text=" - " />
+                                                        <Span Text="{Binding Description}" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                            <Label>
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span FontAttributes="Bold" Text="Data utworzenia" />
+                                                        <Span Text=" - " />
+                                                        <Span Text="{Binding Created}" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+
+                                        </VerticalStackLayout>
+
+
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RegisterVM}}, Path=SetSelectedDriverCommand}"
+                                                CommandParameter="{Binding .}"
+                                                NumberOfTapsRequired="1" />
+                                        </Border.GestureRecognizers>
+
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+
+                            <CollectionView.Footer>
+                                <VerticalStackLayout>
+                                    <Label Text="" />
+                                </VerticalStackLayout>
+                            </CollectionView.Footer>
+
+                        </CollectionView>
+
+                        <Border Grid.Column="2" />
+                    </Grid>
+                </toolkit:Expander.Content>
+            </toolkit:Expander>
+
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+</ContentPage>

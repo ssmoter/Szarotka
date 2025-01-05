@@ -8,6 +8,8 @@ using DataBase.Model.EntitiesRoutes;
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 
+using Shared.Data;
+
 
 namespace DriversRoutes.Pages.Maps.MapSmall;
 
@@ -189,7 +191,7 @@ public partial class MapSmallVM : ObservableObject
         }
         catch (Exception ex)
         {
-            _db.SaveLog(ex);
+            _db.SaveLogExtension(ex);
         }
     }
     public void AutomaticUpdateLocation(Location location)
@@ -246,7 +248,7 @@ public partial class MapSmallVM : ObservableObject
         }
         catch (Exception ex)
         {
-            _db.SaveLog(ex);
+            _db.SaveLogExtension(ex);
         }
     }
     [RelayCommand]
@@ -276,7 +278,7 @@ public partial class MapSmallVM : ObservableObject
         }
         catch (Exception ex)
         {
-            _db.SaveLog(ex);
+            _db.SaveLogExtension(ex);
         }
     }
     [RelayCommand]

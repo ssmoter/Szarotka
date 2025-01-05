@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+﻿using DataBase.Model.EntitiesServer;
 
-using Server.Model;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Handler
 {

@@ -1,11 +1,12 @@
-﻿using Shared.Service;
+﻿using DataBase.Service;
 
 using DriversRoutes.Service;
 
 using Inventory.Service;
 
+using Shared.Service;
+
 using SzarotkaBlazor.Pages.Options.Main;
-using DataBase.Service;
 
 namespace SzarotkaBlazor.Service
 {
@@ -20,8 +21,9 @@ namespace SzarotkaBlazor.Service
 #if ANDROID
 #endif
 
-            services.AddSingleton<MainOptionsV>();
-            services.AddSingleton<MainOptionsVM>();
+            services.AddScoped<MainOptionsV>();
+            services.AddScoped<MainOptionsVM>();
+            services.AddScoped<MainPage>();
 
 #if WINDOWS
             Microsoft.Maui.Handlers.SwitchHandler.Mapper.AppendToMapping("NoLabel", (handler, View) =>
@@ -33,7 +35,6 @@ namespace SzarotkaBlazor.Service
                 handler.PlatformView.MinWidth = 0;
             });
 #endif
-
 
             return services;
         }

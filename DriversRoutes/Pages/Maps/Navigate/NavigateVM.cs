@@ -7,6 +7,7 @@ using DataBase.Model.EntitiesRoutes;
 using DriversRoutes.Pages.Maps.Controls;
 
 using Shared.CustomControls;
+using Shared.Data;
 
 using System.Collections.ObjectModel;
 
@@ -96,7 +97,7 @@ namespace DriversRoutes.Pages.Maps.Navigate
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
         [RelayCommand]

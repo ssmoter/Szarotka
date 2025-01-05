@@ -7,6 +7,8 @@ using DataBase.Model.EntitiesRoutes;
 
 using DriversRoutes.Helper;
 
+using Shared.Data;
+
 namespace DriversRoutes.Pages.Customer.AddCustomer
 {
     [QueryProperty(nameof(Customer), nameof(CustomerRoutes))]
@@ -92,7 +94,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -116,7 +118,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -138,7 +140,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -157,7 +159,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
         [RelayCommand]
@@ -174,7 +176,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -211,7 +213,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 

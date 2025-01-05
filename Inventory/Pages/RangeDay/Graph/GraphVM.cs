@@ -9,6 +9,7 @@ using Inventory.Pages.RangeDay.Graph.GraphOptions;
 
 using System.Collections.ObjectModel;
 using DataBase.Data;
+using Shared.Data;
 
 namespace Inventory.Pages.RangeDay.Graph
 {
@@ -491,7 +492,7 @@ namespace Inventory.Pages.RangeDay.Graph
 
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -525,7 +526,7 @@ namespace Inventory.Pages.RangeDay.Graph
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -538,7 +539,7 @@ namespace Inventory.Pages.RangeDay.Graph
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
             finally
             {

@@ -38,11 +38,19 @@ namespace Server.Service
                 valid.AddError("Account not found", EnumsList.Validation.AccountNotFound);
                 throw valid;
             }
+
+            if (user.RememberMe != firstUser.RememberMe)
+            {
+                firstUser.RememberMe = user.RememberMe;
+                _ = _db.DataBaseAsync.ExecuteAsync(LoginQuery.UpdateRememberMe(firstUser));
+            }
+
             return firstUser;
         }
 
         public async Task<IResult> LogOut(LoginUser user)
         {
+            await Task.Delay(1);
             return Results.Ok();
         }
 

@@ -2,14 +2,23 @@
 
 using SQLite;
 
-using System.Text.Json.Serialization;
-
 namespace DataBase.Model
 {
     public partial class BaseEntities<T> : ObservableObject
     {
+        private T? id;
         [PrimaryKey]
-        public T? Id { get; set; }
+        public T? Id
+        {
+            get => id;
+            set
+            {
+                if (SetProperty(ref id, value))
+                {
+                    OnPropertyChanged(nameof(Id));
+                }
+            }
+        }
         [Ignore]
         public DateTime Created
         {
@@ -46,5 +55,11 @@ namespace DataBase.Model
         }
         private long _createdTicks;
         private long _updatedTicks;
+
+        public BaseEntities()
+        {
+            Created = DateTime.MaxValue;
+            Updated = DateTime.MaxValue;
+        }
     }
 }

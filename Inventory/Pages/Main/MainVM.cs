@@ -6,6 +6,7 @@ using DataBase.Model.EntitiesInventory;
 
 using Inventory.Service;
 using DataBase.Data;
+using Shared.Data;
 
 
 namespace Inventory.Pages.Main
@@ -65,7 +66,7 @@ namespace Inventory.Pages.Main
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -130,7 +131,7 @@ namespace Inventory.Pages.Main
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -171,7 +172,7 @@ namespace Inventory.Pages.Main
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _db.SaveLogExtension(ex);
             }
         }
 

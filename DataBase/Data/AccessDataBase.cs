@@ -54,6 +54,16 @@ namespace DataBase.Data
             Console.WriteLine($"Error{Environment.NewLine}{ex.Message}{Environment.NewLine}{ex.StackTrace}");
         }
 
+
+        public string GetServerUrl()
+        {
+            return Constants.ServerUrl;
+        }
+        public async Task<string> GetServerUrlAsync()
+        {
+            return await Task.FromResult(Constants.ServerUrl);
+        }
+
         public void Dispose()
         {
             DataBase.Dispose();

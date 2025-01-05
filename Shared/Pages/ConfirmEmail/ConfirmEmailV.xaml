@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Shared.Pages.ConfirmEmail.ConfirmEmailV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:behaviors="clr-namespace:Shared.Behavior"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:Shared.Pages.ConfirmEmail"
+    Title="Potwierdź swój email"
+    x:DataType="vm:ConfirmEmailVM">
+
+
+    <ScrollView>
+
+        <Grid
+            Padding="5"
+            RowDefinitions="auto,*"
+            VerticalOptions="Fill">
+
+
+            <VerticalStackLayout VerticalOptions="Fill">
+                <Label
+                    Margin="5"
+                    HorizontalOptions="Center"
+                    Text="Podaj kod weryfikacyjny przesłany na twojego maila" />
+                <Entry
+                    CharacterSpacing="10"
+                    FontSize="Large"
+                    HorizontalTextAlignment="Start"
+                    Keyboard="Numeric"
+                    MaxLength="5"
+                    MaximumWidthRequest="300"
+                    Placeholder="Kod"
+                    Text="{Binding ConfirmEmailM.Code}">
+                    <Entry.Behaviors>
+                        <behaviors:NumericEntryBehavior />
+                    </Entry.Behaviors>
+                </Entry>
+
+                <Label Text="{Binding ConfirmEmailM.Error}" TextColor="Red" />
+
+                <Button
+                    Margin="10"
+                    Padding="10"
+                    Command="{Binding SendCodeCommand}"
+                    HorizontalOptions="Center"
+                    Text="Potwierdź kod" />
+
+            </VerticalStackLayout>
+
+            <Label
+                Grid.Row="1"
+                HorizontalOptions="Center"
+                MaximumWidthRequest="300"
+                Text="Jeżeli kod wygasł albo email nie przyszedł spróbuj się zalogować wtedy wtedy zostanie wysłany nowy mail z kodem aktywacyjnym"
+                VerticalOptions="End" />
+
+
+        </Grid>
+    </ScrollView>
+
+</ContentPage>
