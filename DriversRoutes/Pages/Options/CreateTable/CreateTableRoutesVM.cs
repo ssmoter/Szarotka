@@ -1,22 +1,37 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Shared.Data;
+using DataBase.Data;
 using DataBase.Model;
 using DataBase.Model.EntitiesRoutes;
 
+using Shared.Data;
+
 using System.Collections.ObjectModel;
-using DataBase.Data;
 
 namespace DriversRoutes.Pages.Options.CreateTable
 {
     public partial class CreateTableRoutesVM : ObservableObject
     {
-        [ObservableProperty]
-        ObservableCollection<CreateTableRoutesM> tableMs;
+        private ObservableCollection<CreateTableRoutesM> tableMs;
+        public ObservableCollection<CreateTableRoutesM> TableMs
+        {
+            get => tableMs;
+            set
+            {
+                if (SetProperty(ref tableMs, value, nameof(TableMs))) { }
+            }
+        }
 
-        [ObservableProperty]
-        DataBaseVersion version;
+        private DataBaseVersion version;
+        public DataBaseVersion Version
+        {
+            get => version;
+            set
+            {
+                if (SetProperty(ref version, value, nameof(Version))) { }
+            }
+        }
 
         readonly AccessDataBase _db;
 

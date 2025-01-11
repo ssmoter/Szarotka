@@ -1,18 +1,30 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Shared.Helper;
-using DataBase.Model;
-using System.Collections.ObjectModel;
 using DataBase.Data;
+using DataBase.Model;
+
 using Shared.Data;
+using Shared.Helper;
+
+using System.Collections.ObjectModel;
 
 namespace Shared.Pages.Log
 {
     public partial class LogVM : ObservableObject, IDisposable
     {
-        [ObservableProperty]
-        ObservableCollection<LogM> logs;
+        private ObservableCollection<LogM> logs;
+        public ObservableCollection<LogM> Logs
+        {
+            get => logs;
+            set
+            {
+                if (SetProperty(ref logs, value))
+                {
+                    OnPropertyChanged(nameof(Logs));
+                }
+            }
+        }
 
         readonly AccessDataBase _db;
         public LogVM(AccessDataBase db)

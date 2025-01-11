@@ -10,9 +10,9 @@ namespace DriversRoutes.Pages.Customer.DisplayCustomer
             get => showLocationThisCustomer;
             set
             {
-                if (SetProperty(ref showLocationThisCustomer, value))
+                if (SetProperty(ref showLocationThisCustomer, value, nameof(ShowLocationThisCustomer)))
                 {
-                    OnPropertyChanged(nameof(ShowLocationThisCustomer));
+                    //OnPropertyChanged(nameof(ShowLocationThisCustomer));
 
                     if (ShowLocationThisCustomerInt == 0)
                         ShowLocationThisCustomerInt = 1;
@@ -22,7 +22,15 @@ namespace DriversRoutes.Pages.Customer.DisplayCustomer
             }
         }
 
-        [ObservableProperty]
-        int showLocationThisCustomerInt;
+        private int showLocationThisCustomerInt;
+        public int ShowLocationThisCustomerInt
+        {
+            get => showLocationThisCustomerInt;
+            set
+            {
+                if (SetProperty(ref showLocationThisCustomerInt, value, nameof(ShowLocationThisCustomerInt))) { }
+            }
+        }
+
     }
 }

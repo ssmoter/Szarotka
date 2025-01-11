@@ -98,7 +98,7 @@ namespace DataBase.Helper
         public static CultureInfo CultureInfo => new("pl");
 
         public static string ServerUrl => "http://10.0.2.2:5021";
-        //public static string ServerUrl => "http://localhost:5021";
+        // public static string ServerUrl => "http://localhost:5021";
         //public static string ServerUrl => "http://localhost:32783";
     }
 }

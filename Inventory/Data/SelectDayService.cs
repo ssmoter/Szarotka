@@ -1,13 +1,12 @@
-﻿using Shared.Data;
-using Shared.Helper;
+﻿using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
+using DataBase.Model.JsonContext;
 
 using Inventory.Helper;
 using Inventory.Service;
 
 using System.Collections.ObjectModel;
 using System.Text;
-using DataBase.Data;
 
 namespace Inventory.Data
 {
@@ -127,9 +126,9 @@ namespace Inventory.Data
                 {
                     day.Products.Add(new(products[i]));
                     day.Products[i].Name = System.Text.Json.JsonSerializer.Deserialize<ProductName>(products[i].JsonName
-                        , JsonOptions.JsonSerializeOptionsBoolAndDateTime);
+                        , SzarotkaJsonSerializerContext.Default.ProductName);
                     day.Products[i].Price = System.Text.Json.JsonSerializer.Deserialize<ProductPrice>(products[i].JsonPrice
-                        , JsonOptions.JsonSerializeOptionsBoolAndDateTime);
+                        , SzarotkaJsonSerializerContext.Default.ProductPrice);
                 }
                 var cakes = await _db.DataBaseAsync.Table<Cake>().Where(x => x.DayId == id).ToArrayAsync();
                 day.Cakes = new ObservableCollection<Cake>(cakes);
@@ -147,7 +146,7 @@ namespace Inventory.Data
                         continue;
 
                     var price = System.Text.Json.JsonSerializer.Deserialize<ProductPrice>(products[i].JsonPrice
-                        , JsonOptions.JsonSerializeOptionsBoolAndDateTime);
+                        , SzarotkaJsonSerializerContext.Default.ProductPrice);
                     day.Products.Add(new Product()
                     {
                         Name = products[i],

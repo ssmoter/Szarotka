@@ -8,8 +8,15 @@ namespace DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses
 {
     public partial class ProbableAddressesVM : ObservableObject
     {
-        [ObservableProperty]
-        ProbableAddressesM probableAddressesM;
+        private ProbableAddressesM probableAddressesM;
+        public ProbableAddressesM ProbableAddressesM
+        {
+            get => probableAddressesM;
+            set
+            {
+                if (SetProperty(ref probableAddressesM, value, nameof(ProbableAddressesM))) { }
+            }
+        }
 
         public Func<object, CancellationToken, Task> Close;
         public Task OnClose(object result = null, CancellationToken token = default(CancellationToken))

@@ -6,122 +6,148 @@ using DataBase.Model.EntitiesRoutes;
 
 using Shared.Data;
 
-namespace DriversRoutes.Pages.Customer.DisplayCustomer
+namespace DriversRoutes.Pages.Customer.DisplayCustomer;
+public partial class DisplayCustomerVM : ObservableObject, IQueryAttributable
 {
-    [QueryProperty(nameof(Customer), nameof(CustomerRoutes))]
-    [QueryProperty(nameof(LastSelectedDayOfWeek), nameof(SelectedDayOfWeekRoutes))]
-
-    public partial class DisplayCustomerVM : ObservableObject
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-
-        [ObservableProperty]
-        CustomerRoutes customer;
-
-        [ObservableProperty]
-        DisplayCustomerM displayCustomerM;
-
-        readonly AccessDataBase _db;
-        readonly Service.ISaveRoutes _saveRoutes;
-        public SelectedDayOfWeekRoutes LastSelectedDayOfWeek { get; set; }
-
-        public DisplayCustomerVM(AccessDataBase db, Service.ISaveRoutes saveRoutes)
+        if (query.TryGetValue(nameof(CustomerRoutes), out object customer))
         {
-            _db = db;
-            DisplayCustomerM ??= new();
-            _saveRoutes = saveRoutes;
-        }
-
-
-        #region Command
-
-        [RelayCommand]
-        async Task Delete(CustomerRoutes point)
-        {
-            try
+            if (customer is CustomerRoutes _customer)
             {
-                if (point is null)
-                    return;
-
-                var result = await Shell.Current.DisplayAlert("Czy usunąć", $"Czy na pewno chcesz usunąć {point.QueueNumber}:{point.Name}", "Tak", "Anuluj");
-
-                if (!result)
-                    return;
-
-
-                var taskDay = _db.DataBaseAsync.DeleteAsync(Customer.DayOfWeek);
-                var taskAddress = _db.DataBaseAsync.DeleteAsync(Customer.ResidentialAddress);
-                var taskCustomer = _db.DataBaseAsync.DeleteAsync(Customer);
-
-                var taskReady = await Task.WhenAll(taskDay, taskAddress, taskCustomer);
-
-                result = await Shell.Current.DisplayAlert("Usunięto", "Obiekt został usunięty. Czy chcesz przywrócić", "Przywróć", "Nie");
-
-                if (!result)
-                    await Shell.Current.GoToAsync("..");
-                if (result)
-                {
-                    await _saveRoutes.SaveCustomer(Customer, Customer.RoutesId.ToByteArray());
-                }
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
+                Customer = _customer;
             }
         }
-
-        [RelayCommand]
-        void LocationOfPin()
+        if (query.TryGetValue(nameof(LastSelectedDayOfWeek), out object lastSelectedDayOfWeek))
         {
-            try
+            if (lastSelectedDayOfWeek is SelectedDayOfWeekRoutes _lastSelectedDayOfWeek)
             {
-                DisplayCustomerM.ShowLocationThisCustomer = !DisplayCustomerM.ShowLocationThisCustomer;
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
+                LastSelectedDayOfWeek = _lastSelectedDayOfWeek;
             }
         }
-
-        [RelayCommand]
-        async Task EditPin(CustomerRoutes point)
-        {
-            try
-            {
-                if (point is null)
-                {
-                    return;
-                }
-
-                await Shell.Current.GoToAsync($"{nameof(Pages.Customer.AddCustomer.AddCustomerV)}?",
-                    new Dictionary<string, object>()
-                    {
-                        [nameof(CustomerRoutes)] = new CustomerRoutes()
-                        {
-                            Id = new Guid(point.Id.ToByteArray()),
-                            RoutesId = new Guid(point.RoutesId.ToByteArray()),
-                            QueueNumber = point.QueueNumber,
-                            Name = point.Name,
-                            Description = point.Description,
-                            PhoneNumber = point.PhoneNumber,
-                            Created = point.Created,
-                            DayOfWeek = point.DayOfWeek,
-                            ResidentialAddress = point.ResidentialAddress,
-                            Longitude = point.Longitude,
-                            Latitude = point.Latitude,
-                        },
-                        [nameof(Routes)] = new Routes() { Id = new Guid(point.RoutesId.ToByteArray()), }
-                    });
-
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
-        }
-
-
-        #endregion
-
-
     }
+
+    private CustomerRoutes customer;
+    public CustomerRoutes Customer
+    {
+        get => customer;
+        set
+        {
+            if (SetProperty(ref customer, value, nameof(Customer))) { }
+        }
+    }
+
+    private DisplayCustomerM displayCustomerM;
+    public DisplayCustomerM DisplayCustomerM
+    {
+        get => displayCustomerM;
+        set
+        {
+            if (SetProperty(ref displayCustomerM, value, nameof(DisplayCustomerM))) { }
+        }
+    }
+    readonly AccessDataBase _db;
+    readonly Service.ISaveRoutes _saveRoutes;
+    public SelectedDayOfWeekRoutes LastSelectedDayOfWeek { get; set; }
+
+    public DisplayCustomerVM(AccessDataBase db, Service.ISaveRoutes saveRoutes)
+    {
+        _db = db;
+        DisplayCustomerM ??= new();
+        _saveRoutes = saveRoutes;
+    }
+
+
+    #region Command
+
+    [RelayCommand]
+    async Task Delete(CustomerRoutes point)
+    {
+        try
+        {
+            if (point is null)
+                return;
+
+            var result = await Shell.Current.DisplayAlert("Czy usunąć", $"Czy na pewno chcesz usunąć {point.QueueNumber}:{point.Name}", "Tak", "Anuluj");
+
+            if (!result)
+                return;
+
+
+            var taskDay = _db.DataBaseAsync.DeleteAsync(Customer.DayOfWeek);
+            var taskAddress = _db.DataBaseAsync.DeleteAsync(Customer.ResidentialAddress);
+            var taskCustomer = _db.DataBaseAsync.DeleteAsync(Customer);
+
+            var taskReady = await Task.WhenAll(taskDay, taskAddress, taskCustomer);
+
+            result = await Shell.Current.DisplayAlert("Usunięto", "Obiekt został usunięty. Czy chcesz przywrócić", "Przywróć", "Nie");
+
+            if (!result)
+                await Shell.Current.GoToAsync("..");
+            if (result)
+            {
+                await _saveRoutes.SaveCustomer(Customer, Customer.RoutesId.ToByteArray());
+            }
+        }
+        catch (Exception ex)
+        {
+            _db.SaveLogExtension(ex);
+        }
+    }
+
+    [RelayCommand]
+    void LocationOfPin()
+    {
+        try
+        {
+            DisplayCustomerM.ShowLocationThisCustomer = !DisplayCustomerM.ShowLocationThisCustomer;
+        }
+        catch (Exception ex)
+        {
+            _db.SaveLogExtension(ex);
+        }
+    }
+
+    [RelayCommand]
+    async Task EditPin(CustomerRoutes point)
+    {
+        try
+        {
+            if (point is null)
+            {
+                return;
+            }
+
+            await Shell.Current.GoToAsync($"{nameof(Pages.Customer.AddCustomer.AddCustomerV)}?",
+                new Dictionary<string, object>()
+                {
+                    [nameof(CustomerRoutes)] = new CustomerRoutes()
+                    {
+                        Id = new Guid(point.Id.ToByteArray()),
+                        RoutesId = new Guid(point.RoutesId.ToByteArray()),
+                        QueueNumber = point.QueueNumber,
+                        Name = point.Name,
+                        Description = point.Description,
+                        PhoneNumber = point.PhoneNumber,
+                        Created = point.Created,
+                        DayOfWeek = point.DayOfWeek,
+                        ResidentialAddress = point.ResidentialAddress,
+                        Longitude = point.Longitude,
+                        Latitude = point.Latitude,
+                    },
+                    [nameof(Routes)] = new Routes() { Id = new Guid(point.RoutesId.ToByteArray()), }
+                });
+
+        }
+        catch (Exception ex)
+        {
+            _db.SaveLogExtension(ex);
+        }
+    }
+
+
+    #endregion
+
+
 }
+

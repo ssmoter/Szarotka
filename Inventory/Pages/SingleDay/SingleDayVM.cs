@@ -12,15 +12,44 @@ using Shared.Data;
 
 namespace Inventory.Pages.SingleDay
 {
-    [QueryProperty(nameof(Day), nameof(Day))]
-    public partial class SingleDayVM : ObservableObject, IDisposable
+    public partial class SingleDayVM : ObservableObject, IDisposable, IQueryAttributable
     {
-        [ObservableProperty]
-        Day day;
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.TryGetValue(nameof(Day), out object day))
+            {
+                if (day is Day _day)
+                {
+                    Day = _day;
+                }
+            }
+        }
 
-        [ObservableProperty]
+        private Day day;
+        public Day Day
+        {
+            get => day;
+            set
+            {
+                if (SetProperty(ref day, value))
+                {
+                    OnPropertyChanged(nameof(Day));
+                }
+            }
+        }
+
         SingleDayM singleDayM;
-
+        public SingleDayM SingleDayM
+        {
+            get => singleDayM;
+            set
+            {
+                if (SetProperty(ref singleDayM, value))
+                {
+                    OnPropertyChanged(nameof(SingleDayM));
+                }
+            }
+        }
         static PeriodicTimer lastFastValuePeriodicTimer = new(TimeSpan.FromSeconds(1));
         static (string name, int value, char sign, string message) lastFastValue = new("", 0, ' ', "");
         static int lastFastValueClearTimerValue = 0;
@@ -72,7 +101,7 @@ namespace Inventory.Pages.SingleDay
         {
             if (product is not null)
             {
-                if (product.CanUpadte == false)
+                if (product.CanUpdate == false)
                 {
                     SetCanUpdate(product);
                 }
@@ -84,7 +113,7 @@ namespace Inventory.Pages.SingleDay
         {
             if (product is not null)
             {
-                if (product.CanUpadte == false)
+                if (product.CanUpdate == false)
                 {
                     SetCanUpdate(product);
                 }
@@ -97,7 +126,7 @@ namespace Inventory.Pages.SingleDay
         {
             if (product is not null)
             {
-                if (product.CanUpadte == false)
+                if (product.CanUpdate == false)
                 {
                     SetCanUpdate(product);
                 }
@@ -134,7 +163,7 @@ namespace Inventory.Pages.SingleDay
         }
         static void SetCanUpdate(Product product)
         {
-            product.CanUpadte = true;
+            product.CanUpdate = true;
             product.CalculatePrice();
         }
 
@@ -355,7 +384,7 @@ namespace Inventory.Pages.SingleDay
         {
             try
             {
-                Day.CanUpadte = true;
+                Day.CanUpdate = true;
                 for (int i = 0; i < Day.Products.Count; i++)
                 {
                     SetCanUpdate(Day.Products[i]);
@@ -549,16 +578,6 @@ namespace Inventory.Pages.SingleDay
             }
             lastProductHideElseExpanded.IsExpanded = false;
             lastProductHideElseExpanded = product;
-
-            //var index = Day.Products.IndexOf(lastProductHideElseExpanded);
-            //if (index > -1)
-            //{
-            //    if (index > 0)
-            //    {
-            //        index--;
-            //    }
-            //    OnProductScrollTo(index, -1, ScrollToPosition.Start, true);
-            //}
         }
 
         [RelayCommand]
@@ -567,8 +586,11 @@ namespace Inventory.Pages.SingleDay
             if (product is not null)
             {
                 product.NumberReturn = product.Number + product.NumberEdit;
+                Toast.Make($"{product.Name.Name} zwrot {product.NumberReturn}", duration: CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
             }
         }
+
+
 
         #endregion
 

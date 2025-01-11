@@ -8,8 +8,15 @@ namespace DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses
 {
     public partial class ProbableAddressesM : ObservableObject
     {
-        [ObservableProperty]
-        ObservableCollection<ResidentialAddress> residentialAddresses;
+        private ObservableCollection<ResidentialAddress> residentialAddresses;
+        public ObservableCollection<ResidentialAddress> ResidentialAddresses
+        {
+            get => residentialAddresses;
+            set
+            {
+                if (SetProperty(ref residentialAddresses, value, nameof(ResidentialAddresses))) { }
+            }
+        }
 
         public ProbableAddressesM()
         {

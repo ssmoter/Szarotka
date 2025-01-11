@@ -44,7 +44,7 @@
                     <VerticalStackLayout>
                         <DatePicker Date="{Binding MainM.Date}" HorizontalOptions="Center" />
                         <Label Text="Wczytaj wybraną date" />
-                        <Button Command="{Binding NavigationToSingleDayWitchSelectedDayCommand}" Text="{Binding MainM.DisplyDate}" />
+                        <Button Command="{Binding NavigationToSingleDayWitchSelectedDayCommand}" Text="{Binding MainM.DisplayDate}" />
                     </VerticalStackLayout>
                 </Border>
 

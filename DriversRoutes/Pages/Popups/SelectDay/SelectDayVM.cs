@@ -7,11 +7,26 @@ namespace DriversRoutes.Pages.Popups.SelectDay
 {
     public partial class SelectDayVM : ObservableObject
     {
-        [ObservableProperty]
-        SelectedDayOfWeekRoutes selectDayMs;
+        private SelectedDayOfWeekRoutes selectDayMs;
+        public SelectedDayOfWeekRoutes SelectDayMs
+        {
+            get => selectDayMs;
+            set
+            {
+                if (SetProperty(ref selectDayMs, value, nameof(SelectDayMs))) { }
+            }
+        }
 
-        [ObservableProperty]
-        int selectDayIndex;
+        private int selectDayIndex;
+        public int SelectDayIndex
+        {
+            get => selectDayIndex;
+            set
+            {
+                if (SetProperty(ref selectDayIndex, value, nameof(SelectDayIndex))) { }
+            }
+        }
+
 
         public Func<object, CancellationToken, Task> Close;
         public Task OnClose(object result = null, CancellationToken token = default)

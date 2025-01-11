@@ -10,13 +10,13 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
-builder.Services.ConfigureHttpJsonOptions(options =>
+builder.Services.ConfigureHttpJsonOptions((Action<Microsoft.AspNetCore.Http.Json.JsonOptions>)(options =>
 {
     options.SerializerOptions.TypeInfoResolverChain.Add(AppJsonSerializerContext.Default);
     options.SerializerOptions.TypeInfoResolverChain.Add(UserJsonSerializerContext.Default);
     options.SerializerOptions.TypeInfoResolverChain.Add(RegisterUserJsonSerializerContext.Default);
     options.SerializerOptions.TypeInfoResolverChain.Add(LoginUserJsonSerializerContext.Default);
-});
+}));
 
 builder.Services.AddProblemDetails(options =>
 {

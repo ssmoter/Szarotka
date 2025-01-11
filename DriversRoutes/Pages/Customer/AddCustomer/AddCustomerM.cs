@@ -6,14 +6,35 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
     public partial class AddCustomerM : ObservableObject
     {
 
-        [ObservableProperty]
-        bool address;
+        private bool address;
+        public bool Address
+        {
+            get => address;
+            set
+            {
+                if (SetProperty(ref address, value, nameof(Address))) { }
+            }
+        }
 
-        [ObservableProperty]
-        bool mapIsVisible;
+        private bool mapIsVisible;
+        public bool MapIsVisible
+        {
+            get => mapIsVisible;
+            set
+            {
+                if (SetProperty(ref mapIsVisible, value, nameof(MapIsVisible))) { }
+            }
+        }
 
-        [ObservableProperty]
-        bool mapIsVisibleHelperTime;
+        private bool mapIsVisibleHelperTime;
+        public bool MapIsVisibleHelperTime
+        {
+            get => mapIsVisibleHelperTime;
+            set
+            {
+                if (SetProperty(ref mapIsVisibleHelperTime, value, nameof(MapIsVisibleHelperTime))) { }
+            }
+        }
 
         public AddCustomerM()
         {

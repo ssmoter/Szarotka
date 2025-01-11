@@ -260,10 +260,7 @@
                                     <VerticalStackLayout>
                                         <Grid ColumnDefinitions="70,*,*" RowDefinitions="*,*,*,*">
                                             <Grid.GestureRecognizers>
-                                                <TapGestureRecognizer
-                                                    x:DataType="VM:SingleDayVM"
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=HideElseExpandedCommand}"
-                                                    CommandParameter="{Binding .}" />
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=HideElseExpandedCommand, x:DataType=VM:SingleDayVM}" CommandParameter="{Binding .}" />
                                             </Grid.GestureRecognizers>
 
 
@@ -375,9 +372,8 @@
 
                                                         <Border.GestureRecognizers>
                                                             <TapGestureRecognizer
-                                                                x:DataType="VM:SingleDayVM"
                                                                 Buttons="Primary"
-                                                                Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=SetFullReturnCommand}"
+                                                                Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=SetFullReturnCommand, x:DataType=VM:SingleDayVM}"
                                                                 CommandParameter="{Binding .}"
                                                                 NumberOfTapsRequired="1" />
                                                         </Border.GestureRecognizers>

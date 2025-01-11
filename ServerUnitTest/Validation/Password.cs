@@ -12,7 +12,7 @@ namespace ServerUnitTest.Validation
         [Fact]
         public void ReturnValidNull()
         {
-            RegisterUser user = null;
+            RegisterUser? user = null;
 
             IUserValidation _valid = new UserValidation(new());
             var valid = new ValidationException();
@@ -114,7 +114,7 @@ namespace ServerUnitTest.Validation
         [Fact]
         public void RefValidNull()
         {
-            RegisterUser user = null;
+            RegisterUser? user = null;
 
             IUserValidation _valid = new UserValidation(new());
             var valid = new ValidationException();

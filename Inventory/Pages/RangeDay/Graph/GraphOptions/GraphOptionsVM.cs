@@ -5,8 +5,15 @@ namespace Inventory.Pages.RangeDay.Graph.GraphOptions
 {
     public partial class GraphOptionsVM : ObservableObject, IDisposable
     {
-        [ObservableProperty]
-        GraphOptionsM graphOptionsMs;
+        private GraphOptionsM graphOptionsMs;
+        public GraphOptionsM GraphOptionsMs
+        {
+            get => graphOptionsMs;
+            set
+            {
+                if (SetProperty(ref graphOptionsMs, value, nameof(GraphOptionsMs))) { }
+            }
+        }
 
         public Func<object, CancellationToken, Task> Close;
         public Task OnClose(object result = null, CancellationToken token = default)

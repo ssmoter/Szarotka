@@ -15,20 +15,55 @@ namespace DriversRoutes.Pages.Maps.MapSmall;
 
 public partial class MapSmallVM : ObservableObject
 {
-    [ObservableProperty]
-    MapSmallM mapSmallM;
+    private MapSmallM mapSmallM;
+    public MapSmallM MapSmallM
+    {
+        get => mapSmallM;
+        set
+        {
+            if (SetProperty(ref mapSmallM, value, nameof(MapSmallM))) { }
+        }
+    }
 
-    [ObservableProperty]
-    bool routeIsVisible;
+    private bool routeIsVisible;
+    public bool RouteIsVisible
+    {
+        get => routeIsVisible;
+        set
+        {
+            if (SetProperty(ref routeIsVisible, value, nameof(RouteIsVisible))) { }
+        }
+    }
 
-    [ObservableProperty]
-    string routeDistance;
+    private string routeDistance;
+    public string RouteDistance
+    {
+        get => routeDistance;
+        set
+        {
+            if (SetProperty(ref routeDistance, value, nameof(RouteDistance))) { }
+        }
+    }
 
-    [ObservableProperty]
-    TimeSpan routeDuration;
+    private TimeSpan routeDuration;
+    public TimeSpan RouteDuration
+    {
+        get => routeDuration;
+        set
+        {
+            if (SetProperty(ref routeDuration, value, nameof(RouteDuration))) { }
+        }
+    }
 
-    [ObservableProperty]
-    bool isFullscreen;
+    private bool isFullscreen;
+    public bool IsFullscreen
+    {
+        get => isFullscreen;
+        set
+        {
+            if (SetProperty(ref isFullscreen, value, nameof(IsFullscreen))) { }
+        }
+    }
 
     public Action<MapSpan> MoveToRegion;
     public Action<Microsoft.Maui.Controls.Maps.Pin> AddPin;

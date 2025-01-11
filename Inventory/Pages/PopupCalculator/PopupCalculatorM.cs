@@ -6,17 +6,30 @@ namespace Inventory.Pages.PopupCalculator
 {
     public partial class PopupCalculatorM : ObservableObject
     {
-        [ObservableProperty]
-        ObservableCollection<decimal> values;
+        private ObservableCollection<decimal> values;
+        public ObservableCollection<decimal> Values
+        {
+            get => values;
+            set
+            {
+                if (SetProperty(ref values, value, nameof(Values))) { }
+            }
+        }
 
-        [ObservableProperty]
-        ObservableCollection<char> sigs;
-
+        private ObservableCollection<char> sigs;
+        public ObservableCollection<char> Sigs
+        {
+            get => sigs;
+            set
+            {
+                if (SetProperty(ref sigs, value, nameof(Sigs))) { }
+            }
+        }
 
         public PopupCalculatorM()
         {
-            Values = new ObservableCollection<decimal>();
-            Sigs = new ObservableCollection<char>();
+            Values = [];
+            Sigs = [];
         }
 
     }

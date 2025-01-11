@@ -1,5 +1,7 @@
 ﻿using SQLite;
 
+using System.Text.Json.Serialization;
+
 namespace DataBase.Model
 {
     public class LogsModel
@@ -11,6 +13,7 @@ namespace DataBase.Model
         public string Message { get; set; } = "";
         public string Created { get; set; } = "";
         [Ignore]
+        [JsonConverter(typeof(JsonContext.CustomDateTimeConverter))]
         public DateTime CreatedDateTime
         {
             get

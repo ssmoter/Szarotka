@@ -1,13 +1,11 @@
-﻿
-using Shared.Helper;
-
-using System.Text;
+﻿using System.Text;
+using System.Text.Json.Serialization.Metadata;
 
 namespace Shared.Data.File
 {
     public static class JsonFile
     {
-        public static async Task<T> GetFileJsonAsync<T>(string path)
+        public static async Task<T> GetFileJsonAsync<T>(string path, JsonTypeInfo jsonTypeInfo)
         {
             try
             {
@@ -27,22 +25,22 @@ namespace Shared.Data.File
                     sb.Append(text);
                 }
 
-                var model = System.Text.Json.JsonSerializer.Deserialize<T>(sb.ToString(), JsonOptions.JsonSerializeOptionsBoolAndDateTime);
-                return model;
+                var model = System.Text.Json.JsonSerializer.Deserialize(sb.ToString(), jsonTypeInfo);
+                return (T)model;
             }
             catch (Exception)
             {
                 throw;
             }
         }
-        public static T GetFileJson<T>(string path)
+        public static T GetFileJson<T>(string path, JsonTypeInfo jsonTypeInfo)
         {
             try
             {
                 var text = System.IO.File.ReadAllText(path, Encoding.Unicode);
 
-                var model = System.Text.Json.JsonSerializer.Deserialize<T>(text, JsonOptions.JsonSerializeOptionsBoolAndDateTime);
-                return model;
+                var model = System.Text.Json.JsonSerializer.Deserialize(text, jsonTypeInfo);
+                return (T)model;
             }
             catch (Exception)
             {
@@ -50,12 +48,13 @@ namespace Shared.Data.File
             }
         }
 
-        public static async Task<string> SaveFileJson(object model, string name, string folderName = FileHelper.JsonFolder)
+        public static async Task<string> SaveFileJson(object model, JsonTypeInfo jsonTypeInfo, string name, string folderName = FileHelper.JsonFolder)
         {
             try
             {
-                var json = System.Text.Json.JsonSerializer.Serialize(model);
-                byte[] encodedtext = Encoding.Unicode.GetBytes(json);
+
+                var json = System.Text.Json.JsonSerializer.Serialize(model, jsonTypeInfo);
+                byte[] encodedText = Encoding.Unicode.GetBytes(json);
 
                 var path = Path.Combine(DataBase.Helper.Constants.GetPathFolder, folderName);
 
@@ -64,7 +63,7 @@ namespace Shared.Data.File
                 path = FileHelper.FileIsExist(path, name, FileHelper.jsonTyp);
 
                 using var stream = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.None, bufferSize: 4096, useAsync: true);
-                await stream.WriteAsync(encodedtext);
+                await stream.WriteAsync(encodedText);
 
                 return path;
             }

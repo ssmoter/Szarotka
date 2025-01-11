@@ -33,7 +33,7 @@ namespace SzarotkaBlazor
         }
         private async Task GotToLogin()
         {
-            if (!UserAfterLogin.IsLogin)
+            if (UserAfterLogin.IsLogin)
             {
                 await Shell.Current.GoToAsync($"{nameof(Shared.Pages.LogIn.LogInV)}");
             }

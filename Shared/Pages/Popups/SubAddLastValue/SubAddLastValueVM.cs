@@ -5,12 +5,22 @@ namespace Shared.Pages.Popups.SubAddLastValue
 {
     public partial class SubAddLastValueVM : ObservableObject
     {
-        [ObservableProperty]
-        SubAddLastValueM subAddLastValueM;
+        private SubAddLastValueM subAddLastValueM;
+        public SubAddLastValueM SubAddLastValueM
+        {
+            get => subAddLastValueM;
+            set
+            {
+                if (SetProperty(ref subAddLastValueM, value))
+                {
+                    OnPropertyChanged(nameof(SubAddLastValueM));
+                }
+            }
+        }
 
 
         public Func<object, CancellationToken, Task> Close;
-        public Task OnClose(object result = null, CancellationToken token = default(CancellationToken))
+        public Task OnClose(object result = null, CancellationToken token = default)
         {
             return Close?.Invoke(result, token);
         }

@@ -2,398 +2,450 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Shared.Data.File;
+using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
-using Shared.Pages.ExistingFiles;
-using Shared.Service;
 
 using Inventory.Data.File;
 using Inventory.Model;
 using Inventory.Service;
-using DataBase.Data;
+
 using Shared.Data;
+using Shared.Data.File;
+using Shared.Pages.ExistingFiles;
+using Shared.Service;
 
-namespace Inventory.Pages.RangeDay
+namespace Inventory.Pages.RangeDay;
+
+public partial class RangeDayVM : ObservableObject, IQueryAttributable
 {
-    [QueryProperty(nameof(FilesPath), nameof(FilesPath))]
-    public partial class RangeDayVM : ObservableObject
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        [ObservableProperty]
-        RangeDayM[] rangeDays;
-
-
-        [ObservableProperty]
-        IList<RangeDayM> sum = [];
-        public IList<RangeDayM> SumDayOfWeek { get; set; } = [];
-        public IList<RangeDayM> AveragesDayOfWeek { get; set; } = [];
-        public IList<RangeDayM> SumPerOfWeek { get; set; } = [];
-        public IList<RangeDayM> AveragesPerOfWeek { get; set; } = [];
-        public IList<RangeDayM> SumPerOfMonth { get; set; } = [];
-        public IList<RangeDayM> AveragesPerOfMonth { get; set; } = [];
-        public IList<Product> ProductsAll { get; set; }
-        IList<Driver> UniqueDriver = [];
-
-        readonly Driver[] _allDrivers;
-
-        [ObservableProperty]
-        bool enableSave;
-
-        [ObservableProperty]
-        bool listIsVisible = true;
-        [ObservableProperty]
-        bool graphIsVisible;
-        [ObservableProperty]
-        bool tableIsVisible;
-
-
-        string filesPath;
-        public string FilesPath
+        if (query.TryGetValue(nameof(FilesPath), out object filesPath))
         {
-            set
+            if (filesPath is string _filesPath)
             {
-                if (value is not null)
-                {
-                    filesPath = value;
-                    var extension = Path.GetExtension(filesPath);
-                    if (extension == FileHelper.jsonTyp)
-                    {
-                        RangeDays = JsonFile.GetFileJson<RangeDayM[]>(filesPath);
-                        Calculate(RangeDays);
-                    }
-                    if (extension == FileHelper.csvTyp)
-                    {
-                        RangeDays = CSVFile.GetFileCSV(filesPath);
-                        Calculate(RangeDays);
-                    }
-
-                    EnableSave = true;
-                }
+                FilesPath = _filesPath;
             }
         }
+    }
 
 
-        PopupDateModel PopupDate = new(DateTime.Today.Ticks, DateTime.Today.AddDays(1).Ticks, false, []);
-        readonly AccessDataBase _db;
-        readonly ISelectDayService _selectDayService;
-        readonly ISaveDayService _dayService;
-        public RangeDayVM(AccessDataBase db, ISelectDayService selectDay, ISaveDayService dayService)
+    private RangeDayM[] rangeDays;
+    public RangeDayM[] RangeDays
+    {
+        get => rangeDays;
+        set
         {
-            sum = [];
-            _db = db;
-            _selectDayService = selectDay;
-
-
-            var driver = _db.DataBase.Table<Driver>().ToArray();
-            _allDrivers = driver;
-
-            EnableSave = false;
-            _dayService = dayService;
+            if (SetProperty(ref rangeDays, value, nameof(RangeDays))) { }
         }
+    }
 
-        public RangeDayVM(Driver[] allDrivers)
+    private IList<RangeDayM> sum = [];
+    public IList<RangeDayM> Sum
+    {
+        get => sum;
+        set
         {
-            _allDrivers = allDrivers;
+            if (SetProperty(ref sum, value, nameof(Sum))) { }
         }
+    }
+    public IList<RangeDayM> SumDayOfWeek { get; set; } = [];
+    public IList<RangeDayM> AveragesDayOfWeek { get; set; } = [];
+    public IList<RangeDayM> SumPerOfWeek { get; set; } = [];
+    public IList<RangeDayM> AveragesPerOfWeek { get; set; } = [];
+    public IList<RangeDayM> SumPerOfMonth { get; set; } = [];
+    public IList<RangeDayM> AveragesPerOfMonth { get; set; } = [];
+    public IList<Product> ProductsAll { get; set; }
+    IList<Driver> UniqueDriver = [];
 
-        #region Method
+    readonly Driver[] _allDrivers;
 
-
-        async Task<RangeDayM[]> SelectDays(long from, long to, Guid[] selectedDriverName, bool moreData)
+    private bool enableSave;
+    public bool EnableSave
+    {
+        get => enableSave;
+        set
         {
-            var (drivers, days) = await _selectDayService.GetDaysAndDrivers(from, to, selectedDriverName, moreData);
-
-            var range = new RangeDayM[days.Length];
-
-            for (int i = 0; i < range.Length; i++)
-            {
-                range[i] = new()
-                {
-                    Day = days[i],
-                    Driver = drivers[i]
-                };
-            }
-
-            return range;
+            if (SetProperty(ref enableSave, value, nameof(EnableSave))) { }
         }
+    }
 
-        public void Calculate(IList<RangeDayM> value)
+    private bool listIsVisible = true;
+    public bool ListIsVisible
+    {
+        get => listIsVisible;
+        set
+        {
+            if (SetProperty(ref listIsVisible, value, nameof(ListIsVisible))) { }
+        }
+    }
+    private bool graphIsVisible;
+    public bool GraphIsVisible
+    {
+        get => graphIsVisible;
+        set
+        {
+            if (SetProperty(ref graphIsVisible, value, nameof(GraphIsVisible))) { }
+        }
+    }
+    private bool tableIsVisible;
+    public bool TableIsVisible
+    {
+        get => tableIsVisible;
+        set
+        {
+            if (SetProperty(ref tableIsVisible, value, nameof(TableIsVisible))) { }
+        }
+    }
+
+    string filesPath;
+    public string FilesPath
+    {
+        set
         {
             if (value is not null)
             {
-                Helper.RangeCalculations.GetUniqueDriver(value);
-                UniqueDriver = Helper.RangeCalculations.UniqueDriver;
-
-                Sum = Helper.RangeCalculations.SumTotalOfRangeCalculateAverages(value);
-                if (Sum.Count > 0)
+                filesPath = value;
+                var extension = Path.GetExtension(filesPath);
+                if (extension == FileHelper.jsonTyp)
                 {
-                    ProductsAll = Sum.MaxBy(x => x.Day.Products.Count).Day.Products;
+                    RangeDays = JsonFile.GetFileJson<RangeDayM[]>(filesPath, RangeDayMJsonSerializerContext.Default.RangeDayMArray);
+                    Calculate(RangeDays);
+                }
+                if (extension == FileHelper.csvTyp)
+                {
+                    RangeDays = CSVFile.GetFileCSV(filesPath);
+                    Calculate(RangeDays);
                 }
 
-                SumDayOfWeek = Helper.RangeCalculations.SumDayOfWeek(value);
-                AveragesDayOfWeek = Helper.RangeCalculations.AveragesDayOfWeek(value);
+                EnableSave = true;
+            }
+        }
+    }
 
-                SumPerOfWeek = Helper.RangeCalculations.SumPerOfWeek(value);
-                AveragesPerOfWeek = Helper.RangeCalculations.AveragesPerOfWeek(value);
+
+    PopupDateModel PopupDate = new(DateTime.Today.Ticks, DateTime.Today.AddDays(1).Ticks, false, []);
+    readonly AccessDataBase _db;
+    readonly ISelectDayService _selectDayService;
+    readonly ISaveDayService _dayService;
+    public RangeDayVM(AccessDataBase db, ISelectDayService selectDay, ISaveDayService dayService)
+    {
+        sum = [];
+        _db = db;
+        _selectDayService = selectDay;
 
 
-                SumPerOfMonth = Helper.RangeCalculations.SumPerOfMonth(value);
-                AveragesPerOfMonth = Helper.RangeCalculations.AveragesPerOfMonth(value);
+        var driver = _db.DataBase.Table<Driver>().ToArray();
+        _allDrivers = driver;
 
+        EnableSave = false;
+        _dayService = dayService;
+    }
+
+    public RangeDayVM(Driver[] allDrivers)
+    {
+        _allDrivers = allDrivers;
+    }
+
+    #region Method
+
+
+    async Task<RangeDayM[]> SelectDays(long from, long to, Guid[] selectedDriverName, bool moreData)
+    {
+        var (drivers, days) = await _selectDayService.GetDaysAndDrivers(from, to, selectedDriverName, moreData);
+
+        var range = new RangeDayM[days.Length];
+
+        for (int i = 0; i < range.Length; i++)
+        {
+            range[i] = new()
+            {
+                Day = days[i],
+                Driver = drivers[i]
+            };
+        }
+
+        return range;
+    }
+
+    public void Calculate(IList<RangeDayM> value)
+    {
+        if (value is not null)
+        {
+            Helper.RangeCalculations.GetUniqueDriver(value);
+            UniqueDriver = Helper.RangeCalculations.UniqueDriver;
+
+            Sum = Helper.RangeCalculations.SumTotalOfRangeCalculateAverages(value);
+            if (Sum.Count > 0)
+            {
+                ProductsAll = Sum.MaxBy(x => x.Day.Products.Count).Day.Products;
             }
 
-            Table.RangeTable.OnSetRangeDayMs(RangeDays, Sum, SumDayOfWeek, AveragesDayOfWeek, SumPerOfWeek, AveragesPerOfWeek, SumPerOfMonth, AveragesPerOfMonth, ProductsAll, UniqueDriver);
-            Graph.Graph.OnSetRangeDayMs(RangeDays, Sum, SumDayOfWeek, AveragesDayOfWeek, SumPerOfWeek, AveragesPerOfWeek, SumPerOfMonth, AveragesPerOfMonth, ProductsAll, UniqueDriver);
+            SumDayOfWeek = Helper.RangeCalculations.SumDayOfWeek(value);
+            AveragesDayOfWeek = Helper.RangeCalculations.AveragesDayOfWeek(value);
+
+            SumPerOfWeek = Helper.RangeCalculations.SumPerOfWeek(value);
+            AveragesPerOfWeek = Helper.RangeCalculations.AveragesPerOfWeek(value);
+
+
+            SumPerOfMonth = Helper.RangeCalculations.SumPerOfMonth(value);
+            AveragesPerOfMonth = Helper.RangeCalculations.AveragesPerOfMonth(value);
 
         }
 
-        async static Task<string> SelectImportExport(string type)
-        {
+        Table.RangeTable.OnSetRangeDayMs(RangeDays, Sum, SumDayOfWeek, AveragesDayOfWeek, SumPerOfWeek, AveragesPerOfWeek, SumPerOfMonth, AveragesPerOfMonth, ProductsAll, UniqueDriver);
+        Graph.Graph.OnSetRangeDayMs(RangeDays, Sum, SumDayOfWeek, AveragesDayOfWeek, SumPerOfWeek, AveragesPerOfWeek, SumPerOfMonth, AveragesPerOfMonth, ProductsAll, UniqueDriver);
+
+    }
+
+    async static Task<string> SelectImportExport(string type)
+    {
 #if WINDOWS
             var result = await Shell.Current.CurrentPage.DisplayActionSheet($"Wybierz co chcesz{Environment.NewLine}wykonać z plikami {type}",
             "Anuluj", null, "Import", "Eksport");
 #else
-            var result = await Shell.Current.CurrentPage.DisplayActionSheet($"Wybierz co chcesz{Environment.NewLine}wykonać z plikami {type}",
-                "Anuluj", null, "Import", "Eksport", "Pliki");
+        var result = await Shell.Current.CurrentPage.DisplayActionSheet($"Wybierz co chcesz{Environment.NewLine}wykonać z plikami {type}",
+            "Anuluj", null, "Import", "Eksport", "Pliki");
 #endif
-            return result;
-        }
+        return result;
+    }
 
-        string CreateFileName()
+    string CreateFileName()
+    {
+        if (RangeDays.Length == 1)
         {
-            if (RangeDays.Length == 1)
+            return string.Join('_', "Szarotka", RangeDays[0].Day.Created.ToString("dd.MM.yyyy"));
+        }
+        var from = RangeDays.FirstOrDefault().Day.Created.ToString("dd.MM.yyyy");
+        var to = RangeDays.LastOrDefault().Day.Created.ToString("dd.MM.yyyy");
+        return string.Join('_', "Szarotka", from, to);
+    }
+
+    #endregion
+
+    #region Command
+
+    [RelayCommand]
+    async Task OpenDetailPage(RangeDayM rangeDay)
+    {
+        try
+        {
+            rangeDay.Day = await _selectDayService.GetDayProcedure(rangeDay.Day.Id);
+            rangeDay.Day.CanUpdate = true;
+            for (int i = 0; i < rangeDay.Day.Products.Count; i++)
             {
-                return string.Join('_', "Szarotka", RangeDays[0].Day.Created.ToString("dd.MM.yyyy"));
+                rangeDay.Day.Products[i].CanUpdate = true;
             }
-            var from = RangeDays.FirstOrDefault().Day.Created.ToString("dd.MM.yyyy");
-            var to = RangeDays.LastOrDefault().Day.Created.ToString("dd.MM.yyyy");
-            return string.Join('_', "Szarotka", from, to);
-        }
 
-        #endregion
-
-        #region Command
-
-        [RelayCommand]
-        async Task OpenDetailPage(RangeDayM rangeDay)
-        {
-            try
-            {
-                rangeDay.Day = await _selectDayService.GetDayProcedure(rangeDay.Day.Id);
-                rangeDay.Day.CanUpadte = true;
-                for (int i = 0; i < rangeDay.Day.Products.Count; i++)
+            await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
+                new Dictionary<string, object>()
                 {
-                    rangeDay.Day.Products[i].CanUpadte = true;
-                }
-
-                await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
-                    new Dictionary<string, object>()
-                    {
-                        [nameof(Day)] = rangeDay.Day
-                    });
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
+                    [nameof(Day)] = rangeDay.Day
+                });
         }
-
-        [RelayCommand]
-        async Task GenerateJsonFile()
+        catch (Exception ex)
         {
-            try
-            {
+            _db.SaveLogExtension(ex);
+        }
+    }
+
+    [RelayCommand]
+    async Task GenerateJsonFile()
+    {
+        try
+        {
 #if ANDROID
                 if (!await AndroidPermissionService.CheckAllPermissionsAboutStorage())
                 {
                     return;
                 }
 #endif
-                var result = await SelectImportExport("Json");
+            var result = await SelectImportExport("Json");
 
-                if (string.IsNullOrWhiteSpace(result))
-                {
-                    return;
-                }
-
-                if (result == "Anuluj")
-                {
-                    return;
-                }
-                if (result == "Import")
-                {
-                    var response = await FilePicker.PickAsync(ExistingFilesVM.FileTypJson());
-                    if (response == null)
-                        return;
-                    var file = JsonFile.GetFileJson<RangeDayM[]>(response.FullPath);
-                    RangeDays = file;
-                    Calculate(RangeDays);
-                    EnableSave = true;
-                }
-                if (result == "Eksport")
-                {
-                    for (int i = 0; i < RangeDays.Length; i++)
-                    {
-                        if (RangeDays[i].Day.Products.Count <= 0)
-                            RangeDays[i].Day = await _selectDayService.GetDayProcedure(RangeDays[i].Day.Id);
-                    }
-                    var name = CreateFileName();
-                    var response = await JsonFile.SaveFileJson(RangeDays, name);
-                    await Share.Default.RequestAsync(new ShareFileRequest
-                    {
-                        Title = name,
-                        File = new ShareFile(response)
-                    });
-                }
-                if (result == "Pliki")
-                {
-                    var files = FileHelper.GetFilesPaths(FileHelper.JsonFolder);
-                    await Shell.Current.GoToAsync($"{nameof(ExistingFilesV)}?GetTyp={FileHelper.JsonFolder}",
-                        new Dictionary<string, object>
-                        {
-                            [nameof(ExistingFilesM)] = ExistingFilesVM.GetExistingFiles(files)
-                            ,
-                            ["ReturnPage"] = nameof(RangeDayV)
-                        }); ;
-                }
-
-            }
-            catch (Exception ex)
+            if (string.IsNullOrWhiteSpace(result))
             {
-                _db.SaveLogExtension(ex);
+                return;
             }
-        }
 
-        [RelayCommand]
-        async Task GenerateCSVFile()
-        {
-            try
+            if (result == "Anuluj")
             {
-#if ANDROID
-                if (!await AndroidPermissionService.CheckAllPermissionsAboutStorage())
-                {
-                    return;
-                }
-#endif
-                var result = await SelectImportExport("CSV");
-
-                if (string.IsNullOrWhiteSpace(result))
-                {
-                    return;
-                }
-                if (result == "Anuluj")
-                {
-                    return;
-                }
-                if (result == "Import")
-                {
-                    var response = await FilePicker.PickAsync(ExistingFilesVM.FileTypCSV());
-                    if (response == null)
-                        return;
-                    var file = CSVFile.GetFileCSV(response.FullPath);
-                    RangeDays = file;
-                    Calculate(RangeDays);
-                    EnableSave = true;
-                }
-                if (result == "Eksport")
-                {
-                    for (int i = 0; i < RangeDays.Length; i++)
-                    {
-                        if (RangeDays[i].Day.Products.Count <= 0)
-                            RangeDays[i].Day = await _selectDayService.GetDayProcedure(RangeDays[i].Day.Id);
-                    }
-                    var name = CreateFileName();
-                    var response = CSVFile.SaveFileCSV(RangeDays, name);
-                    await Share.Default.RequestAsync(new ShareFileRequest
-                    {
-                        Title = name,
-                        File = new ShareFile(response)
-                    });
-                }
-                if (result == "Pliki")
-                {
-                    var files = FileHelper.GetFilesPaths(FileHelper.CsvFolder);
-                    await Shell.Current.GoToAsync($"{nameof(ExistingFilesV)}?GetTyp={FileHelper.CsvFolder}",
-                        new Dictionary<string, object>
-                        {
-                            [nameof(ExistingFilesM)] = ExistingFilesVM.GetExistingFiles(files)
-                            ,
-                            ["ReturnPage"] = nameof(RangeDayV)
-                        }); ;
-                }
-
+                return;
             }
-            catch (Exception ex)
+            if (result == "Import")
             {
-                _db.SaveLogExtension(ex);
+                var response = await FilePicker.PickAsync(ExistingFilesVM.FileTypJson());
+                if (response == null)
+                    return;
+                var file = JsonFile.GetFileJson<RangeDayM[]>(response.FullPath, RangeDayMJsonSerializerContext.Default.RangeDayMArray);
+                RangeDays = file;
+                Calculate(RangeDays);
+                EnableSave = true;
             }
-        }
-
-        [RelayCommand]
-        async Task SaveAnotherDriverData()
-        {
-            try
+            if (result == "Eksport")
             {
                 for (int i = 0; i < RangeDays.Length; i++)
                 {
-                    await Task.Delay(1);
+                    if (RangeDays[i].Day.Products.Count <= 0)
+                        RangeDays[i].Day = await _selectDayService.GetDayProcedure(RangeDays[i].Day.Id);
                 }
-                throw new NotImplementedException();
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
-        }
-
-        [RelayCommand]
-        async Task SelectMoreDate()
-        {
-            try
-            {
-                var popup = new PopupSelectRangeDate.PopupSelectRangeDateV(_allDrivers);
-                var result = await Shell.Current.ShowPopupAsync(popup);
-
-                if (result is PopupDateModel model)
+                var name = CreateFileName();
+                var response = await JsonFile.SaveFileJson(RangeDays, RangeDayMJsonSerializerContext.Default.RangeDayMArray, name);
+                await Share.Default.RequestAsync(new ShareFileRequest
                 {
-                    PopupDate = model;
-                    RangeDays = await SelectDays(PopupDate.From, PopupDate.To, PopupDate.DriverId, PopupDate.MoreData);
-                    // RangeDays = await SelectDays(0, DateTime.Today.Ticks, [], true);
-
-                    Calculate(RangeDays);
-                    EnableSave = false;
-                }
+                    Title = name,
+                    File = new ShareFile(response)
+                });
             }
-            catch (Exception ex)
+            if (result == "Pliki")
             {
-                _db.SaveLogExtension(ex);
-            }
-        }
-
-        [RelayCommand]
-        static async Task Back()
-        {
-            await Shell.Current.GoToAsync("..");
-        }
-
-        [RelayCommand]
-        async Task GoToGraph()
-        {
-            try
-            {
-                await Shell.Current.GoToAsync($"{nameof(Graph.GraphV)}?",
-                    new Dictionary<string, object>()
+                var files = FileHelper.GetFilesPaths(FileHelper.JsonFolder);
+                await Shell.Current.GoToAsync($"{nameof(ExistingFilesV)}?GetTyp={FileHelper.JsonFolder}",
+                    new Dictionary<string, object>
                     {
-                        [nameof(RangeDayM)] = RangeDays
-                    });
+                        [nameof(ExistingFilesM)] = ExistingFilesVM.GetExistingFiles(files)
+                        ,
+                        ["ReturnPage"] = nameof(RangeDayV)
+                    }); ;
             }
-            catch (Exception ex)
+
+        }
+        catch (Exception ex)
+        {
+            _db.SaveLogExtension(ex);
+        }
+    }
+
+    [RelayCommand]
+    async Task GenerateCSVFile()
+    {
+        try
+        {
+#if ANDROID
+                if (!await AndroidPermissionService.CheckAllPermissionsAboutStorage())
+                {
+                    return;
+                }
+#endif
+            var result = await SelectImportExport("CSV");
+
+            if (string.IsNullOrWhiteSpace(result))
             {
-                _db.SaveLogExtension(ex);
+                return;
+            }
+            if (result == "Anuluj")
+            {
+                return;
+            }
+            if (result == "Import")
+            {
+                var response = await FilePicker.PickAsync(ExistingFilesVM.FileTypCSV());
+                if (response == null)
+                    return;
+                var file = CSVFile.GetFileCSV(response.FullPath);
+                RangeDays = file;
+                Calculate(RangeDays);
+                EnableSave = true;
+            }
+            if (result == "Eksport")
+            {
+                for (int i = 0; i < RangeDays.Length; i++)
+                {
+                    if (RangeDays[i].Day.Products.Count <= 0)
+                        RangeDays[i].Day = await _selectDayService.GetDayProcedure(RangeDays[i].Day.Id);
+                }
+                var name = CreateFileName();
+                var response = CSVFile.SaveFileCSV(RangeDays, name);
+                await Share.Default.RequestAsync(new ShareFileRequest
+                {
+                    Title = name,
+                    File = new ShareFile(response)
+                });
+            }
+            if (result == "Pliki")
+            {
+                var files = FileHelper.GetFilesPaths(FileHelper.CsvFolder);
+                await Shell.Current.GoToAsync($"{nameof(ExistingFilesV)}?GetTyp={FileHelper.CsvFolder}",
+                    new Dictionary<string, object>
+                    {
+                        [nameof(ExistingFilesM)] = ExistingFilesVM.GetExistingFiles(files)
+                        ,
+                        ["ReturnPage"] = nameof(RangeDayV)
+                    }); ;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            _db.SaveLogExtension(ex);
+        }
+    }
+
+    [RelayCommand]
+    async Task SaveAnotherDriverData()
+    {
+        try
+        {
+            for (int i = 0; i < RangeDays.Length; i++)
+            {
+                await Task.Delay(1);
+            }
+            throw new NotImplementedException();
+        }
+        catch (Exception ex)
+        {
+            _db.SaveLogExtension(ex);
+        }
+    }
+
+    [RelayCommand]
+    async Task SelectMoreDate()
+    {
+        try
+        {
+            var popup = new PopupSelectRangeDate.PopupSelectRangeDateV(_allDrivers);
+            var result = await Shell.Current.ShowPopupAsync(popup);
+
+            if (result is PopupDateModel model)
+            {
+                PopupDate = model;
+                RangeDays = await SelectDays(PopupDate.From, PopupDate.To, PopupDate.DriverId, PopupDate.MoreData);
+                // RangeDays = await SelectDays(0, DateTime.Today.Ticks, [], true);
+
+                Calculate(RangeDays);
+                EnableSave = false;
             }
         }
-
-        #endregion
-
-
+        catch (Exception ex)
+        {
+            _db.SaveLogExtension(ex);
+        }
     }
+
+    [RelayCommand]
+    static async Task Back()
+    {
+        await Shell.Current.GoToAsync("..");
+    }
+
+    [RelayCommand]
+    async Task GoToGraph()
+    {
+        try
+        {
+            await Shell.Current.GoToAsync($"{nameof(Graph.GraphV)}?",
+                new Dictionary<string, object>()
+                {
+                    [nameof(RangeDayM)] = RangeDays
+                });
+        }
+        catch (Exception ex)
+        {
+            _db.SaveLogExtension(ex);
+        }
+    }
+
+    #endregion
+
+
 }
+

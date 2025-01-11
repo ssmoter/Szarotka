@@ -11,37 +11,125 @@ using Shared.Data;
 
 namespace DriversRoutes.Pages.Customer.AddCustomer
 {
-    [QueryProperty(nameof(Customer), nameof(CustomerRoutes))]
-    [QueryProperty(nameof(RouteId), nameof(Routes))]
-    public partial class AddCustomerVM : ObservableObject
+    public partial class AddCustomerVM : ObservableObject, IQueryAttributable
     {
         #region Variable
 
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.TryGetValue(nameof(CustomerRoutes), out object customer))
+            {
+                if (customer is CustomerRoutes _customer)
+                {
+                    Customer = _customer;
+                }
+            }
+            if (query.TryGetValue(nameof(Routes), out object routeId))
+            {
+                if (routeId is Routes _routeId)
+                {
+                    RouteId = _routeId;
+                }
+            }
+        }
+
         private const string NewPoint = "Dodawanie nowego punktu";
 
-        [ObservableProperty]
-        AddCustomerM addCustomer;
-        public Routes RouteId { get; set; }
+        private AddCustomerM addCustomer;
+        public AddCustomerM AddCustomer
+        {
+            get => addCustomer;
+            set
+            {
+                if (SetProperty(ref addCustomer, value, nameof(AddCustomer))) { }
+            }
+        }
+        private Routes routeId;
+        public Routes RouteId
+        {
+            get => routeId;
+            set
+            {
+                if (SetProperty(ref routeId, value, nameof(RouteId))) { }
+            }
+        }
 
-        [ObservableProperty]
-        CustomerRoutes customer;
+        private CustomerRoutes customer;
+        public CustomerRoutes Customer
+        {
+            get => customer;
+            set
+            {
+                if (SetProperty(ref customer, value, nameof(Customer))) { }
+            }
+        }
 
-        [ObservableProperty]
-        CustomerRoutes customerHelperMap;
+        private CustomerRoutes customerHelperMap;
+        public CustomerRoutes CustomerHelperMap
+        {
+            get => customerHelperMap;
+            set
+            {
+                if (!SetProperty(ref customerHelperMap, value, nameof(CustomerHelperMap))) { }
+            }
+        }
 
-        [ObservableProperty]
-        SelectedDayOfWeekRoutes dayOfWeekCustomerBefore;
-        [ObservableProperty]
-        bool dayOfWeekCustomerBeforeIsVisible;
-        [ObservableProperty]
-        SelectedDayOfWeekRoutes dayOfWeekCustomerAfter;
-        [ObservableProperty]
-        bool dayOfWeekCustomerAfterIsVisible;
+        private SelectedDayOfWeekRoutes dayOfWeekCustomerBefore;
+        public SelectedDayOfWeekRoutes DayOfWeekCustomerBefore
+        {
+            get => dayOfWeekCustomerBefore;
+            set
+            {
+                if (SetProperty(ref dayOfWeekCustomerBefore, value, nameof(DayOfWeekCustomerBefore))) { }
+            }
+        }
 
-        [ObservableProperty]
-        Border fullSize;
-        [ObservableProperty]
-        Border timeSize;
+        private bool dayOfWeekCustomerBeforeIsVisible;
+        public bool DayOfWeekCustomerBeforeIsVisible
+        {
+            get => dayOfWeekCustomerBeforeIsVisible;
+            set
+            {
+                if (SetProperty(ref dayOfWeekCustomerBeforeIsVisible, value, nameof(DayOfWeekCustomerBeforeIsVisible))) { }
+            }
+        }
+        private SelectedDayOfWeekRoutes dayOfWeekCustomerAfter;
+        public SelectedDayOfWeekRoutes DayOfWeekCustomerAfter
+        {
+            get => dayOfWeekCustomerAfter;
+            set
+            {
+                if (SetProperty(ref dayOfWeekCustomerAfter, value, nameof(DayOfWeekCustomerAfter))) { }
+            }
+        }
+        private bool dayOfWeekCustomerAfterIsVisible;
+        public bool DayOfWeekCustomerAfterIsVisible
+        {
+            get => dayOfWeekCustomerAfterIsVisible;
+            set
+            {
+                if (SetProperty(ref dayOfWeekCustomerAfterIsVisible, value, nameof(DayOfWeekCustomerAfterIsVisible))) { }
+            }
+        }
+
+        private Border fullSize;
+        public Border FullSize
+        {
+            get => fullSize;
+            set
+            {
+                if (SetProperty(ref fullSize, value, nameof(FullSize))) { }
+            }
+        }
+        private Border timeSize;
+        public Border TimeSize
+        {
+            get => timeSize;
+            set
+            {
+                if (SetProperty(ref timeSize, value, nameof(TimeSize))) { }
+            }
+        }
 
         List<SelectedDayOfWeekRoutes> DayOfWeekCustomerBeforeList;
         List<SelectedDayOfWeekRoutes> DayOfWeekCustomerAfterList;
@@ -50,7 +138,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         readonly Data.GoogleApi.IAddressFromCoordinates _IAddressFromCoordinates;
         readonly AccessDataBase _db;
         internal ResidentialAddress[] _address { get; set; } = [];
-        internal CustomerRoutes originCustomer {  get; set; }
+        internal CustomerRoutes originCustomer { get; set; }
         #endregion
 
         public AddCustomerVM(Service.ISaveRoutes saveRoutes, AccessDataBase db, Data.GoogleApi.IAddressFromCoordinates IAddressFromCoordinates)

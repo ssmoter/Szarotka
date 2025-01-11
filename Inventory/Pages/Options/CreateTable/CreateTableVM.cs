@@ -16,11 +16,25 @@ namespace Inventory.Pages.Options.CreateTable
     public partial class CreateTableVM : ObservableObject
     {
 
-        [ObservableProperty]
-        ObservableCollection<CreateTableM> tableMs;
+        private ObservableCollection<CreateTableM> tableMs;
+        public ObservableCollection<CreateTableM> TableMs
+        {
+            get => tableMs;
+            set
+            {
+                if (SetProperty(ref tableMs, value, nameof(TableMs))) { }
+            }
+        }
 
-        [ObservableProperty]
-        DataBaseVersion version;
+        private DataBaseVersion version;
+        public DataBaseVersion Version
+        {
+            get => version;
+            set
+            {
+                if (SetProperty(ref version, value, nameof(Version))) { }
+            }
+        }
 
         readonly AccessDataBase _db;
         public CreateTableVM(AccessDataBase dataBase)

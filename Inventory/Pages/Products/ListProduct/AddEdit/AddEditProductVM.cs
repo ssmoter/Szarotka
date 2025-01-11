@@ -12,18 +12,49 @@ using static Inventory.Pages.Products.ListProduct.AddEdit.AddEditProductM;
 
 namespace Inventory.Pages.Products.ListProduct.AddEdit
 {
-    [QueryProperty(nameof(Product), nameof(ListProductM))]
-    public partial class AddEditProductVM : ObservableObject
+    public partial class AddEditProductVM : ObservableObject, IQueryAttributable
     {
-        [ObservableProperty]
-        ListProductM product;
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.TryGetValue(nameof(ListProductM), out object product))
+            {
+                if (product is ListProductM _product)
+                {
+                    Product = _product;
+                }
+            }
 
-        [ObservableProperty]
-        AddEditProductM addEdit;
+        }
 
-        [ObservableProperty]
-        ObservableCollection<string> imgList;
+        private ListProductM product;
+        public ListProductM Product
+        {
+            get => product;
+            set
+            {
+                if (SetProperty(ref product, value, nameof(Product))) { }
+            }
+        }
 
+        private AddEditProductM addEdit;
+        public AddEditProductM AddEdit
+        {
+            get => addEdit;
+            set
+            {
+                if (SetProperty(ref addEdit, value, nameof(AddEdit))) { }
+            }
+        }
+
+        private ObservableCollection<AddEditProductMImg> imgList = [];
+        public ObservableCollection<AddEditProductMImg> ImgList
+        {
+            get => imgList;
+            set
+            {
+                if (SetProperty(ref imgList, value, nameof(ImgList))) { }
+            }
+        }
 
         readonly AccessDataBase _db;
 
@@ -42,6 +73,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             }
             ImgList ??= [];
             _db = db;
+
         }
 
         private static readonly string[] extensionsValues = ["jpg", "png", "gif"];
@@ -208,6 +240,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
         void SwipeViewGesture(string selected)
         {
             var id = int.Parse(selected);
+            string[] newImgList = [];
             ImgList.Clear();
             switch ((FrameToDisplay)id)
             {
@@ -216,29 +249,35 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                     break;
                 case FrameToDisplay.bread:
                     AddEdit.IsVisibleBread = !AddEdit.IsVisibleBread;
-                    ImgList = new ObservableCollection<string>(Shared.Helper.Img.ImgPath.Bread);
+                    newImgList = (Shared.Helper.Img.ImgPath.Bread);
                     break;
                 case FrameToDisplay.buns:
                     AddEdit.IsVisibleBuns = !AddEdit.IsVisibleBuns;
-                    ImgList = new ObservableCollection<string>(Shared.Helper.Img.ImgPath.Buns);
+                    newImgList = (Shared.Helper.Img.ImgPath.Buns);
                     break;
                 case FrameToDisplay.cake:
                     AddEdit.IsVisibleCake = !AddEdit.IsVisibleCake;
-                    ImgList = new ObservableCollection<string>(Shared.Helper.Img.ImgPath.Cakes);
+                    newImgList = (Shared.Helper.Img.ImgPath.Cakes);
                     break;
                 case FrameToDisplay.cookies:
                     AddEdit.IsVisibleCookies = !AddEdit.IsVisibleCookies;
-                    ImgList = new ObservableCollection<string>(Shared.Helper.Img.ImgPath.Cookies);
+                    newImgList = (Shared.Helper.Img.ImgPath.Cookies);
                     break;
                 case FrameToDisplay.other:
                     AddEdit.IsVisibleOther = !AddEdit.IsVisibleOther;
-                    ImgList = new ObservableCollection<string>(Shared.Helper.Img.ImgPath.Other);
+                    newImgList = (Shared.Helper.Img.ImgPath.Other);
                     break;
                 case FrameToDisplay.@default:
                     Product.Name.Img = Shared.Helper.Img.ImgPath.Logo;
                     ImgList.Clear();
                     break;
             }
+
+            for (int i = 0; i < newImgList.Length; i++)
+            {
+                ImgList.Add(new(newImgList[i]));
+            }
+            OnPropertyChanged(nameof(ImgList));
         }
 
         [RelayCommand]

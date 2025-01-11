@@ -1,24 +1,50 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Shared.Helper;
+using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 
 using Inventory.Service;
-using DataBase.Data;
+
 using Shared.Data;
+using Shared.Helper;
 
 
 namespace Inventory.Pages.Main
 {
-    [QueryProperty(nameof(Day), nameof(DataBase.Model.EntitiesInventory.Day))]
-    public partial class MainVM : ObservableObject
+    public partial class MainVM : ObservableObject, IQueryAttributable
     {
-        [ObservableProperty]
-        string name;
 
-        [ObservableProperty]
-        MainM mainM;
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.TryGetValue(nameof(DataBase.Model.EntitiesInventory.Day),out object day)) 
+            {
+                if (day is DataBase.Model.EntitiesInventory.Day _day)
+                {
+                    Day = _day;
+                }
+            }
+        }
+
+        private string name;
+        public string Name
+        {
+            get => name;
+            set
+            {
+                if (SetProperty(ref name, value, nameof(Name))) { }
+            }
+        }
+
+        private MainM mainM;
+        public MainM MainM
+        {
+            get => mainM;
+            set
+            {
+                if (SetProperty(ref mainM, value, nameof(MainM))) { }
+            }
+        }
 
 
         public Day Day { get; set; }
@@ -117,10 +143,10 @@ namespace Inventory.Pages.Main
                     Day = await _selectDayService.GetDayProcedure(DateTime.Now);
                 }
 
-                Day.CanUpadte = true;
+                Day.CanUpdate = true;
                 for (int i = 0; i < Day.Products.Count; i++)
                 {
-                    Day.Products[i].CanUpadte = true;
+                    Day.Products[i].CanUpdate = true;
                 }
                 await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
                     new Dictionary<string, object>()
@@ -154,15 +180,15 @@ namespace Inventory.Pages.Main
             {
                 if (await MainVM.CheckDriver())
                     return;
-                if (string.IsNullOrWhiteSpace(MainM.DisplyDate))
+                if (string.IsNullOrWhiteSpace(MainM.DisplayDate))
                     return;
 
 
                 var days = await _selectDayService.GetDayProcedure(MainM.Date);
-                days.CanUpadte = true;
+                days.CanUpdate = true;
                 for (int i = 0; i < days.Products.Count; i++)
                 {
-                    days.Products[i].CanUpadte = true;
+                    days.Products[i].CanUpdate = true;
                 }
                 await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
                     new Dictionary<string, object>()

@@ -1,5 +1,14 @@
-﻿namespace DriversRoutes.Model.Address
+﻿using System.Text.Json.Serialization;
+
+namespace DriversRoutes.Model.Address
 {
+
+    [JsonSerializable(typeof(GoogleApiAddress))]
+    [JsonSourceGenerationOptions(WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        PropertyNameCaseInsensitive = true)]
+    public partial class GoogleApiAddressJsonSerializerContext : JsonSerializerContext
+    { }
     public class GoogleApiAddress
     {
         public List<Result> Results { get; set; }

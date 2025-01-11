@@ -1,17 +1,45 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-
-using SQLite;
+﻿using SQLite;
 
 namespace DataBase.Model.EntitiesInventory;
 
 public partial class Product : BaseEntities<Guid>
 {
-    [ObservableProperty]
     private Guid dayId;
-    [ObservableProperty]
+    public Guid DayId
+    {
+        get => dayId;
+        set
+        {
+            if (SetProperty(ref dayId, value, nameof(DayId)))
+            {
+                //OnPropertyChanged(nameof(DayId));
+            }
+        }
+    }
     private Guid productNameId;
-    [ObservableProperty]
+    public Guid ProductNameId
+    {
+        get => productNameId;
+        set
+        {
+            if (SetProperty(ref productNameId, value, nameof(ProductNameId)))
+            {
+                //OnPropertyChanged(nameof(ProductNameId));
+            }
+        }
+    }
     private Guid productPriceId;
+    public Guid ProductPriceId
+    {
+        get => productPriceId;
+        set
+        {
+            if (SetProperty(ref productPriceId, value, nameof(ProductPriceId)))
+            {
+                //OnPropertyChanged(nameof(ProductPriceId));
+            }
+        }
+    }
     private ProductName name = new();
     [Ignore]
     public ProductName Name
@@ -19,14 +47,21 @@ public partial class Product : BaseEntities<Guid>
         get => name;
         set
         {
-            if (SetProperty(ref name, value))
+            if (SetProperty(ref name, value, nameof(Name)))
             {
-                OnPropertyChanged(nameof(Name));
+                //OnPropertyChanged(nameof(Name));
             }
         }
     }
-    [ObservableProperty]
     private string description = "";
+    public string Description
+    {
+        get => description;
+        set
+        {
+            if (SetProperty(ref description, value, nameof(Description))) { }
+        }
+    }
 
     private ProductPrice price = new();
     [Ignore]
@@ -35,9 +70,9 @@ public partial class Product : BaseEntities<Guid>
         get => price;
         set
         {
-            if (SetProperty(ref price, value))
+            if (SetProperty(ref price, value, nameof(Price)))
             {
-                OnPropertyChanged(nameof(Price));
+                //OnPropertyChanged(nameof(Price));
             }
         }
     }
@@ -47,9 +82,9 @@ public partial class Product : BaseEntities<Guid>
         get => priceTotal;
         set
         {
-            if (SetProperty(ref priceTotal, value))
+            if (SetProperty(ref priceTotal, value, nameof(PriceTotal)))
             {
-                OnPropertyChanged(nameof(PriceTotal));
+                //OnPropertyChanged(nameof(PriceTotal));
                 OnPropertyChanged(nameof(PriceTotalDecimal));
                 CalculatePrice();
             }
@@ -66,10 +101,10 @@ public partial class Product : BaseEntities<Guid>
         }
         set
         {
-            if (SetProperty(ref priceTotal, (int)(value * 100)))
+            if (SetProperty(ref priceTotal, (int)(value * 100), nameof(PriceTotalDecimal)))
             {
                 OnPropertyChanged(nameof(PriceTotal));
-                OnPropertyChanged(nameof(PriceTotalDecimal));
+                //OnPropertyChanged(nameof(PriceTotalDecimal));
                 CalculatePrice();
             }
         }
@@ -80,9 +115,9 @@ public partial class Product : BaseEntities<Guid>
         get => priceTotalCorrect;
         set
         {
-            if (SetProperty(ref priceTotalCorrect, value))
+            if (SetProperty(ref priceTotalCorrect, value, nameof(PriceTotalCorrect)))
             {
-                OnPropertyChanged(nameof(PriceTotalCorrect));
+                //OnPropertyChanged(nameof(PriceTotalCorrect));
                 OnPropertyChanged(nameof(PriceTotalCorrectDecimal));
                 CalculatePrice();
             }
@@ -98,10 +133,10 @@ public partial class Product : BaseEntities<Guid>
         }
         set
         {
-            if (SetProperty(ref priceTotalCorrect, (int)(value * 100)))
+            if (SetProperty(ref priceTotalCorrect, (int)(value * 100), nameof(PriceTotalCorrectDecimal)))
             {
                 OnPropertyChanged(nameof(PriceTotalCorrect));
-                OnPropertyChanged(nameof(PriceTotalCorrectDecimal));
+                //OnPropertyChanged(nameof(PriceTotalCorrectDecimal));
                 CalculatePrice();
             }
         }
@@ -112,9 +147,9 @@ public partial class Product : BaseEntities<Guid>
         get => priceTotalAfterCorrect;
         set
         {
-            if (SetProperty(ref priceTotalAfterCorrect, value))
+            if (SetProperty(ref priceTotalAfterCorrect, value, nameof(PriceTotalAfterCorrect)))
             {
-                OnPropertyChanged(nameof(PriceTotalAfterCorrect));
+                //OnPropertyChanged(nameof(PriceTotalAfterCorrect));
                 OnPropertyChanged(nameof(PriceTotalAfterCorrectDecimal));
                 CalculatePrice();
             }
@@ -129,10 +164,10 @@ public partial class Product : BaseEntities<Guid>
         }
         set
         {
-            if (SetProperty(ref priceTotalAfterCorrect, (int)(value * 100)))
+            if (SetProperty(ref priceTotalAfterCorrect, (int)(value * 100), nameof(PriceTotalAfterCorrectDecimal)))
             {
                 OnPropertyChanged(nameof(PriceTotalAfterCorrect));
-                OnPropertyChanged(nameof(PriceTotalAfterCorrectDecimal));
+                //OnPropertyChanged(nameof(PriceTotalAfterCorrectDecimal));
                 CalculatePrice();
             }
         }
@@ -146,9 +181,9 @@ public partial class Product : BaseEntities<Guid>
         get => number;
         set
         {
-            if (SetProperty(ref number, value))
+            if (SetProperty(ref number, value, nameof(Number)))
             {
-                OnPropertyChanged(nameof(Number));
+                //OnPropertyChanged(nameof(Number));
                 CalculatePrice();
             }
         }
@@ -159,9 +194,9 @@ public partial class Product : BaseEntities<Guid>
         get => numberEdit;
         set
         {
-            if (SetProperty(ref numberEdit, value))
+            if (SetProperty(ref numberEdit, value, nameof(NumberEdit)))
             {
-                OnPropertyChanged(nameof(NumberEdit));
+                //OnPropertyChanged(nameof(NumberEdit));
                 CalculatePrice();
             }
         }
@@ -173,16 +208,16 @@ public partial class Product : BaseEntities<Guid>
         get => numberReturn;
         set
         {
-            if (SetProperty(ref numberReturn, value))
+            if (SetProperty(ref numberReturn, value, nameof(NumberReturn)))
             {
-                OnPropertyChanged(nameof(NumberReturn));
+                //OnPropertyChanged(nameof(NumberReturn));
                 CalculatePrice();
             }
         }
     }
 
     [Ignore]
-    public bool CanUpadte { get; set; }
+    public bool CanUpdate { get; set; }
 
     private bool isExpanded;
     [Ignore]
@@ -191,9 +226,9 @@ public partial class Product : BaseEntities<Guid>
         get => isExpanded;
         set
         {
-            if (SetProperty(ref isExpanded, value))
+            if (SetProperty(ref isExpanded, value, nameof(IsExpanded)))
             {
-                OnPropertyChanged(nameof(IsExpanded));
+                //OnPropertyChanged(nameof(IsExpanded));
             }
         }
     }
@@ -225,11 +260,11 @@ public partial class Product : BaseEntities<Guid>
         this.NumberEdit = product.NumberEdit;
         this.NumberReturn = product.NumberReturn;
 
-        this.CanUpadte = product.CanUpadte;
+        this.CanUpdate = product.CanUpdate;
     }
     public void CalculatePrice()
     {
-        if (CanUpadte)
+        if (CanUpdate)
         {
             PriceTotalDecimal = (number + numberEdit - numberReturn) * Price.PriceDecimal;
             PriceTotalAfterCorrectDecimal = PriceTotalDecimal + PriceTotalCorrectDecimal;

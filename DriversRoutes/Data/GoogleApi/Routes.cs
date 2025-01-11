@@ -1,6 +1,4 @@
-﻿using Shared.Helper;
-
-using DriversRoutes.Model.Route;
+﻿using DriversRoutes.Model.Route;
 
 using System.Net.Http.Json;
 
@@ -62,7 +60,9 @@ namespace DriversRoutes.Data.GoogleApi
             _httpClient.DefaultRequestHeaders.Remove("X-Goog-FieldMask");
             _httpClient.DefaultRequestHeaders.Add("X-Goog-FieldMask", FieldMask);
 
-            var result = await _httpClient.PostAsJsonAsync(Uri, request, token);
+
+
+            var result = await _httpClient.PostAsJsonAsync(Uri, request, ComputeRoutesRequestJsonSerializerContext.Default.ComputeRoutesRequest, token);
 
             var json = await result.Content.ReadAsStringAsync(token);
             if (!result.IsSuccessStatusCode)
@@ -87,7 +87,7 @@ namespace DriversRoutes.Data.GoogleApi
             _httpClient.DefaultRequestHeaders.Remove("X-Goog-FieldMask");
             _httpClient.DefaultRequestHeaders.Add("X-Goog-FieldMask", FieldMask);
 
-            var result = await _httpClient.PostAsJsonAsync(Uri, request, token);
+            var result = await _httpClient.PostAsJsonAsync(Uri, request, ComputeRoutesRequestJsonSerializerContext.Default.ComputeRoutesRequest, token);
 
             if (!result.IsSuccessStatusCode)
             {
@@ -97,10 +97,8 @@ namespace DriversRoutes.Data.GoogleApi
 
             var stream = await result.Content.ReadAsStreamAsync(token);
 
-            var options = JsonOptions.JsonSerializeOptionsIgnoreCapitalLetters;
-            options.Converters.Add(JsonOptions.JsonSerializeOptionsJsonStringEnumConverter.Converters[0]);
 
-            var response = await System.Text.Json.JsonSerializer.DeserializeAsync<DriversRoutes.Model.Route.Response>(stream, options, cancellationToken: token);
+            var response = await System.Text.Json.JsonSerializer.DeserializeAsync<Response>(stream, ResponseJsonSerializerContext.Default.Response, cancellationToken: token);
 
             return response;
         }

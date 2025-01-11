@@ -5,18 +5,60 @@ using System.Collections.ObjectModel;
 
 namespace Shared.Pages.ExistingFiles
 {
-    [QueryProperty(nameof(ExistingFilesM), nameof(ExistingFilesM))]
-    [QueryProperty(nameof(GetTyp), nameof(GetTyp))]
-    [QueryProperty(nameof(ReturnPage), nameof(ReturnPage))]
-    public partial class ExistingFilesVM : ObservableObject
+    public partial class ExistingFilesVM : ObservableObject, IQueryAttributable
     {
-        [ObservableProperty]
-        ObservableCollection<ExistingFilesM> existingFilesM;
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.TryGetValue(nameof(ExistingFilesM), out object existingFilesM))
+            {
+                if (existingFilesM is ObservableCollection<ExistingFilesM> collection)
+                {
+                    ExistingFilesM = collection;
+                }
+            }
+            if (query.TryGetValue(nameof(GetTyp), out object getTyp))
+            {
+                if (getTyp is string _getType)
+                {
+                    GetTyp = _getType;
+                }
+            }
+            if (query.TryGetValue(nameof(ReturnPage), out object returnPage))
+            {
+                if (returnPage is string _returnPage)
+                {
+                    ReturnPage = _returnPage;
+                }
+            }
+        }
 
-        [ObservableProperty]
-        string getTyp;
+        private ObservableCollection<ExistingFilesM> existingFilesM;
+        public ObservableCollection<ExistingFilesM> ExistingFilesM
+        {
+            get => existingFilesM;
+            set
+            {
+                if (SetProperty(ref existingFilesM, value))
+                {
+                    OnPropertyChanged(nameof(ExistingFilesM));
+                }
+            }
+        }
 
-        public string ReturnPage { get; set; }
+        private string getTyp = "";
+        public string GetTyp
+        {
+            get => getTyp;
+            set
+            {
+                if (SetProperty(ref getTyp, value))
+                {
+                    OnPropertyChanged(nameof(GetTyp));
+                }
+            }
+        }
+
+        public string ReturnPage { get; set; } = "";
         public ExistingFilesVM()
         {
             ExistingFilesM ??= [];
@@ -110,5 +152,7 @@ namespace Shared.Pages.ExistingFiles
         {
             await Shell.Current.GoToAsync($"../../{ReturnPage}?FilesPath={response.FullPath}");
         }
+
+
     }
 }

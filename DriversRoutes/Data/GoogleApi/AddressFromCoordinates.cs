@@ -41,7 +41,7 @@ namespace DriversRoutes.Data.GoogleApi
                 var uri = new Uri($"https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lon}&key={key}");
                 _httpClient.BaseAddress = uri;
 
-                var result = await _httpClient.GetFromJsonAsync<GoogleApiAddress>(uri, token) ?? throw new Exception("Wystąpił nieznany błąd przy odwróconej geolokalizacji");
+                var result = await _httpClient.GetFromJsonAsync<GoogleApiAddress>(uri, GoogleApiAddressJsonSerializerContext.Default.GoogleApiAddress, token) ?? throw new Exception("Wystąpił nieznany błąd przy odwróconej geolokalizacji");
 
                 return result.Status switch
                 {

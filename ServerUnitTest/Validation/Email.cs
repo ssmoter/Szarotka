@@ -14,7 +14,7 @@ namespace ServerUnitTest.Validation
         [Fact]
         public void EmailIsCorrentNull()
         {
-            RegisterUser user = null;
+            RegisterUser? user = null;
 
             IUserValidation _valid = new UserValidation(new());
 
@@ -81,7 +81,7 @@ namespace ServerUnitTest.Validation
         [Fact]
         public void EmailIsExistNull()
         {
-            RegisterUser user = null;
+            RegisterUser? user = null;
 
             IUserValidation _valid = new UserValidation(new());
 

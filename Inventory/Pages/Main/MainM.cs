@@ -11,16 +11,23 @@ namespace Inventory.Pages.Main
             get => date;
             set
             {
-                if (SetProperty(ref date, value))
+                if (SetProperty(ref date, value, nameof(Date)))
                 {
-                    OnPropertyChanged(nameof(Date));
-                    DisplyDate = Date.ToString("dd.MM.yyyy");
+                    //OnPropertyChanged(nameof(Date));
+                    DisplayDate = Date.ToString("dd.MM.yyyy");
                 }
             }
         }
 
-        [ObservableProperty]
-        string displyDate;
+        private string displayDate;
+        public string DisplayDate
+        {
+            get => displayDate;
+            set
+            {
+                if (SetProperty(ref displayDate, value, nameof(DisplayDate))) { }
+            }
+        }
 
         public MainM()
         {

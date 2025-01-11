@@ -5,12 +5,32 @@ using CommunityToolkit.Mvvm.Input;
 namespace Shared.Pages.Log.LogData
 {
 
-    [QueryProperty(nameof(SingleLog), nameof(LogM))]
-    public partial class LogDataVM : ObservableObject
+    public partial class LogDataVM : ObservableObject, IQueryAttributable
     {
-        [ObservableProperty]
-        LogM singleLog;
+        private LogM singleLog;
+        public LogM SingleLog
+        {
+            get => singleLog;
+            set
+            {
+                if (SetProperty(ref singleLog, value))
+                {
+                    OnPropertyChanged(nameof(SingleLog));
+                }
+            }
+        }
 
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.TryGetValue(nameof(LogM), out object singleLog))
+            {
+                if (singleLog is LogM _singleLog)
+                {
+                    SingleLog = _singleLog;
+                }
+            }
+
+        }
         public LogDataVM()
         {
             SingleLog = new LogM();
@@ -24,7 +44,7 @@ namespace Shared.Pages.Log.LogData
             var txt = $"Data-{SingleLog.Created} {Environment.NewLine}Wiadomość-{SingleLog.Message} {Environment.NewLine}Miejsce wystąpienia-{SingleLog.StackTrace}";
             await Clipboard.SetTextAsync(txt);
 
-            var toast = Toast.Make("Skopiowano współrzędne geograficzne", CommunityToolkit.Maui.Core.ToastDuration.Short);
+            var toast = Toast.Make("Skopiowano informacje o błędzie", CommunityToolkit.Maui.Core.ToastDuration.Short);
             await toast.Show();
         }
     }

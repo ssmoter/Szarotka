@@ -5,6 +5,7 @@ public partial class AddEditProductV : ContentPage
     public AddEditProductV(AddEditProductVM vm)
     {
         InitializeComponent();
+
         BindingContext = vm;
     }
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
@@ -24,9 +25,18 @@ public partial class AddEditProductV : ContentPage
             }
             else
             {
+                vm.Product.Name.Img = Shared.Helper.Img.ImgPath.Logo;
                 vm.AddEdit.AddP = true;
                 vm.AddEdit.UpdateP = false;
             }
+        }
+    }
+
+    private void TapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+    {
+        if (gImg.MaximumHeightRequest == double.PositiveInfinity || gImg.MaximumHeightRequest == 0)
+        {
+            gImg.MaximumHeightRequest = gImg.Bounds.Y;
         }
     }
 }

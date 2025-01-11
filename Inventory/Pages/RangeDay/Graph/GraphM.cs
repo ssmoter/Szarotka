@@ -4,10 +4,25 @@ namespace Inventory.Pages.RangeDay.Graph
 {
     public partial class GraphM : ObservableObject
     {
-        [ObservableProperty]
-        string name;
-        [ObservableProperty]
-        Color color;
+        private string name;
+        public string Name
+        {
+            get => name;
+            set
+            {
+                if (SetProperty(ref name, value, nameof(Name))) { }
+            }
+        }
+
+        private Color color;
+        public Color Color
+        {
+            get => color;
+            set
+            {
+                if (SetProperty(ref color, value, nameof(Color))) { }
+            }
+        }
     }
     public partial class TypeOfGraphM : ObservableObject
     {
@@ -19,9 +34,9 @@ namespace Inventory.Pages.RangeDay.Graph
             get { return column; }
             set
             {
-                if (SetProperty(ref column, value))
+                if (SetProperty(ref column, value, nameof(Column)))
                 {
-                    OnPropertyChanged(nameof(Column));
+                    //OnPropertyChanged(nameof(Column));
                     if (value)
                     {
                         graphType = 0;
@@ -36,9 +51,9 @@ namespace Inventory.Pages.RangeDay.Graph
             get { return line; }
             set
             {
-                if (SetProperty(ref line, value))
+                if (SetProperty(ref line, value, nameof(Line)))
                 {
-                    OnPropertyChanged(nameof(Line));
+                    //OnPropertyChanged(nameof(Line));
                     if (value)
                     {
                         graphType = 1;
@@ -53,9 +68,9 @@ namespace Inventory.Pages.RangeDay.Graph
             get { return point; }
             set
             {
-                if (SetProperty(ref point, value))
+                if (SetProperty(ref point, value, nameof(Point)))
                 {
-                    OnPropertyChanged(nameof(Point));
+                    //OnPropertyChanged(nameof(Point));
                     if (value)
                     {
                         graphType = 2;
@@ -70,9 +85,9 @@ namespace Inventory.Pages.RangeDay.Graph
             get { return linePoint; }
             set
             {
-                if (SetProperty(ref linePoint, value))
+                if (SetProperty(ref linePoint, value, nameof(LinePoint)))
                 {
-                    OnPropertyChanged(nameof(LinePoint));
+                    //OnPropertyChanged(nameof(LinePoint));
                     if (value)
                     {
                         graphType = 3;

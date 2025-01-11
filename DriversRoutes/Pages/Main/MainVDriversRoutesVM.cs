@@ -1,21 +1,29 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Shared.Data;
+using DataBase.Data;
 using DataBase.Model.EntitiesRoutes;
-using Shared.Service;
 
 using DriversRoutes.Helper;
 
+using Shared.Data;
+using Shared.Service;
+
 using System.Collections.ObjectModel;
-using DataBase.Data;
 
 namespace DriversRoutes.Pages.Main
 {
     public partial class MainVDriversRoutesVM : ObservableObject
     {
-        [ObservableProperty]
-        ObservableCollection<Routes> routes;
+        private ObservableCollection<Routes> routes;
+        public ObservableCollection<Routes> Routes
+        {
+            get => routes;
+            set
+            {
+                if (SetProperty(ref routes, value, nameof(Routes))) { }
+            }
+        }
 
         readonly AccessDataBase _db;
         readonly Service.ISelectRoutes selectRoutes;

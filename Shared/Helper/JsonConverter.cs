@@ -13,10 +13,6 @@ namespace Shared.Helper
         {
             PropertyNameCaseInsensitive = true
         };
-        public static JsonSerializerOptions JsonSerializeOptionsJsonStringEnumConverter => new()
-        {
-            Converters = { new JsonStringEnumConverter() }
-        };
 
 
     }

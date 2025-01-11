@@ -4,16 +4,44 @@ namespace DriversRoutes.Pages.Customer.CustomerSmall
 {
     public partial class CustomerSmallM : ObservableObject
     {
-        [ObservableProperty]
-        bool description;
-        [ObservableProperty]
-        bool phoneNumber;
+        private bool description;
+        public bool Description
+        {
+            get => description;
+            set
+            {
+                if (SetProperty(ref description, value, nameof(Description))) { }
+            }
+        }
+        private bool phoneNumber;
+        public bool PhoneNumber
+        {
+            get => phoneNumber;
+            set
+            {
+                if (SetProperty(ref phoneNumber, value, nameof(PhoneNumber))) { }
+            }
+        }
 
-        [ObservableProperty]
-        bool address;
+        private bool address;
+        public bool Address
+        {
+            get => address;
+            set
+            {
+                if (SetProperty(ref address, value, nameof(Address))) { }
+            }
+        }
 
-        [ObservableProperty]
-        bool coordinates;
+        private bool coordinates;
+        public bool Coordinates
+        {
+            get => coordinates;
+            set
+            {
+                if (SetProperty(ref coordinates, value, nameof(Coordinates))) { }
+            }
+        }
 
 
     }

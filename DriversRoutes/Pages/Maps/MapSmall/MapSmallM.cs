@@ -4,11 +4,24 @@ namespace DriversRoutes.Pages.Maps.MapSmall
 {
     public partial class MapSmallM : ObservableObject
     {
-        [ObservableProperty]
-        bool changeLocation = true;
-        [ObservableProperty]
-        bool saveLocation = false;
-
+        private bool changeLocation = true;
+        public bool ChangeLocation
+        {
+            get => changeLocation;
+            set
+            {
+                if (SetProperty(ref changeLocation, value, nameof(ChangeLocation))) { }
+            }
+        }
+        private bool saveLocation = false;
+        public bool SaveLocation
+        {
+            get => saveLocation;
+            set
+            {
+                if (SetProperty(ref saveLocation, value, nameof(SaveLocation))) { }
+            }
+        }
 
 
         public MapSmallM()

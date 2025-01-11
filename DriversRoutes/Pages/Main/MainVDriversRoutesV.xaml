@@ -40,8 +40,8 @@
                                     TextDecorations="Underline">
                                     <Label.GestureRecognizers>
                                         <TapGestureRecognizer
-                                            x:DataType="VM:MainVDriversRoutesVM"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=ChangeNameCommand}"
+                                            x:DataType="Route:Routes"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=ChangeNameCommand, x:DataType=VM:MainVDriversRoutesVM}"
                                             CommandParameter="{Binding .}"
                                             NumberOfTapsRequired="2" />
                                     </Label.GestureRecognizers>
@@ -51,15 +51,15 @@
 
                                     <Button
                                         x:DataType="VM:MainVDriversRoutesVM"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=NavigationToListOfPointsCommand}"
-                                        CommandParameter="{Binding .}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=NavigationToListOfPointsCommand, x:DataType=VM:MainVDriversRoutesVM}"
+                                        CommandParameter="{Binding ., x:DataType=Route:Routes}"
                                         HorizontalOptions="Center"
                                         Text="Lista" />
 
                                     <Button
                                         x:DataType="VM:MainVDriversRoutesVM"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=NavigationToMapsSelectedCommand}"
-                                        CommandParameter="{Binding .}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=NavigationToMapsSelectedCommand, x:DataType=VM:MainVDriversRoutesVM}"
+                                        CommandParameter="{Binding ., x:DataType=Route:Routes}"
                                         HorizontalOptions="Center"
                                         Text="Mapa" />
 

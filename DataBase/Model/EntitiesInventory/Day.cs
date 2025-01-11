@@ -1,40 +1,66 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-
-using SQLite;
+﻿using SQLite;
 
 using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
 
 namespace DataBase.Model.EntitiesInventory;
 
+
 public partial class Day : BaseEntities<Guid>, IDisposable
 {
-    [ObservableProperty]
     private string description = "";
-    [ObservableProperty]
+    public string Description
+    {
+        get => description;
+        set
+        {
+            if (SetProperty(ref description, value, nameof(Description)))
+            {
+                //OnPropertyChanged(nameof(Description));
+            }
+        }
+    }
+
     private Guid driverGuid;
+    public Guid DriverGuid
+    {
+        get => driverGuid;
+        set
+        {
+            if (SetProperty(ref driverGuid, value, nameof(DriverGuid)))
+            {
+                //OnPropertyChanged(nameof(DriverGuid));
+            }
+        }
+    }
     private string selectedDateString = "";
     public string SelectedDateString
     {
         get => selectedDateString;
         set
         {
-            if (SetProperty(ref selectedDateString, value))
+            if (SetProperty(ref selectedDateString, value, nameof(SelectedDateString)))
             {
-                OnPropertyChanged(nameof(SelectedDateString));
+                //OnPropertyChanged(nameof(SelectedDateString));
             }
         }
     }
 
     [Ignore]
+    [JsonConverter(typeof(JsonContext.CustomDateTimeConverter))]
     public DateTime SelectedDate
     {
         get => new(selectedDateTicks);
         set
         {
-            if (SetProperty(ref selectedDateString, value.ToString("dd.MM.yyyy")))
+            if (SetProperty(ref selectedDateString, value.ToString("dd.MM.yyyy"), nameof(SelectedDate)))
+            {
                 OnPropertyChanged(nameof(SelectedDateString));
+            }
             if (SetProperty(ref selectedDateTicks, value.Ticks))
+            {
                 OnPropertyChanged(nameof(SelectedDateTicks));
+            }
         }
     }
 
@@ -44,9 +70,9 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         get => selectedDateTicks;
         set
         {
-            if (SetProperty(ref selectedDateTicks, value))
+            if (SetProperty(ref selectedDateTicks, value, nameof(SelectedDateTicks)))
             {
-                OnPropertyChanged(nameof(SelectedDateTicks));
+                //OnPropertyChanged(nameof(SelectedDateTicks));
             }
         }
     }
@@ -56,9 +82,9 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         get => totalPriceProducts;
         set
         {
-            if (SetProperty(ref totalPriceProducts, value))
+            if (SetProperty(ref totalPriceProducts, value, nameof(TotalPriceProducts)))
             {
-                OnPropertyChanged(nameof(TotalPriceProducts));
+                //OnPropertyChanged(nameof(TotalPriceProducts));
                 OnPropertyChanged(nameof(TotalPriceProductsDecimal));
                 UpdateTotalPrice();
             }
@@ -73,9 +99,10 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         }
         set
         {
-            if (SetProperty(ref totalPriceProducts, (int)(value * 100)))
+            if (SetProperty(ref totalPriceProducts, (int)(value * 100), nameof(TotalPriceProductsDecimal)))
             {
-                OnPropertyChanged(nameof(TotalPriceProductsDecimal));
+                //OnPropertyChanged(nameof(TotalPriceProductsDecimal));
+                OnPropertyChanged(nameof(TotalPriceProducts));
                 UpdateTotalPrice();
             }
 
@@ -87,9 +114,9 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         get => totalPriceCake;
         set
         {
-            if (SetProperty(ref totalPriceCake, value))
+            if (SetProperty(ref totalPriceCake, value, nameof(TotalPriceCake)))
             {
-                OnPropertyChanged(nameof(TotalPriceCake));
+                //OnPropertyChanged(nameof(TotalPriceCake));
                 OnPropertyChanged(nameof(TotalPriceCakeDecimal));
                 UpdateTotalPrice();
             }
@@ -104,10 +131,10 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         }
         set
         {
-            if (SetProperty(ref totalPriceCake, (int)(value * 100)))
+            if (SetProperty(ref totalPriceCake, (int)(value * 100), nameof(TotalPriceCakeDecimal)))
             {
                 OnPropertyChanged(nameof(TotalPriceCake));
-                OnPropertyChanged(nameof(TotalPriceCakeDecimal));
+                //OnPropertyChanged(nameof(TotalPriceCakeDecimal));
                 UpdateTotalPrice();
             }
         }
@@ -118,9 +145,9 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         get => totalPrice;
         set
         {
-            if (SetProperty(ref totalPrice, value))
+            if (SetProperty(ref totalPrice, value, nameof(TotalPrice)))
             {
-                OnPropertyChanged(nameof(TotalPrice));
+                //OnPropertyChanged(nameof(TotalPrice));
                 OnPropertyChanged(nameof(TotalPriceDecimal));
                 UpdateTotalPrice();
             }
@@ -136,10 +163,10 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         }
         set
         {
-            if (SetProperty(ref totalPrice, (int)(value * 100)))
+            if (SetProperty(ref totalPrice, (int)(value * 100), nameof(TotalPriceDecimal)))
             {
                 OnPropertyChanged(nameof(TotalPrice));
-                OnPropertyChanged(nameof(TotalPriceDecimal));
+                //OnPropertyChanged(nameof(TotalPriceDecimal));
                 UpdateTotalPrice();
             }
         }
@@ -150,9 +177,9 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         get => totalPriceCorrect;
         set
         {
-            if (SetProperty(ref totalPriceCorrect, value))
+            if (SetProperty(ref totalPriceCorrect, value, nameof(TotalPriceCorrect)))
             {
-                OnPropertyChanged(nameof(TotalPriceCorrect));
+                //OnPropertyChanged(nameof(TotalPriceCorrect));
                 OnPropertyChanged(nameof(TotalPriceCorrectDecimal));
                 UpdateTotalPrice();
             }
@@ -168,10 +195,10 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         }
         set
         {
-            if (SetProperty(ref totalPriceCorrect, (int)(value * 100)))
+            if (SetProperty(ref totalPriceCorrect, (int)(value * 100), nameof(TotalPriceCorrectDecimal)))
             {
                 OnPropertyChanged(nameof(TotalPriceCorrect));
-                OnPropertyChanged(nameof(TotalPriceCorrectDecimal));
+                //OnPropertyChanged(nameof(TotalPriceCorrectDecimal));
                 UpdateTotalPrice();
             }
         }
@@ -182,9 +209,9 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         get => totalPriceAfterCorrect;
         set
         {
-            if (SetProperty(ref totalPriceAfterCorrect, value))
+            if (SetProperty(ref totalPriceAfterCorrect, value, nameof(TotalPriceAfterCorrect)))
             {
-                OnPropertyChanged(nameof(TotalPriceAfterCorrect));
+                //OnPropertyChanged(nameof(TotalPriceAfterCorrect));
                 OnPropertyChanged(nameof(TotalPriceAfterCorrectDecimal));
                 UpdateTotalPrice();
             }
@@ -200,10 +227,10 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         }
         set
         {
-            if (SetProperty(ref totalPriceAfterCorrect, (int)(value * 100)))
+            if (SetProperty(ref totalPriceAfterCorrect, (int)(value * 100), nameof(TotalPriceAfterCorrectDecimal)))
             {
                 OnPropertyChanged(nameof(TotalPriceAfterCorrect));
-                OnPropertyChanged(nameof(TotalPriceAfterCorrectDecimal));
+                //OnPropertyChanged(nameof(TotalPriceAfterCorrectDecimal));
                 UpdateTotalPrice();
             }
         }
@@ -214,9 +241,9 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         get => totalPriceMoney;
         set
         {
-            if (SetProperty(ref totalPriceMoney, value))
+            if (SetProperty(ref totalPriceMoney, value, nameof(TotalPriceMoney)))
             {
-                OnPropertyChanged(nameof(TotalPriceMoney));
+                //OnPropertyChanged(nameof(TotalPriceMoney));
                 OnPropertyChanged(nameof(TotalPriceMoneyDecimal));
                 UpdateTotalPrice();
             }
@@ -232,10 +259,10 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         }
         set
         {
-            if (SetProperty(ref totalPriceMoney, (int)(value * 100)))
+            if (SetProperty(ref totalPriceMoney, (int)(value * 100), nameof(TotalPriceMoneyDecimal)))
             {
                 OnPropertyChanged(nameof(TotalPriceMoney));
-                OnPropertyChanged(nameof(TotalPriceMoneyDecimal));
+                //OnPropertyChanged(nameof(TotalPriceMoneyDecimal));
                 UpdateTotalPrice();
             }
         }
@@ -246,9 +273,9 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         get => totalPriceDifference;
         set
         {
-            if (SetProperty(ref totalPriceDifference, value))
+            if (SetProperty(ref totalPriceDifference, value, nameof(TotalPriceDifference)))
             {
-                OnPropertyChanged(nameof(TotalPriceDifference));
+                //OnPropertyChanged(nameof(TotalPriceDifference));
                 OnPropertyChanged(nameof(TotalPriceDifferenceDecimal));
                 UpdateTotalPrice();
             }
@@ -264,10 +291,10 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         }
         set
         {
-            if (SetProperty(ref totalPriceDifference, (int)(value * 100)))
+            if (SetProperty(ref totalPriceDifference, (int)(value * 100), nameof(TotalPriceDifferenceDecimal)))
             {
                 OnPropertyChanged(nameof(TotalPriceDifference));
-                OnPropertyChanged(nameof(TotalPriceDifferenceDecimal));
+                //OnPropertyChanged(nameof(TotalPriceDifferenceDecimal));
                 UpdateTotalPrice();
             }
         }
@@ -280,9 +307,9 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         get => products;
         set
         {
-            if (SetProperty(ref products, value))
+            if (SetProperty(ref products, value, nameof(Products)))
             {
-                OnPropertyChanged(nameof(Products));
+                //OnPropertyChanged(nameof(Products));
                 UpdateTotalPrice();
             }
         }
@@ -294,19 +321,19 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         get => cakes;
         set
         {
-            if (SetProperty(ref cakes, value))
+            if (SetProperty(ref cakes, value, nameof(Cakes)))
             {
-                OnPropertyChanged(nameof(Cakes));
+                //OnPropertyChanged(nameof(Cakes));
                 UpdateTotalPrice();
             }
         }
     }
     [Ignore]
-    public bool CanUpadte { get; set; }
+    public bool CanUpdate { get; set; }
 
     public void UpdateTotalPrice()
     {
-        if (CanUpadte)
+        if (CanUpdate)
         {
             if (Products is not null)
                 TotalPriceProductsDecimal = Products.Sum(x => x.PriceTotalAfterCorrectDecimal);

@@ -8,11 +8,25 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
     {
         public Driver Driver { get; set; }
 
-        [ObservableProperty]
-        string name;
+        private string name;
+        public string Name
+        {
+            get => name;
+            set
+            {
+                if (SetProperty(ref name, value, nameof(Name))) { }
+            }
+        }
 
-        [ObservableProperty]
-        bool isChecked;
+        private bool isChecked;
+        public bool IsChecked
+        {
+            get => isChecked;
+            set
+            {
+                if (SetProperty(ref isChecked, value, nameof(IsChecked))) { }
+            }
+        }
 
         public PopupSelectRangeDateM(Driver driver)
         {

@@ -26,7 +26,7 @@ namespace Inventory.Data
                 }
 
 
-                value.CanUpadte = false;
+                value.CanUpdate = false;
                 if (await CheckDriver(value))
                 {
                     return value;
@@ -60,11 +60,11 @@ namespace Inventory.Data
                 value.Cakes = cake.Result;
 
                 await Toast.Make("Zapisano", ToastDuration.Short).Show();
-                value.CanUpadte = true;
+                value.CanUpdate = true;
 
                 for (int i = 0; i < value.Products.Count; i++)
                 {
-                    value.Products[i].CanUpadte = true;
+                    value.Products[i].CanUpdate = true;
                 }
 
             }

@@ -158,13 +158,9 @@
                                         <Label Text="{Binding Day.TotalPriceDifferenceDecimal}" />
                                         <Label Text="zł" />
                                     </HorizontalStackLayout>
-                                    <HorizontalStackLayout
-                                        Grid.Column="5"
-                                        x:DataType="VM:RangeDayVM"
-                                        VerticalOptions="Center">
+                                    <HorizontalStackLayout Grid.Column="5" VerticalOptions="Center">
                                         <Button
-                                            x:DataType="VM:RangeDayVM"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type VM:RangeDayVM}}, Path=OpenDetailpageCommand}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type VM:RangeDayVM}}, Path=OpenDetailpageCommand, x:DataType=VM:RangeDayVM}"
                                             CommandParameter="{Binding .}"
                                             Text="Wczytaj dzień" />
                                     </HorizontalStackLayout>

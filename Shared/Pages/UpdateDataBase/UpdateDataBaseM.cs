@@ -6,30 +6,134 @@ namespace Shared.Pages.UpdateDataBase
 {
     public partial class UpdateDataBaseM : ObservableObject
     {
-        [ObservableProperty]
-        DataBaseVersion fromVersion;
-        [ObservableProperty]
-        DataBaseVersion uppdateVersion;
-        [ObservableProperty]
-        DataBaseVersion toVersion;
+        private DataBaseVersion fromVersion;
+        public DataBaseVersion FromVersion
+        {
+            get => fromVersion;
+            set
+            {
+                if (SetProperty(ref fromVersion, value))
+                {
+                    OnPropertyChanged(nameof(FromVersion));
+                }
+            }
+        }
+
+        private DataBaseVersion updateVersion;
+        public DataBaseVersion UpdateVersion
+        {
+            get => updateVersion;
+            set
+            {
+                if (SetProperty(ref updateVersion, value))
+                {
+                    OnPropertyChanged(nameof(UpdateVersion));
+                }
+            }
+        }
+        private DataBaseVersion toVersion;
+        public DataBaseVersion ToVersion
+        {
+            get => toVersion;
+            set
+            {
+                if (SetProperty(ref toVersion, value))
+                {
+                    OnPropertyChanged(nameof(toVersion));
+                }
+            }
+        }
 
 
-        [ObservableProperty]
-        double dataBaseProgresBar;
-        [ObservableProperty]
-        double inventioryProgresBar;
-        [ObservableProperty]
-        double driverRoutesProgresBar;
+        private double dataBaseProgressBar;
+        public double DataBaseProgressBar
+        {
+            get => dataBaseProgressBar;
+            set
+            {
+                if (SetProperty(ref dataBaseProgressBar, value))
+                {
+                    OnPropertyChanged(nameof(DataBaseProgressBar));
+                }
+            }
+        }
+        private double inventoryProgressBar;
+        public double InventoryProgressBar
+        {
+            get => inventoryProgressBar;
+            set
+            {
+                if (SetProperty(ref inventoryProgressBar, value))
+                {
+                    OnPropertyChanged(nameof(InventoryProgressBar));
+                }
+            }
+        }
 
-        [ObservableProperty]
-        bool dataBaseIsVisible = true;
-        [ObservableProperty]
-        bool inventioryIsVisible = true;
-        [ObservableProperty]
-        bool driverRoutesIsVisible = true;
+        private double driverRoutesProgressBar;
+        public double DriverRoutesProgressBar
+        {
+            get => driverRoutesProgressBar;
+            set
+            {
+                if (SetProperty(ref driverRoutesProgressBar, value))
+                {
+                    OnPropertyChanged(nameof(DriverRoutesProgressBar));
+                }
+            }
+        }
 
-        [ObservableProperty]
-        bool backIsVisible;
+        private bool dataBaseIsVisible = true;
+        public bool DataBaseIsVisible
+        {
+            get => dataBaseIsVisible;
+            set
+            {
+                if (SetProperty(ref dataBaseIsVisible, value))
+                {
+                    OnPropertyChanged(nameof(DataBaseIsVisible));
+                }
+            }
+        }
+
+        private bool inventoryIsVisible = true;
+        public bool InventoryIsVisible
+        {
+            get => inventoryIsVisible;
+            set
+            {
+                if (SetProperty(ref inventoryIsVisible, value))
+                {
+                    OnPropertyChanged(nameof(InventoryIsVisible));
+                }
+            }
+        }
+
+        private bool driverRoutesIsVisible = true;
+        public bool DriverRoutesIsVisible
+        {
+            get => driverRoutesIsVisible;
+            set
+            {
+                if (SetProperty(ref driverRoutesIsVisible, value))
+                {
+                    OnPropertyChanged(nameof(DriverRoutesIsVisible));
+                }
+            }
+        }
+
+        private bool backIsVisible;
+        public bool BackIsVisible
+        {
+            get => backIsVisible;
+            set
+            {
+                if (SetProperty(ref backIsVisible, value))
+                {
+                    OnPropertyChanged(nameof(BackIsVisible));
+                }
+            }
+        }
 
         public UpdateDataBaseM()
         {

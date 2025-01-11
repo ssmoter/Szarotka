@@ -4,8 +4,15 @@ namespace Inventory.Pages.Options.CreateTable
 {
     public partial class CreateTableM : ObservableObject
     {
-        [ObservableProperty]
-        string tableName;
+        private string tableName;
+        public string TableName
+        {
+            get => tableName;
+            set
+            {
+                if (SetProperty(ref tableName, value, nameof(TableName))) { }
+            }
+        }
 
         public string RealTableName { get; set; }
 
@@ -15,15 +22,22 @@ namespace Inventory.Pages.Options.CreateTable
             get => isExist;
             set
             {
-                if (SetProperty(ref isExist, value))
+                if (SetProperty(ref isExist, value, nameof(IsExist)))
                 {
-                    OnPropertyChanged(nameof(IsExist));
+                    //OnPropertyChanged(nameof(IsExist));
                     SetColor();
                 }
             }
         }
-        [ObservableProperty]
-        Color color;
+        private Color color;
+        public Color Color
+        {
+            get => color;
+            set
+            {
+                if (SetProperty(ref color, value, nameof(Color))) { }
+            }
+        }
 
         public CreateTableM()
         {

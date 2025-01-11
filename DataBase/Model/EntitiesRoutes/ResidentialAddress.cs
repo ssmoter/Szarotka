@@ -1,69 +1,129 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-
-namespace DataBase.Model.EntitiesRoutes
+﻿namespace DataBase.Model.EntitiesRoutes;
+public partial class ResidentialAddress : BaseEntities<Guid>, IDisposable
 {
-    public partial class ResidentialAddress : BaseEntities<Guid>, IDisposable
+    private Guid customerId;
+    public Guid CustomerId
     {
-        [ObservableProperty]
-        public Guid customerId;
-
-        [ObservableProperty]
-        string name = "";
-        [ObservableProperty]
-        string surname = "";
-        [ObservableProperty]
-        string street = "";
-        [ObservableProperty]
-        string houseNumber = "";
-        [ObservableProperty]
-        string apartmentNumber = "";
-        [ObservableProperty]
-        string postalCode = "";
-        [ObservableProperty]
-        string city = "";
-        [ObservableProperty]
-        string country = "";
-
-        public ResidentialAddress()
-        { }
-
-        public ResidentialAddress(ResidentialAddress copy)
+        get => customerId;
+        set
         {
-            this.CustomerId = copy.CustomerId;
-            this.Name = copy.Name;
-            this.Street = copy.Street;
-            this.HouseNumber = copy.HouseNumber;
-            this.ApartmentNumber = copy.ApartmentNumber;
-            this.PostalCode = copy.PostalCode;
-            this.City = copy.City;
-            this.Country = copy.Country;
-            this.Updated = copy.Updated;
-            this.Surname = copy.Surname;
-            this.Id = copy.Id;
-            this.Created = copy.Created;
+            if (SetProperty(ref customerId, value, nameof(CustomerId))) { }
         }
+    }
 
-        public override string ToString()
+    private string name = "";
+    public string Name
+    {
+        get => name;
+        set
         {
-            string to = $"{Name} {Surname}{Environment.NewLine}" +
-                $"{Street} {HouseNumber} {(string.IsNullOrWhiteSpace(ApartmentNumber) ? "" : "/")} {ApartmentNumber}{Environment.NewLine}" +
-                $"{PostalCode} {City}{Environment.NewLine}" +
-                $"{Country}";
-
-            return to;
+            if (SetProperty(ref name, value, nameof(Name))) { }
         }
-
-
-        public void Dispose()
+    }
+    private string surname = "";
+    public string Surname
+    {
+        get => surname;
+        set
         {
-            Name = "";
-            Surname = "";
-            Street = "";
-            HouseNumber = "";
-            ApartmentNumber = "";
-            PostalCode = "";
-            City = "";
-            Country = "";
+            if (!SetProperty(ref surname, value, nameof(Surname))) { }
         }
+    }
+    private string street = "";
+    public string Street
+    {
+        get => street;
+        set
+        {
+            if (SetProperty(ref street, value, nameof(Street))) { }
+        }
+    }
+    private string houseNumber = "";
+    public string HouseNumber
+    {
+        get => houseNumber;
+        set
+        {
+            if (SetProperty(ref houseNumber, value, nameof(HouseNumber))) { }
+        }
+    }
+    private string apartmentNumber = "";
+    public string ApartmentNumber
+    {
+        get => apartmentNumber;
+        set
+        {
+            if (SetProperty(ref apartmentNumber, value, nameof(ApartmentNumber))) { }
+        }
+    }
+    private string postalCode = "";
+    public string PostalCode
+    {
+        get => postalCode;
+        set
+        {
+            if (SetProperty(ref postalCode, value, nameof(PostalCode))) { }
+        }
+    }
+
+    private string city = "";
+    public string City
+    {
+        get => city;
+        set
+        {
+            if (SetProperty(ref city, value, nameof(City))) { }
+        }
+    }
+
+    private string country = "";
+    public string Country
+    {
+        get => country;
+        set
+        {
+            if (SetProperty(ref country, value, nameof(Country))) { }
+        }
+    }
+    public ResidentialAddress()
+    { }
+
+    public ResidentialAddress(ResidentialAddress copy)
+    {
+        this.CustomerId = copy.CustomerId;
+        this.Name = copy.Name;
+        this.Street = copy.Street;
+        this.HouseNumber = copy.HouseNumber;
+        this.ApartmentNumber = copy.ApartmentNumber;
+        this.PostalCode = copy.PostalCode;
+        this.City = copy.City;
+        this.Country = copy.Country;
+        this.Updated = copy.Updated;
+        this.Surname = copy.Surname;
+        this.Id = copy.Id;
+        this.Created = copy.Created;
+    }
+
+    public override string ToString()
+    {
+        string to = $"{Name} {Surname}{Environment.NewLine}" +
+            $"{Street} {HouseNumber} {(string.IsNullOrWhiteSpace(ApartmentNumber) ? "" : "/")} {ApartmentNumber}{Environment.NewLine}" +
+            $"{PostalCode} {City}{Environment.NewLine}" +
+            $"{Country}";
+
+        return to;
+    }
+
+
+    public void Dispose()
+    {
+        Name = "";
+        Surname = "";
+        Street = "";
+        HouseNumber = "";
+        ApartmentNumber = "";
+        PostalCode = "";
+        City = "";
+        Country = "";
     }
 }

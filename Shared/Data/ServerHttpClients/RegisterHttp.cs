@@ -30,7 +30,7 @@ namespace Shared.Data.ServerHttpClients
         {
             ArgumentNullException.ThrowIfNull(user);
 
-            var request = JsonSerializer.Serialize(user);
+            var request = JsonSerializer.Serialize(user,RegisterUserJsonSerializerContext.Default.RegisterUser);
 
             var content = new StringContent(request, Encoding.UTF8, "application/json");
 

@@ -31,7 +31,7 @@ namespace Shared.Data.ServerHttpClients
 
             ArgumentNullException.ThrowIfNull(login);
 
-            var request = JsonSerializer.Serialize(login);
+            var request = JsonSerializer.Serialize(login, LoginUserJsonSerializerContext.Default.LoginUser);
 
             var content = new StringContent(request, Encoding.UTF8, "application/json");
 

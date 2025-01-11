@@ -65,7 +65,7 @@ namespace DataBase.Model.EntitiesServer
         public int Status { get; set; }
         public string Instance { get; set; } = "";
         public string TraceId { get; set; } = "";
-        public string Requestid { get; set; } = "";
+        public string RequestId { get; set; } = "";
         public string Detail { get; set; } = "";
         public ValidationException.Valid[] ValidationErrors { get; set; } = [];
 

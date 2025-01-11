@@ -8,11 +8,29 @@ using Shared.Data;
 
 namespace Inventory.Pages.Options.EditDriver
 {
-    [QueryProperty(nameof(Driver), nameof(Driver))]
-    public partial class EditDriverVM : ObservableObject
+    public partial class EditDriverVM : ObservableObject, IQueryAttributable
     {
-        [ObservableProperty]
-        Driver driver;
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.TryGetValue(nameof(Driver), out object driver))
+            {
+                if (driver is Driver _driver)
+                {
+                    Driver = _driver;
+                }
+            }
+
+        }
+
+        private Driver driver;
+        public Driver Driver
+        {
+            get => driver;
+            set
+            {
+                if (SetProperty(ref driver, value, nameof(Driver))) { }
+            }
+        }
 
         readonly AccessDataBase _db;
         public EditDriverVM(AccessDataBase db)

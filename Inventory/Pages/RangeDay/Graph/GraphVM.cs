@@ -2,37 +2,81 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 
 using Inventory.Model;
 using Inventory.Pages.RangeDay.Graph.GraphOptions;
 
-using System.Collections.ObjectModel;
-using DataBase.Data;
 using Shared.Data;
+
+using System.Collections.ObjectModel;
 
 namespace Inventory.Pages.RangeDay.Graph
 {
-    [QueryProperty(nameof(RangeDayMs), nameof(RangeDayM))]
-    public partial class GraphVM : ObservableObject, IDisposable
+    public partial class GraphVM : ObservableObject, IDisposable, IQueryAttributable
     {
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.TryGetValue(nameof(RangeDayM), out object rangeDayMs))
+            {
+                if (rangeDayMs is RangeDayM[] _rangeDayM)
+                {
+                    RangeDayMs = _rangeDayM;
+                }
+            }
+        }
+
         public RangeDayM[] RangeDayMs { get; set; }
 
-        [ObservableProperty]
-        ObservableCollection<GraphM> legend;
+        private ObservableCollection<GraphM> legend;
+        public ObservableCollection<GraphM> Legend
+        {
+            get => legend;
+            set
+            {
+                if (SetProperty(ref legend, value, nameof(Legend))) { }
+            }
+        }
 
-        [ObservableProperty]
-        Data.Draw.DrawGraph drawGraph;
+        private Data.Draw.DrawGraph drawGraph;
+        public Data.Draw.DrawGraph DrawGraph
+        {
+            get => drawGraph;
+            set
+            {
+                if (SetProperty(ref drawGraph, value, nameof(DrawGraph))) { }
+            }
+        }
 
-        [ObservableProperty]
-        bool isRefreshingGraph;
+        private bool isRefreshingGraph;
+        public bool IsRefreshingGraph
+        {
+            get => isRefreshingGraph;
+            set
+            {
+                if (SetProperty(ref isRefreshingGraph, value, nameof(IsRefreshingGraph))) { }
+            }
+        }
 
-        [ObservableProperty]
-        bool isVisibleFrame;
-
-        [ObservableProperty]
-        TypeOfGraphM typeOfGraphM;
-
+        private bool isVisibleFrame;
+        public bool IsVisibleFrame
+        {
+            get => isVisibleFrame;
+            set
+            {
+                if (SetProperty(ref isVisibleFrame, value, nameof(IsVisibleFrame))) { }
+            }
+        }
+        private TypeOfGraphM typeOfGraphM;
+        public TypeOfGraphM TypeOfGraphM
+        {
+            get => typeOfGraphM;
+            set
+            {
+                if (SetProperty(ref typeOfGraphM, value, nameof(TypeOfGraphM))) { }
+            }
+        }
         GraphOptionsM _optionsM;
 
         public Action<IDrawable> ReDraw { get; set; }

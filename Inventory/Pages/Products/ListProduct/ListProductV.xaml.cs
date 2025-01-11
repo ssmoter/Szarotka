@@ -45,19 +45,36 @@ public partial class ListProductV : ContentPage
         vm.SetUpCommand.Execute(product);
     }
 
+    private void DragGestureRecognizer_DragStarting(object sender, DragStartingEventArgs e)
+    {
+        if (sender is not DragGestureRecognizer drag) { return; }
 
-    //protected override void OnNavigatedTo(NavigatedToEventArgs args)
-    //{
-    //    base.OnNavigatedTo(args);
-    //    var vm = BindingContext as ListProductVM;
-    //    if (vm != null)
-    //    {
-    //        Task.Run(async () =>
-    //        {
-    //            await vm.SelectAllProductsAsync();
-    //        });
-    //    }
-    //}
+        if (drag.Parent is not Grid grid) { return; }
 
+        if (grid.BindingContext is not ListProductM product) { return; }
 
+        vm.DragCommand.Execute(product);
+    }
+
+    private void DragGestureRecognizer_DropCompleted(object sender, DropCompletedEventArgs e)
+    {
+        if (sender is not DragGestureRecognizer drag) { return; }
+
+        if (drag.Parent is not Grid grid) { return; }
+
+        if (grid.BindingContext is not ListProductM product) { return; }
+
+        vm.DropCompletedCommand.Execute(product);
+    }
+
+    private void DropGestureRecognizer_Drop(object sender, DropEventArgs e)
+    {
+        if (sender is not DropGestureRecognizer drop) { return; }
+
+        if (drop.Parent is not Grid grid) { return; }
+
+        if (grid.BindingContext is not ListProductM product) { return; }
+
+        vm.DropCommand.Execute(product);
+    }
 }

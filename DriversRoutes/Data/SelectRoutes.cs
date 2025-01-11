@@ -1,9 +1,8 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesRoutes;
+using DataBase.Model.JsonContext;
 
 using DriversRoutes.Service;
-
-using Shared.Helper;
 
 namespace DriversRoutes.Data
 {
@@ -33,9 +32,9 @@ namespace DriversRoutes.Data
                     Longitude = queryResult[i].Longitude,
                     Latitude = queryResult[i].Latitude,
                     DayOfWeek = System.Text.Json.JsonSerializer.Deserialize<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek
-                    , JsonOptions.JsonSerializeOptionsBoolAndDateTime),
+                    , SzarotkaJsonSerializerContext.Default.SelectedDayOfWeekRoutes),
                     ResidentialAddress = System.Text.Json.JsonSerializer.Deserialize<ResidentialAddress>(queryResult[i].JsonAddress
-                    , JsonOptions.JsonSerializeOptionsBoolAndDateTime)
+                    , SzarotkaJsonSerializerContext.Default.ResidentialAddress)
                 };
                 yield return cust;
             }
@@ -47,7 +46,9 @@ namespace DriversRoutes.Data
             routes ??= _routesLast;
             _routesLast = routes;
 
-            var queryResult = await _db.DataBaseAsync.QueryAsync<FullModelForQuery>(Helper.SqlQuery.GetQueryForSelectedRoutes(routes.Id.ToString(), dayOf));
+            var query = Helper.SqlQuery.GetQueryForSelectedRoutes(routes.Id.ToString(), dayOf);
+
+            var queryResult = await _db.DataBaseAsync.QueryAsync<FullModelForQuery>(query);
             var customers = new CustomerRoutes[queryResult.Count];
 
 
@@ -65,9 +66,9 @@ namespace DriversRoutes.Data
                     Longitude = queryResult[i].Longitude,
                     Latitude = queryResult[i].Latitude,
                     DayOfWeek = System.Text.Json.JsonSerializer.Deserialize<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek
-                    , JsonOptions.JsonSerializeOptionsBoolAndDateTime),
+                    , SzarotkaJsonSerializerContext.Default.SelectedDayOfWeekRoutes),
                     ResidentialAddress = System.Text.Json.JsonSerializer.Deserialize<ResidentialAddress>(queryResult[i].JsonAddress
-                    , JsonOptions.JsonSerializeOptionsBoolAndDateTime)
+                    , SzarotkaJsonSerializerContext.Default.ResidentialAddress)
                 };
                 customers[i] = cust;
             }
@@ -95,9 +96,9 @@ namespace DriversRoutes.Data
                     Longitude = queryResult[i].Longitude,
                     Latitude = queryResult[i].Latitude,
                     DayOfWeek = System.Text.Json.JsonSerializer.Deserialize<SelectedDayOfWeekRoutes>(queryResult[i].JsonDayOfWeek
-                    , JsonOptions.JsonSerializeOptionsBoolAndDateTime),
+                    , SzarotkaJsonSerializerContext.Default.SelectedDayOfWeekRoutes),
                     ResidentialAddress = System.Text.Json.JsonSerializer.Deserialize<ResidentialAddress>(queryResult[i].JsonAddress
-                    , JsonOptions.JsonSerializeOptionsBoolAndDateTime)
+                    , SzarotkaJsonSerializerContext.Default.ResidentialAddress)
                 };
                 customers[i] = cust;
             }

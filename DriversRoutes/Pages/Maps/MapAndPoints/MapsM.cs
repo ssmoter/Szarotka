@@ -2,17 +2,33 @@
 
 using DataBase.Model.EntitiesRoutes;
 
+using DriversRoutes.Model;
+
 using Microsoft.Maui.Controls.Maps;
 
 namespace DriversRoutes.Pages.Maps.MapAndPoints
 {
     public partial class MapsM : ObservableObject
     {
-        [ObservableProperty]
-        DriversRoutes.Model.CustomPin pin;
+        private CustomPin pin;
+        public CustomPin Pin
+        {
+            get => pin;
+            set
+            {
+                if (SetProperty(ref pin, value, nameof(Pin))) { }
+            }
+        }
 
-        [ObservableProperty]
-        CustomerRoutes customerRoutes;
+        private CustomerRoutes customerRoutes;
+        public CustomerRoutes CustomerRoutes
+        {
+            get => customerRoutes;
+            set
+            {
+                if (SetProperty(ref customerRoutes, value, nameof(CustomerRoutes))) { }
+            }
+        }
 
         public MapsM()
         {

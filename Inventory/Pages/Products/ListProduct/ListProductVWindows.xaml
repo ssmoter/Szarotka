@@ -40,12 +40,12 @@
                         <Border.GestureRecognizers>
                             <DragGestureRecognizer
                                 x:DataType="VM:ListProductVM"
-                                DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDragCommand}"
+                                DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDragCommand, x:DataType=VM:ListProductVM}"
                                 DragStartingCommandParameter="{Binding .}"
-                                DropCompletedCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDropCompletedCommand}" />
+                                DropCompletedCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDropCompletedCommand, x:DataType=VM:ListProductVM}" />
                             <DropGestureRecognizer
                                 x:DataType="VM:ListProductVM"
-                                DropCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDropCommand}"
+                                DropCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDropCommand, x:DataType=VM:ListProductVM}"
                                 DropCommandParameter="{Binding .}" />
                         </Border.GestureRecognizers>
 

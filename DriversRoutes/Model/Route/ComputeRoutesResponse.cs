@@ -1,8 +1,18 @@
 ﻿
 using DriversRoutes.Model.Address;
 
+using System.Text.Json.Serialization;
+
 namespace DriversRoutes.Model.Route
 {
+    [JsonSerializable(typeof(Response))]
+    [JsonSourceGenerationOptions(WriteIndented = true,
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+    PropertyNameCaseInsensitive = true)]
+    public partial class ResponseJsonSerializerContext : JsonSerializerContext
+    { }
+
+
     public class Response
     {
         /// <summary>

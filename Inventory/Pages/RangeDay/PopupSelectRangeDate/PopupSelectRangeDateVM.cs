@@ -17,9 +17,9 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             get => fromDate;
             set
             {
-                if (SetProperty(ref fromDate, value))
+                if (SetProperty(ref fromDate, value, nameof(FromDate)))
                 {
-                    OnPropertyChanged(nameof(FromDate));
+                    //OnPropertyChanged(nameof(FromDate));
                     from = FromDate.Ticks;
                 }
             }
@@ -30,20 +30,41 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             get => toDate;
             set
             {
-                if (SetProperty(ref toDate, value))
+                if (SetProperty(ref toDate, value, nameof(ToDate)))
                 {
-                    OnPropertyChanged(nameof(ToDate));
+                    //OnPropertyChanged(nameof(ToDate));
                     to = ToDate.AddHours(23).Ticks;
                 }
             }
         }
-        [ObservableProperty]
-        ObservableCollection<string> rangeFast;
+        private ObservableCollection<string> rangeFast;
+        public ObservableCollection<string> RangeFast
+        {
+            get => rangeFast;
+            set
+            {
+                if (SetProperty(ref rangeFast, value, nameof(RangeFast))) { }
+            }
+        }
 
-        [ObservableProperty]
-        ObservableCollection<string> rangeMonth;
-        [ObservableProperty]
-        bool moreData;
+        private ObservableCollection<string> rangeMonth;
+        public ObservableCollection<string> RangeMonth
+        {
+            get => rangeMonth;
+            set
+            {
+                if (SetProperty(ref rangeMonth, value, nameof(RangeMonth))) { }
+            }
+        }
+        private bool moreData;
+        public bool MoreData
+        {
+            get => moreData;
+            set
+            {
+                if (SetProperty(ref moreData, value, nameof(MoreData))) { }
+            }
+        }
 
         string isSelectedDateFast;
         public string IsSelectedDateFast
@@ -51,9 +72,9 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             get => isSelectedDateFast;
             set
             {
-                if (SetProperty(ref isSelectedDateFast, value))
+                if (SetProperty(ref isSelectedDateFast, value, nameof(IsSelectedDateFast)))
                 {
-                    OnPropertyChanged(nameof(IsSelectedDateFast));
+                    //OnPropertyChanged(nameof(IsSelectedDateFast));
                     if (!string.IsNullOrWhiteSpace(IsSelectedDateFast))
                     {
                         SelectedDate(IsSelectedDateFast);
@@ -69,9 +90,9 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             get => isSelectedDateMonth;
             set
             {
-                if (SetProperty(ref isSelectedDateMonth, value))
+                if (SetProperty(ref isSelectedDateMonth, value, nameof(IsSelectedDateMonth)))
                 {
-                    OnPropertyChanged(nameof(IsSelectedDateMonth));
+                    //OnPropertyChanged(nameof(IsSelectedDateMonth));
                     if (!string.IsNullOrWhiteSpace(IsSelectedDateMonth))
                     {
                         SelectedDate(IsSelectedDateMonth);
@@ -81,8 +102,15 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             }
         }
 
-        [ObservableProperty]
-        ObservableCollection<PopupSelectRangeDate.PopupSelectRangeDateM> selectRangeDateMs;
+        private ObservableCollection<PopupSelectRangeDate.PopupSelectRangeDateM> selectRangeDateMs;
+        public ObservableCollection<PopupSelectRangeDate.PopupSelectRangeDateM> SelectRangeDateMs
+        {
+            get => selectRangeDateMs;
+            set
+            {
+                if (SetProperty(ref selectRangeDateMs, value, nameof(SelectRangeDateMs))) { }
+            }
+        }
 
 
         long from = 0;

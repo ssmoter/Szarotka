@@ -1,8 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using Shared.Helper;
 using DataBase.Model.EntitiesRoutes;
+
+using Shared.Helper;
 
 namespace DriversRoutes.Pages.Popups.MoveTimeOnCustomers
 {
@@ -17,18 +18,45 @@ namespace DriversRoutes.Pages.Popups.MoveTimeOnCustomers
         }
 
 
-        [ObservableProperty]
-        SelectedDayOfWeekRoutes selectDayMs;
+        private SelectedDayOfWeekRoutes selectDayMs;
+        public SelectedDayOfWeekRoutes SelectDayMs
+        {
+            get => selectDayMs;
+            set
+            {
+                if (SetProperty(ref selectDayMs, value, nameof(SelectDayMs))) { }
+            }
+        }
 
-        [ObservableProperty]
-        TimeSpan selectedTime;
+        private TimeSpan selectedTime;
+        public TimeSpan SelectedTime
+        {
+            get => selectedTime;
+            set
+            {
+                if (SetProperty(ref selectedTime, value, nameof(SelectedTime))) { }
+            }
+        }
 
-        [ObservableProperty]
-        TimeSpan addTime;
+        private TimeSpan addTime;
+        public TimeSpan AddTime
+        {
+            get => addTime;
+            set
+            {
+                if (SetProperty(ref addTime, value, nameof(AddTime))) { }
+            }
+        }
 
-        [ObservableProperty]
-        char sign;
-
+        private char sign;
+        public char Sign
+        {
+            get => sign;
+            set
+            {
+                if (SetProperty(ref sign, value, nameof(Sign))) { }
+            }
+        }
 
         public MoveTimeOnCustomersVM(SelectedDayOfWeekRoutes selectDayMs)
         {

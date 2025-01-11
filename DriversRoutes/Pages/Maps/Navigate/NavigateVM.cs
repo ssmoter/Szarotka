@@ -12,111 +12,147 @@ using Shared.Data;
 using System.Collections.ObjectModel;
 
 
-namespace DriversRoutes.Pages.Maps.Navigate
+namespace DriversRoutes.Pages.Maps.Navigate;
+public partial class NavigateVM : ObservableObject, IQueryAttributable
 {
-    [QueryProperty(nameof(AllPoints), nameof(ObservableCollection<CustomerRoutes>))]
-    [QueryProperty(nameof(SelectedPoint), nameof(CustomerRoutes))]
-    public partial class NavigateVM : ObservableObject
+
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        [ObservableProperty]
-        ObservableCollection<CustomerRoutes> allPoints;
-
-        [ObservableProperty]
-        CustomerRoutes selectedPoint;
-
-        [ObservableProperty]
-        StepSelected stepSelected = StepSelected.One;
-
-        private readonly AccessDataBase _db;
-
-        public NavigateVM(AccessDataBase db)
+        if (query.TryGetValue(nameof(ObservableCollection<CustomerRoutes>), out object allpoints))
         {
-            _db = db;
-        }
-
-        private void DescriptionOfPreviousPoint(int direction)
-        {
-            int index;
-            index = SelectedPoint.QueueNumber + direction;
-            if (index > AllPoints.Count)
+            if (allpoints is ObservableCollection<CustomerRoutes> _allpoints)
             {
-                index = 1;
-            }
-            else if (index < 1)
-            {
-                index = AllPoints.Count;
-            }
-            BlazorMap.OnRemoveAdvancedMarker(SelectedPoint);
-            SelectedPoint = AllPoints.FirstOrDefault(x => x.QueueNumber == index);
-            if (SelectedPoint is null)
-            {
-                return;
-            }
-            BlazorMap.OnSetCustomer(SelectedPoint);
-            BlazorMap.OnSetAdvancedMarker();
-            BlazorMap.OnRemoveDrirections();
-            BlazorMap.OnFitMapToAdvancedMarkers();
-        }
-
-
-        [RelayCommand]
-        void ShowMovingView()
-        {
-            StepSelected = MovingViewInSteps.StepUp(StepSelected);
-        }
-        [RelayCommand]
-        void HideMovingView()
-        {
-            StepSelected = MovingViewInSteps.StepDown(StepSelected);
-        }
-        [RelayCommand]
-        void DisplayDescriptionOfNextPoint()
-        {
-            DescriptionOfPreviousPoint(1);
-        }
-        [RelayCommand]
-        void DisplayDescriptionOfPreviousPoint()
-        {
-            DescriptionOfPreviousPoint(-1);
-        }
-        [RelayCommand]
-        async Task DisplayDescriptionPin(CustomerRoutes point)
-        {
-            try
-            {
-                if (point is null)
-                {
-                    return;
-                }
-
-                await Shell.Current.GoToAsync($"{nameof(Pages.Customer.DisplayCustomer.DisplayCustomerV)}?",
-                    new Dictionary<string, object>()
-                    {
-                        [nameof(CustomerRoutes)] = point
-                    });
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
+                AllPoints = _allpoints;
             }
         }
-        [RelayCommand]
-        void CalculateRoute()
+        if (query.TryGetValue(nameof(CustomerRoutes), out object selectedPoint))
         {
-            if (SelectedPoint is null)
+            if (selectedPoint is CustomerRoutes _selectedPoint)
             {
-                return;
+                SelectedPoint = _selectedPoint;
             }
-            Task.Run(async () =>
-            {
-                await BlazorMap.OnAddDirections();
-            });
         }
-        [RelayCommand]
-        static void FitMapToMarkers()
-        {
-            BlazorMap.OnFitMapToAdvancedMarkers();
-        }
-
     }
+    private ObservableCollection<CustomerRoutes> allPoints;
+    public ObservableCollection<CustomerRoutes> AllPoints
+    {
+        get => allPoints;
+        set
+        {
+            if (SetProperty(ref allPoints, value, nameof(AllPoints))) { }
+        }
+    }
+
+    private CustomerRoutes selectedPoint;
+    public CustomerRoutes SelectedPoint
+    {
+        get => selectedPoint;
+        set
+        {
+            if (SetProperty(ref selectedPoint, value, nameof(SelectedPoint))) { }
+        }
+    }
+
+    private StepSelected stepSelected = Shared.CustomControls.StepSelected.One;
+    public StepSelected StepSelected
+    {
+        get => stepSelected;
+        set
+        {
+            if (SetProperty(ref stepSelected, value, nameof(StepSelected))) { }
+        }
+    }
+
+    private readonly AccessDataBase _db;
+
+    public NavigateVM(AccessDataBase db)
+    {
+        _db = db;
+    }
+
+    private void DescriptionOfPreviousPoint(int direction)
+    {
+        int index;
+        index = SelectedPoint.QueueNumber + direction;
+        if (index > AllPoints.Count)
+        {
+            index = 1;
+        }
+        else if (index < 1)
+        {
+            index = AllPoints.Count;
+        }
+        BlazorMap.OnRemoveAdvancedMarker(SelectedPoint);
+        SelectedPoint = AllPoints.FirstOrDefault(x => x.QueueNumber == index);
+        if (SelectedPoint is null)
+        {
+            return;
+        }
+        BlazorMap.OnSetCustomer(SelectedPoint);
+        BlazorMap.OnSetAdvancedMarker();
+        BlazorMap.OnRemoveDrirections();
+        BlazorMap.OnFitMapToAdvancedMarkers();
+    }
+
+
+    [RelayCommand]
+    void ShowMovingView()
+    {
+        StepSelected = MovingViewInSteps.StepUp(StepSelected);
+    }
+    [RelayCommand]
+    void HideMovingView()
+    {
+        StepSelected = MovingViewInSteps.StepDown(StepSelected);
+    }
+    [RelayCommand]
+    void DisplayDescriptionOfNextPoint()
+    {
+        DescriptionOfPreviousPoint(1);
+    }
+    [RelayCommand]
+    void DisplayDescriptionOfPreviousPoint()
+    {
+        DescriptionOfPreviousPoint(-1);
+    }
+    [RelayCommand]
+    async Task DisplayDescriptionPin(CustomerRoutes point)
+    {
+        try
+        {
+            if (point is null)
+            {
+                return;
+            }
+
+            await Shell.Current.GoToAsync($"{nameof(Pages.Customer.DisplayCustomer.DisplayCustomerV)}?",
+                new Dictionary<string, object>()
+                {
+                    [nameof(CustomerRoutes)] = point
+                });
+        }
+        catch (Exception ex)
+        {
+            _db.SaveLogExtension(ex);
+        }
+    }
+    [RelayCommand]
+    void CalculateRoute()
+    {
+        if (SelectedPoint is null)
+        {
+            return;
+        }
+        Task.Run(async () =>
+        {
+            await BlazorMap.OnAddDirections();
+        });
+    }
+    [RelayCommand]
+    static void FitMapToMarkers()
+    {
+        BlazorMap.OnFitMapToAdvancedMarkers();
+    }
+
 }
+

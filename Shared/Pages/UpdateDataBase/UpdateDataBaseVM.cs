@@ -38,7 +38,7 @@ namespace Shared.Pages.UpdateDataBase
             try
             {
                 UpdateDataBaseM.FromVersion = _createdDataBase.GetCurrentVersion();
-                UpdateDataBaseM.UppdateVersion = UpdateDataBaseM.FromVersion;
+                UpdateDataBaseM.UpdateVersion = UpdateDataBaseM.FromVersion;
                 var result = await _createdDataBase.UpdateDataBase(UpdateDataBase, UpdateInventory, UpdateDriverRoutes);
 
                 if (result)
@@ -54,18 +54,18 @@ namespace Shared.Pages.UpdateDataBase
 
         private void UpdateDataBase(double progressBar, int version)
         {
-            UpdateDataBaseM.DataBaseProgresBar = progressBar;
-            UpdateDataBaseM.UppdateVersion.DataBase = version;
+            UpdateDataBaseM.DataBaseProgressBar = progressBar;
+            UpdateDataBaseM.UpdateVersion.DataBase = version;
         }
         private void UpdateInventory(double progressBar, int version)
         {
-            UpdateDataBaseM.InventioryProgresBar = progressBar;
-            UpdateDataBaseM.UppdateVersion.Inventory = version;
+            UpdateDataBaseM.InventoryProgressBar = progressBar;
+            UpdateDataBaseM.UpdateVersion.Inventory = version;
         }
         private void UpdateDriverRoutes(double progressBar, int version)
         {
-            UpdateDataBaseM.DriverRoutesProgresBar = progressBar;
-            UpdateDataBaseM.UppdateVersion.DriversRoutes = version;
+            UpdateDataBaseM.DriverRoutesProgressBar = progressBar;
+            UpdateDataBaseM.UpdateVersion.DriversRoutes = version;
         }
 
         [RelayCommand]

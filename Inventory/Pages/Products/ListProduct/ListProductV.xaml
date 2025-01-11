@@ -82,22 +82,23 @@
                                 ColumnDefinitions="*,*,*"
                                 RowDefinitions="*,*,*">
                                 <Grid.GestureRecognizers>
-                                    <DragGestureRecognizer
-                                        x:DataType="VM:ListProductVM"
-                                        DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDragCommand}"
-                                        DragStartingCommandParameter="{Binding .}"
-                                        DropCompletedCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDropCompletedCommand}" />
-                                    <DropGestureRecognizer
-                                        x:DataType="VM:ListProductVM"
-                                        DropCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDropCommand}"
-                                        DropCommandParameter="{Binding .}" />
-                                </Grid.GestureRecognizers>
 
+                                    <!--<DragGestureRecognizer
+                                        DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDragCommand, x:DataType=VM:ListProductVM}"
+                                        DragStartingCommandParameter="{Binding .}"
+                                        DropCompletedCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDropCompletedCommand, x:DataType=VM:ListProductVM}" />
+                                    <DropGestureRecognizer DropCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDropCommand, x:DataType=VM:ListProductVM}" DropCommandParameter="{Binding .}" />-->
+
+                                    <DragGestureRecognizer DragStarting="DragGestureRecognizer_DragStarting" DropCompleted="DragGestureRecognizer_DropCompleted" />
+                                    <DropGestureRecognizer Drop="DropGestureRecognizer_Drop" />
+
+                                </Grid.GestureRecognizers>
 
                                 <CustomControls:StringImage
                                     Grid.Row="0"
                                     Grid.RowSpan="4"
                                     Grid.Column="0"
+                                    x:DataType="VM:ListProductM"
                                     String64Base="{Binding Name.Img}" />
 
                                 <Label

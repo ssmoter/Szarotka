@@ -49,7 +49,7 @@
                         <Setter Property="IsVisible" Value="False" />
                         <Style.Triggers>
                             <DataTrigger
-                                Binding="{Binding Source={x:Reference EntryName}, Path=Text.Length}"
+                                Binding="{Binding Source={x:Reference EntryName}, Path=Text.Length, x:DataType=Entry}"
                                 TargetType="Label"
                                 Value="0">
                                 <Setter Property="TextColor" Value="Red" />
@@ -69,7 +69,7 @@
                         <Setter Property="TextColor" Value="Red" />
                         <Style.Triggers>
                             <DataTrigger
-                                Binding="{Binding Source={x:Reference LabelEmailError}, Path=Text.Length}"
+                                Binding="{Binding Source={x:Reference LabelEmailError}, Path=Text.Length, x:DataType=Label}"
                                 TargetType="Label"
                                 Value="0">
                                 <Setter Property="IsVisible" Value="False" />
@@ -98,7 +98,7 @@
                         <Setter Property="TextColor" Value="Red" />
                         <Style.Triggers>
                             <DataTrigger
-                                Binding="{Binding Source={x:Reference LabelPasswordError}, Path=Text.Length}"
+                                Binding="{Binding Source={x:Reference LabelPasswordError}, Path=Text.Length, x:DataType=Label}"
                                 TargetType="Label"
                                 Value="0">
                                 <Setter Property="IsVisible" Value="False" />
@@ -195,10 +195,12 @@
 
                                         </VerticalStackLayout>
 
+                                        <!--  Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RegisterVM}}, Path=SetSelectedDriverCommand}"  -->
 
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RegisterVM}}, Path=SetSelectedDriverCommand}"
+                                                x:DataType="vm:RegisterVM"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RegisterVM}}, Path=SetSelectedDriverCommand, x:DataType=vm:RegisterVM}"
                                                 CommandParameter="{Binding .}"
                                                 NumberOfTapsRequired="1" />
                                         </Border.GestureRecognizers>

@@ -2,6 +2,8 @@
 
 using SQLite;
 
+using System.Text.Json.Serialization;
+
 namespace DataBase.Model
 {
     public partial class BaseEntities<T> : ObservableObject
@@ -20,6 +22,7 @@ namespace DataBase.Model
             }
         }
         [Ignore]
+        [JsonConverter(typeof(JsonContext.CustomDateTimeConverter))]
         public DateTime Created
         {
             get => new(_createdTicks, DateTimeKind.Local);
@@ -32,6 +35,7 @@ namespace DataBase.Model
             }
         }
         [Ignore]
+        [JsonConverter(typeof(JsonContext.CustomDateTimeConverter))]
         public DateTime Updated
         {
             get => new(_updatedTicks, DateTimeKind.Local);
@@ -56,10 +60,5 @@ namespace DataBase.Model
         private long _createdTicks;
         private long _updatedTicks;
 
-        public BaseEntities()
-        {
-            Created = DateTime.MaxValue;
-            Updated = DateTime.MaxValue;
-        }
     }
 }

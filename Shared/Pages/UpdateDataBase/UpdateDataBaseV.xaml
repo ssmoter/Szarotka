@@ -22,10 +22,10 @@
                     </FormattedString>
                 </Label.FormattedText>
             </Label>
-            <ProgressBar Progress="{Binding UpdateDataBaseM.DataBaseProgresBar}" />
+            <ProgressBar Progress="{Binding UpdateDataBaseM.DataBaseProgressBar}" />
         </VerticalStackLayout>
 
-        <VerticalStackLayout Padding="5" IsVisible="{Binding UpdateDataBaseM.InventioryIsVisible}">
+        <VerticalStackLayout Padding="5" IsVisible="{Binding UpdateDataBaseM.InventoryIsVisible}">
 
             <Label HorizontalOptions="Center">
                 <Label.FormattedText>
@@ -37,7 +37,7 @@
                     </FormattedString>
                 </Label.FormattedText>
             </Label>
-            <ProgressBar Progress="{Binding UpdateDataBaseM.InventioryProgresBar}" />
+            <ProgressBar Progress="{Binding UpdateDataBaseM.InventoryProgressBar}" />
         </VerticalStackLayout>
 
         <VerticalStackLayout Padding="5" IsVisible="{Binding UpdateDataBaseM.DriverRoutesIsVisible}">
@@ -52,7 +52,7 @@
                     </FormattedString>
                 </Label.FormattedText>
             </Label>
-            <ProgressBar Progress="{Binding UpdateDataBaseM.DriverRoutesProgresBar}" />
+            <ProgressBar Progress="{Binding UpdateDataBaseM.DriverRoutesProgressBar}" />
         </VerticalStackLayout>
 
 

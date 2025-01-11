@@ -1,22 +1,38 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using DataBase.Model.JsonContext;
 
 using SQLite;
+
+using System.Text.Json.Serialization;
 
 namespace DataBase.Model.EntitiesInventory;
 
 public partial class Cake : BaseEntities<Guid>
 {
-    [ObservableProperty]
     private Guid dayId;
+    public Guid DayId
+    {
+        get => dayId;
+        set
+        {
+            if (SetProperty(ref dayId, value, nameof(DayId)))
+            {
+                //OnPropertyChanged(nameof(DayId));
+            }
+        }
+
+
+    }
+
     private bool isSell;
+    [JsonConverter(typeof(CustomBoolConverter))]
     public bool IsSell
     {
         get => isSell;
         set
         {
-            if (SetProperty(ref isSell, value))
+            if (SetProperty(ref isSell, value, nameof(IsSell)))
             {
-                OnPropertyChanged(nameof(IsSell));
+                //OnPropertyChanged(nameof(IsSell));
                 OnSell?.Invoke();
                 ProductUpdatePriceService.OnUpdate();
             }
@@ -32,8 +48,10 @@ public partial class Cake : BaseEntities<Guid>
         get => index;
         set
         {
-            if (SetProperty(ref index, value))
-                OnPropertyChanged(nameof(index));
+            if (SetProperty(ref index, value, nameof(Index)))
+            {
+                //OnPropertyChanged(nameof(index));
+            }
         }
     }
 
@@ -44,9 +62,9 @@ public partial class Cake : BaseEntities<Guid>
         get => price;
         set
         {
-            if (SetProperty(ref price, value))
+            if (SetProperty(ref price, value, nameof(Price)))
             {
-                OnPropertyChanged(nameof(Price));
+                //OnPropertyChanged(nameof(Price));
                 OnPropertyChanged(nameof(PriceDecimal));
             }
         }
@@ -61,9 +79,9 @@ public partial class Cake : BaseEntities<Guid>
         }
         set
         {
-            if (SetProperty(ref price, (int)(value * 100)))
+            if (SetProperty(ref price, (int)(value * 100), nameof(PriceDecimal)))
             {
-                OnPropertyChanged(nameof(Price));
+                //OnPropertyChanged(nameof(Price));
                 OnPropertyChanged(nameof(PriceDecimal));
                 ProductUpdatePriceService.OnUpdate();
             }

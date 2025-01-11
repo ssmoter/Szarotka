@@ -31,7 +31,7 @@ namespace SzarotkaBlazor
                 }
             }
         }
-        private User user;
+        private User user = new();
 
         public AppShellVM()
         {

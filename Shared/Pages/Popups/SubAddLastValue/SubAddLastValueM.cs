@@ -4,12 +4,32 @@ namespace Shared.Pages.Popups.SubAddLastValue
 {
     public partial class SubAddLastValueM : ObservableObject
     {
-        [ObservableProperty]
-        string title;
+        private string title;
+        public string Title
+        {
+            get => title;
+            set
+            {
+                if (SetProperty(ref title, value))
+                {
+                    OnPropertyChanged(nameof(Title));
+                }
+            }
+        }
 
-        [ObservableProperty]
-        int oldValue;
-        int newValue;
+        private int oldValue;
+        public int OldValue
+        {
+            get => oldValue;
+            set
+            {
+                if (SetProperty(ref oldValue, value))
+                {
+                    OnPropertyChanged(nameof(OldValue));
+                }
+            }
+        }
+        private int newValue;
         public int NewValue
         {
             get => newValue;
@@ -24,8 +44,18 @@ namespace Shared.Pages.Popups.SubAddLastValue
         }
 
 
-        [ObservableProperty]
-        int result;
+        private int result;
+        public int Result
+        {
+            get => result;
+            set
+            {
+                if (SetProperty(ref result, value))
+                {
+                    OnPropertyChanged(nameof(Result));
+                }
+            }
+        }
 
     }
 }

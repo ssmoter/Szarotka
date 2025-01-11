@@ -31,8 +31,14 @@
 
             </VerticalStackLayout>
 
-            <Label HorizontalOptions="Center" Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{}{0:dddd, MMMM}'}" />
-            <Label HorizontalOptions="Center" Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{}{0:dd.MM.yyyy}'}" />
+            <Label
+                x:DataType="sys:DateTime"
+                HorizontalOptions="Center"
+                Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{}{0:dddd, MMMM}'}" />
+            <Label
+                x:DataType="sys:DateTime"
+                HorizontalOptions="Center"
+                Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{}{0:dd.MM.yyyy}'}" />
 
         </VerticalStackLayout>
 

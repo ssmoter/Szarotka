@@ -1,22 +1,30 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-
-using SQLite;
+﻿using SQLite;
 
 namespace DataBase.Model.EntitiesInventory;
 
 public partial class ProductPrice : BaseEntities<Guid>
 {
-    [ObservableProperty]
     private Guid productNameId;
+    public Guid ProductNameId
+    {
+        get => productNameId;
+        set
+        {
+            if (SetProperty(ref productNameId, value, nameof(ProductNameId)))
+            {
+                //OnPropertyChanged(nameof(productNameId));
+            }
+        }
+    }
     private int price;
     public int Price
     {
         get => price;
         set
         {
-            if (SetProperty(ref price, value))
+            if (SetProperty(ref price, value, nameof(Price)))
             {
-                OnPropertyChanged(nameof(Price));
+                //OnPropertyChanged(nameof(Price));
                 OnPropertyChanged(nameof(PriceDecimal));
             }
         }
@@ -30,10 +38,10 @@ public partial class ProductPrice : BaseEntities<Guid>
         }
         set
         {
-            if (SetProperty(ref price, (int)(value * 100)))
+            if (SetProperty(ref price, (int)(value * 100), nameof(PriceDecimal)))
             {
                 OnPropertyChanged(nameof(Price));
-                OnPropertyChanged(nameof(PriceDecimal));
+                //OnPropertyChanged(nameof(PriceDecimal));
             }
         }
     }

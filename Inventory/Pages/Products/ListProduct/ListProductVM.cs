@@ -13,14 +13,35 @@ namespace Inventory.Pages.Products.ListProduct
 {
     public partial class ListProductVM : ObservableObject
     {
-        [ObservableProperty]
-        ObservableCollection<ListProductM> productMs;
+        private ObservableCollection<ListProductM> productMs;
+        public ObservableCollection<ListProductM> ProductMs
+        {
+            get => productMs;
+            set
+            {
+                if (SetProperty(ref productMs, value, nameof(ProductMs))) { }
+            }
+        }
 
-        [ObservableProperty]
-        ListProductM dragAndDropProduct;
+        private ListProductM dragAndDropProduct;
+        public ListProductM DragAndDropProduct
+        {
+            get => dragAndDropProduct;
+            set
+            {
+                if (SetProperty(ref dragAndDropProduct, value, nameof(DragAndDropProduct))) { }
+            }
+        }
 
-        [ObservableProperty]
-        bool isGenerateDefaultEnable;
+        private bool isGenerateDefaultEnable;
+        public bool IsGenerateDefaultEnable
+        {
+            get => isGenerateDefaultEnable;
+            set
+            {
+                if (SetProperty(ref isGenerateDefaultEnable, value, nameof(IsGenerateDefaultEnable))) { }
+            }
+        }
 
         readonly Random random = new(2137);
         readonly AccessDataBase _db;
@@ -111,7 +132,6 @@ namespace Inventory.Pages.Products.ListProduct
 
         private async Task SetArrangement()
         {
-            var task = new Task[ProductMs.Count];
             for (int i = 0; i < ProductMs.Count; i++)
             {
                 int arrangement = i + 1;
@@ -119,9 +139,8 @@ namespace Inventory.Pages.Products.ListProduct
 
                 var entities = ProductMs[i].Name;
                 entities.Updated = DateTime.Now;
-                task[i] = _db.DataBaseAsync.UpdateAsync(entities);
+                await _db.DataBaseAsync.UpdateAsync(entities);
             }
-            await Task.WhenAll(task);
         }
 
         #endregion
