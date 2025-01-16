@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Inventory.Pages.SingleDayPreview.SingleDayPreviewPage.SingleDayPreviewPageV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:CustomControls="clr-namespace:Shared.CustomControls;assembly=Shared"
+    xmlns:ImgPath="clr-namespace:Shared.Helper.Img;assembly=Shared"
+    xmlns:Product="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
+    xmlns:smallDay="clr-namespace:Inventory.Pages.SingleDayPreview.SingleDayPreviewSmall"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:Inventory.Pages.SingleDayPreview.SingleDayPreviewPage"
+    Title="{Binding Day.SelectedDate}"
+    x:DataType="vm:SingleDayPreviewPageVM">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding GoToEditCommand}" Text="Edytuj" />
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <smallDay:SingleDayPreviewSmallV Day="{Binding Day}" Driver="{Binding Driver}" />
+    </Grid>
+
+
+</ContentPage>

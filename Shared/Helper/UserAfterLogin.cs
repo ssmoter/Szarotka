@@ -11,7 +11,7 @@ namespace Shared.Helper
     public partial class UserAfterLogin
     {
         public static DateTime Expires { get; private set; } = new();
-        public static bool IsLogin { get; private set; } = false;
+        public static bool IsLogin { get; private set; } = true;
         public static User User { get; private set; } = new();
 
         public static event Action<User, bool> OnLogin;

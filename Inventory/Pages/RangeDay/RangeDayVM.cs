@@ -237,11 +237,15 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
                 rangeDay.Day.Products[i].CanUpdate = true;
             }
 
-            await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
-                new Dictionary<string, object>()
-                {
-                    [nameof(Day)] = rangeDay.Day
-                });
+            var popup = new SingleDayPreview.SingleDayPreviewPopUp.SingleDayPreviewPopUpV(rangeDay.Day, rangeDay.Driver.Name);
+
+            await Shell.Current.ShowPopupAsync(popup);
+
+            //await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
+            //    new Dictionary<string, object>()
+            //    {
+            //        [nameof(Day)] = rangeDay.Day
+            //    });
         }
         catch (Exception ex)
         {

@@ -7,17 +7,15 @@ using DataBase.Model.EntitiesInventory;
 using Inventory.Service;
 
 using Shared.Data;
-using Shared.Helper;
 
 
 namespace Inventory.Pages.Main
 {
     public partial class MainVM : ObservableObject, IQueryAttributable
     {
-
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            if (query.TryGetValue(nameof(DataBase.Model.EntitiesInventory.Day),out object day)) 
+            if (query.TryGetValue(nameof(DataBase.Model.EntitiesInventory.Day), out object day))
             {
                 if (day is DataBase.Model.EntitiesInventory.Day _day)
                 {
@@ -58,12 +56,15 @@ namespace Inventory.Pages.Main
             _selectDayService = selectDay;
             MainM = new MainM();
             Name = "wybierz kierowcę";
+            LookingForSelectedDriver();
             Service.DriverNameUpdateService.Update += SetName;
+
         }
 
         #region Method
 
-        public async Task LookingForSelectedDriver()
+
+        public void LookingForSelectedDriver()
         {
             try
             {
@@ -81,37 +82,16 @@ namespace Inventory.Pages.Main
                         SetName();
                     }
                 }
-                if (await MainVM.CheckDriver())
-                {
-                    await Shell.Current.GoToAsync("//MainPage/MainOptionsV?",
-                        new Dictionary<string, object>()
-                        {
-                            [nameof(ListOfEnums.TypOfOptions)] = ListOfEnums.TypOfOptions.Inventory,
-                        });
-                }
             }
             catch (Exception ex)
             {
                 _db.SaveLogExtension(ex);
             }
         }
-
-        static async Task<bool> CheckDriver()
-        {
-            if (string.IsNullOrWhiteSpace(Helper.SelectedDriver.Id))
-            {
-                await Shell.Current.DisplayAlert("Kierowca", $"Kierowca nie został wybrany{Environment.NewLine}Wybierz kierowcę w celu wczytania", "Ok");
-                return true;
-            }
-            return false;
-        }
-
         void SetName()
         {
-            Name = Helper.SelectedDriver.Name;
+            Name = Shared.Helper.UserAfterLogin.User.Name;
         }
-
-
 
         #endregion
 
@@ -122,14 +102,10 @@ namespace Inventory.Pages.Main
         {
             try
             {
-                if (await MainVM.CheckDriver())
-                    return;
-
                 if (Day is not null)
                 {
                     Day.Products = new(Day.Products.OrderBy(x => x.Name.Arrangement));
                 }
-
                 if (Day is null)
                 {
                     Day = await _selectDayService.GetDayProcedure(DateTime.Now);
@@ -143,17 +119,45 @@ namespace Inventory.Pages.Main
                     Day = await _selectDayService.GetDayProcedure(DateTime.Now);
                 }
 
+
                 Day.CanUpdate = true;
                 for (int i = 0; i < Day.Products.Count; i++)
                 {
                     Day.Products[i].CanUpdate = true;
                 }
-                await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
-                    new Dictionary<string, object>()
-                    {
-                        [nameof(DataBase.Model.EntitiesInventory.Day)] = Day,
 
+
+                for (int i = 0; i < 10; i++)
+                {
+                    Day.Cakes.Add(new Cake()
+                    {
+                        PriceDecimal = i * 10,
+                        Created = DateTime.Now,
+                        Updated = DateTime.Now,
+                        IsSell = i % 2 == 0,
+                        Index = i,
                     });
+                }
+
+                if (Day.Id == Guid.Empty)
+                {
+                    await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
+                        new Dictionary<string, object>()
+                        {
+                            [nameof(DataBase.Model.EntitiesInventory.Day)] = Day,
+
+                        });
+                }
+                else
+                {
+                    await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDayPreview.SingleDayPreviewPage.SingleDayPreviewPageV)}?",
+                        new Dictionary<string, object>()
+                        {
+                            [nameof(DataBase.Model.EntitiesInventory.Day)] = Day,
+                            [nameof(DataBase.Model.EntitiesInventory.Driver)] = Helper.SelectedDriver.Name,
+
+                        });
+                }
             }
             catch (Exception ex)
             {
@@ -178,8 +182,6 @@ namespace Inventory.Pages.Main
         {
             try
             {
-                if (await MainVM.CheckDriver())
-                    return;
                 if (string.IsNullOrWhiteSpace(MainM.DisplayDate))
                     return;
 
@@ -190,11 +192,26 @@ namespace Inventory.Pages.Main
                 {
                     days.Products[i].CanUpdate = true;
                 }
-                await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
-                    new Dictionary<string, object>()
-                    {
-                        [nameof(DataBase.Model.EntitiesInventory.Day)] = days
-                    });
+
+
+                if (days.Id == Guid.Empty)
+                {
+                    await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
+                        new Dictionary<string, object>()
+                        {
+                            [nameof(DataBase.Model.EntitiesInventory.Day)] = days,
+
+                        });
+                }
+                else
+                {
+                    await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDayPreview.SingleDayPreviewPage.SingleDayPreviewPageV)}?",
+                        new Dictionary<string, object>()
+                        {
+                            [nameof(DataBase.Model.EntitiesInventory.Day)] = days,
+                            [nameof(DataBase.Model.EntitiesInventory.Driver)] = Helper.SelectedDriver.Name,
+                        });
+                }
             }
             catch (Exception ex)
             {

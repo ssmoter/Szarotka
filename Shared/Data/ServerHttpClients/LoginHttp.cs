@@ -1,5 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
+using DataBase.Model.JsonContext;
 
 using System.Text;
 using System.Text.Json;
@@ -31,7 +32,7 @@ namespace Shared.Data.ServerHttpClients
 
             ArgumentNullException.ThrowIfNull(login);
 
-            var request = JsonSerializer.Serialize(login, LoginUserJsonSerializerContext.Default.LoginUser);
+            var request = JsonSerializer.Serialize(login, SzarotkaJsonSerializerContext.Default.LoginUser);
 
             var content = new StringContent(request, Encoding.UTF8, "application/json");
 
@@ -41,7 +42,7 @@ namespace Shared.Data.ServerHttpClients
 
             if (response.IsSuccessStatusCode)
             {
-                var user = JsonSerializer.Deserialize<User>(json, UserJsonSerializerContext.Default.User);
+                var user = JsonSerializer.Deserialize<User>(json, SzarotkaJsonSerializerContext.Default.User);
                 return user;
             }
 

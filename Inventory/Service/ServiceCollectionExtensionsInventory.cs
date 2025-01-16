@@ -39,6 +39,8 @@ namespace Inventory.Service
             services.AddScoped<Pages.RangeDay.RangeDayV>();
             services.AddScoped<Pages.Products.ListProduct.ListProductV>();
 #endif
+            services.AddScoped<Inventory.Pages.SingleDayPreview.SingleDayPreviewPage.SingleDayPreviewPageVM>();
+            services.AddScoped<Inventory.Pages.SingleDayPreview.SingleDayPreviewPage.SingleDayPreviewPageV>();
 
             return services;
         }

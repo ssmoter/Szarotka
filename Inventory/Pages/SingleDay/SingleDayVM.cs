@@ -31,9 +31,9 @@ namespace Inventory.Pages.SingleDay
             get => day;
             set
             {
-                if (SetProperty(ref day, value))
+                if (SetProperty(ref day, value,nameof(Day)))
                 {
-                    OnPropertyChanged(nameof(Day));
+                    //OnPropertyChanged(nameof(Day));
                 }
             }
         }
@@ -44,9 +44,9 @@ namespace Inventory.Pages.SingleDay
             get => singleDayM;
             set
             {
-                if (SetProperty(ref singleDayM, value))
+                if (SetProperty(ref singleDayM, value,nameof(SingleDayM)))
                 {
-                    OnPropertyChanged(nameof(SingleDayM));
+                    //OnPropertyChanged(nameof(SingleDayM));
                 }
             }
         }

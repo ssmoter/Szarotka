@@ -1,15 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-using System.Text.Json.Serialization;
-
 namespace DataBase.Model.EntitiesServer;
 
-[JsonSerializable(typeof(User))]
-[JsonSourceGenerationOptions(WriteIndented = true,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        PropertyNameCaseInsensitive = true)]
-public partial class UserJsonSerializerContext : JsonSerializerContext
-{ }
+
 public partial class User : BaseEntities<Guid>
 {
     private string name = "";
@@ -113,12 +106,6 @@ public partial class User : BaseEntities<Guid>
     public string Token { get; set; } = "";
 
 }
-[JsonSerializable(typeof(RegisterUser))]
-[JsonSourceGenerationOptions(WriteIndented = true,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        PropertyNameCaseInsensitive = true)]
-public partial class RegisterUserJsonSerializerContext : JsonSerializerContext
-{ }
 
 public partial class RegisterUser : User
 {
@@ -135,12 +122,7 @@ public partial class RegisterUser : User
         }
     }
 }
-[JsonSerializable(typeof(LoginUser))]
-[JsonSourceGenerationOptions(WriteIndented = true,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-        PropertyNameCaseInsensitive = true)]
-public partial class LoginUserJsonSerializerContext : JsonSerializerContext
-{ }
+
 public partial class LoginUser : ObservableObject
 {
     private string email = "";

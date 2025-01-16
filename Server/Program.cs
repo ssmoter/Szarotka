@@ -1,4 +1,5 @@
 ﻿using DataBase.Model.EntitiesServer;
+using DataBase.Model.JsonContext;
 
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +14,7 @@ var builder = WebApplication.CreateSlimBuilder(args);
 builder.Services.ConfigureHttpJsonOptions((Action<Microsoft.AspNetCore.Http.Json.JsonOptions>)(options =>
 {
     options.SerializerOptions.TypeInfoResolverChain.Add(AppJsonSerializerContext.Default);
-    options.SerializerOptions.TypeInfoResolverChain.Add(UserJsonSerializerContext.Default);
-    options.SerializerOptions.TypeInfoResolverChain.Add(RegisterUserJsonSerializerContext.Default);
-    options.SerializerOptions.TypeInfoResolverChain.Add(LoginUserJsonSerializerContext.Default);
+    options.SerializerOptions.TypeInfoResolverChain.Add(SzarotkaJsonSerializerContext.Default);
 }));
 
 builder.Services.AddProblemDetails(options =>

@@ -159,10 +159,10 @@
                                         <Label Text="zł" />
                                     </HorizontalStackLayout>
                                     <HorizontalStackLayout Grid.Column="5" VerticalOptions="Center">
-                                        <Button
+                                        <!--<Button
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type VM:RangeDayVM}}, Path=OpenDetailpageCommand, x:DataType=VM:RangeDayVM}"
                                             CommandParameter="{Binding .}"
-                                            Text="Wczytaj dzień" />
+                                            Text="Wczytaj dzień" />-->
                                     </HorizontalStackLayout>
                                 </Grid>
                             </Border>

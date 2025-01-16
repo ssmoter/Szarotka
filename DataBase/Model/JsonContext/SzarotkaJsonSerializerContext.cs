@@ -1,11 +1,15 @@
 ﻿using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesRoutes;
+using DataBase.Model.EntitiesServer;
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace DataBase.Model.JsonContext;
 
+[JsonSerializable(typeof(User))]
+[JsonSerializable(typeof(RegisterUser))]
+[JsonSerializable(typeof(LoginUser))]
 
 [JsonSerializable(typeof(SelectedDayOfWeekRoutes))]
 [JsonSerializable(typeof(ResidentialAddress))]
@@ -26,9 +30,7 @@ namespace DataBase.Model.JsonContext;
 //[JsonConverter(typeof(CustomDateTimeConverter))]
 //[JsonConverter(typeof(CustomBoolConverter))]
 public partial class SzarotkaJsonSerializerContext : JsonSerializerContext
-{
-
-}
+{ }
 public class CustomBoolConverter : JsonConverter<bool>
 {
     public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -61,7 +63,28 @@ public class CustomDateTimeConverter : JsonConverter<DateTime>
 {
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        if (DateTime.TryParse(reader.GetString(), out var result))
+        if (reader.TokenType == JsonTokenType.Number)
+        {
+            if (reader.TryGetInt32(out int resultInt))
+            {
+                return new(resultInt);
+            }
+        }
+
+        if (reader.TokenType == JsonTokenType.String)
+        {
+            var str = reader.GetString();
+            if (str == "0")
+            {
+                return new(int.Parse(str));
+            }
+
+            if (DateTime.TryParse(str, out var resultStr))
+            {
+                return resultStr;
+            }
+        }
+        if (reader.TryGetDateTime(out var result))
         {
             return result;
         }
