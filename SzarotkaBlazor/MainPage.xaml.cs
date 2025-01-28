@@ -3,6 +3,7 @@ using DataBase.Model;
 
 using Shared.Data;
 using Shared.Helper;
+using Shared.Model;
 
 using SzarotkaBlazor.Pages.Options.Main;
 
@@ -18,21 +19,27 @@ namespace SzarotkaBlazor
             InitializeComponent();
             _db = db;
             _createdDataBase = new(db);
-
         }
-
 
         protected override async void OnNavigatedTo(NavigatedToEventArgs args)
         {
             base.OnNavigatedTo(args);
-
-            var log = GotToLogin();
-            var db = UpdateDataBase();
-
-            await Task.WhenAll(log, db);
+            var update = UpdateDataBase();
+            await update;
+            if (update.IsCompleted)
+            {
+                await GotToLogin();
+            }
         }
+
         private async Task GotToLogin()
         {
+            var user = await HelperTable.Get(nameof(UserAfterLogin.User.Token), _db);
+            if (user is not null)
+            {
+                UserAfterLogin.SetLoginUser(user.Value);
+            }
+
             if (!UserAfterLogin.IsLogin)
             {
                 await Shell.Current.GoToAsync($"{nameof(Shared.Pages.LogIn.LogInV)}");

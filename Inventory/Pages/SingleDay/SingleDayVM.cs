@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
+using DataBase.Data.Save;
 using DataBase.Model.EntitiesInventory;
 
 using Inventory.Service;
@@ -20,7 +21,12 @@ namespace Inventory.Pages.SingleDay
             {
                 if (day is Day _day)
                 {
+                    if (Day is not null)
+                    {
+                        RemovePropertyChangedEvent();
+                    }
                     Day = _day;
+                    AddPropertyChangedEvent();
                 }
             }
         }
@@ -31,7 +37,7 @@ namespace Inventory.Pages.SingleDay
             get => day;
             set
             {
-                if (SetProperty(ref day, value,nameof(Day)))
+                if (SetProperty(ref day, value, nameof(Day)))
                 {
                     //OnPropertyChanged(nameof(Day));
                 }
@@ -44,7 +50,7 @@ namespace Inventory.Pages.SingleDay
             get => singleDayM;
             set
             {
-                if (SetProperty(ref singleDayM, value,nameof(SingleDayM)))
+                if (SetProperty(ref singleDayM, value, nameof(SingleDayM)))
                 {
                     //OnPropertyChanged(nameof(SingleDayM));
                 }
@@ -56,16 +62,15 @@ namespace Inventory.Pages.SingleDay
 
         const char signPlus = '+';
         //const char signMinus = '-';
-        readonly AccessDataBase _db;
-        readonly ISaveDayService _saveDay;
-        readonly ISelectDayService _selectDay;
-
-        public Action<object, object, ScrollToPosition, bool> ProductScrollToObject;
-        public Action<int, int, ScrollToPosition, bool> ProductScrollToInt;
+        private readonly AccessDataBase _db;
+        private readonly ISaveDayService _saveDay;
+        private readonly ISelectDayService _selectDay;
+        private readonly ISaveInventoryAoT _saveInventoryAoT;
 
         public SingleDayVM(AccessDataBase db,
             ISaveDayService saveDay,
-            ISelectDayService selectDay)
+            ISelectDayService selectDay,
+            ISaveInventoryAoT saveInventoryAoT)
         {
             _db = db;
             _saveDay = saveDay;
@@ -73,7 +78,10 @@ namespace Inventory.Pages.SingleDay
             SingleDayM ??= new();
             _selectDay = selectDay;
             ResetLastFastValue();
+            _saveInventoryAoT = saveInventoryAoT;
         }
+
+
         public void Dispose()
         {
             lastFastValuePeriodicTimer.Dispose();
@@ -82,6 +90,87 @@ namespace Inventory.Pages.SingleDay
 
 
         #region Method
+
+        private async void AddPropertyChangedEvent()
+        {
+            Day.PropertyChanged += SingleDayVM_PropertyChanged;
+            for (int i = 0; i < Day.Products.Count; i++)
+            {
+                Day.Products[i].PropertyChanged += SingleDayVM_PropertyChanged;
+            }
+            if (Day.Id == Guid.Empty)
+            {
+                await SaveDay();
+            }
+        }
+        public void RemovePropertyChangedEvent()
+        {
+            Day.PropertyChanged -= SingleDayVM_PropertyChanged;
+            for (int i = 0; i < Day.Products.Count; i++)
+            {
+                Day.Products[i].PropertyChanged -= SingleDayVM_PropertyChanged;
+            }
+        }
+        private bool isPropertyChanged;
+        private async void SingleDayVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            try
+            {
+                var userId = Shared.Helper.UserAfterLogin.User.Id.ToByteArray();
+
+                if (e.PropertyName == nameof(Product.IsExpanded))
+                {
+                    return;
+                }
+                if (sender is Day day)
+                {
+                    if (isPropertyChanged)
+                    {
+                        return;
+                    }
+
+                    isPropertyChanged = true;
+                    Day.UpdateTotalPrice();
+                    await _saveInventoryAoT.SaveDay(day, userId);
+                    isPropertyChanged = false;
+                }
+                if (sender is Product product)
+                {
+                    if (isPropertyChanged)
+                    {
+                        return;
+                    }
+                    isPropertyChanged = true;
+                    product.CalculatePrice();
+                    Day.UpdateTotalPrice();
+                    if (product.DayId == Guid.Empty)
+                    {
+                        product.DayId = Day.Id;
+                    }
+                    await _saveInventoryAoT.SaveProduct(product, userId);
+                    await _saveInventoryAoT.SaveDay(Day, userId);
+                    isPropertyChanged = false;
+                }
+                if (sender is Cake cake)
+                {
+                    if (e.PropertyName == nameof(Cake.IsSell))
+                    {
+                        Day.UpdateTotalPrice();
+                        if (cake.DayId == Guid.Empty)
+                        {
+                            cake.DayId = Day.Id;
+                        }
+                        await _saveInventoryAoT.SaveCake(cake, userId);
+                        await _saveInventoryAoT.SaveDay(Day, userId);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isPropertyChanged = false;
+                _db.SaveLogExtension(ex);
+            }
+        }
         public async Task ShowCurrentDay()
         {
             await CommunityToolkit.Maui.Alerts.Toast.Make($"Wczytano dzień {Day.SelectedDate.ToShortDateString()}", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
@@ -97,45 +186,40 @@ namespace Inventory.Pages.SingleDay
                 }
             }
         }
-        static void FastChangeProductNumber(Product product, int value)
+
+        public static void FastChangeProductNumber(Product product, int value, IView snackBar = null)
         {
             if (product is not null)
             {
-                if (product.CanUpdate == false)
-                {
-                    SetCanUpdate(product);
-                }
                 product.Number += value;
-                ToastMakeFastChange(product, value, "ilość");
+                ToastMakeFastChange(product, value, "ilość", snackBar);
             }
         }
-        static void FastChangeProductEdit(Product product, int value)
+        public static void FastChangeProductEdit(Product product, int value, IView snackBar = null)
         {
             if (product is not null)
             {
-                if (product.CanUpdate == false)
-                {
-                    SetCanUpdate(product);
-                }
+
                 product.NumberEdit += value;
 
-                ToastMakeFastChange(product, value, "edycja");
+                ToastMakeFastChange(product, value, "edycja", snackBar);
             }
         }
-        static void FastChangeProductReturn(Product product, int value)
+        public static void FastChangeProductReturn(Product product, int value, IView snackBar = null)
         {
             if (product is not null)
             {
-                if (product.CanUpdate == false)
-                {
-                    SetCanUpdate(product);
-                }
                 product.NumberReturn += value;
 
-                ToastMakeFastChange(product, value, "zwrot");
+                ToastMakeFastChange(product, value, "zwrot", snackBar);
             }
         }
-        private static void ToastMakeFastChange(Product product, int value, string message)
+        static SnackbarOptions snackBarOptions = new SnackbarOptions()
+        {
+            CornerRadius = new CornerRadius(50),
+            ActionButtonTextColor = Colors.Transparent,
+        };
+        private static void ToastMakeFastChange(Product product, int value, string message, IView snackBar = null)
         {
             if (Math.Sign(lastFastValue.value) != Math.Sign(value))
             {
@@ -159,30 +243,13 @@ namespace Inventory.Pages.SingleDay
             lastFastValueClearTimerValue = 10;
             char sign = value > 0 ? signPlus : ' ';
             lastFastValue.message = message;
-            Toast.Make($"{product.Name.Name} {message} {sign}{lastFastValue.value}", duration: CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
-        }
-        static void SetCanUpdate(Product product)
-        {
-            product.CanUpdate = true;
-            product.CalculatePrice();
+            var toastMessage = $"{product.Name.Name} {message} {sign}{lastFastValue.value}";
+#if !WINDOWS
+            //view.DisplaySnackbar(toastMessage, null, "", TimeSpan.FromSeconds(3), visualOptions: snackBarOptions);
+            Toast.Make(toastMessage, duration: CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
+#endif
         }
 
-        void OnProductScrollTo(object item, object group = null, ScrollToPosition position = ScrollToPosition.MakeVisible, bool animate = true)
-        {
-            try
-            {
-                ProductScrollToObject.Invoke(item, group, position, animate);
-            }
-            catch { }
-        }
-        void OnProductScrollTo(int item, int group = -1, ScrollToPosition position = ScrollToPosition.MakeVisible, bool animate = true)
-        {
-            try
-            {
-                ProductScrollToInt.Invoke(item, group, position, animate);
-            }
-            catch { }
-        }
         #endregion
 
         #region Command
@@ -224,7 +291,6 @@ namespace Inventory.Pages.SingleDay
         {
             SingleDayVM.FastChangeProductEdit(product, -1);
         }
-
         [RelayCommand]
         static void FastAddProductReturn(Product product)
         {
@@ -240,7 +306,28 @@ namespace Inventory.Pages.SingleDay
         [RelayCommand]
         async Task SaveDay()
         {
-            await _saveDay.SaveDayAsync(Day);
+            //await _saveDay.SaveDayAsync(Day);
+            var userId = Shared.Helper.UserAfterLogin.User.Id.ToByteArray();
+            await _saveInventoryAoT.SaveDay(Day, userId);
+            var dayId = Day.Id.ToByteArray();
+            var taskProducts = new Task[Day.Products.Count];
+            for (int i = 0; i < Day.Products.Count; i++)
+            {
+                Day.Products[i].CalculatePrice();
+                Day.Products[i].DayId = new Guid(dayId);
+                taskProducts[i] = _saveInventoryAoT.SaveProduct(Day.Products[i], userId);
+            }
+            await Task.WhenAll(taskProducts);
+
+            var taskCakes = new Task[Day.Cakes.Count];
+            for (int i = 0; i < Day.Cakes.Count; i++)
+            {
+                Day.Cakes[i].DayId = new Guid(dayId);
+                taskCakes[i] = _saveInventoryAoT.SaveCake(day.Cakes[i], userId);
+            }
+            await Task.WhenAll(taskCakes);
+            Day.UpdateTotalPrice();
+            await _saveInventoryAoT.SaveDay(Day, userId);
         }
 
         [RelayCommand]
@@ -258,10 +345,6 @@ namespace Inventory.Pages.SingleDay
                 }
 
                 var response = await Shell.Current.DisplayPromptAsync("Ciasto", "Podaj cenę ciasta", "Tak", "Anuluj", keyboard: Keyboard.Numeric);
-#if __ANDROID_24__
-                //var response = await Shell.Current.DisplayPromptAsync("Ciasto", "Podaj cenę ciasta", "Tak", "Anuluj", keyboard: Keyboard.Telephone);
-#else
-#endif
 
                 if (string.IsNullOrWhiteSpace(response))
                 {
@@ -281,9 +364,10 @@ namespace Inventory.Pages.SingleDay
                     };
                     Day.Cakes.Add(cake);
                     Day.Cakes.LastOrDefault().IsSell = true;
-                    DataBase.Model.EntitiesInventory.ProductUpdatePriceService.OnUpdate();
-
+                    Day.UpdateTotalPrice();
                     await CommunityToolkit.Maui.Alerts.Toast.Make($"Dodano ciasto z ceną {value}", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
+                    await _saveInventoryAoT.SaveCake(cake, Day.Id.ToByteArray());
+                    cake.PropertyChanged += SingleDayVM_PropertyChanged;
                 }
             }
             catch (Exception ex)
@@ -305,9 +389,10 @@ namespace Inventory.Pages.SingleDay
                 {
                     return;
                 }
-
                 Day.Cakes.Remove(cake);
-                DataBase.Model.EntitiesInventory.ProductUpdatePriceService.OnUpdate();
+                cake.IsDelete = true;
+                Day.UpdateTotalPrice();
+                _saveInventoryAoT.SaveCake(cake, Day.Id.ToByteArray());
             }
             catch (Exception ex)
             {
@@ -375,6 +460,7 @@ namespace Inventory.Pages.SingleDay
                 if (decimal.TryParse(paste, out decimal result))
                 {
                     Day.TotalPriceMoneyDecimal = result;
+                    await _saveInventoryAoT.SaveDay(Day, Shared.Helper.UserAfterLogin.User.Id.ToByteArray());
                 }
             }
         }
@@ -384,29 +470,31 @@ namespace Inventory.Pages.SingleDay
         {
             try
             {
-                Day.CanUpdate = true;
+                bool needToSort = false;
                 for (int i = 0; i < Day.Products.Count; i++)
                 {
-                    SetCanUpdate(Day.Products[i]);
+                    Day.Products[i].CalculatePrice();
+                    if (Day.Products[i].Name.Arrangement <= i)
+                    {
+                        needToSort = true;
+                    }
                 }
                 Day.UpdateTotalPrice();
+
+                if (needToSort)
+                {
+                    var products = Day.Products.OrderBy(x => x.Name.Arrangement).ToArray();
+                    Day.Products.Clear();
+                    foreach (var item in products)
+                    {
+                        Day.Products.Add(item);
+                    }
+                }
             }
             catch (Exception ex) { _db.SaveLogExtension(ex); }
             finally { SingleDayM.ProductIsRefreshing = false; }
         }
 
-        [RelayCommand]
-        static async Task PopupToAddValueFromList(Product product)
-        {
-            var popup = new Shared.Pages.Popups.SubAddLastValue.SubAddLastValueV(product.NumberEdit, product.Name.Name);
-
-            var result = await Shell.Current.ShowPopupAsync(popup);
-
-            if (result is not null)
-            {
-                product.NumberEdit = (int)result;
-            }
-        }
 
         [RelayCommand]
         async Task ChangeProductPrice(Product product)
@@ -467,9 +555,10 @@ namespace Inventory.Pages.SingleDay
                 if (!result)
                     return;
 
+                product.IsDelete = true;
                 Day.Products.Remove(product);
                 await Shell.Current.DisplayAlert("Usuwanie", $"Produkt {product.Name.Name} został usunięty", "Ok");
-
+                await _saveInventoryAoT.SaveProduct(product, Shared.Helper.UserAfterLogin.User.Id.ToByteArray());
                 RefreshListOfProduct();
             }
             catch (Exception ex)
@@ -510,13 +599,22 @@ namespace Inventory.Pages.SingleDay
 
                 if (selectedProduct is not null)
                 {
-                    var newProduct = new Product()
+                    var newProduct = await _db.DataBaseAsync.Table<Product>().FirstOrDefaultAsync(x => x.DayId == Day.Id && x.ProductNameId == selectedProduct.Id);
+                    newProduct ??= new Product();
+
+                    newProduct.Name = selectedProduct;
+                    if (newProduct.ProductPriceId != Guid.Empty)
                     {
-                        Name = selectedProduct,
-                        Price = await _db.DataBaseAsync.Table<ProductPrice>().FirstOrDefaultAsync(x => x.ProductNameId == selectedProduct.Id),
-                    };
+                        newProduct.Price = await _db.DataBaseAsync.Table<ProductPrice>().FirstOrDefaultAsync(x => x.Id == newProduct.ProductPriceId);
+                    }
+                    else
+                    {
+                        newProduct.Price = await _db.DataBaseAsync.Table<ProductPrice>().FirstOrDefaultAsync(x => x.ProductNameId == selectedProduct.Id);
+                        newProduct.ProductPriceId = newProduct.Price.Id;
+                    }
+
                     newProduct.ProductNameId = newProduct.Name.Id;
-                    newProduct.ProductPriceId = newProduct.Price.Id;
+
                     Day.Products.Add(newProduct);
                     RefreshListOfProduct();
                 }
@@ -581,12 +679,13 @@ namespace Inventory.Pages.SingleDay
         }
 
         [RelayCommand]
-        static void SetFullReturn(Product product)
+        async Task SetFullReturn(Product product)
         {
             if (product is not null)
             {
                 product.NumberReturn = product.Number + product.NumberEdit;
-                Toast.Make($"{product.Name.Name} zwrot {product.NumberReturn}", duration: CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
+                await Toast.Make($"{product.Name.Name} zwrot {product.NumberReturn}", duration: CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
+                await _saveInventoryAoT.SaveProduct(product, Shared.Helper.UserAfterLogin.User.Id.ToByteArray());
             }
         }
 

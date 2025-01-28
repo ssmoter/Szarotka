@@ -25,7 +25,15 @@ namespace DataBase.Model
         [JsonConverter(typeof(JsonContext.CustomDateTimeConverter))]
         public DateTime Created
         {
-            get => new(_createdTicks, DateTimeKind.Local);
+            get
+            {
+                if (_createdTicks == 0)
+                {
+                    return new DateTime();
+                }
+                var date = new DateTime(_createdTicks);
+                return date.ToLocalTime();
+            }
             set
             {
                 if (SetProperty(ref _createdTicks, value.ToUniversalTime().Ticks))
@@ -38,7 +46,15 @@ namespace DataBase.Model
         [JsonConverter(typeof(JsonContext.CustomDateTimeConverter))]
         public DateTime Updated
         {
-            get => new(_updatedTicks, DateTimeKind.Local);
+            get
+            {
+                if (_updatedTicks == 0)
+                {
+                    return new DateTime();
+                }
+                var date = new DateTime(_updatedTicks);
+                return date.ToLocalTime();
+            }
             set
             {
                 if (SetProperty(ref _updatedTicks, value.ToUniversalTime().Ticks))
@@ -60,5 +76,34 @@ namespace DataBase.Model
         private long _createdTicks;
         private long _updatedTicks;
 
+        private bool isDelete;
+        public bool IsDelete
+        {
+            get => isDelete;
+            set
+            {
+                if (SetProperty(ref isDelete, value, nameof(IsDelete))) { }
+            }
+        }
+
+        private Guid userCreatedId;
+        public Guid UserCreatedId
+        {
+            get => userCreatedId;
+            set
+            {
+                if (SetProperty(ref userCreatedId, value, nameof(UserCreatedId))) { }
+            }
+        }
+
+        private Guid userUpdatedId;
+        public Guid UserUpdatedId
+        {
+            get => userUpdatedId;
+            set
+            {
+                if (SetProperty(ref userUpdatedId, value, nameof(UserUpdatedId))) { }
+            }
+        }
     }
 }

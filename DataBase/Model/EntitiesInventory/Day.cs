@@ -86,7 +86,6 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             {
                 //OnPropertyChanged(nameof(TotalPriceProducts));
                 OnPropertyChanged(nameof(TotalPriceProductsDecimal));
-                UpdateTotalPrice();
             }
         }
     }
@@ -103,7 +102,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             {
                 //OnPropertyChanged(nameof(TotalPriceProductsDecimal));
                 OnPropertyChanged(nameof(TotalPriceProducts));
-                UpdateTotalPrice();
+
             }
 
         }
@@ -118,7 +117,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             {
                 //OnPropertyChanged(nameof(TotalPriceCake));
                 OnPropertyChanged(nameof(TotalPriceCakeDecimal));
-                UpdateTotalPrice();
+
             }
         }
     }
@@ -135,7 +134,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             {
                 OnPropertyChanged(nameof(TotalPriceCake));
                 //OnPropertyChanged(nameof(TotalPriceCakeDecimal));
-                UpdateTotalPrice();
+
             }
         }
     }
@@ -149,7 +148,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             {
                 //OnPropertyChanged(nameof(TotalPrice));
                 OnPropertyChanged(nameof(TotalPriceDecimal));
-                UpdateTotalPrice();
+
             }
         }
     }
@@ -167,7 +166,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             {
                 OnPropertyChanged(nameof(TotalPrice));
                 //OnPropertyChanged(nameof(TotalPriceDecimal));
-                UpdateTotalPrice();
+
             }
         }
     }
@@ -181,7 +180,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             {
                 //OnPropertyChanged(nameof(TotalPriceCorrect));
                 OnPropertyChanged(nameof(TotalPriceCorrectDecimal));
-                UpdateTotalPrice();
+
             }
         }
     }
@@ -199,7 +198,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             {
                 OnPropertyChanged(nameof(TotalPriceCorrect));
                 //OnPropertyChanged(nameof(TotalPriceCorrectDecimal));
-                UpdateTotalPrice();
+
             }
         }
     }
@@ -213,7 +212,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             {
                 //OnPropertyChanged(nameof(TotalPriceAfterCorrect));
                 OnPropertyChanged(nameof(TotalPriceAfterCorrectDecimal));
-                UpdateTotalPrice();
+
             }
         }
     }
@@ -231,7 +230,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             {
                 OnPropertyChanged(nameof(TotalPriceAfterCorrect));
                 //OnPropertyChanged(nameof(TotalPriceAfterCorrectDecimal));
-                UpdateTotalPrice();
+
             }
         }
     }
@@ -245,7 +244,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             {
                 //OnPropertyChanged(nameof(TotalPriceMoney));
                 OnPropertyChanged(nameof(TotalPriceMoneyDecimal));
-                UpdateTotalPrice();
+
             }
         }
     }
@@ -263,7 +262,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             {
                 OnPropertyChanged(nameof(TotalPriceMoney));
                 //OnPropertyChanged(nameof(TotalPriceMoneyDecimal));
-                UpdateTotalPrice();
+
             }
         }
     }
@@ -277,7 +276,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             {
                 //OnPropertyChanged(nameof(TotalPriceDifference));
                 OnPropertyChanged(nameof(TotalPriceDifferenceDecimal));
-                UpdateTotalPrice();
+
             }
         }
     }
@@ -295,7 +294,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             {
                 OnPropertyChanged(nameof(TotalPriceDifference));
                 //OnPropertyChanged(nameof(TotalPriceDifferenceDecimal));
-                UpdateTotalPrice();
+
             }
         }
     }
@@ -310,7 +309,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             if (SetProperty(ref products, value, nameof(Products)))
             {
                 //OnPropertyChanged(nameof(Products));
-                UpdateTotalPrice();
+
             }
         }
     }
@@ -324,27 +323,21 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             if (SetProperty(ref cakes, value, nameof(Cakes)))
             {
                 //OnPropertyChanged(nameof(Cakes));
-                UpdateTotalPrice();
+
             }
         }
     }
-    [Ignore]
-    public bool CanUpdate { get; set; }
 
     public void UpdateTotalPrice()
     {
-        if (CanUpdate)
-        {
-            if (Products is not null)
-                TotalPriceProductsDecimal = Products.Sum(x => x.PriceTotalAfterCorrectDecimal);
-            if (Cakes is not null)
-                TotalPriceCakeDecimal = Cakes.Where(x => x.IsSell).Sum(x => x.PriceDecimal);
+        if (Products is not null)
+            TotalPriceProductsDecimal = Products.Where(x => !x.IsDelete).Sum(z => z.PriceTotalAfterCorrectDecimal);
+        if (Cakes is not null)
+            TotalPriceCakeDecimal = Cakes.Where(x => x.IsSell && !x.IsDelete).Sum(x => x.PriceDecimal);
 
-            TotalPriceDecimal = TotalPriceProductsDecimal + TotalPriceCakeDecimal;
-            TotalPriceAfterCorrectDecimal = TotalPriceDecimal + TotalPriceCorrectDecimal;
-
-            TotalPriceDifferenceDecimal = TotalPriceMoneyDecimal - TotalPriceAfterCorrectDecimal;
-        }
+        TotalPriceDecimal = TotalPriceProductsDecimal + TotalPriceCakeDecimal;
+        TotalPriceAfterCorrectDecimal = TotalPriceDecimal + TotalPriceCorrectDecimal;
+        TotalPriceDifferenceDecimal = TotalPriceMoneyDecimal - TotalPriceAfterCorrectDecimal;
     }
 
 
@@ -353,7 +346,6 @@ public partial class Day : BaseEntities<Guid>, IDisposable
     {
         Products ??= [];
         Cakes ??= [];
-        ProductUpdatePriceService.UpdatePrice += UpdateTotalPrice;
     }
     public Day(Day day)
     {
@@ -371,26 +363,13 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         this.TotalPriceCorrectDecimal = day.TotalPriceCorrectDecimal;
         this.TotalPriceMoneyDecimal = day.TotalPriceMoneyDecimal;
         this.TotalPriceDifferenceDecimal = day.TotalPriceDifferenceDecimal;
-
-        ProductUpdatePriceService.UpdatePrice += UpdateTotalPrice;
+        this.IsDelete = day.IsDelete;
     }
     public void Dispose()
     {
         Products.Clear();
         Cakes.Clear();
-        ProductUpdatePriceService.UpdatePrice -= UpdateTotalPrice;
         GC.SuppressFinalize(this);
     }
 
-}
-public static class ProductUpdatePriceService
-{
-    public static event Action? UpdatePrice;
-    /// <summary>
-    /// Aktualizowanie utargu
-    /// </summary>
-    public static void OnUpdate()
-    {
-        UpdatePrice?.Invoke();
-    }
 }

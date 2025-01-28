@@ -32,14 +32,10 @@ public partial class Cake : BaseEntities<Guid>
         {
             if (SetProperty(ref isSell, value, nameof(IsSell)))
             {
-                //OnPropertyChanged(nameof(IsSell));
-                OnSell?.Invoke();
-                ProductUpdatePriceService.OnUpdate();
+                //OnPropertyChanged(nameof(IsSell));               
             }
         }
     }
-
-    public Action? OnSell;
 
     private int index;
     [Ignore]
@@ -83,7 +79,7 @@ public partial class Cake : BaseEntities<Guid>
             {
                 //OnPropertyChanged(nameof(Price));
                 OnPropertyChanged(nameof(PriceDecimal));
-                ProductUpdatePriceService.OnUpdate();
+
             }
         }
     }

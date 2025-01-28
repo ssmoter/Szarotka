@@ -7,6 +7,7 @@ using DataBase.Model.EntitiesInventory;
 using Inventory.Service;
 
 using Shared.Data;
+using Shared.Helper;
 
 
 namespace Inventory.Pages.Main
@@ -58,7 +59,6 @@ namespace Inventory.Pages.Main
             Name = "wybierz kierowcę";
             LookingForSelectedDriver();
             Service.DriverNameUpdateService.Update += SetName;
-
         }
 
         #region Method
@@ -114,39 +114,30 @@ namespace Inventory.Pages.Main
                 {
                     Day = await _selectDayService.GetDayProcedure(DateTime.Now);
                 }
-                else if (Day.DriverGuid != new Guid(Helper.SelectedDriver.Id))
+                else if (Day.DriverGuid != new Guid(UserAfterLogin.User.Id.ToByteArray()))
                 {
                     Day = await _selectDayService.GetDayProcedure(DateTime.Now);
                 }
 
-
-                Day.CanUpdate = true;
-                for (int i = 0; i < Day.Products.Count; i++)
-                {
-                    Day.Products[i].CanUpdate = true;
-                }
-
-
-                for (int i = 0; i < 10; i++)
-                {
-                    Day.Cakes.Add(new Cake()
-                    {
-                        PriceDecimal = i * 10,
-                        Created = DateTime.Now,
-                        Updated = DateTime.Now,
-                        IsSell = i % 2 == 0,
-                        Index = i,
-                    });
-                }
-
                 if (Day.Id == Guid.Empty)
                 {
-                    await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
+
+                    var result = await Shell.Current.DisplayAlert("Czy chcesz utworzyć nowy wpis",
+                        "Wraz z utworzeniem nowego dnia dane są automatycznie zapisywane",
+                        "Utwórz", "Anuluj");
+
+                    if (result)
+                    {
+                        await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
                         new Dictionary<string, object>()
                         {
                             [nameof(DataBase.Model.EntitiesInventory.Day)] = Day,
-
                         });
+                    }
+                    else
+                    {
+                        Day.Dispose();
+                    }
                 }
                 else
                 {
@@ -154,7 +145,7 @@ namespace Inventory.Pages.Main
                         new Dictionary<string, object>()
                         {
                             [nameof(DataBase.Model.EntitiesInventory.Day)] = Day,
-                            [nameof(DataBase.Model.EntitiesInventory.Driver)] = Helper.SelectedDriver.Name,
+                            [nameof(DataBase.Model.EntitiesInventory.Driver)] = UserAfterLogin.User.Name,
 
                         });
                 }
@@ -185,23 +176,22 @@ namespace Inventory.Pages.Main
                 if (string.IsNullOrWhiteSpace(MainM.DisplayDate))
                     return;
 
-
                 var days = await _selectDayService.GetDayProcedure(MainM.Date);
-                days.CanUpdate = true;
-                for (int i = 0; i < days.Products.Count; i++)
-                {
-                    days.Products[i].CanUpdate = true;
-                }
-
 
                 if (days.Id == Guid.Empty)
                 {
-                    await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
+                    var result = await Shell.Current.DisplayAlert("Czy chcesz utworzyć nowy wpis",
+                                "Wraz z utworzeniem nowego dnia dane są automatycznie zapisywane",
+                                "Utwórz", "Anuluj");
+
+                    if (result)
+                    {
+                        await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
                         new Dictionary<string, object>()
                         {
                             [nameof(DataBase.Model.EntitiesInventory.Day)] = days,
-
                         });
+                    }
                 }
                 else
                 {

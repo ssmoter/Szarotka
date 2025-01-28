@@ -19,13 +19,13 @@ namespace SzarotkaBlazor
 
     public partial class AppShellVM : ObservableObject
     {
-        private bool islogin;
+        private bool isLogin;
         public bool IsLogin
         {
-            get => islogin;
+            get => isLogin;
             set
             {
-                if (SetProperty(ref islogin, value))
+                if (SetProperty(ref isLogin, value))
                 {
                     OnPropertyChanged(nameof(IsLogin));
                 }
@@ -38,10 +38,10 @@ namespace SzarotkaBlazor
             UserAfterLogin.OnLogin += UserAfterLogin_OnLogin;
         }
 
-        private void UserAfterLogin_OnLogin(User user, bool islogin)
+        private void UserAfterLogin_OnLogin(User user, bool isLogin)
         {
             this.user = user;
-            IsLogin = islogin;
+            IsLogin = isLogin;
         }
     }
 }

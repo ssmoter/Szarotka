@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:smallDay="clr-namespace:Inventory.Pages.SingleDayPreview.SingleDayPreviewSmall"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:Inventory.Pages.SingleDayPreview.SingleDayPreviewPopUp"
     x:Name="this"
     Color="{AppThemeBinding Light={StaticResource White},
                             Dark={StaticResource Black}}">
@@ -20,6 +21,7 @@
 
         <smallDay:SingleDayPreviewSmallV
             Grid.Row="0"
+            x:DataType="vm:SingleDayPreviewPopUpV"
             Day="{Binding Day}"
             Driver="{Binding Driver}"
             HorizontalOptions="Fill" />

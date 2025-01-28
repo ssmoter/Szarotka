@@ -1,8 +1,9 @@
-﻿using Shared.Helper;
-using DataBase.Model.EntitiesInventory;
+﻿using DataBase.Model.EntitiesInventory;
+
+using Shared.Helper;
 namespace Inventory.Pages.SingleDay;
 
-public partial class SingleDayV : ContentPage, IDisposable
+public partial class SingleDayV : ContentPage
 {
     readonly SingleDayVM _vm;
 
@@ -10,30 +11,13 @@ public partial class SingleDayV : ContentPage, IDisposable
     {
         InitializeComponent();
         _vm = vm;
-        vm.ProductScrollToObject += CVProducts.ScrollTo;
-        vm.ProductScrollToInt += CVProducts.ScrollTo;
         BindingContext = vm;
-    }
-    public void Dispose()
-    {
-        if (BindingContext is SingleDayVM vm)
-        {
-            vm.ProductScrollToObject -= CVProducts.ScrollTo;
-            vm.ProductScrollToInt -= CVProducts.ScrollTo;
-
-        }
-        GC.SuppressFinalize(this);
     }
 
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
         var context = BindingContext as SingleDayVM;
-
-        //for (int i = 0; i < 15; i++)
-        //{
-        //    context.Day.Cakes.Add(new Cake() { Price = i * 100, Index = i, IsSell = true, });
-        //}
 
         if (context is not null)
         {
@@ -43,24 +27,21 @@ public partial class SingleDayV : ContentPage, IDisposable
             });
         }
     }
-
-    protected override bool OnBackButtonPressed()
+    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
     {
+        base.OnNavigatedFrom(args);
         if (BindingContext is SingleDayVM vm)
         {
-            vm.BackCommand.Execute(null);
+            vm.RemovePropertyChangedEvent();
         }
-        return true;
-        //return base.OnBackButtonPressed();
     }
-
     private void Entry_TextChanged_SetValueToSecondPositionEmptyIsZero(object sender, TextChangedEventArgs e)
     {
         try
         {
             if (sender is Entry entry)
             {
-                if (entry.Text is null)
+                if (string.IsNullOrWhiteSpace(entry.Text))
                 {
                     return;
                 }
@@ -93,11 +74,10 @@ public partial class SingleDayV : ContentPage, IDisposable
         {
             if (sender is Entry entry)
             {
-                if (entry.Text is null)
+                if (string.IsNullOrWhiteSpace(entry.Text))
                 {
                     return;
                 }
-
                 if (entry.Text.Length > 0 && entry.Text.Length <= 1)
                 {
                     entry.CursorPosition = 1;
@@ -129,10 +109,10 @@ public partial class SingleDayV : ContentPage, IDisposable
     private async void Button_Clicked_FastMinusProductNumber(object sender, EventArgs e)
     {
         if (sender is not ImageButton item) { return; }
-
         if (item.BindingContext is not Product product) { return; }
         await item.BounceOnPressAsync();
-        _vm.FastMinusProductNumberCommand.Execute(product);
+        SingleDayVM.FastChangeProductNumber(product, -1, item);
+        // _vm.FastMinusProductNumberCommand.Execute(product);
     }
     private async void Button_Clicked_FastAddProductNumber(object sender, EventArgs e)
     {
@@ -141,7 +121,8 @@ public partial class SingleDayV : ContentPage, IDisposable
         if (item.BindingContext is not Product product) { return; }
 
         await item.BounceOnPressAsync();
-        _vm.FastAddProductNumberCommand.Execute(product);
+        SingleDayVM.FastChangeProductNumber(product, 1, item);
+        //_vm.FastAddProductNumberCommand.Execute(product);
     }
     private async void Button_Clicked_FastMinusProductEdit(object sender, EventArgs e)
     {
@@ -150,7 +131,8 @@ public partial class SingleDayV : ContentPage, IDisposable
         if (item.BindingContext is not Product product) { return; }
 
         await item.BounceOnPressAsync();
-        _vm.FastMinusProductEditCommand.Execute(product);
+        SingleDayVM.FastChangeProductEdit(product, -1, item);
+        //_vm.FastMinusProductEditCommand.Execute(product);
     }
     private async void Button_Clicked_FastAddProductEdit(object sender, EventArgs e)
     {
@@ -158,7 +140,8 @@ public partial class SingleDayV : ContentPage, IDisposable
 
         if (item.BindingContext is not Product product) { return; }
         await item.BounceOnPressAsync();
-        _vm.FastAddProductEditCommand.Execute(product);
+        SingleDayVM.FastChangeProductEdit(product, 1, item);
+        //_vm.FastAddProductEditCommand.Execute(product);
     }
     private async void Button_Clicked_FastMinusProductReturn(object sender, EventArgs e)
     {
@@ -166,7 +149,8 @@ public partial class SingleDayV : ContentPage, IDisposable
 
         if (item.BindingContext is not Product product) { return; }
         await item.BounceOnPressAsync();
-        _vm.FastMinusProductReturnCommand.Execute(product);
+        SingleDayVM.FastChangeProductReturn(product, -1, item);
+        //_vm.FastMinusProductReturnCommand.Execute(product);
     }
     private async void Button_Clicked_FastAddProductReturn(object sender, EventArgs e)
     {
@@ -174,7 +158,8 @@ public partial class SingleDayV : ContentPage, IDisposable
 
         if (item.BindingContext is not Product product) { return; }
         await item.BounceOnPressAsync();
-        _vm.FastAddProductReturnCommand.Execute(product);
+        SingleDayVM.FastChangeProductReturn(product, 1, item);
+        //_vm.FastAddProductReturnCommand.Execute(product);
     }
 
     #region left

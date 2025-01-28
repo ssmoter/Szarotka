@@ -37,7 +37,6 @@
         <footer:FlyoutFooterV />
     </Shell.FlyoutFooter>
 
-
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems" IsVisible="{Binding IsLogin}">
 
         <ShellContent Title="Home" ContentTemplate="{DataTemplate local:MainPage}" />

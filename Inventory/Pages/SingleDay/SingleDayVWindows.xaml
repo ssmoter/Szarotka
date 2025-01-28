@@ -225,15 +225,7 @@
                                     <Label
                                         HorizontalOptions="Center"
                                         Text="Edycja"
-                                        VerticalOptions="Center">
-                                        <Label.GestureRecognizers>
-                                            <TapGestureRecognizer
-                                                x:DataType="VM:SingleDayVM"
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=PopupToAddValueFromListCommand}"
-                                                CommandParameter="{Binding .}"
-                                                NumberOfTapsRequired="2" />
-                                        </Label.GestureRecognizers>
-                                    </Label>
+                                        VerticalOptions="Center" />
                                     <Entry
                                         Keyboard="Numeric"
                                         ReturnType="Next"

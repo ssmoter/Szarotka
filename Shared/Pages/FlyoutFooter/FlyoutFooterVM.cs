@@ -2,9 +2,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Data;
 using DataBase.Model.EntitiesServer;
 
 using Shared.Helper;
+using Shared.Model;
 
 namespace Shared.Pages.FlyoutFooter
 {
@@ -36,7 +38,6 @@ namespace Shared.Pages.FlyoutFooter
         }
 
 
-
         public FlyoutFooterVM()
         {
             UserAfterLogin.OnLogin += UserAfterLogin_OnLogin;
@@ -59,7 +60,13 @@ namespace Shared.Pages.FlyoutFooter
 
             foreach (Page item in pages)
             {
-                Shell.Current.Navigation.RemovePage(item);
+                try
+                {
+                    Shell.Current.Navigation.RemovePage(item);
+                }
+                catch (Exception)
+                {
+                }
             }
             UserAfterLogin.RemoveLoginUser();
 

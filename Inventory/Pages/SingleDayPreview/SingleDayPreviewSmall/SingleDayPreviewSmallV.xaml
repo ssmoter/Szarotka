@@ -345,6 +345,7 @@
                                     Grid.Row="0"
                                     Grid.RowSpan="3"
                                     Grid.Column="0"
+                                    MaximumWidthRequest="100"
                                     String64Base="{Binding Name.Img, x:DataType=Product:Product}" />
 
                                 <Label
@@ -359,14 +360,19 @@
                                     Grid.Row="1"
                                     Grid.Column="1"
                                     ColumnDefinitions="auto,*"
+                                    ColumnSpacing="5"
                                     RowDefinitions="0,*,auto,*,auto,*,auto,*">
 
 
                                     <Label
                                         Grid.Row="1"
                                         Grid.Column="0"
-                                        Text="Ilość: " />
-                                    <Label Grid.Row="1" Grid.Column="1">
+                                        Text="Ilość: "
+                                        VerticalOptions="End" />
+                                    <Label
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        VerticalOptions="End">
                                         <Label.FormattedText>
                                             <FormattedString>
                                                 <Span Text="{Binding Number}" />
@@ -382,8 +388,12 @@
                                     <Label
                                         Grid.Row="3"
                                         Grid.Column="0"
-                                        Text="Edycja: " />
-                                    <Label Grid.Row="3" Grid.Column="1">
+                                        Text="Edycja: "
+                                        VerticalOptions="End" />
+                                    <Label
+                                        Grid.Row="3"
+                                        Grid.Column="1"
+                                        VerticalOptions="End">
                                         <Label.FormattedText>
                                             <FormattedString>
                                                 <Span Text="{Binding NumberEdit}" />
@@ -399,8 +409,12 @@
                                     <Label
                                         Grid.Row="5"
                                         Grid.Column="0"
-                                        Text="Zwrot: " />
-                                    <Label Grid.Row="5" Grid.Column="1">
+                                        Text="Zwrot: "
+                                        VerticalOptions="End" />
+                                    <Label
+                                        Grid.Row="5"
+                                        Grid.Column="1"
+                                        VerticalOptions="End">
                                         <Label.FormattedText>
                                             <FormattedString>
                                                 <Span Text="{Binding NumberReturn}" />
@@ -417,32 +431,44 @@
                                         Grid.Row="7"
                                         Grid.Column="0"
                                         Text="Sprzedaż: " />
-                                    <HorizontalStackLayout Grid.Row="7" Grid.Column="1">
-                                        <Label>
-                                            <Label.Text>
-                                                <MultiBinding Converter="{StaticResource MultiMathExpressionConverter}" ConverterParameter="x0 + x1 - x2">
-                                                    <Binding Path="Number" />
-                                                    <Binding Path="NumberEdit" />
-                                                    <Binding Path="NumberReturn" />
-                                                </MultiBinding>
-                                            </Label.Text>
-                                        </Label>
-                                        <Label Text=" szt." />
-                                    </HorizontalStackLayout>
+                                    <Label
+                                        Grid.Row="7"
+                                        Grid.Column="1"
+                                        VerticalOptions="End">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span>
+                                                    <Span.Text>
+                                                        <MultiBinding Converter="{StaticResource MultiMathExpressionConverter}" ConverterParameter="x0 + x1 - x2">
+                                                            <Binding Path="Number" />
+                                                            <Binding Path="NumberEdit" />
+                                                            <Binding Path="NumberReturn" />
+                                                        </MultiBinding>
+                                                    </Span.Text>
+                                                </Span>
+                                                <Span Text="szt." />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
 
                                 </Grid>
                                 <Grid
                                     Grid.Row="1"
                                     Grid.Column="2"
                                     ColumnDefinitions="auto,*"
+                                    ColumnSpacing="5"
                                     RowDefinitions="0,*,auto,*,auto,*,auto,*">
 
 
                                     <Label
                                         Grid.Row="1"
                                         Grid.Column="0"
-                                        Text="Cena: " />
-                                    <Label Grid.Row="1" Grid.Column="1">
+                                        Text="Cena: "
+                                        VerticalOptions="End" />
+                                    <Label
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        VerticalOptions="End">
                                         <Label.FormattedText>
                                             <FormattedString>
                                                 <Span Text="{Binding Price.PriceDecimal}" />
@@ -458,8 +484,12 @@
                                     <Label
                                         Grid.Row="3"
                                         Grid.Column="0"
-                                        Text="Utarg: " />
-                                    <Label Grid.Row="3" Grid.Column="1">
+                                        Text="Utarg: "
+                                        VerticalOptions="End" />
+                                    <Label
+                                        Grid.Row="3"
+                                        Grid.Column="1"
+                                        VerticalOptions="End">
                                         <Label.FormattedText>
                                             <FormattedString>
                                                 <Span Text="{Binding PriceTotalDecimal}" />
@@ -475,8 +505,12 @@
                                     <Label
                                         Grid.Row="5"
                                         Grid.Column="0"
-                                        Text="Korekta: " />
-                                    <Label Grid.Row="5" Grid.Column="1">
+                                        Text="Korekta: "
+                                        VerticalOptions="End" />
+                                    <Label
+                                        Grid.Row="5"
+                                        Grid.Column="1"
+                                        VerticalOptions="End">
                                         <Label.FormattedText>
                                             <FormattedString>
                                                 <Span Text="{Binding PriceTotalCorrectDecimal}" />
@@ -492,8 +526,12 @@
                                     <Label
                                         Grid.Row="7"
                                         Grid.Column="0"
-                                        Text="Po korekcie: " />
-                                    <Label Grid.Row="7" Grid.Column="1">
+                                        Text="Po korekcie: "
+                                        VerticalOptions="End" />
+                                    <Label
+                                        Grid.Row="7"
+                                        Grid.Column="1"
+                                        VerticalOptions="End">
                                         <Label.FormattedText>
                                             <FormattedString>
                                                 <Span Text="{Binding PriceTotalAfterCorrectDecimal}" />
@@ -556,6 +594,7 @@
 
                 <RefreshView
                     Grid.Row="1"
+                    x:DataType="local:SingleDayPreviewSmallV"
                     IsRefreshing="{Binding SingleDayPreviewSmallM.CakesIsRefreshing}"
                     Refreshing="RefreshView_Refreshing">
 
@@ -569,7 +608,7 @@
                                         Padding="5"
                                         ColumnDefinitions="30,auto,auto,*">
 
-                                        <Label Grid.Column="0">
+                                        <Label Grid.Column="0" VerticalOptions="Center">
                                             <Label.FormattedText>
                                                 <FormattedString>
                                                     <Span Text="{Binding Index}" />
@@ -577,7 +616,10 @@
                                                 </FormattedString>
                                             </Label.FormattedText>
                                         </Label>
-                                        <Label Grid.Column="1" Margin="5,0,5,0">
+                                        <Label
+                                            Grid.Column="1"
+                                            Margin="5,0,5,0"
+                                            VerticalOptions="Center">
                                             <Label.FormattedText>
                                                 <FormattedString>
                                                     <Span Text="{Binding PriceDecimal}" />

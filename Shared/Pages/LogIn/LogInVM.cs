@@ -9,6 +9,7 @@ using DataBase.Model.EntitiesServer;
 using Shared.Data;
 using Shared.Data.ServerHttpClients;
 using Shared.Helper;
+using Shared.Model;
 using Shared.Pages.ConfirmEmail;
 
 using System.Web;

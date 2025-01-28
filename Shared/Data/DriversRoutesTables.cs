@@ -1,5 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesRoutes;
+
 using Shared.Service;
 
 namespace Shared.Data
@@ -16,11 +17,20 @@ namespace Shared.Data
             updateProgressBar /= updateProgressBar.ToString().Length * 10;
 
 
-            if (oldVersion <= 1)
+            if (oldVersion < 1)
+            {
+                await CreateDriversRoutesTables();
+                await CreatedDefaultRoutes();
+                progressBar += updateProgressBar;
+                oldVersion = 1;
+                updateDriverRoutes?.Invoke(progressBar, oldVersion);
+            }
+
+            if (oldVersion < 2)
             {
                 await CreateDriversRoutesTables();
                 progressBar += updateProgressBar;
-                oldVersion = 1;
+                oldVersion = 2;
                 updateDriverRoutes?.Invoke(progressBar, oldVersion);
             }
             updateDriverRoutes?.Invoke(1, oldVersion);
@@ -33,7 +43,6 @@ namespace Shared.Data
             var day = _db.DataBaseAsync.CreateTableAsync<SelectedDayOfWeekRoutes>();
             var address = _db.DataBaseAsync.CreateTableAsync<ResidentialAddress>();
             await Task.WhenAll(routes, customer, day, address);
-            await CreatedDefaultRoutes();
         }
 
         async Task CreatedDefaultRoutes()

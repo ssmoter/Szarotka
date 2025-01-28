@@ -32,11 +32,18 @@ namespace Shared.Data
             if (oldVersion < 1)
             {
                 await CreateInventoryTables();
+                await CreatedDefaultProduct();
                 progressBar += updateProgressBar;
                 oldVersion = 1;
                 updateInventory?.Invoke(progressBar, oldVersion);
             }
-
+            if (oldVersion < 2)
+            {
+                await CreateInventoryTables();
+                progressBar += updateProgressBar;
+                oldVersion = 2;
+                updateInventory?.Invoke(progressBar, oldVersion);
+            }
 
 
 
@@ -55,7 +62,6 @@ namespace Shared.Data
 
             await Task.WhenAll(driver, selectedDriver, name, price, product, cake, day);
 
-            await CreatedDefaultProduct();
         }
 
         private async Task CreatedDefaultProduct()

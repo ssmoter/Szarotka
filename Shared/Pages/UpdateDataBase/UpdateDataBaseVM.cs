@@ -24,8 +24,8 @@ namespace Shared.Pages.UpdateDataBase
         }
 
 
-        readonly ICreatedDataBase _createdDataBase;
-        readonly AccessDataBase _db;
+        private readonly ICreatedDataBase _createdDataBase;
+        public readonly AccessDataBase _db;
         public UpdateDataBaseVM(ICreatedDataBase createdDataBase, AccessDataBase db)
         {
             _createdDataBase = createdDataBase;
@@ -33,7 +33,7 @@ namespace Shared.Pages.UpdateDataBase
             _db = db;
         }
 
-        public async Task Update()
+        public async Task UpdateAsync()
         {
             try
             {
@@ -46,9 +46,9 @@ namespace Shared.Pages.UpdateDataBase
                     UpdateDataBaseM.BackIsVisible = true;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _db.SaveLogExtension(ex);
+                throw;
             }
         }
 
@@ -66,6 +66,19 @@ namespace Shared.Pages.UpdateDataBase
         {
             UpdateDataBaseM.DriverRoutesProgressBar = progressBar;
             UpdateDataBaseM.UpdateVersion.DriversRoutes = version;
+        }
+
+        [RelayCommand]
+        async Task Update()
+        {
+            try
+            {
+                await UpdateAsync();
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLogExtension(ex);
+            }
         }
 
         [RelayCommand]

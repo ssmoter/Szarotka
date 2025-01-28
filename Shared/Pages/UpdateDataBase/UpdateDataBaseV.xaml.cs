@@ -1,3 +1,5 @@
+﻿using CommunityToolkit.Maui.Alerts;
+
 namespace Shared.Pages.UpdateDataBase;
 
 public partial class UpdateDataBaseV : ContentPage
@@ -8,17 +10,23 @@ public partial class UpdateDataBaseV : ContentPage
         BindingContext = vm;
     }
 
-    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override async void OnAppearing()
     {
-        base.OnNavigatedTo(args);
-        if (BindingContext is UpdateDataBaseVM vm)
+        base.OnAppearing();
+        try
         {
-            await vm.Update();
+            if (BindingContext is UpdateDataBaseVM vm)
+            {
+                await vm.UpdateAsync();
+            }
         }
+        catch (Exception ex)
+        {
+            await Dispatcher.DispatchAsync(async () =>
+             {
+                 await Snackbar.Make(ex.Message, null, "Ok", TimeSpan.FromMinutes(1)).Show();
+             });
+        }
+
     }
-
-
-
-
-
 }

@@ -14,7 +14,7 @@ public partial class SingleDayPreviewSmallV : ContentView
         {
             if (newValue is Day day)
             {
-                view.SingleDayPreviewSmallM.Products = day.Products;
+                view.SingleDayPreviewSmallM.Products = new(day.Products);
                 day.Cakes = new(day.Cakes.OrderByDescending(x => x.IsSell));
                 view.SingleDayPreviewSmallM.CountSellCakes = day.Cakes.Count(x => x.IsSell);
                 view.SingleDayPreviewSmallM.CountReturnCakes = day.Cakes.Count - view.SingleDayPreviewSmallM.CountSellCakes;
@@ -98,6 +98,7 @@ public partial class SingleDayPreviewSmallV : ContentView
         if (e.NewTextValue.Length > 2)
         {
             var search = Day.Products.Where(x => x.Name.Name.Contains(e.NewTextValue, StringComparison.OrdinalIgnoreCase));
+
             SingleDayPreviewSmallM.Products = new(search);
         }
         else

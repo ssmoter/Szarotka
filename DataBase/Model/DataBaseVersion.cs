@@ -19,9 +19,9 @@ namespace DataBase.Model
         long lastBackup = DateTime.Today.Ticks;
         public DataBaseVersion()
         {
-            DataBase = 1;
-            Inventory = 1;
-            DriversRoutes = 1;
+            DataBase = 2;
+            Inventory = 2;
+            DriversRoutes = 2;
         }
 
         public override bool Equals(object? obj)

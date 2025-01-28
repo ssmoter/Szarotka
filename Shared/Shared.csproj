@@ -25,24 +25,23 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="CommunityToolkit.Maui" Version="10.0.0" />
+	  <PackageReference Include="CommunityToolkit.Maui" Version="11.0.0" />
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 	  <PackageReference Include="CsvHelper" Version="33.0.1" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
-	  <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="9.0.21" />
-	  <PackageReference Include="MudBlazor" Version="7.15.0" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.1" />
+	  <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="9.0.30" />
+	  <PackageReference Include="MudBlazor" Version="7.16.0" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.21" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.21" />
-		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.30" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.30" />
+		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0" />
 	</ItemGroup>
 
 
 	<ItemGroup>
-	  <Folder Include="Model\" />
 	  <Folder Include="Platforms\Android\" />
 	  <Folder Include="Platforms\Windows\" />
 	</ItemGroup>

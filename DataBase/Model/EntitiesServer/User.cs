@@ -66,15 +66,6 @@ public partial class User : BaseEntities<Guid>
             }
         }
     }
-    private bool isDelete;
-    public bool IsDelete
-    {
-        get => isDelete;
-        set
-        {
-            if (!SetProperty(ref isDelete, value, nameof(IsDelete))) { }
-        }
-    }
 
     private bool isEmailConfirm;
     public bool IsEmailConfirm

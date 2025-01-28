@@ -22,14 +22,15 @@ namespace Shared.Data
         public DataBaseVersion GetCurrentVersion()
         {
 
-            var tableInfo = _db.DataBase.GetTableInfo(nameof(DataBaseVersion));
+            //var tableInfo = _db.DataBase.GetTableInfo(nameof(DataBaseVersion));
 
-            bool exist = tableInfo.Count > 0;
-            if (!exist)
-            {
-                _db.DataBase.CreateTable<DataBaseVersion>();
-            }
+            //bool exist = tableInfo.Count > 0;
+            //if (!exist)
+            //{
+            //    _db.DataBase.CreateTable<DataBaseVersion>();
+            //}
 
+            _db.DataBase.CreateTable<DataBaseVersion>();
             var version = _db.DataBase.Table<DataBaseVersion>().FirstOrDefault();
 
             version ??= new DataBaseVersion()
@@ -69,8 +70,6 @@ namespace Shared.Data
             var driversRoutes = _driversRoutesTables.Update(oldVersion.DriversRoutes, newVersion.DriversRoutes, updateDriverRoutes);
             await Task.WhenAll(inventory, driversRoutes);
 
-
-            updateDataBase?.Invoke(1, newVersion.DataBase);
             await _db.DataBaseAsync.InsertOrReplaceAsync(newVersion);
 
             return true;
@@ -90,7 +89,15 @@ namespace Shared.Data
                 oldVersion = 1;
                 updateAction?.Invoke(progressBar, oldVersion);
             }
-
+            if (oldVersion < 2)
+            {
+                await _db.DataBaseAsync.CreateTableAsync<LogsModel>();
+                await _db.DataBaseAsync.CreateTableAsync<Model.HelperTable>();
+                progressBar += updateProgressBar;
+                oldVersion = 2;
+                updateAction?.Invoke(progressBar, oldVersion);
+            }
+                updateAction?.Invoke(1, oldVersion);
         }
     }
 }

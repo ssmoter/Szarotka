@@ -86,7 +86,7 @@ public partial class Product : BaseEntities<Guid>
             {
                 //OnPropertyChanged(nameof(PriceTotal));
                 OnPropertyChanged(nameof(PriceTotalDecimal));
-                CalculatePrice();
+
             }
         }
     }
@@ -105,7 +105,7 @@ public partial class Product : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(PriceTotal));
                 //OnPropertyChanged(nameof(PriceTotalDecimal));
-                CalculatePrice();
+
             }
         }
     }
@@ -119,7 +119,7 @@ public partial class Product : BaseEntities<Guid>
             {
                 //OnPropertyChanged(nameof(PriceTotalCorrect));
                 OnPropertyChanged(nameof(PriceTotalCorrectDecimal));
-                CalculatePrice();
+
             }
         }
     }
@@ -137,7 +137,7 @@ public partial class Product : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(PriceTotalCorrect));
                 //OnPropertyChanged(nameof(PriceTotalCorrectDecimal));
-                CalculatePrice();
+
             }
         }
     }
@@ -151,7 +151,7 @@ public partial class Product : BaseEntities<Guid>
             {
                 //OnPropertyChanged(nameof(PriceTotalAfterCorrect));
                 OnPropertyChanged(nameof(PriceTotalAfterCorrectDecimal));
-                CalculatePrice();
+
             }
         }
     }
@@ -168,7 +168,7 @@ public partial class Product : BaseEntities<Guid>
             {
                 OnPropertyChanged(nameof(PriceTotalAfterCorrect));
                 //OnPropertyChanged(nameof(PriceTotalAfterCorrectDecimal));
-                CalculatePrice();
+
             }
         }
     }
@@ -184,7 +184,7 @@ public partial class Product : BaseEntities<Guid>
             if (SetProperty(ref number, value, nameof(Number)))
             {
                 //OnPropertyChanged(nameof(Number));
-                CalculatePrice();
+
             }
         }
     }
@@ -197,7 +197,7 @@ public partial class Product : BaseEntities<Guid>
             if (SetProperty(ref numberEdit, value, nameof(NumberEdit)))
             {
                 //OnPropertyChanged(nameof(NumberEdit));
-                CalculatePrice();
+
             }
         }
     }
@@ -211,13 +211,10 @@ public partial class Product : BaseEntities<Guid>
             if (SetProperty(ref numberReturn, value, nameof(NumberReturn)))
             {
                 //OnPropertyChanged(nameof(NumberReturn));
-                CalculatePrice();
+
             }
         }
     }
-
-    [Ignore]
-    public bool CanUpdate { get; set; }
 
     private bool isExpanded;
     [Ignore]
@@ -260,15 +257,13 @@ public partial class Product : BaseEntities<Guid>
         this.NumberEdit = product.NumberEdit;
         this.NumberReturn = product.NumberReturn;
 
-        this.CanUpdate = product.CanUpdate;
+        this.IsDelete = product.IsDelete;
+
     }
     public void CalculatePrice()
     {
-        if (CanUpdate)
-        {
-            PriceTotalDecimal = (number + numberEdit - numberReturn) * Price.PriceDecimal;
-            PriceTotalAfterCorrectDecimal = PriceTotalDecimal + PriceTotalCorrectDecimal;
-            ProductUpdatePriceService.OnUpdate();
-        }
+        PriceTotalDecimal = (number + numberEdit - numberReturn) * Price.PriceDecimal;
+        PriceTotalAfterCorrectDecimal = PriceTotalDecimal + PriceTotalCorrectDecimal;
     }
+
 }
