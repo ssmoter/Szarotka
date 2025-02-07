@@ -8,7 +8,7 @@ namespace DataBaseUnitTest.Created
 {
     public class CreatedDriversRoutes : IAsyncLifetime
     {
-        private readonly AccessDataBase _db;
+        private readonly IAccessDataBase _db;
         private readonly DriversRoutesTables _driversRoutesTables;
         public CreatedDriversRoutes()
         {

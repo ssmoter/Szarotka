@@ -25,7 +25,7 @@
                 case Model.EntitiesServer.EnumsList.Validation.PasswordNoSpecial:
                     message = "Hasło musi zawierać co najmniej jeden znak specjalny";
                     break;
-                case Model.EntitiesServer.EnumsList.Validation.PasswordsContainEmail:
+                case Model.EntitiesServer.EnumsList.Validation.PasswordContainEmail:
                     message = "Hasło nie może zawierać adresu email";
                     break;
                 case Model.EntitiesServer.EnumsList.Validation.RegisterUserNull:
@@ -37,10 +37,10 @@
                 case Model.EntitiesServer.EnumsList.Validation.EmailExist:
                     message = "Adres email jest już zajęty";
                     break;
-                case Model.EntitiesServer.EnumsList.Validation.EmailCodeIsExpire:
+                case Model.EntitiesServer.EnumsList.Validation.CodeIsExpire:
                     message = "Kod weryfikacyjny wygasł";
                     break;
-                case Model.EntitiesServer.EnumsList.Validation.EmailCodeNotExist:
+                case Model.EntitiesServer.EnumsList.Validation.CodeNotExist:
                     message = "Kod weryfikacyjny nie istnie";
                     break;
                 case Model.EntitiesServer.EnumsList.Validation.LoginIsNull:
@@ -57,6 +57,15 @@
                     break;
                 case Model.EntitiesServer.EnumsList.Validation.AccountEmailIsNotConfirm:
                     message = "Email nie został potwierdzony";
+                    break;
+                case Model.EntitiesServer.EnumsList.Validation.NameRequired:
+                    message = "Imię jest wymagane";
+                    break;
+                case Model.EntitiesServer.EnumsList.Validation.PhoneNumberRequired:
+                    message = "Numer telefonu jest wymagany";
+                    break;
+                case Model.EntitiesServer.EnumsList.Validation.PhoneNumberInvalid:
+                    message = "Niepoprawny numer telefonu";
                     break;
                 default:
                     break;

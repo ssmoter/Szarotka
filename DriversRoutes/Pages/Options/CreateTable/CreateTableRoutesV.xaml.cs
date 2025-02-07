@@ -1,5 +1,6 @@
-using DataBase.Data;
 using DataBase.Model;
+
+using Shared.Service;
 
 namespace DriversRoutes.Pages.Options.CreateTable;
 
@@ -23,7 +24,6 @@ public partial class CreateTableRoutesV : ContentView
     public CreateTableRoutesV()
     {
         InitializeComponent();
-        BindingContext = new CreateTableRoutesVM(new AccessDataBase());
-
+        BindingContext = AppServiceProvider.GetService<CreateTableRoutesVM>();
     }
 }

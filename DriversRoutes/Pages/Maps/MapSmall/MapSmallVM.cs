@@ -74,11 +74,11 @@ public partial class MapSmallVM : ObservableObject
     public Action<Polyline> AddRoute;
     public Func<MapSpan> VisibleRegion;
 
-    private readonly AccessDataBase _db;
+    private readonly IAccessDataBase _db;
     private readonly Data.GoogleApi.IRoutes _routes;
     private Pin _pin;
     CancellationTokenSource _tokenSource;
-    public MapSmallVM(AccessDataBase db, Data.GoogleApi.IRoutes routes)
+    public MapSmallVM(IAccessDataBase db, Data.GoogleApi.IRoutes routes)
     {
         MapSmallM = new();
         _tokenSource = new();

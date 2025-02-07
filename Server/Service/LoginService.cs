@@ -1,8 +1,8 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
+using DataBase.Service;
 
 using Server.Helper;
-using Server.Model;
 using Server.SqlQuery;
 
 namespace Server.Service
@@ -15,11 +15,13 @@ namespace Server.Service
 
     public class LoginService : ILoginService
     {
-        private readonly AccessDataBase _db;
+        private readonly IAccessDataBase _db;
+        private readonly ITimeService _timeService;
 
-        public LoginService(AccessDataBase db)
+        public LoginService(IAccessDataBase db, ITimeService timeService)
         {
             _db = db;
+            _timeService = timeService;
         }
 
         public async Task<User> LogIn(LoginUser user)
@@ -38,11 +40,13 @@ namespace Server.Service
                 valid.AddError("Account not found", EnumsList.Validation.AccountNotFound);
                 throw valid;
             }
-
+            firstUser.UserUpdatedId = firstUser.Id;
             if (user.RememberMe != firstUser.RememberMe)
             {
                 firstUser.RememberMe = user.RememberMe;
-                _ = _db.DataBaseAsync.ExecuteAsync(LoginQuery.UpdateRememberMe(firstUser));
+                firstUser.Updated = _timeService.UtcNow();
+                sql = LoginQuery.UpdateRememberMe(firstUser);
+                _ = await _db.DataBaseAsync.ExecuteAsync(sql);
             }
 
             return firstUser;

@@ -5,9 +5,9 @@ using Shared.Service;
 
 namespace Shared.Data
 {
-    public class DriversRoutesTables(AccessDataBase db) : IUpdateDataBase
+    public class DriversRoutesTables(IAccessDataBase db) : IUpdateDataBase
     {
-        readonly AccessDataBase _db = db;
+        readonly IAccessDataBase _db = db;
         readonly Random _random = new(1337);
 
         public async Task Update(int oldVersion, int newVersion, Action<double, int> updateDriverRoutes)

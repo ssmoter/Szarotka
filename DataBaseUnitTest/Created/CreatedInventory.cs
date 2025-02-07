@@ -8,7 +8,7 @@ namespace DataBaseUnitTest.Created
 {
     public class CreatedInventory : IAsyncLifetime
     {
-        private readonly AccessDataBase _db;
+        private readonly IAccessDataBase _db;
         private readonly InventoryTables _inventoryTables;
         public CreatedInventory()
         {

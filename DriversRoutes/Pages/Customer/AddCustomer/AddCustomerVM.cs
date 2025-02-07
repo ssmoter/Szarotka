@@ -136,12 +136,12 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
 
         readonly Service.ISaveRoutes _saveRoutes;
         readonly Data.GoogleApi.IAddressFromCoordinates _IAddressFromCoordinates;
-        readonly AccessDataBase _db;
+        readonly IAccessDataBase _db;
         internal ResidentialAddress[] _address { get; set; } = [];
         internal CustomerRoutes originCustomer { get; set; }
         #endregion
 
-        public AddCustomerVM(Service.ISaveRoutes saveRoutes, AccessDataBase db, Data.GoogleApi.IAddressFromCoordinates IAddressFromCoordinates)
+        public AddCustomerVM(Service.ISaveRoutes saveRoutes, IAccessDataBase db, Data.GoogleApi.IAddressFromCoordinates IAddressFromCoordinates)
         {
             AddCustomer ??= new();
             Customer ??= new();

@@ -25,9 +25,9 @@ namespace DriversRoutes.Pages.Main
             }
         }
 
-        readonly AccessDataBase _db;
+        readonly IAccessDataBase _db;
         readonly Service.ISelectRoutes selectRoutes;
-        public MainVDriversRoutesVM(AccessDataBase db, Service.ISelectRoutes selectRoutes)
+        public MainVDriversRoutesVM(IAccessDataBase db, Service.ISelectRoutes selectRoutes)
         {
             _db = db;
             this.selectRoutes = selectRoutes;
@@ -112,7 +112,7 @@ namespace DriversRoutes.Pages.Main
                 if (!string.IsNullOrWhiteSpace(result))
                 {
                     routes.Name = result;
-                    routes.Updated = DateTime.Now;
+                    routes.Updated = DateTime.UtcNow;
                     await _db.DataBaseAsync.UpdateAsync(routes);
                 }
             }

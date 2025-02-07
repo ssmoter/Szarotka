@@ -14,14 +14,14 @@ namespace Benchmark.Inventory
     [MemoryDiagnoser]
     public class GetSingleDay
     {
-        private readonly AccessDataBase _db;
+        private readonly IAccessDataBase _db;
         private readonly ISelectDayService _selectDay;
 
         private readonly Guid _id = new Guid("98e3e70f-8ae9-4ff9-b045-a62a4444578c");
         private readonly DateTime _dateTime = new DateTime(638472044271180544);
         public GetSingleDay()
         {
-            _db = new();
+            _db = new AccessDataBase();
             _selectDay = new SelectDayService(_db);
             SelectedDriver.Id = "ae86aaeb-1080-4ae2-9226-62cf3a042ca8";
         }

@@ -19,7 +19,7 @@ SELECT
 {nameof(User.IsDelete)},
 {nameof(User.IsEmailConfirm)}
 FROM {nameof(User)}
-WHERE 
+WHERE
 {nameof(User.Email)} = '{user.Email}'
 AND
 {nameof(RegisterUser.Password)} = '{user.Password}'
@@ -30,15 +30,16 @@ LIMIT 1
         public static string UpdateRememberMe(User user)
         {
             string sql = @$"
-        UPDATE {nameof(User)}
-        SET 
-        {nameof(User.RememberMe)} = {user.RememberMe}
-        WHERE 
-        {nameof(User.Id)} = '{user.Id}'
-        ";
+UPDATE {nameof(User)}
+SET
+{nameof(User.RememberMe)} = {user.RememberMe},
+{nameof(User.UpdatedTicks)} = {user.UpdatedTicks},
+{nameof(User.UserUpdatedId)} = '{user.UserUpdatedId}'
+WHERE
+{nameof(User.Id)} = '{user.Id}'
+";
             return sql;
         }
-
         public static string InFromId(string id)
         {
             string sql = @$"
@@ -55,13 +56,12 @@ SELECT
 {nameof(User.IsEmailConfirm)},
 {nameof(User.RememberMe)}
 FROM {nameof(User)}
-WHERE 
+WHERE
 {nameof(User.Id)} = '{id}'
 LIMIT 1
 ";
             return sql;
         }
-
         public static string Out(string user)
         {
             return user;

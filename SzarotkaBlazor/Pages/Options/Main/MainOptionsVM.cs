@@ -84,8 +84,8 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
         }
     }
 
-    public AccessDataBase _db { get; private set; }
-    public MainOptionsVM(AccessDataBase db)
+    public IAccessDataBase _db { get; private set; }
+    public MainOptionsVM(IAccessDataBase db)
     {
         MainOptionsM ??= new();
         SelectTypOfOptions(ListOfEnums.TypOfOptions.Main);

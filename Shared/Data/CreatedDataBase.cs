@@ -9,11 +9,11 @@ namespace Shared.Data
 {
     public class CreatedDataBase : ICreatedDataBase, IUpdateDataBase
     {
-        private readonly AccessDataBase _db;
+        private readonly IAccessDataBase _db;
         private readonly InventoryTables _inventoryTables;
         private readonly DriversRoutesTables _driversRoutesTables;
 
-        public CreatedDataBase(AccessDataBase accessData)
+        public CreatedDataBase(IAccessDataBase accessData)
         {
             this._db = accessData;
             _inventoryTables ??= new InventoryTables(_db);

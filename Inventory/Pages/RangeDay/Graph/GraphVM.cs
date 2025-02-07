@@ -83,8 +83,8 @@ namespace Inventory.Pages.RangeDay.Graph
         const string _szt = " _szt.";
         const string _zl = " zł";
         readonly Driver[] _allDrivers;
-        readonly AccessDataBase _db;
-        public GraphVM(AccessDataBase db)
+        readonly IAccessDataBase _db;
+        public GraphVM(IAccessDataBase db)
         {
             RangeDayMs ??= [];
             Legend ??= [];

@@ -25,8 +25,8 @@ namespace Shared.Pages.UpdateDataBase
 
 
         private readonly ICreatedDataBase _createdDataBase;
-        public readonly AccessDataBase _db;
-        public UpdateDataBaseVM(ICreatedDataBase createdDataBase, AccessDataBase db)
+        public readonly IAccessDataBase _db;
+        public UpdateDataBaseVM(ICreatedDataBase createdDataBase, IAccessDataBase db)
         {
             _createdDataBase = createdDataBase;
             UpdateDataBaseM ??= new();

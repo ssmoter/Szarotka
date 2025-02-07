@@ -57,9 +57,9 @@ namespace DataBase.Data.Save
 
     public class SaveDriverRoutesAoT : ISaveDriverRoutesAoT
     {
-        private readonly AccessDataBase _db;
+        private readonly IAccessDataBase _db;
 
-        public SaveDriverRoutesAoT(AccessDataBase db)
+        public SaveDriverRoutesAoT(IAccessDataBase db)
         {
             _db = db;
         }
@@ -68,7 +68,7 @@ namespace DataBase.Data.Save
         {
             var lastUpdate = customerRoutes.Updated;
             var userUpdateId = customerRoutes.UserUpdatedId.ToByteArray();
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             if (customerRoutes.Id == Guid.Empty)
             {
                 customerRoutes.Id = Guid.CreateVersion7();
@@ -108,7 +108,7 @@ namespace DataBase.Data.Save
         {
             var lastUpdate = residentialAddress.Updated;
             var userUpdateId = residentialAddress.UserUpdatedId.ToByteArray();
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             if (residentialAddress.Id == Guid.Empty)
             {
                 residentialAddress.Id = Guid.CreateVersion7();
@@ -148,7 +148,7 @@ namespace DataBase.Data.Save
         {
             var lastUpdate = routes.Updated;
             var userUpdateId = routes.UserUpdatedId.ToByteArray();
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             if (routes.Id == Guid.Empty)
             {
                 routes.Id = Guid.CreateVersion7();
@@ -188,7 +188,7 @@ namespace DataBase.Data.Save
         {
             var lastUpdate = selectedDayOfWeek.Updated;
             var userUpdateId = selectedDayOfWeek.UserUpdatedId.ToByteArray();
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             if (selectedDayOfWeek.Id == Guid.Empty)
             {
                 selectedDayOfWeek.Id = Guid.CreateVersion7();

@@ -6,9 +6,9 @@ using DriversRoutes.Service;
 
 namespace DriversRoutes.Data
 {
-    public class SelectRoutes(AccessDataBase db) : ISelectRoutes
+    public class SelectRoutes(IAccessDataBase db) : ISelectRoutes
     {
-        readonly AccessDataBase _db = db;
+        readonly IAccessDataBase _db = db;
         private Routes _routesLast;
 
         public async IAsyncEnumerable<CustomerRoutes> Test(Routes routes, SelectedDayOfWeekRoutes dayOf)

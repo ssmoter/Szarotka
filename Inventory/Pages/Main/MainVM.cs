@@ -48,10 +48,10 @@ namespace Inventory.Pages.Main
 
         public Day Day { get; set; }
 
-        readonly AccessDataBase _db;
+        readonly IAccessDataBase _db;
         readonly Service.ISelectDayService _selectDayService;
 
-        public MainVM(AccessDataBase db, ISelectDayService selectDay)
+        public MainVM(IAccessDataBase db, ISelectDayService selectDay)
         {
             _db = db;
             _selectDayService = selectDay;

@@ -32,10 +32,7 @@ namespace Server.Service
         }
         public async Task SendMessage(MimeMessage messages)
         {
-            if (_emailConfig is null)
-            {
-                throw new ArgumentNullException(nameof(_emailConfig));
-            }
+            ArgumentNullException.ThrowIfNull(_emailConfig, nameof(_emailConfig));
 
             using var client = new SmtpClient();
             client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, _secureSocketOptions);
@@ -48,10 +45,7 @@ namespace Server.Service
 
         public async Task SendMessages(IList<MimeMessage> messages)
         {
-            if (_emailConfig is null)
-            {
-                throw new ArgumentNullException(nameof(_emailConfig));
-            }
+            ArgumentNullException.ThrowIfNull(_emailConfig, nameof(_emailConfig));
 
             using var client = new SmtpClient();
             client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, _secureSocketOptions);

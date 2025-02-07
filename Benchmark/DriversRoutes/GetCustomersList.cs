@@ -13,7 +13,7 @@ namespace Benchmark.DriversRoutes
     [MemoryDiagnoser]
     public class GetCustomersList
     {
-        private readonly AccessDataBase _db;
+        private readonly IAccessDataBase _db;
         private readonly ISelectRoutes _selectRoutes;
 
         private readonly Routes _routes = new()
@@ -23,7 +23,7 @@ namespace Benchmark.DriversRoutes
         private readonly SelectedDayOfWeekRoutes _week = new();
         public GetCustomersList()
         {
-            _db = new();
+            _db = new AccessDataBase();
             _selectRoutes = new SelectRoutes(_db);
         }
         [Benchmark]

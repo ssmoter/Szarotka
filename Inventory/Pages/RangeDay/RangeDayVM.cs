@@ -125,10 +125,10 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
 
 
     PopupDateModel PopupDate = new(DateTime.Today.Ticks, DateTime.Today.AddDays(1).Ticks, false, []);
-    readonly AccessDataBase _db;
+    readonly IAccessDataBase _db;
     readonly ISelectDayService _selectDayService;
     readonly ISaveDayService _dayService;
-    public RangeDayVM(AccessDataBase db, ISelectDayService selectDay, ISaveDayService dayService)
+    public RangeDayVM(IAccessDataBase db, ISelectDayService selectDay, ISaveDayService dayService)
     {
         sum = [];
         _db = db;

@@ -62,12 +62,12 @@ namespace Inventory.Pages.SingleDay
 
         const char signPlus = '+';
         //const char signMinus = '-';
-        private readonly AccessDataBase _db;
+        private readonly IAccessDataBase _db;
         private readonly ISaveDayService _saveDay;
         private readonly ISelectDayService _selectDay;
         private readonly ISaveInventoryAoT _saveInventoryAoT;
 
-        public SingleDayVM(AccessDataBase db,
+        public SingleDayVM(IAccessDataBase db,
             ISaveDayService saveDay,
             ISelectDayService selectDay,
             ISaveInventoryAoT saveInventoryAoT)

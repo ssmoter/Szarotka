@@ -44,10 +44,10 @@ namespace Inventory.Pages.Products.ListProduct
         }
 
         readonly Random random = new(2137);
-        readonly AccessDataBase _db;
+        readonly IAccessDataBase _db;
 
         public Action<int, int, ScrollToPosition, bool> ScrollTo;
-        public ListProductVM(AccessDataBase db)
+        public ListProductVM(IAccessDataBase db)
         {
             ProductMs = [];
             this._db = db;

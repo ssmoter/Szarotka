@@ -63,9 +63,9 @@ public partial class NavigateVM : ObservableObject, IQueryAttributable
         }
     }
 
-    private readonly AccessDataBase _db;
+    private readonly IAccessDataBase _db;
 
-    public NavigateVM(AccessDataBase db)
+    public NavigateVM(IAccessDataBase db)
     {
         _db = db;
     }

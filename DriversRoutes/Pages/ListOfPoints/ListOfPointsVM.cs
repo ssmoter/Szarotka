@@ -154,13 +154,13 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
         }
     }
 
-    readonly AccessDataBase _db;
+    readonly IAccessDataBase _db;
     readonly Service.ISelectRoutes _selectRoutes;
     readonly Service.ISaveRoutes _saveRoutes;
 
     public Action CalculateRoute;
 
-    public ListOfPointsVM(AccessDataBase db, Service.ISelectRoutes selectRoutes, Service.ISaveRoutes saveRoutes)
+    public ListOfPointsVM(IAccessDataBase db, Service.ISelectRoutes selectRoutes, Service.ISaveRoutes saveRoutes)
     {
         _db = db;
         _selectRoutes = selectRoutes;

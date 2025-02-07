@@ -12,9 +12,9 @@ using System.Collections.ObjectModel;
 
 namespace Inventory.Data
 {
-    public class SaveDayService(AccessDataBase db) : ISaveDayService
+    public class SaveDayService(IAccessDataBase db) : ISaveDayService
     {
-        readonly AccessDataBase _db = db;
+        readonly IAccessDataBase _db = db;
 
         public async Task<Day> SaveDayAsync(Day value)
         {

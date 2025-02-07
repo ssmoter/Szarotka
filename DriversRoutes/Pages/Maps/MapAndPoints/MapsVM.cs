@@ -192,13 +192,13 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
     public Action<Polyline> AddRoutesPolilineAction;
     public Action ClearRoutesPolilineAction;
     public Microsoft.Maui.Controls.Maps.Map GetMap { get; set; }
-    private readonly AccessDataBase _db;
+    private readonly IAccessDataBase _db;
     private readonly Service.ISelectRoutes _selectRoutes;
     private readonly Service.ISaveRoutes _saveRoutes;
     private readonly Data.GoogleApi.IRoutes _routes;
 
     #endregion
-    public MapsVM(AccessDataBase db,
+    public MapsVM(IAccessDataBase db,
                   Service.ISelectRoutes selectRoutes,
                   Service.ISaveRoutes saveRoutes,
                   Data.GoogleApi.IRoutes routes)

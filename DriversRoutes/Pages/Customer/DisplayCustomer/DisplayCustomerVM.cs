@@ -46,11 +46,11 @@ public partial class DisplayCustomerVM : ObservableObject, IQueryAttributable
             if (SetProperty(ref displayCustomerM, value, nameof(DisplayCustomerM))) { }
         }
     }
-    readonly AccessDataBase _db;
+    readonly IAccessDataBase _db;
     readonly Service.ISaveRoutes _saveRoutes;
     public SelectedDayOfWeekRoutes LastSelectedDayOfWeek { get; set; }
 
-    public DisplayCustomerVM(AccessDataBase db, Service.ISaveRoutes saveRoutes)
+    public DisplayCustomerVM(IAccessDataBase db, Service.ISaveRoutes saveRoutes)
     {
         _db = db;
         DisplayCustomerM ??= new();

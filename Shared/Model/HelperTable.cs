@@ -56,7 +56,7 @@ namespace Shared.Model
                     {nameof(UpdatedTicks)} = '{helperTable.UpdatedTicks}'";
             return sql;
         }
-        public static async Task<HelperTable> Get(string name, AccessDataBase accessDataBase)
+        public static async Task<HelperTable> Get(string name, IAccessDataBase accessDataBase)
         {
             List<HelperTable> result = [];
             for (int i = 0; i < 3; i++)
@@ -83,12 +83,12 @@ namespace Shared.Model
         {
             return HelperTable.SetQuery(helperTable);
         }
-        public static async Task SetAsync(this HelperTable helperTable, AccessDataBase accessDataBase)
+        public static async Task SetAsync(this HelperTable helperTable, IAccessDataBase accessDataBase)
         {
             var sql = HelperTable.SetQuery(helperTable);
             await accessDataBase.DataBaseAsync.ExecuteAsync(sql);
         }
-        public static void Set(this HelperTable helperTable, AccessDataBase accessDataBase)
+        public static void Set(this HelperTable helperTable, IAccessDataBase accessDataBase)
         {
             var sql = HelperTable.SetQuery(helperTable);
             accessDataBase.DataBase.Execute(sql);

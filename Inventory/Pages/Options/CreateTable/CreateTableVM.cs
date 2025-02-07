@@ -36,8 +36,8 @@ namespace Inventory.Pages.Options.CreateTable
             }
         }
 
-        readonly AccessDataBase _db;
-        public CreateTableVM(AccessDataBase dataBase)
+        readonly IAccessDataBase _db;
+        public CreateTableVM(IAccessDataBase dataBase)
         {
             TableMs =
             [
@@ -57,7 +57,7 @@ namespace Inventory.Pages.Options.CreateTable
             });
         }
 
-        public static async Task OnNavigation(AccessDataBase db)
+        public static async Task OnNavigation(IAccessDataBase db)
         {
             try
             {
@@ -248,7 +248,7 @@ namespace Inventory.Pages.Options.CreateTable
             }
         }
 
-        private static async Task SelectDriverMethod(AccessDataBase db)
+        private static async Task SelectDriverMethod(IAccessDataBase db)
         {
             try
             {
@@ -298,7 +298,7 @@ namespace Inventory.Pages.Options.CreateTable
             bool exist = tableInfo.Count > 0;
             return exist;
         }
-        private static async Task CreatedNewDriverMethod(AccessDataBase db)
+        private static async Task CreatedNewDriverMethod(IAccessDataBase db)
         {
             if (db is null)
             {

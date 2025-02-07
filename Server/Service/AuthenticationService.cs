@@ -13,6 +13,7 @@ using System.Security.Claims;
 
 using System.Text;
 
+
 namespace Server.Service
 {
     public interface IAuthenticationService
@@ -24,9 +25,9 @@ namespace Server.Service
     public class AuthenticationService : IAuthenticationService
     {
         private readonly JSONWebTokensSettings _jwtSettings;
-        private readonly AccessDataBase _db;
+        private readonly IAccessDataBase _db;
         private readonly JwtSecurityTokenHandler _handler;
-        public AuthenticationService(JSONWebTokensSettings jSONWebTokensSettings, AccessDataBase db)
+        public AuthenticationService(JSONWebTokensSettings jSONWebTokensSettings, IAccessDataBase db)
         {
             _jwtSettings = jSONWebTokensSettings;
             _db = db;
@@ -42,26 +43,28 @@ namespace Server.Service
 
             return request;
         }
-
         public async Task<User> AuthenticateAsync(string token)
         {
-            var jwtToken = _handler.ReadJwtToken(token);
-
-            var claimId = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.NameId);
-            string id = claimId?.Value ?? throw new ArgumentNullException(nameof(claimId), "Claim not found");
-           
-            var users = await _db.DataBaseAsync.QueryAsync<User>(LoginQuery.InFromId(id));
+            var result = DataBase.Helper.ReadToken.GetUserFromToken(token);
+            var sql = LoginQuery.InFromId(result.user.Id.ToString());
+            var users = await _db.DataBaseAsync.QueryAsync<User>(sql);
             var user = users.FirstOrDefault();
 
             if (user is null)
             {
-                throw new ArgumentNullException(nameof(user));
+                throw new UnauthorizedAccessException();
             }
 
-            JwtSecurityToken jwtSecurityToken = await GenerateToken(user);
-            user.Token = _handler.WriteToken(jwtSecurityToken);
-            return user;
+            if (user.Id == result.user.Id)
+            {
+                JwtSecurityToken jwtSecurityToken = await GenerateToken(result.user);
+                result.user.Token = _handler.WriteToken(jwtSecurityToken);
+                return result.user;
+            }
+            throw new UnauthorizedAccessException();
         }
+
+
 
         private async Task<JwtSecurityToken> GenerateToken(User user)
         {

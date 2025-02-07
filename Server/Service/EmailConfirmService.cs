@@ -28,7 +28,7 @@ namespace Server.Service
         {
             var code = _random.Next(9_999, 99_999);
 
-            var saveCode = _registerService.InsertCodeEmailAndRemoveOld(new RegisterConfirmEmailUser(user.Id, code));
+            var saveCode = _registerService.InsertCodeEmailAndRemoveOld(new ConfirmCode(user.Id, code));
             var sendEmail = _emailService.SendMessage(user.Email, "Potwierdź swój email", Email.ConfirmEmail(code));
 
             await Task.WhenAll(saveCode, sendEmail);

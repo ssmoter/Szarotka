@@ -32,8 +32,8 @@ namespace Inventory.Pages.Options.EditDriver
             }
         }
 
-        readonly AccessDataBase _db;
-        public EditDriverVM(AccessDataBase db)
+        readonly IAccessDataBase _db;
+        public EditDriverVM(IAccessDataBase db)
         {
             Driver = new();
             _db = db;

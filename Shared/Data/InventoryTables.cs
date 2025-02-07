@@ -5,9 +5,9 @@ using DataBase.Data;
 
 namespace Shared.Data
 {
-    public class InventoryTables(AccessDataBase db) : IUpdateDataBase
+    public class InventoryTables(IAccessDataBase db) : IUpdateDataBase
     {
-        readonly AccessDataBase _db = db;
+        readonly IAccessDataBase _db = db;
         static readonly Random _random = new(2137);
 
         public static Guid GetGuidSed()

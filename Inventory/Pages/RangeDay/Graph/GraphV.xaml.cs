@@ -1,3 +1,5 @@
+using Shared.Service;
+
 namespace Inventory.Pages.RangeDay.Graph;
 
 public partial class GraphV : ContentView, IDisposable
@@ -30,10 +32,11 @@ public partial class GraphV : ContentView, IDisposable
         vm.OnReDraw(vm.DrawGraph);
     }
 
-    public GraphVM Vm { get; set; } = new(new());
+    public GraphVM Vm { get; set; }
 
     public GraphV()
     {
+        Vm = AppServiceProvider.GetService<GraphVM>();
         InitializeComponent();
         Vm.ReDraw += ReDrawGraph;
         Vm.OnReDraw(Vm.DrawGraph);

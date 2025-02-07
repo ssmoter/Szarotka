@@ -25,9 +25,9 @@ namespace Shared.Pages.ConfirmEmail
             }
         }
 
-        private readonly AccessDataBase _db;
+        private readonly IAccessDataBase _db;
         private readonly IRegisterHttp _registerHttp;
-        public ConfirmEmailVM(AccessDataBase db, IRegisterHttp registerHttp)
+        public ConfirmEmailVM(IAccessDataBase db, IRegisterHttp registerHttp)
         {
             ConfirmEmailM = new();
             _db = db;
@@ -37,7 +37,7 @@ namespace Shared.Pages.ConfirmEmail
 
         string CodeValid(EnumsList.Validation valid, string error)
         {
-            if (valid >= EnumsList.Validation.EmailCodeIsExpire && valid <= EnumsList.Validation.EmailCodeNotExist)
+            if (valid >= EnumsList.Validation.CodeIsExpire && valid <= EnumsList.Validation.CodeNotExist)
             {
                 if (!string.IsNullOrWhiteSpace(error))
                 {

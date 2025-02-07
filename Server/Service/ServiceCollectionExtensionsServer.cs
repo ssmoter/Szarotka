@@ -13,7 +13,7 @@ namespace Server.Service
         {
             DataBase.Service.ServiceCollectionExtensionsDataBase.AddMyServiceDataBase(services);
 
-            services.AddScoped<AccessDataBase>(options =>
+            services.AddScoped<IAccessDataBase>(options =>
             {
                 var env = options.GetRequiredService<IWebHostEnvironment>();
                 var path = Path.Combine(env.ContentRootPath,
@@ -41,6 +41,8 @@ namespace Server.Service
                     configuration["JSONWebTokensSettings:DurationInDays"]
                     );
             });
+            services.AddScoped<IEditUserService, EditUserService>();
+            services.AddScoped<IEditUserEndpoint, EditUserEndpoint>();
 
 
             return services;

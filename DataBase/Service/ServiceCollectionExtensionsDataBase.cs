@@ -9,10 +9,11 @@ namespace DataBase.Service
     {
         public static IServiceCollection AddMyServiceDataBase(this IServiceCollection services)
         {
-            services.AddTransient<AccessDataBase>();
+            services.AddTransient<IAccessDataBase, AccessDataBase>();
 
             services.AddScoped<ISaveInventoryAoT, SaveInventoryAoT>();
             services.AddScoped<ISaveDriverRoutesAoT, SaveDriverRoutesAoT>();
+            services.AddScoped<ITimeService, CurrentUtc>();
 
             return services;
         }

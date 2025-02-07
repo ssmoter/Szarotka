@@ -55,9 +55,9 @@ namespace Shared.Pages.Register
         }
 
 
-        private readonly AccessDataBase _db;
+        private readonly IAccessDataBase _db;
         private readonly IRegisterHttp _registerHttp;
-        public RegisterVM(AccessDataBase db, IRegisterHttp registerHttp)
+        public RegisterVM(IAccessDataBase db, IRegisterHttp registerHttp)
         {
             RegisterUser = new();
             RegisterM = new();
@@ -84,7 +84,7 @@ namespace Shared.Pages.Register
 
         private static string PasswordsValidation(EnumsList.Validation valid, string message)
         {
-            if (valid >= EnumsList.Validation.PasswordIsNull && valid <= EnumsList.Validation.PasswordsContainEmail)
+            if (valid >= EnumsList.Validation.PasswordIsNull && valid <= EnumsList.Validation.PasswordContainEmail)
             {
                 if (!string.IsNullOrWhiteSpace(message))
                 {

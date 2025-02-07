@@ -1,5 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
+using DataBase.Model.JsonContext;
+
+using System.Text.Json.Serialization;
+
 namespace DataBase.Model.EntitiesServer;
 
 
@@ -68,6 +72,7 @@ public partial class User : BaseEntities<Guid>
     }
 
     private bool isEmailConfirm;
+    [JsonConverter(typeof(CustomBoolConverter))]
     public bool IsEmailConfirm
     {
         get => isEmailConfirm;
@@ -81,6 +86,7 @@ public partial class User : BaseEntities<Guid>
     }
 
     private bool rememberMe;
+    [JsonConverter(typeof(CustomBoolConverter))]
     public bool RememberMe
     {
         get => rememberMe;
@@ -141,6 +147,7 @@ public partial class LoginUser : ObservableObject
         }
     }
     private bool rememberMe;
+    [JsonConverter(typeof(CustomBoolConverter))]
     public bool RememberMe
     {
         get => rememberMe;
@@ -154,19 +161,19 @@ public partial class LoginUser : ObservableObject
     }
 }
 
-public class RegisterConfirmEmailUser : BaseEntities<int>
+public class ConfirmCode : BaseEntities<int>
 {
     public Guid UserId { get; set; }
     public int Code { get; set; }
     public long ExpireDate { get; set; }
-    public RegisterConfirmEmailUser(Guid userId, int code)
+    public ConfirmCode(Guid userId, int code)
     {
         UserId = userId;
         Code = code;
         Created = DateTime.UtcNow;
         Updated = DateTime.UtcNow;
     }
-    public RegisterConfirmEmailUser()
+    public ConfirmCode()
     {
 
     }
@@ -179,4 +186,8 @@ public enum UserType
     Baker = 2,
 }
 
-
+public class EditUser
+{
+    public User Old { get; set; } = new();
+    public User New { get; set; } = new();
+}

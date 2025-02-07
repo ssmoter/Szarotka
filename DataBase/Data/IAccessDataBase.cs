@@ -6,7 +6,19 @@ using SQLite;
 #endif
 namespace DataBase.Data
 {
-    public class AccessDataBase : IDisposable
+    public interface IAccessDataBase
+    {
+        SQLiteConnection DataBase { get; }
+        SQLiteAsyncConnection DataBaseAsync { get; }
+
+        void Dispose();
+        string GetServerUrl();
+        Task<string> GetServerUrlAsync();
+        void SaveLog(Exception ex);
+        Task SaveLogAsync(Exception ex);
+    }
+
+    public class AccessDataBase : IDisposable, IAccessDataBase
     {
         public SQLiteAsyncConnection DataBaseAsync { get; private set; }
         public SQLiteConnection DataBase { get; private set; }
@@ -31,7 +43,7 @@ namespace DataBase.Data
         {
             var log = new Model.LogsModel()
             {
-                CreatedDateTime = DateTime.Now,
+                CreatedDateTime = DateTime.UtcNow,
                 Message = ex.Message,
                 StackTrace = ex.StackTrace is not null ? ex.StackTrace : ""
             };
@@ -45,7 +57,7 @@ namespace DataBase.Data
         {
             var log = new Model.LogsModel()
             {
-                CreatedDateTime = DateTime.Now,
+                CreatedDateTime = DateTime.UtcNow,
                 Message = ex.Message,
                 StackTrace = ex.StackTrace is not null ? ex.StackTrace : ""
             };

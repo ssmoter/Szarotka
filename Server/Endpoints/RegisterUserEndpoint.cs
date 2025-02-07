@@ -1,5 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
+using DataBase.Service;
 
 using Server.Model;
 using Server.Service;
@@ -16,23 +17,27 @@ namespace Server.Endpoints
 
     public class RegisterUserEndpoint : IRegisterUserEndpoint
     {
-        private readonly AccessDataBase _db;
+        private readonly IAccessDataBase _db;
         private readonly IRegisterUserService _registerService;
         private readonly IUserValidation _userValidation;
         private readonly IEmailService _emailService;
         private readonly IEmailConfirmService _emailConfirmService;
+        private readonly ITimeService _time;
 
-        public RegisterUserEndpoint(AccessDataBase db
+
+        public RegisterUserEndpoint(IAccessDataBase db
                                     , IRegisterUserService register
                                     , IUserValidation userValidation
-                                    , IEmailService emailService,
-IEmailConfirmService emailConfirmService)
+                                    , IEmailService emailService
+                                    , IEmailConfirmService emailConfirmService
+                                    , ITimeService time)
         {
             _db = db;
             _registerService = register;
             _userValidation = userValidation;
             _emailService = emailService;
             _emailConfirmService = emailConfirmService;
+            _time = time;
         }
 
         public async Task<IResult> InsertUser(RegisterUser registerUser)
@@ -40,55 +45,42 @@ IEmailConfirmService emailConfirmService)
             try
             {
                 #region Validation
-                var validError = new ValidationException();
-                if (registerUser is null)
+                if (_userValidation.RegisterUserNull(registerUser) == ServerEnums.Result.Error)
                 {
-                    validError.AddError($"{nameof(RegisterUser)} is required", EnumsList.Validation.RegisterUserNull);
-                    throw validError;
+                    throw _userValidation.Validation;
                 }
-
-                var emailIsCorrent = _userValidation.EmailIsCorrent(registerUser);
-                if (emailIsCorrent == ServerEnums.Result.Error)
+                if (_userValidation.EmailIsNull(registerUser.Email) == ServerEnums.Result.Success)
                 {
-                    validError.AddError("Email is not a valid format", EnumsList.Validation.EmailValidFormat);
+                    _userValidation.EmailValidFormat(registerUser.Email);
+                    await _userValidation.EmailExist(registerUser.Email);
                 }
-                if (emailIsCorrent == ServerEnums.Result.Success)
+                if (_userValidation.PasswordIsNull(registerUser.Password) == ServerEnums.Result.Error)
                 {
-                    var emailIsExist = await _userValidation.EmailIsExist(registerUser);
-
-                    if (emailIsExist == ServerEnums.Result.Error)
-                    {
-                        validError.AddError("Email already exists", EnumsList.Validation.EmailExist);
-                    }
+                    var password = registerUser.Password;
+                    _userValidation.PasswordLength8(password);
+                    _userValidation.PasswordNoUpper(password);
+                    _userValidation.PasswordNoLower(password);
+                    _userValidation.PasswordNoDigit(password);
+                    _userValidation.PasswordNoSpecial(password);
+                    _userValidation.PasswordContainEmail(password, registerUser.Email);
                 }
-
-                _userValidation.PasswordValid(registerUser, ref validError);
-
                 #endregion
 
-
-                if (validError.Count > 0)
+                if (_userValidation.Validation.Count > 0)
                 {
-                    throw validError;
+                    throw _userValidation.Validation;
                 }
-            }
-            catch (ValidationException ex)
-            {
-                Console.WriteLine(ex.GetError());
-                throw;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw;
-            }
-            try
-            {
+
                 RegisterUser result = await _registerService.InsertNewUser(registerUser);
 
                 await _emailConfirmService.SendVerificationEmailCode(result);
 
                 return Results.Ok();
+            }
+            catch (ValidationException)
+            {
+                Console.WriteLine(_userValidation.Validation.GetError());
+                throw;
             }
             catch (Exception ex)
             {
@@ -101,17 +93,13 @@ IEmailConfirmService emailConfirmService)
         {
             try
             {
-                if (CountDigits(code) < 5)
-                {
-                    throw new ArgumentNullException(nameof(code));
-                }
                 var user = await _registerService.GetUserEmailFromCodeAndRemoveOld(code);
-
-                if (user is null)
-                {
-                    throw new ArgumentNullException(nameof(user));
-                }
                 return Results.Ok(user);
+            }
+            catch (ValidationException ex)
+            {
+                Console.WriteLine(ex.GetError());
+                throw;
             }
             catch (Exception ex)
             {
@@ -119,12 +107,6 @@ IEmailConfirmService emailConfirmService)
                 _db.SaveLog(ex);
                 throw;
             }
-            static int CountDigits(int number)
-            {
-                if (number == 0) return 1;
-                return (int)Math.Log10(Math.Abs(number)) + 1;
-            }
-
         }
 
 

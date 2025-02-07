@@ -10,9 +10,9 @@ using System.Text;
 
 namespace Inventory.Data
 {
-    public class SelectDayService(AccessDataBase db) : ISelectDayService
+    public class SelectDayService(IAccessDataBase db) : ISelectDayService
     {
-        readonly AccessDataBase _db = db;
+        readonly IAccessDataBase _db = db;
 
         public async Task<(Driver[] drivers, Day[] days)> GetDaysAndDrivers(long from, long to, Guid[] selectedDriverName, bool moreData)
         {

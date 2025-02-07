@@ -56,9 +56,9 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             }
         }
 
-        readonly AccessDataBase _db;
+        readonly IAccessDataBase _db;
 
-        public AddEditProductVM(AccessDataBase db)
+        public AddEditProductVM(IAccessDataBase db)
         {
             AddEdit = new AddEditProductM();
             if (Product is null)

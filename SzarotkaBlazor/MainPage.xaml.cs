@@ -13,8 +13,8 @@ namespace SzarotkaBlazor
     public partial class MainPage : ContentPage
     {
         private readonly CreatedDataBase _createdDataBase;
-        private readonly AccessDataBase _db;
-        public MainPage(AccessDataBase db)
+        private readonly IAccessDataBase _db;
+        public MainPage(IAccessDataBase db)
         {
             InitializeComponent();
             _db = db;

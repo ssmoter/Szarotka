@@ -14,12 +14,12 @@ namespace Server.Endpoints
 
     public class LoginUserEndpoint : ILoginUserEndpoint
     {
-        private readonly AccessDataBase _db;
+        private readonly IAccessDataBase _db;
         private readonly ILoginService _loginService;
         private readonly IEmailConfirmService _emailConfirmService;
         private readonly IAuthenticationService _authenticationService;
 
-        public LoginUserEndpoint(AccessDataBase db, ILoginService loginService, IEmailConfirmService emailConfirmService, IAuthenticationService authenticationService)
+        public LoginUserEndpoint(IAccessDataBase db, ILoginService loginService, IEmailConfirmService emailConfirmService, IAuthenticationService authenticationService)
         {
             _db = db;
             _loginService = loginService;
@@ -52,16 +52,7 @@ namespace Server.Endpoints
                 {
                     throw valid;
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(valid.GetError());
-                Console.WriteLine(ex.Message);
-                throw;
-            }
 
-            try
-            {
                 var dbUser = await _loginService.LogIn(user);
 
                 if (dbUser.IsDelete == true)
@@ -83,10 +74,14 @@ namespace Server.Endpoints
 
                 return Results.Ok(new User() { Token = token.Token });
             }
+            catch (ValidationException)
+            {
+                Console.WriteLine(valid.GetError());
+                throw;
+            }
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
-                Console.WriteLine(valid.GetError());
                 Console.WriteLine(ex.Message);
                 throw;
             }
@@ -103,6 +98,10 @@ namespace Server.Endpoints
                 var newToken = await _authenticationService.AuthenticateAsync(token);
 
                 return Results.Ok(newToken);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Results.Unauthorized();
             }
             catch (Exception ex)
             {

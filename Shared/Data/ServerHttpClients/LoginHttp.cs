@@ -15,9 +15,9 @@ namespace Shared.Data.ServerHttpClients
     public class LoginHttp : ILoginHttp
     {
         private readonly HttpClient _httpClient;
-        private readonly AccessDataBase _db;
+        private readonly IAccessDataBase _db;
         private readonly string _url;
-        public LoginHttp(AccessDataBase db, HttpClient httpClient)
+        public LoginHttp(IAccessDataBase db, HttpClient httpClient)
         {
             _db = db;
             _url = db.GetServerUrl();

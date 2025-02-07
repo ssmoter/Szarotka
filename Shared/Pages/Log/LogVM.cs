@@ -26,8 +26,8 @@ namespace Shared.Pages.Log
             }
         }
 
-        readonly AccessDataBase _db;
-        public LogVM(AccessDataBase db)
+        readonly IAccessDataBase _db;
+        public LogVM(IAccessDataBase db)
         {
             Logs = [];
             _db = db;

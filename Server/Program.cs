@@ -80,16 +80,30 @@ user.MapGet("refresh_token", async (HttpContext context, ILoginUserEndpoint logi
         return Results.Unauthorized();
     }
     // Pobierz token
-    var token = authorizationHeader.Substring("Bearer ".Length).Trim();
-
+    var token = DataBase.Helper.ReadToken.RemoveBearer(authorizationHeader);
     if (token is null)
     {
         return Results.Unauthorized();
     }
     return await loginUserEndpoint.RefreshToken(token);
 }).RequireAuthorization();
+user.MapPost("edit", async ([FromBody] User user, IEditUserEndpoint editUserEndpoint, HttpContext context)
+    =>
+{
+    var authorizationHeader = context.Request.Headers.Authorization.ToString();
+    var token = DataBase.Helper.ReadToken.RemoveBearer(authorizationHeader);
+    var tokenModel = DataBase.Helper.ReadToken.GetUserFromToken(token);
 
+    user.UserUpdatedId = new Guid(tokenModel.user.Id.ToByteArray());
+    user.Id = new Guid(tokenModel.user.Id.ToByteArray());
+    var editUser = new EditUser()
+    {
+        New = user,
+        Old = tokenModel.user,
+    };
 
+    return await editUserEndpoint.Update(editUser);
+}).RequireAuthorization();
 
 
 

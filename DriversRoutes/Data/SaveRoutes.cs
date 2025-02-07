@@ -7,9 +7,9 @@ using DataBase.Data;
 
 namespace DriversRoutes.Data
 {
-    public class SaveRoutes(AccessDataBase db) : ISaveRoutes
+    public class SaveRoutes(IAccessDataBase db) : ISaveRoutes
     {
-        readonly AccessDataBase _db = db;
+        readonly IAccessDataBase _db = db;
 
         public async Task SaveCustomer(CustomerRoutes customer, byte[] idRoute)
         {

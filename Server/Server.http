@@ -1,8 +1,19 @@
 ﻿@Server_HostAddress = http://localhost:5021
 //@Server_HostAddress = http://localhost:32783
 @server_user = user
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJOYW1lIiwianRpIjoiNGRmYzE3NWUtN2Q5Yi00MDE1LTk5YjctY2VkMmFiMWIyYTI0IiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5IiwibmFtZWlkIjoiMjY1OWFhMTMtZWNkOC00MGEwLWE3ZGMtNzRiYmJiNjE3MWViIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiRHJpdmVyIiwiZXhwIjoxNzM2MDE0MDE4LCJpc3MiOiJsb2NhbGhvc3QiLCJhdWQiOiJsb2NhbGhvc3RVc2VycyJ9.OxJf3dfzt-sadQrROubUF72PlXeZzXIRZjOjrJwrqgY
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJOYW1lIiwianRpIjoiOGE3MWE3NzktODg0OC00NGU3LTg0NzYtYTBhNTQ4ZGJhMGIzIiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5IiwibmFtZWlkIjoiMDE5NGQwZWYtYzU2Yy03MTJlLWI1MDctNWI1NDBmNjM5NzQ5IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQmFrZXIiLCJleHAiOjE3Mzk0NjUzMDMsImlzcyI6ImxvY2FsaG9zdCIsImF1ZCI6ImxvY2FsaG9zdFVzZXJzIn0.u674ahNfbGat8iZtjuf1taxrn-lAd0-UzBDAWwkGe9U
 
+
+POST {{Server_HostAddress}}/{{server_user}}/login
+Content-Type: application/json 
+
+{ 
+    "Email": "user@example.com",
+    "Password": "Password1!",
+    "RememberMe": 1
+}
+
+###
 
 
 GET {{Server_HostAddress}}/todos/
@@ -27,19 +38,11 @@ Content-Type: application/json
 }
 
 ###
-GET {{Server_HostAddress}}/{{server_user}}/confirm_email/81329
+GET {{Server_HostAddress}}/{{server_user}}/confirm_email/57179
 Accept: application/json
 
 ###
-POST {{Server_HostAddress}}/{{server_user}}/login
-Content-Type: application/json 
 
-{ 
-    "Email": "user@example.com",
-    "Password": "Password1!"
-}
-
-###
 GET {{Server_HostAddress}}/{{server_user}}/logout/
 Accept: application/json
 Authorization: Bearer {{token}}
@@ -47,5 +50,18 @@ Authorization: Bearer {{token}}
 ###
 GET {{Server_HostAddress}}/user/refresh_token
 Authorization: Bearer {{token}}
+
+### 
+POST {{Server_HostAddress}}/user/edit
+Authorization: Bearer {{token}}
+Content-Type: application/json 
+
+{
+    "Email": "user@example.com",
+    "Name": "Name",
+    "Description": "Description",
+    "PhoneNumber": "123456789",
+    "UserType":0
+}
 
 ###

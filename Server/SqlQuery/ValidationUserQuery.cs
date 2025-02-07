@@ -4,11 +4,13 @@ namespace Server.SqlQuery
 {
     public static class ValidationUserQuery
     {
-        public static string SelectEmails()
+        public static string SelectEmails(string email)
         {
             string sql = $@"
-SELECT {nameof(User)}.{nameof(User.Email)} FROM {nameof(User)}
-WHERE {nameof(User)}.{nameof(User.Email)} == ?
+SELECT {nameof(User.Email)}
+FROM {nameof(User)}
+WHERE 
+{nameof(User.Email)} == '{email}'
 ";
             return sql;
         }

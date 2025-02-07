@@ -10,7 +10,7 @@ namespace DataBaseUnitTest.Created
 {
     public class CreatedDataBaseMain : IAsyncLifetime
     {
-        private readonly AccessDataBase _db;
+        private readonly IAccessDataBase _db;
         private readonly CreatedDataBase _createdDataBase;
         public static string Path => Constants.GetPathFolder + "\\DataBaseSzarotkaSQLiteUnitTest.db3";
         public CreatedDataBaseMain()

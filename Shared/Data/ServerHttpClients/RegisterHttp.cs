@@ -17,10 +17,10 @@ namespace Shared.Data.ServerHttpClients
     public class RegisterHttp : IRegisterHttp
     {
         private readonly HttpClient _httpClient;
-        private readonly AccessDataBase _db;
+        private readonly IAccessDataBase _db;
         private string _url;
 
-        public RegisterHttp(HttpClient httpClient, AccessDataBase db)
+        public RegisterHttp(HttpClient httpClient, IAccessDataBase db)
         {
             _httpClient = httpClient;
             _db = db;

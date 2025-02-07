@@ -7,6 +7,6 @@ public partial class CreateTableV : ContentView
     public CreateTableV()
     {
         InitializeComponent();
-        BindingContext = new CreateTableVM(new());
+        BindingContext = Shared.Service.AppServiceProvider.GetService<CreateTableVM>();
     }
 }
