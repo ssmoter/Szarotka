@@ -43,6 +43,9 @@ namespace Shared.Service
             services.AddScoped<LogInVM>();
             services.AddScoped<LogInV>();
 
+            //services.AddScoped<UserDisplayVM>();
+            //services.AddScoped<UserDisplayV>();
+
             return services;
         }
 

@@ -6,7 +6,7 @@ namespace Server.Service
 {
     public interface IEmailConfirmService
     {
-        Task SendVerificationEmailCode(User user);
+        Task SendVerificationEmailCode(User user, CancellationToken token = default);
     }
 
     public class EmailConfirmService : IEmailConfirmService
@@ -24,12 +24,12 @@ namespace Server.Service
 
 
 
-        public async Task SendVerificationEmailCode(User user)
+        public async Task SendVerificationEmailCode(User user, CancellationToken token = default)
         {
             var code = _random.Next(9_999, 99_999);
 
             var saveCode = _registerService.InsertCodeEmailAndRemoveOld(new ConfirmCode(user.Id, code));
-            var sendEmail = _emailService.SendMessage(user.Email, "Potwierdź swój email", Email.ConfirmEmail(code));
+            var sendEmail = _emailService.SendMessage(user.Email, "Potwierdź swój email", Email.ConfirmEmail(code), token);
 
             await Task.WhenAll(saveCode, sendEmail);
         }

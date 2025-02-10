@@ -26,7 +26,7 @@ namespace ServerUnitTest.SQL
             };
             var sql = UserQuery.RegisterNewUser(user);
             string expected = $@"
-INSERT INTO User
+INSERT INTO UserP
 (
 Id,
 CreatedTicks,
@@ -122,7 +122,7 @@ LIMIT 1
             };
             var sql = UserQuery.EmailIsConfirmUpdate(user);
             string expected = $@"
-UPDATE User
+UPDATE UserP
 SET
 IsEmailConfirm = {user.IsEmailConfirm},
 UpdatedTicks = '{user.UpdatedTicks}',
@@ -156,7 +156,7 @@ ExpireDate < {ticks}
             string expected = $@"
 SELECT
 Email
-FROM User
+FROM UserP
 WHERE
 Id = '{id}'
 ";
@@ -177,7 +177,7 @@ Id = '{id}'
             };
             var sql = UserQuery.UpdateName(user);
             string expected = $@"
-UPDATE User
+UPDATE UserP
 SET
 Name = '{user.Name}',
 UpdatedTicks = {user.UpdatedTicks},
@@ -200,7 +200,7 @@ Id = '{user.Id}'
             };
             var sql = UserQuery.UpdateDescription(user);
             string expected = $@"
-UPDATE User
+UPDATE UserP
 SET
 Description = '{user.Description}',
 UpdatedTicks = {user.UpdatedTicks},
@@ -222,7 +222,7 @@ Id = '{user.Id}'
             };
             var sql = UserQuery.UpdateEmail(user);
             string expected = $@"
-UPDATE User
+UPDATE UserP
 SET
 Email = '{user.Email}',
 UpdatedTicks = {user.UpdatedTicks},
@@ -244,7 +244,7 @@ Id = '{user.Id}'
             };
             var sql = UserQuery.UpdatePhoneNumber(user);
             string expected = $@"
-UPDATE User
+UPDATE UserP
 SET
 PhoneNumber = '{user.PhoneNumber}',
 UpdatedTicks = {user.UpdatedTicks},
@@ -266,7 +266,7 @@ Id = '{user.Id}'
             };
             var sql = UserQuery.UpdateUserType(user);
             string expected = $@"
-UPDATE User
+UPDATE UserP
 SET
 UserType = {user.UserType},
 UpdatedTicks = {user.UpdatedTicks},

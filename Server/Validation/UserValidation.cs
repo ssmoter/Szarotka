@@ -14,7 +14,7 @@ namespace Server.Validation;
 
 public interface IUserValidation
 {
-    ValidationException Validation { get; }
+    IValidationException Validation { get; }
 
     ServerEnums.Result AccountEmailIsNotConfirm(User user);
     ServerEnums.Result AccountNotFound(User? user);
@@ -51,12 +51,19 @@ public class UserValidation : IUserValidation
     private readonly string _special = "!@#$%^&*()_+-=[]{}|;:'\",.<>?/\\`~";
     private readonly string _phoneNumberPattern = @"^\+?[1-9]\d{1,14}$"; // E.164 format
 
-    public ValidationException Validation { get; private set; }
-    public UserValidation(IAccessDataBase db, ITimeService timeService)
+    public IValidationException Validation { get; private set; }
+    public UserValidation(IAccessDataBase db, ITimeService timeService, IValidationException? validation = null)
     {
         _db = db;
-        Validation = new ValidationException();
         _timeService = timeService;
+        if (validation is not null)
+        {
+            Validation = validation;
+        }
+        else
+        {
+            Validation = new ValidationException();
+        }
     }
     public ServerEnums.Result RegisterUserNull(RegisterUser? user)
     {

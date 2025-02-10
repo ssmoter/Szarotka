@@ -1,5 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model;
+using DataBase.Model.EntitiesServer;
 
 using Shared.Data;
 using Shared.Helper;
@@ -75,6 +76,16 @@ namespace SzarotkaBlazor
         private async void Maps_Clicked(object sender, EventArgs e)
         {
             await Shell.Current.GoToAsync(nameof(DriversRoutes.Pages.Main.MainVDriversRoutesV));
+        }
+
+        private async void Button_Clicked(object sender, EventArgs e)
+        {
+            var user = UserAfterLogin.User;
+            var navigationParameter = new Dictionary<string, object>
+            {
+                { nameof(User), user }
+            };
+            //await Shell.Current.GoToAsync(nameof(Shared.Pages.UserP.UserDisplay.UserDisplayV), navigationParameter);
         }
     }
 }

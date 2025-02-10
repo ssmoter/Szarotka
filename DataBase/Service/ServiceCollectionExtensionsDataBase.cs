@@ -1,5 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Data.Save;
+using DataBase.Model.EntitiesServer;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +15,7 @@ namespace DataBase.Service
             services.AddScoped<ISaveInventoryAoT, SaveInventoryAoT>();
             services.AddScoped<ISaveDriverRoutesAoT, SaveDriverRoutesAoT>();
             services.AddScoped<ITimeService, CurrentUtc>();
+            services.AddScoped<IValidationException, ValidationException>();
 
             return services;
         }

@@ -45,6 +45,11 @@
                     HorizontalOptions="Center"
                     Text="Opcje" />
 
+                <Button
+                    Clicked="Button_Clicked"
+                    HorizontalOptions="Center"
+                    Text="user" />
+
             </VerticalStackLayout>
         </ScrollView>
 

@@ -16,26 +16,45 @@ namespace DataBase.Model.EntitiesServer
         }
     }
 
-    [Serializable]
-    public class ValidationException : Exception
+    public interface IValidationException
     {
-        public List<Valid> ValidationErrors { get; } = [];
+        IList<ValidationException.Valid> ValidationErrors { get; }
+
+        void AddError(string message, EnumsList.Validation valid);
+        void AddError(ValidationException.Valid valid);
+        string GetError();
+        ValidationException Throw();
+    }
+
+    [Serializable]
+    public class ValidationException : Exception, IValidationException
+    {
+        public IList<Valid> ValidationErrors { get; private set; } = [];
 
         public void AddError(Valid valid)
         {
+            ValidationErrors ??= [];
             ValidationErrors.Add(valid);
         }
         public void AddError(string message, EnumsList.Validation valid)
         {
+            ValidationErrors ??= [];
             ValidationErrors.Add(new Valid(message, valid));
         }
-        public int Count => ValidationErrors.Count;
-
         public string GetError()
         {
             string json = JsonSerializer.Serialize([.. ValidationErrors], ValidJsonSerializerContext.Default.ValidArray);
             return json;
         }
+
+        public ValidationException Throw()
+        {
+            return this;
+        }
+
+        public ValidationException()
+        { }
+
         public class Valid
         {
             public string Message { get; set; } = "";

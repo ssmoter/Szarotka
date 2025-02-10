@@ -11,7 +11,7 @@ namespace ServerUnitTest.SQL
             string sql = ValidationUserQuery.SelectEmails(email);
             string expected = $@"
 SELECT Email
-FROM User
+FROM UserP
 WHERE 
 Email == '{email}'
 ";

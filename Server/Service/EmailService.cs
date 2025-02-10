@@ -10,64 +10,62 @@ namespace Server.Service
     public interface IEmailService
     {
         MimeMessage CreatedMessage(string to, string subject, string body, string bodyType = "html");
-        Task SendMessage(MimeMessage messages);
-        Task SendMessage(string to, string subject, string body);
-        Task SendMessages(IList<MimeMessage> messages);
+        void Dispose();
+        Task SendMessage(MimeMessage messages, CancellationToken token = default);
+        Task SendMessage(string to, string subject, string body, CancellationToken token = default);
+        Task SendMessages(IList<MimeMessage> messages, CancellationToken token = default);
     }
 
-    public class EmailService : IEmailService
+    public class EmailService : IDisposable, IEmailService
     {
         private readonly EmailConfiguration? _emailConfig;
         private readonly SecureSocketOptions _secureSocketOptions = SecureSocketOptions.StartTls;
+        private readonly ISmtpClient _client;
 
-        public EmailService(IConfiguration configuration)
+        public EmailService(IConfiguration configuration, ISmtpClient client)
         {
             _emailConfig = configuration.GetSection(nameof(EmailConfiguration)).Get<EmailConfiguration>();
+            _client = client;
         }
 
-        public async Task SendMessage(string to, string subject, string body)
+        public async Task SendMessage(string to, string subject, string body, CancellationToken token = default)
         {
             var message = CreatedMessage(to, subject, body);
-            await SendMessage(message);
+            await SendMessage(message, token);
         }
-        public async Task SendMessage(MimeMessage messages)
+        public async Task SendMessage(MimeMessage messages, CancellationToken token = default)
         {
             ArgumentNullException.ThrowIfNull(_emailConfig, nameof(_emailConfig));
 
-            using var client = new SmtpClient();
-            client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, _secureSocketOptions);
+            _client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, _secureSocketOptions, token);
 
-            client.Authenticate(_emailConfig.UserName, _emailConfig.Password);
+            _client.Authenticate(_emailConfig.UserName, _emailConfig.Password, token);
 
-            await client.SendAsync(messages);
-            await client.DisconnectAsync(true);
+            await _client.SendAsync(messages, token);
+            await _client.DisconnectAsync(true, token);
         }
 
-        public async Task SendMessages(IList<MimeMessage> messages)
+        public async Task SendMessages(IList<MimeMessage> messages, CancellationToken token = default)
         {
             ArgumentNullException.ThrowIfNull(_emailConfig, nameof(_emailConfig));
 
-            using var client = new SmtpClient();
-            client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, _secureSocketOptions);
+            _client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, _secureSocketOptions, token);
 
-            client.Authenticate(_emailConfig.UserName, _emailConfig.Password);
+            _client.Authenticate(_emailConfig.UserName, _emailConfig.Password);
 
             Task[] tasks = new Task[messages.Count];
 
             for (int i = 0; i < messages.Count; i++)
             {
-                tasks[i] = client.SendAsync(messages[i]);
+                tasks[i] = _client.SendAsync(messages[i], token);
             }
 
             await Task.WhenAll(tasks);
-            await client.DisconnectAsync(true);
+            await _client.DisconnectAsync(true, token);
         }
         public MimeMessage CreatedMessage(string to, string subject, string body, string bodyType = "html")
         {
-            if (_emailConfig is null)
-            {
-                throw new ArgumentNullException(nameof(_emailConfig));
-            }
+            ArgumentNullException.ThrowIfNull(_emailConfig, nameof(_emailConfig));
 
             var message = new MimeMessage();
 
@@ -81,6 +79,9 @@ namespace Server.Service
             return message;
         }
 
-
+        public void Dispose()
+        {
+            _client.Dispose();
+        }
     }
 }

@@ -23,8 +23,9 @@ namespace Shared.Service
             Routing.RegisterRoute(nameof(RegisterV), typeof(RegisterV));
             Routing.RegisterRoute(nameof(ConfirmEmailV), typeof(ConfirmEmailV));
             Routing.RegisterRoute(nameof(LogInV), typeof(LogInV));
+            //Routing.RegisterRoute(nameof(UserDisplayV), typeof(UserDisplayV));
 
-
+             
         }
     }
 }

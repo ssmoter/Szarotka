@@ -1,5 +1,7 @@
 ﻿using DataBase.Data;
 
+using MailKit.Net.Smtp;
+
 using Server.Endpoints;
 using Server.Model;
 using Server.Validation;
@@ -43,6 +45,7 @@ namespace Server.Service
             });
             services.AddScoped<IEditUserService, EditUserService>();
             services.AddScoped<IEditUserEndpoint, EditUserEndpoint>();
+            services.AddScoped<ISmtpClient, SmtpClient>();
 
 
             return services;

@@ -4,6 +4,7 @@ using DataBase.Service;
 
 using Server.Helper;
 using Server.SqlQuery;
+using Server.Validation;
 
 namespace Server.Service
 {
@@ -17,11 +18,13 @@ namespace Server.Service
     {
         private readonly IAccessDataBase _db;
         private readonly ITimeService _timeService;
+        private readonly IUserValidation _userValidation;
 
-        public LoginService(IAccessDataBase db, ITimeService timeService)
+        public LoginService(IAccessDataBase db, ITimeService timeService, IUserValidation userValidation)
         {
             _db = db;
             _timeService = timeService;
+            _userValidation = userValidation;
         }
 
         public async Task<User> LogIn(LoginUser user)
@@ -34,11 +37,10 @@ namespace Server.Service
 
             var firstUser = dbUser.FirstOrDefault();
 
+            _userValidation.AccountNotFound(firstUser);
             if (firstUser is null)
             {
-                var valid = new ValidationException();
-                valid.AddError("Account not found", EnumsList.Validation.AccountNotFound);
-                throw valid;
+                throw _userValidation.Validation.Throw();
             }
             firstUser.UserUpdatedId = firstUser.Id;
             if (user.RememberMe != firstUser.RememberMe)

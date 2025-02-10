@@ -2,14 +2,15 @@
 using DataBase.Model.EntitiesServer;
 
 using Server.Service;
+using Server.Validation;
 
 namespace Server.Endpoints
 {
     public interface ILoginUserEndpoint
     {
-        Task<IResult> LogInUser(LoginUser user);
-        Task<IResult> LogOutUser(string user);
-        Task<IResult> RefreshToken(string token);
+        Task<IResult> LogInUser(LoginUser user, CancellationToken token = default);
+        Task<IResult> LogOutUser(string user, CancellationToken token = default);
+        Task<IResult> RefreshToken(string userToken, CancellationToken token = default);
     }
 
     public class LoginUserEndpoint : ILoginUserEndpoint
@@ -18,65 +19,67 @@ namespace Server.Endpoints
         private readonly ILoginService _loginService;
         private readonly IEmailConfirmService _emailConfirmService;
         private readonly IAuthenticationService _authenticationService;
+        private readonly IUserValidation _userValidation;
 
-        public LoginUserEndpoint(IAccessDataBase db, ILoginService loginService, IEmailConfirmService emailConfirmService, IAuthenticationService authenticationService)
+        public LoginUserEndpoint(IAccessDataBase db,
+                                 ILoginService loginService,
+                                 IEmailConfirmService emailConfirmService,
+                                 IAuthenticationService authenticationService,
+                                 IUserValidation userValidation)
         {
             _db = db;
             _loginService = loginService;
             _emailConfirmService = emailConfirmService;
             _authenticationService = authenticationService;
+            _userValidation = userValidation;
         }
 
 
 
-        public async Task<IResult> LogInUser(LoginUser user)
+        public async Task<IResult> LogInUser(LoginUser user, CancellationToken token = default)
         {
-            var valid = new ValidationException();
             try
             {
+                _userValidation.LoginIsNull(user);
                 if (user is null)
                 {
-                    valid.AddError("Login is null", EnumsList.Validation.LoginIsNull);
-                    throw valid;
+                    throw _userValidation.Validation.Throw();
                 }
-                if (string.IsNullOrWhiteSpace(user.Email))
-                {
-                    valid.AddError("Email is null", EnumsList.Validation.EmailIsNull);
-                }
-                if (string.IsNullOrWhiteSpace(user.Password))
-                {
-                    valid.AddError("Password is null", EnumsList.Validation.PasswordIsNull);
-                }
+                _userValidation.EmailIsNull(user.Email);
+                _userValidation.PasswordIsNull(user.Password);
 
-                if (valid.Count > 0)
+
+                if (_userValidation.Validation.ValidationErrors.Count > 0)
                 {
-                    throw valid;
+                    throw _userValidation.Validation.Throw();
                 }
+                token.ThrowIfCancellationRequested();
 
                 var dbUser = await _loginService.LogIn(user);
+                _userValidation.AccountWasDelete(dbUser);
 
-                if (dbUser.IsDelete == true)
+                if (_userValidation.AccountEmailIsNotConfirm(dbUser) == Model.ServerEnums.Result.Error)
                 {
-                    valid.AddError("Account was delete", EnumsList.Validation.AccountWasDelete);
-                }
-                if (dbUser.IsEmailConfirm == false)
-                {
-                    valid.AddError("Confirm your email, new code was sent", EnumsList.Validation.AccountEmailIsNotConfirm);
-                    await _emailConfirmService.SendVerificationEmailCode(dbUser);
+                    await _emailConfirmService.SendVerificationEmailCode(dbUser, token);
                 }
 
-                if (valid.Count > 0)
+                if (_userValidation.Validation.ValidationErrors.Count > 0)
                 {
-                    throw valid;
+                    throw _userValidation.Validation.Throw();
                 }
 
-                var token = await _authenticationService.AuthenticateAsync(dbUser);
+                var userToken = await _authenticationService.AuthenticateAsync(dbUser);
 
-                return Results.Ok(new User() { Token = token.Token });
+                return Results.Ok(new User() { Token = userToken.Token });
             }
             catch (ValidationException)
             {
-                Console.WriteLine(valid.GetError());
+                Console.WriteLine(_userValidation.Validation.GetError());
+                throw;
+            }
+            catch (OperationCanceledException ex)
+            {
+                Console.WriteLine(ex.Message);
                 throw;
             }
             catch (Exception ex)
@@ -87,15 +90,13 @@ namespace Server.Endpoints
             }
         }
 
-        public async Task<IResult> RefreshToken(string token)
+        public async Task<IResult> RefreshToken(string userToken, CancellationToken token = default)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(token))
-                {
-                    throw new ArgumentNullException(nameof(token));
-                }
-                var newToken = await _authenticationService.AuthenticateAsync(token);
+                ArgumentNullException.ThrowIfNullOrWhiteSpace(userToken, nameof(userToken));
+                token.ThrowIfCancellationRequested();
+                var newToken = await _authenticationService.AuthenticateAsync(userToken);
 
                 return Results.Ok(newToken);
             }
@@ -103,6 +104,11 @@ namespace Server.Endpoints
             {
                 return Results.Unauthorized();
             }
+            catch (OperationCanceledException ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
@@ -111,11 +117,26 @@ namespace Server.Endpoints
             }
         }
 
-
-        public async Task<IResult> LogOutUser(string user)
+        public async Task<IResult> LogOutUser(string user, CancellationToken token = default)
         {
-            await Task.Delay(1);
-            return Results.Ok();
+            try
+            {
+                await Task.Delay(1);
+                token.ThrowIfCancellationRequested();
+                return Results.Ok();
+            }
+            catch (OperationCanceledException ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+
         }
 
 

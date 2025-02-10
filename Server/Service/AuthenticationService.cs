@@ -48,12 +48,7 @@ namespace Server.Service
             var result = DataBase.Helper.ReadToken.GetUserFromToken(token);
             var sql = LoginQuery.InFromId(result.user.Id.ToString());
             var users = await _db.DataBaseAsync.QueryAsync<User>(sql);
-            var user = users.FirstOrDefault();
-
-            if (user is null)
-            {
-                throw new UnauthorizedAccessException();
-            }
+            var user = users.FirstOrDefault() ?? throw new UnauthorizedAccessException();
 
             if (user.Id == result.user.Id)
             {

@@ -73,13 +73,13 @@ namespace Server.Service
             _userValidation.CodeNotExist(userEmail);
             if (userEmail is null)
             {
-                throw _userValidation.Validation;
+                throw _userValidation.Validation.Throw();
             }
             _userValidation.CodeIsExpire(userEmail);
 
-            if (_userValidation.Validation.Count > 0)
+            if (_userValidation.Validation.ValidationErrors.Count > 0)
             {
-                throw _userValidation.Validation;
+                throw _userValidation.Validation.Throw();
             }
 
             var user = new User()
@@ -113,7 +113,7 @@ namespace Server.Service
 
             if (email is null)
             {
-                throw _userValidation.Validation;
+                throw _userValidation.Validation.Throw();
             }
 
             return email;

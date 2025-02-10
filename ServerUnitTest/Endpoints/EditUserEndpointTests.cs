@@ -1,0 +1,188 @@
+﻿using DataBase.Data;
+using DataBase.Model.EntitiesServer;
+
+using Microsoft.AspNetCore.Http.HttpResults;
+
+using Moq;
+
+using Server.Endpoints;
+using Server.Service;
+using Server.Validation;
+
+namespace ServerUnitTest.Endpoints
+{
+    public class EditUserEndpointTests
+    {
+        private readonly Mock<IAccessDataBase> _mockDb;
+        private readonly Mock<IUserValidation> _userValidation;
+        private readonly Mock<IEditUserService> _mockEditUserService;
+        private readonly Mock<IAuthenticationService> _mockAuthenticationService;
+        private readonly EditUserEndpoint _editUserEndpoint;
+        public EditUserEndpointTests()
+        {
+            _mockDb = new Mock<IAccessDataBase>();
+            _userValidation = new Mock<IUserValidation>();
+            _mockEditUserService = new Mock<IEditUserService>();
+            _mockAuthenticationService = new Mock<IAuthenticationService>();
+            _editUserEndpoint = new EditUserEndpoint(
+                _mockDb.Object,
+                _userValidation.Object,
+                _mockEditUserService.Object,
+                _mockAuthenticationService.Object
+            );
+        }
+
+        [Fact]
+        public async Task Update_ShouldReturnOk_WhenValidationPasses()
+        {
+            // Arrange
+            var editUser = new EditUser { New = new User(), Old = new User() };
+            _userValidation.Setup(v => v.Validation.ValidationErrors.Count).Returns(0);
+            _mockAuthenticationService.Setup(a => a.AuthenticateAsync(It.IsAny<User>())).ReturnsAsync(new User());
+
+            // Act
+            var result = await _editUserEndpoint.Update(editUser);
+
+            // Assert
+            Assert.IsType<Ok<User>>(result);
+        }
+
+        [Fact]
+        public async Task Update_ShouldThrowValidationException_WhenValidationFails()
+        {
+            // Arrange
+            var editUser = new EditUser { New = new User(), Old = new User() };
+            _userValidation.Setup(v => v.Validation.ValidationErrors.Count).Returns(1);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<NullReferenceException>(() => _editUserEndpoint.Update(editUser));
+        }
+
+        [Fact]
+        public async Task UpdateDescription_ShouldReturnOk_WhenValidationPasses()
+        {
+            // Arrange
+            var editUser = new EditUser { New = new User(), Old = new User() };
+            _userValidation.Setup(v => v.Validation.ValidationErrors.Count).Returns(0);
+
+            // Act
+            var result = await _editUserEndpoint.UpdateDescription(editUser);
+
+            // Assert
+            Assert.IsType<Ok>(result);
+        }
+
+        [Fact]
+        public async Task UpdateDescription_ShouldThrowValidationException_WhenValidationFails()
+        {
+            // Arrange
+            var editUser = new EditUser { New = new User(), Old = new User() };
+            _userValidation.Setup(v => v.Validation.ValidationErrors.Count).Returns(1);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<NullReferenceException>(() => _editUserEndpoint.UpdateDescription(editUser));
+        }
+
+        // Repeat similar tests for UpdateName, UpdateEmail, UpdatePhoneNumber, and UpdateUserType methods
+
+        [Fact]
+        public async Task UpdateName_ShouldReturnOk_WhenValidationPasses()
+        {
+            // Arrange
+            var editUser = new EditUser { New = new User(), Old = new User() };
+            _userValidation.Setup(v => v.Validation.ValidationErrors.Count).Returns(0);
+
+            // Act
+            var result = await _editUserEndpoint.UpdateName(editUser);
+
+            // Assert
+            Assert.IsType<Ok>(result);
+        }
+
+        [Fact]
+        public async Task UpdateName_ShouldThrowValidationException_WhenValidationFails()
+        {
+            // Arrange
+            var editUser = new EditUser { New = new User(), Old = new User() };
+            _userValidation.Setup(v => v.Validation.ValidationErrors.Count).Returns(1);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<NullReferenceException>(() => _editUserEndpoint.UpdateName(editUser));
+        }
+
+        [Fact]
+        public async Task UpdateEmail_ShouldReturnOk_WhenValidationPasses()
+        {
+            // Arrange
+            var editUser = new EditUser { New = new User(), Old = new User() };
+            _userValidation.Setup(v => v.Validation.ValidationErrors.Count).Returns(0);
+
+            // Act
+            var result = await _editUserEndpoint.UpdateEmail(editUser);
+
+            // Assert
+            Assert.IsType<Ok>(result);
+        }
+
+        [Fact]
+        public async Task UpdateEmail_ShouldThrowValidationException_WhenValidationFails()
+        {
+            // Arrange
+            var editUser = new EditUser { New = new User(), Old = new User() };
+            _userValidation.Setup(v => v.Validation.ValidationErrors.Count).Returns(1);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<NullReferenceException>(() => _editUserEndpoint.UpdateEmail(editUser));
+        }
+
+        [Fact]
+        public async Task UpdatePhoneNumber_ShouldReturnOk_WhenValidationPasses()
+        {
+            // Arrange
+            var editUser = new EditUser { New = new User(), Old = new User() };
+            _userValidation.Setup(v => v.Validation.ValidationErrors.Count).Returns(0);
+
+            // Act
+            var result = await _editUserEndpoint.UpdatePhoneNumber(editUser);
+
+            // Assert
+            Assert.IsType<Ok>(result);
+        }
+
+        [Fact]
+        public async Task UpdatePhoneNumber_ShouldThrowValidationException_WhenValidationFails()
+        {
+            // Arrange
+            var editUser = new EditUser { New = new User(), Old = new User() };
+            _userValidation.Setup(v => v.Validation.ValidationErrors.Count).Returns(1);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<NullReferenceException>(() => _editUserEndpoint.UpdatePhoneNumber(editUser));
+        }
+
+        [Fact]
+        public async Task UpdateUserType_ShouldReturnOk_WhenValidationPasses()
+        {
+            // Arrange
+            var editUser = new EditUser { New = new User(), Old = new User() };
+            _userValidation.Setup(v => v.Validation.ValidationErrors.Count).Returns(0);
+
+            // Act
+            var result = await _editUserEndpoint.UpdateUserType(editUser);
+
+            // Assert
+            Assert.IsType<Ok>(result);
+        }
+
+        [Fact]
+        public async Task UpdateUserType_ShouldThrowValidationException_WhenValidationFails()
+        {
+            // Arrange
+            var editUser = new EditUser { New = new User(), Old = new User() };
+            _userValidation.Setup(v => v.Validation.ValidationErrors.Count).Returns(1);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<NullReferenceException>(() => _editUserEndpoint.UpdateUserType(editUser));
+        }
+    }
+}

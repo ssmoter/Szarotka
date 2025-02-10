@@ -10,8 +10,8 @@ namespace Server.Endpoints
 {
     public interface IRegisterUserEndpoint
     {
-        Task<IResult> ConfirmEmail(int code);
-        Task<IResult> InsertUser(RegisterUser registerUser);
+        Task<IResult> ConfirmEmail(int code, CancellationToken token = default);
+        Task<IResult> InsertUser(RegisterUser registerUser, CancellationToken token = default);
     }
 
 
@@ -40,14 +40,14 @@ namespace Server.Endpoints
             _time = time;
         }
 
-        public async Task<IResult> InsertUser(RegisterUser registerUser)
+        public async Task<IResult> InsertUser(RegisterUser registerUser, CancellationToken token = default)
         {
             try
             {
                 #region Validation
                 if (_userValidation.RegisterUserNull(registerUser) == ServerEnums.Result.Error)
                 {
-                    throw _userValidation.Validation;
+                    throw _userValidation.Validation.Throw();
                 }
                 if (_userValidation.EmailIsNull(registerUser.Email) == ServerEnums.Result.Success)
                 {
@@ -66,14 +66,14 @@ namespace Server.Endpoints
                 }
                 #endregion
 
-                if (_userValidation.Validation.Count > 0)
+                if (_userValidation.Validation?.ValidationErrors?.Count > 0)
                 {
-                    throw _userValidation.Validation;
+                    throw _userValidation.Validation.Throw();
                 }
-
+                token.ThrowIfCancellationRequested();
                 RegisterUser result = await _registerService.InsertNewUser(registerUser);
 
-                await _emailConfirmService.SendVerificationEmailCode(result);
+                await _emailConfirmService.SendVerificationEmailCode(result, token);
 
                 return Results.Ok();
             }
@@ -82,23 +82,35 @@ namespace Server.Endpoints
                 Console.WriteLine(_userValidation.Validation.GetError());
                 throw;
             }
+            catch (OperationCanceledException ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 _db.SaveLog(ex);
                 throw;
             }
+
         }
-        public async Task<IResult> ConfirmEmail(int code)
+        public async Task<IResult> ConfirmEmail(int code, CancellationToken token = default)
         {
             try
             {
+                token.ThrowIfCancellationRequested();
                 var user = await _registerService.GetUserEmailFromCodeAndRemoveOld(code);
                 return Results.Ok(user);
             }
             catch (ValidationException ex)
             {
                 Console.WriteLine(ex.GetError());
+                throw;
+            }
+            catch (OperationCanceledException ex)
+            {
+                Console.WriteLine(ex.Message);
                 throw;
             }
             catch (Exception ex)

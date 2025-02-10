@@ -8,12 +8,12 @@ namespace Server.Endpoints
 {
     public interface IEditUserEndpoint
     {
-        Task<IResult> Update(EditUser edit);
-        Task<IResult> UpdateDescription(EditUser edit);
-        Task<IResult> UpdateEmail(EditUser edit);
-        Task<IResult> UpdateName(EditUser edit);
-        Task<IResult> UpdatePhoneNumber(EditUser edit);
-        Task<IResult> UpdateUserType(EditUser edit);
+        Task<IResult> Update(EditUser edit, CancellationToken token = default);
+        Task<IResult> UpdateDescription(EditUser edit, CancellationToken token = default);
+        Task<IResult> UpdateEmail(EditUser edit, CancellationToken token = default);
+        Task<IResult> UpdateName(EditUser edit, CancellationToken token = default);
+        Task<IResult> UpdatePhoneNumber(EditUser edit, CancellationToken token = default);
+        Task<IResult> UpdateUserType(EditUser edit, CancellationToken token = default);
     }
 
     public class EditUserEndpoint : IEditUserEndpoint
@@ -35,7 +35,7 @@ namespace Server.Endpoints
         }
 
 
-        public async Task<IResult> Update(EditUser edit)
+        public async Task<IResult> Update(EditUser edit, CancellationToken token = default)
         {
             try
             {
@@ -49,15 +49,16 @@ namespace Server.Endpoints
                     UpdateUserTypeTask(edit)
                 };
 
-                if (_userValidation.Validation.Count == 0)
+                if (_userValidation.Validation.ValidationErrors.Count == 0)
                 {
+                    token.ThrowIfCancellationRequested();
                     await Task.WhenAll(tasks);
-                    var token = await _authenticationService.AuthenticateAsync(edit.New);
-                    return Results.Ok(token);
+                    var userToken = await CreatedNewToken(edit.New.Id.ToString());
+                    return Results.Ok(userToken);
                 }
                 else
                 {
-                    throw _userValidation.Validation;
+                    throw _userValidation.Validation.Throw();
                 }
             }
             catch (ValidationException)
@@ -73,24 +74,30 @@ namespace Server.Endpoints
             }
         }
 
-        public async Task<IResult> UpdateDescription(EditUser edit)
+        public async Task<IResult> UpdateDescription(EditUser edit, CancellationToken token = default)
         {
             try
             {
-
-                if (_userValidation.Validation.Count == 0)
+                if (_userValidation.Validation.ValidationErrors.Count == 0)
                 {
+                    token.ThrowIfCancellationRequested();
                     await UpdateDescriptionTask(edit);
-                    return Results.Ok();
+                    var userToken = await CreatedNewToken(edit.New.Id.ToString());
+                    return Results.Ok(userToken);
                 }
                 else
                 {
-                    throw _userValidation.Validation;
+                    throw _userValidation.Validation.Throw();
                 }
             }
             catch (ValidationException)
             {
                 Console.WriteLine(_userValidation.Validation.GetError());
+                throw;
+            }
+            catch (OperationCanceledException ex)
+            {
+                Console.WriteLine(ex.Message);
                 throw;
             }
             catch (Exception ex)
@@ -100,24 +107,30 @@ namespace Server.Endpoints
                 throw;
             }
         }
-        public async Task<IResult> UpdateName(EditUser edit)
+        public async Task<IResult> UpdateName(EditUser edit, CancellationToken token = default)
         {
             try
             {
-
-                if (_userValidation.Validation.Count == 0)
+                if (_userValidation.Validation.ValidationErrors.Count == 0)
                 {
+                    token.ThrowIfCancellationRequested();
                     await UpdateNameTask(edit);
-                    return Results.Ok();
+                    var userToken = await CreatedNewToken(edit.New.Id.ToString());
+                    return Results.Ok(userToken);
                 }
                 else
                 {
-                    throw _userValidation.Validation;
+                    throw _userValidation.Validation.Throw();
                 }
             }
             catch (ValidationException)
             {
                 Console.WriteLine(_userValidation.Validation.GetError());
+                throw;
+            }
+            catch (OperationCanceledException ex)
+            {
+                Console.WriteLine(ex.Message);
                 throw;
             }
             catch (Exception ex)
@@ -127,24 +140,31 @@ namespace Server.Endpoints
                 throw;
             }
         }
-        public async Task<IResult> UpdateEmail(EditUser edit)
+        public async Task<IResult> UpdateEmail(EditUser edit, CancellationToken token = default)
         {
             try
             {
 
-                if (_userValidation.Validation.Count == 0)
+                if (_userValidation.Validation.ValidationErrors.Count == 0)
                 {
+                    token.ThrowIfCancellationRequested();
                     await UpdateEmailTask(edit);
-                    return Results.Ok();
+                    var userToken = await CreatedNewToken(edit.New.Id.ToString());
+                    return Results.Ok(userToken);
                 }
                 else
                 {
-                    throw _userValidation.Validation;
+                    throw _userValidation.Validation.Throw();
                 }
             }
             catch (ValidationException)
             {
                 Console.WriteLine(_userValidation.Validation.GetError());
+                throw;
+            }
+            catch (OperationCanceledException ex)
+            {
+                Console.WriteLine(ex.Message);
                 throw;
             }
             catch (Exception ex)
@@ -154,24 +174,31 @@ namespace Server.Endpoints
                 throw;
             }
         }
-        public async Task<IResult> UpdatePhoneNumber(EditUser edit)
+        public async Task<IResult> UpdatePhoneNumber(EditUser edit, CancellationToken token = default)
         {
             try
             {
 
-                if (_userValidation.Validation.Count == 0)
+                if (_userValidation.Validation.ValidationErrors.Count == 0)
                 {
+                    token.ThrowIfCancellationRequested();
                     await UpdatePhoneNumberTask(edit);
-                    return Results.Ok();
+                    var userToken = await CreatedNewToken(edit.New.Id.ToString());
+                    return Results.Ok(userToken);
                 }
                 else
                 {
-                    throw _userValidation.Validation;
+                    throw _userValidation.Validation.Throw();
                 }
             }
             catch (ValidationException)
             {
                 Console.WriteLine(_userValidation.Validation.GetError());
+                throw;
+            }
+            catch (OperationCanceledException ex)
+            {
+                Console.WriteLine(ex.Message);
                 throw;
             }
             catch (Exception ex)
@@ -181,23 +208,30 @@ namespace Server.Endpoints
                 throw;
             }
         }
-        public async Task<IResult> UpdateUserType(EditUser edit)
+        public async Task<IResult> UpdateUserType(EditUser edit, CancellationToken token = default)
         {
             try
             {
-                if (_userValidation.Validation.Count == 0)
+                if (_userValidation.Validation.ValidationErrors.Count == 0)
                 {
+                    token.ThrowIfCancellationRequested();
                     await UpdateUserTypeTask(edit);
-                    return Results.Ok();
+                    var userToken = await CreatedNewToken(edit.New.Id.ToString());
+                    return Results.Ok(userToken);
                 }
                 else
                 {
-                    throw _userValidation.Validation;
+                    throw _userValidation.Validation.Throw();
                 }
             }
             catch (ValidationException)
             {
                 Console.WriteLine(_userValidation.Validation.GetError());
+                throw;
+            }
+            catch (OperationCanceledException ex)
+            {
+                Console.WriteLine(ex.Message);
                 throw;
             }
             catch (Exception ex)
@@ -272,6 +306,19 @@ namespace Server.Endpoints
             {
                 await _editUser.UpdateUserType(edit.New);
             }
+        }
+
+
+
+        private async Task<User> CreatedNewToken(string id)
+        {
+            var sql = SqlQuery.LoginQuery.InFromId(id);
+            var users = await _db.DataBaseAsync.QueryAsync<User>(sql);
+
+            User updateUser = users.FirstOrDefault() ?? throw new UnauthorizedAccessException();
+
+            var userToken = await _authenticationService.AuthenticateAsync(updateUser);
+            return userToken;
         }
     }
 }

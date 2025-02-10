@@ -35,7 +35,24 @@ builder.Services.AddSecurityServicesServer(builder.Configuration);
 
 builder.Services.AddAuthorization();
 
+#if DEBUG
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+#endif
+
 var app = builder.Build();
+
+#if DEBUG
+app.UseCors("AllowAll");
+#endif
 
 app.UseExceptionHandler();
 
@@ -43,21 +60,22 @@ app.UseRouting();
 app.UseAuthorization();
 
 
+
 var user = app.MapGroup("/user");
-user.MapPost("/register", async ([FromBody] RegisterUser user, IRegisterUserEndpoint registerUserEndpoint)
+user.MapPost("/register", async ([FromBody] RegisterUser user, IRegisterUserEndpoint registerUserEndpoint, CancellationToken token = default)
     =>
     {
-        return await registerUserEndpoint.InsertUser(user);
+        return await registerUserEndpoint.InsertUser(user, token);
     });
-user.MapGet("/confirm_email/{code}", async (int code, IRegisterUserEndpoint registerUserEndpoint)
+user.MapGet("/confirm_email/{code}", async (int code, IRegisterUserEndpoint registerUserEndpoint, CancellationToken token = default)
     =>
     {
-        return await registerUserEndpoint.ConfirmEmail(code);
+        return await registerUserEndpoint.ConfirmEmail(code, token);
     });
-user.MapPost("login", async ([FromBody] LoginUser user, ILoginUserEndpoint loginUserEndpoint)
+user.MapPost("login", async ([FromBody] LoginUser user, HttpContext context, ILoginUserEndpoint loginUserEndpoint, CancellationToken token = default)
     =>
     {
-        return await loginUserEndpoint.LogInUser(user);
+        return await loginUserEndpoint.LogInUser(user, token);
     });
 user.MapGet("logout", ( /*ILoginUserEndpoint loginUserEndpoint*/)
     =>
@@ -65,7 +83,7 @@ user.MapGet("logout", ( /*ILoginUserEndpoint loginUserEndpoint*/)
     throw new NotImplementedException();
     //return await loginUserEndpoint.LogOutUser("user");
 }).RequireAuthorization();
-user.MapGet("refresh_token", async (HttpContext context, ILoginUserEndpoint loginUserEndpoint)
+user.MapGet("refresh_token", async (HttpContext context, ILoginUserEndpoint loginUserEndpoint, CancellationToken token = default)
     =>
 {
     // Pobierz wartość nagłówka Authorization
@@ -80,19 +98,19 @@ user.MapGet("refresh_token", async (HttpContext context, ILoginUserEndpoint logi
         return Results.Unauthorized();
     }
     // Pobierz token
-    var token = DataBase.Helper.ReadToken.RemoveBearer(authorizationHeader);
-    if (token is null)
+    var userToken = DataBase.Helper.ReadToken.RemoveBearer(authorizationHeader);
+    if (userToken is null)
     {
         return Results.Unauthorized();
     }
-    return await loginUserEndpoint.RefreshToken(token);
+    return await loginUserEndpoint.RefreshToken(userToken, token);
 }).RequireAuthorization();
-user.MapPost("edit", async ([FromBody] User user, IEditUserEndpoint editUserEndpoint, HttpContext context)
+user.MapPost("edit", async ([FromBody] User user, IEditUserEndpoint editUserEndpoint, HttpContext context, CancellationToken token = default)
     =>
 {
     var authorizationHeader = context.Request.Headers.Authorization.ToString();
-    var token = DataBase.Helper.ReadToken.RemoveBearer(authorizationHeader);
-    var tokenModel = DataBase.Helper.ReadToken.GetUserFromToken(token);
+    var userToken = DataBase.Helper.ReadToken.RemoveBearer(authorizationHeader);
+    var tokenModel = DataBase.Helper.ReadToken.GetUserFromToken(userToken);
 
     user.UserUpdatedId = new Guid(tokenModel.user.Id.ToByteArray());
     user.Id = new Guid(tokenModel.user.Id.ToByteArray());
@@ -102,7 +120,7 @@ user.MapPost("edit", async ([FromBody] User user, IEditUserEndpoint editUserEndp
         Old = tokenModel.user,
     };
 
-    return await editUserEndpoint.Update(editUser);
+    return await editUserEndpoint.Update(editUser, token);
 }).RequireAuthorization();
 
 
@@ -127,7 +145,7 @@ var sampleTodos = new Todo[] {
 
 var todosApi = app.MapGroup("/todos");
 todosApi.RequireAuthorization();
-todosApi.MapGet("/", () => sampleTodos);
+todosApi.MapGet("/", () => new DataBase.Data.AccessDataBase().SaveLog(new Exception("test")));
 todosApi.MapGet("/{id}", (int id) =>
     sampleTodos.FirstOrDefault(a => a.Id == id) is { } todo
         ? Results.Ok(todo)

@@ -28,7 +28,7 @@ Description,
 PhoneNumber,
 IsDelete,
 IsEmailConfirm
-FROM User
+FROM UserP
 WHERE
 Email = '{user.Email}'
 AND
@@ -48,7 +48,7 @@ LIMIT 1
             };
             var sql = LoginQuery.UpdateRememberMe(user);
             var expected = $@"
-UPDATE User
+UPDATE UserP
 SET
 RememberMe = {user.RememberMe},
 UpdatedTicks = {user.UpdatedTicks},
@@ -78,7 +78,7 @@ PhoneNumber,
 IsDelete,
 IsEmailConfirm,
 RememberMe
-FROM User
+FROM UserP
 WHERE
 Id = '{id}'
 LIMIT 1
