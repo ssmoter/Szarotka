@@ -27,7 +27,7 @@ namespace SzarotkaBlazor
             base.OnNavigatedTo(args);
             var update = UpdateDataBase();
             await update;
-            if (update.IsCompleted)
+            if (update.Result)
             {
                 await GotToLogin();
             }
@@ -38,7 +38,12 @@ namespace SzarotkaBlazor
             var user = await HelperTable.Get(nameof(UserAfterLogin.User.Token), _db);
             if (user is not null)
             {
-                UserAfterLogin.SetLoginUser(user.Value);
+                try
+                {
+                    UserAfterLogin.SetLoginUser(user.Value);
+                }
+                catch (Exception)
+                { }
             }
 
             if (!UserAfterLogin.IsLogin)
@@ -46,13 +51,15 @@ namespace SzarotkaBlazor
                 await Shell.Current.GoToAsync($"{nameof(Shared.Pages.LogIn.LogInV)}");
             }
         }
-        private async Task UpdateDataBase()
+        private async Task<bool> UpdateDataBase()
         {
+            var result = true;
             try
             {
                 var old = _createdDataBase.GetCurrentVersion();
                 if (!old.Equals(new DataBaseVersion()))
                 {
+                    result = false;
                     await Shell.Current.GoToAsync(nameof(Shared.Pages.UpdateDataBase.UpdateDataBaseV));
                 }
                 await _createdDataBase.CreateBackUp();
@@ -61,6 +68,7 @@ namespace SzarotkaBlazor
             {
                 _db.SaveLogExtension(ex);
             }
+            return result;
         }
 
         private async void Options_Clicked(object sender, EventArgs e)
@@ -85,7 +93,7 @@ namespace SzarotkaBlazor
             {
                 { nameof(User), user }
             };
-            //await Shell.Current.GoToAsync(nameof(Shared.Pages.UserP.UserDisplay.UserDisplayV), navigationParameter);
+            await Shell.Current.GoToAsync(nameof(Shared.Pages.UserDisplay.UserDisplayV), navigationParameter);
         }
     }
 }

@@ -42,6 +42,7 @@
 
 
 	<ItemGroup>
+	  <Folder Include="Pages\UserDisplay\Popup\" />
 	  <Folder Include="Platforms\Android\" />
 	  <Folder Include="Platforms\Windows\" />
 	</ItemGroup>
@@ -93,6 +94,12 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\UpdateDataBase\UpdateDataBaseV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\UserDisplay\Small\UserDisplaySmallV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\UserDisplay\UserDisplayV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

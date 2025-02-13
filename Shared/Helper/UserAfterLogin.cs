@@ -1,27 +1,27 @@
-﻿using DataBase.Data;
+﻿using CommunityToolkit.Maui.Alerts;
+
+using DataBase.Data;
 using DataBase.Model.EntitiesServer;
 
 using Shared.Data;
 using Shared.Model;
-
-using System.IdentityModel.Tokens.Jwt;
 
 namespace Shared.Helper
 {
     public partial class UserAfterLogin
     {
         public static DateTime Expires { get; private set; } = new();
-        public static bool IsLogin { get; private set; } = true;
+        public static bool IsLogin { get; private set; } = false;
         public static User User { get; private set; } = new();
+
         public static event Action<User, bool> OnLogin;
 
-        private static readonly JwtSecurityTokenHandler _handler = new();
         private readonly static IAccessDataBase _db;
 
         static UserAfterLogin()
         {
             _db = Shared.Service.AppServiceProvider.Current.GetRequiredService<IAccessDataBase>();
-            OnLogin?.Invoke(new(), true);
+            // OnLogin?.Invoke(new(), true);
         }
 
         public static void SetLoginUser(User token)
@@ -32,10 +32,11 @@ namespace Shared.Helper
         {
             try
             {
-                var result = DataBase.Helper.ReadToken.GetUserFromToken(token);
+                ArgumentNullException.ThrowIfNullOrWhiteSpace(token);
+                var (user, expires) = DataBase.Helper.ReadToken.GetUserFromToken(token);
 
-                User = result.user;
-                Expires = result.expires;
+                User = user;
+                Expires = expires;
 
                 IsLogin = true;
                 OnLogin?.Invoke(User, IsLogin);
@@ -47,8 +48,13 @@ namespace Shared.Helper
             {
                 RemoveLoginUser();
             }
+            catch (ArgumentException)
+            {
+
+            }
             catch (Exception ex)
             {
+                Toast.Make(ex.Message, CommunityToolkit.Maui.Core.ToastDuration.Long).Show();
                 _db.SaveLogExtension(ex);
             }
         }

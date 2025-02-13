@@ -27,7 +27,29 @@ namespace DataBase.Data
 
         public AccessDataBase()
         {
+            CreatedFolderPath();
+
             var path = Constants.DatabasePath;
+            DataBaseAsync ??= new SQLiteAsyncConnection(path, Constants.Flags);
+            DataBase ??= new SQLiteConnection(path, Constants.Flags);
+            _timeService = new CurrentUtc();
+        }
+        public AccessDataBase(ITimeService time)
+        {
+            CreatedFolderPath();
+
+            var path = Constants.DatabasePath;
+            DataBaseAsync ??= new SQLiteAsyncConnection(path, Constants.Flags);
+            DataBase ??= new SQLiteConnection(path, Constants.Flags);
+            _timeService = time;
+        }
+        /// <summary>
+        /// Tylko dla testów i serwera        
+        /// </summary>
+        /// <param name="path"></param>
+        public AccessDataBase(string path)
+        {
+
             DataBaseAsync ??= new SQLiteAsyncConnection(path, Constants.Flags);
             DataBase ??= new SQLiteConnection(path, Constants.Flags);
             _timeService = new CurrentUtc();
@@ -36,14 +58,9 @@ namespace DataBase.Data
         /// Tylko dla testów i serwera        
         /// </summary>
         /// <param name="path"></param>
-        public AccessDataBase(string path)
-        {
-            DataBaseAsync ??= new SQLiteAsyncConnection(path, Constants.Flags);
-            DataBase ??= new SQLiteConnection(path, Constants.Flags);
-            _timeService = new CurrentUtc();
-        }
         public AccessDataBase(string path, ITimeService time)
         {
+
             DataBaseAsync ??= new SQLiteAsyncConnection(path, Constants.Flags);
             DataBase ??= new SQLiteConnection(path, Constants.Flags);
             _timeService = time;
@@ -90,6 +107,14 @@ Error {log.CreatedDateTime}{Environment.NewLine}
         public async Task<string> GetServerUrlAsync()
         {
             return await Task.FromResult(Constants.ServerUrl);
+        }
+
+        private static void CreatedFolderPath()
+        {
+            if (!Directory.Exists(Constants.GetPathFolder))
+            {
+                Directory.CreateDirectory(Constants.GetPathFolder);
+            }
         }
 
         public void Dispose()

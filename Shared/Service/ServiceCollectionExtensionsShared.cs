@@ -4,6 +4,7 @@ using Shared.Data;
 using Shared.Data.ServerHttpClients;
 using Shared.Pages.ConfirmEmail;
 using Shared.Pages.LogIn;
+using Shared.Pages.UserDisplay;
 
 namespace Shared.Service
 {
@@ -43,8 +44,8 @@ namespace Shared.Service
             services.AddScoped<LogInVM>();
             services.AddScoped<LogInV>();
 
-            //services.AddScoped<UserDisplayVM>();
-            //services.AddScoped<UserDisplayV>();
+            services.AddScoped<UserDisplayVM>();
+            services.AddScoped<UserDisplayV>();
 
             return services;
         }

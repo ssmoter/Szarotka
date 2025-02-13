@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="Shared.Pages.UserDisplay.Small.UserDisplaySmallV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:user="clr-namespace:DataBase.Model.EntitiesServer;assembly=DataBase"
+    xmlns:vm="clr-namespace:Shared.Pages.UserDisplay.Small"
+    x:Name="this"
+    x:DataType="vm:UserDisplaySmallV">
+
+
+    <Grid BindingContext="{x:Reference this}">
+        <Border>
+
+            <ScrollView>
+
+                <Grid RowDefinitions="auto,auto,auto,*">
+
+                    <Grid
+                        Grid.Row="0"
+                        ColumnDefinitions="auto,*"
+                        RowDefinitions="*,*,*,*,*">
+
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Text="Nazwa:" />
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Text="{Binding User.Name}" />
+
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Text="Email:" />
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Text="{Binding User.Email}" />
+
+                        <Label
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Text="Opis:" />
+                        <Label
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Text="{Binding User.Description}" />
+
+                        <Label
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            Text="Nr telefonu:" />
+                        <Label
+                            Grid.Row="3"
+                            Grid.Column="1"
+                            Text="{Binding User.PhoneNumber}" />
+
+                        <Label
+                            Grid.Row="4"
+                            Grid.Column="0"
+                            Text="Typ użytkownika:" />
+                        <Label
+                            Grid.Row="4"
+                            Grid.Column="1"
+                            Text="{Binding User.UserType}" />
+
+
+                    </Grid>
+
+                    <Border Grid.Row="1" HorizontalOptions="Fill" />
+
+                    <Grid
+                        Grid.Row="2"
+                        ColumnDefinitions="auto,*"
+                        RowDefinitions="*,*,*">
+
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Text="Data utworzenia: " />
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Text="{Binding User.Created}" />
+
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Text="Ostatnia edycja: " />
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Text="{Binding User.Updated}" />
+
+                        <Label
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Text="Użytkownik który edytował: " />
+                        <Label
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Text="{Binding User.UserUpdatedId}" />
+
+                    </Grid>
+
+                </Grid>
+
+            </ScrollView>
+        </Border>
+    </Grid>
+
+
+</ContentView>

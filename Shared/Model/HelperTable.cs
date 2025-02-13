@@ -4,6 +4,7 @@ namespace Shared.Model
 {
     public partial class HelperTable : DataBase.Model.BaseEntities<Guid>
     {
+        [SQLite.Unique]
         public string Name { get; set; }
         public string Value { get; set; }
 
@@ -49,10 +50,11 @@ namespace Shared.Model
                     '{helperTable.UpdatedTicks}', 
                     '{helperTable.IsDelete}'
                 )
-                ON CONFLICT({nameof(Id)}) 
+                ON CONFLICT({nameof(Name)}) 
                 DO UPDATE SET 
                     {nameof(Name)} = '{helperTable.Name}', 
                     {nameof(Value)} = '{helperTable.Value}', 
+                    {nameof(IsDelete)} = '{helperTable.IsDelete}', 
                     {nameof(UpdatedTicks)} = '{helperTable.UpdatedTicks}'";
             return sql;
         }
