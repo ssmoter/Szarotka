@@ -5,6 +5,7 @@ using DataBase.Model.EntitiesServer;
 using Shared.Data;
 using Shared.Helper;
 using Shared.Model;
+using Shared.Service;
 
 using SzarotkaBlazor.Pages.Options.Main;
 
@@ -13,42 +14,38 @@ namespace SzarotkaBlazor
 {
     public partial class MainPage : ContentPage
     {
-        private readonly CreatedDataBase _createdDataBase;
+        private readonly ICreatedDataBase _createdDataBase;
         private readonly IAccessDataBase _db;
-        public MainPage(IAccessDataBase db)
+        public MainPage(IAccessDataBase db, ICreatedDataBase createdDataBase)
         {
             InitializeComponent();
             _db = db;
-            _createdDataBase = new(db);
-        }
-
-        protected override async void OnNavigatedTo(NavigatedToEventArgs args)
-        {
-            base.OnNavigatedTo(args);
-            var update = UpdateDataBase();
-            await update;
-            if (update.Result)
-            {
-                await GotToLogin();
-            }
+            _createdDataBase = createdDataBase;
         }
 
         private async Task GotToLogin()
         {
-            var user = await HelperTable.Get(nameof(UserAfterLogin.User.Token), _db);
-            if (user is not null)
+            try
             {
-                try
+                var user = await HelperTable.Get(nameof(UserAfterLogin.User.Token), _db);
+                if (user is not null)
                 {
-                    UserAfterLogin.SetLoginUser(user.Value);
+                    try
+                    {
+                        UserAfterLogin.SetLoginUser(user.Value);
+                    }
+                    catch (Exception)
+                    { }
                 }
-                catch (Exception)
-                { }
-            }
 
-            if (!UserAfterLogin.IsLogin)
+                if (!UserAfterLogin.IsLogin)
+                {
+                    await Shell.Current.GoToAsync($"{nameof(Shared.Pages.LogIn.LogInV)}");
+                }
+            }
+            catch (Exception ex)
             {
-                await Shell.Current.GoToAsync($"{nameof(Shared.Pages.LogIn.LogInV)}");
+                _db.SaveLogExtension(ex);
             }
         }
         private async Task<bool> UpdateDataBase()
@@ -93,6 +90,7 @@ namespace SzarotkaBlazor
             {
                 { nameof(User), user }
             };
+
             await Shell.Current.GoToAsync(nameof(Shared.Pages.UserDisplay.UserDisplayV), navigationParameter);
         }
     }

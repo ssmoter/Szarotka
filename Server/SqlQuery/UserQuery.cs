@@ -5,7 +5,17 @@ namespace Server.SqlQuery
 {
     public static class UserQuery
     {
-        public static string RegisterNewUser(RegisterUser user)
+        public static string RegisterNewUser(Guid Id,
+            long CreatedTicks,
+            long UpdatedTicks,
+            string Name,
+            string Description,
+            string Email,
+            string PhoneNumber,
+            UserType UserType,
+            bool IsDelete,
+            bool IsEmailConfirm,
+            string Password)
         {
             string sql = $@"
 INSERT INTO {nameof(User)}
@@ -25,24 +35,24 @@ INSERT INTO {nameof(User)}
 {nameof(User.UserCreatedId)}
 )
 VALUES(
-'{user.Id}',
-{user.CreatedTicks},
-{user.UpdatedTicks},
-'{user.Name}',
-'{user.Description}',
-'{user.Email}',
-'{user.PhoneNumber}',
-'{user.UserType}',
-'{user.IsDelete}',
-'{user.IsEmailConfirm}',
-'{user.Password}',
-'{user.Id}',
-'{user.Id}'
+@{nameof(Id)},
+@{nameof(CreatedTicks)},
+@{nameof(UpdatedTicks)},
+@{nameof(Name)},
+@{nameof(Description)},
+@{nameof(Email)},
+@{nameof(PhoneNumber)},
+@{nameof(UserType)},
+@{nameof(IsDelete)},
+@{nameof(IsEmailConfirm)},
+@{nameof(Password)},
+@{nameof(Id)},
+@{nameof(Id)}
 )
 ";
             return sql;
         }
-        public static string EmailConfirmInsert(ConfirmCode user)
+        public static string ConfirmCodeInsert(long CreatedTicks, long UpdatedTicks, Guid UserId, int Code, long ExpireDate)
         {
             string sql = $@"
 INSERT INTO {nameof(ConfirmCode)}
@@ -54,16 +64,16 @@ INSERT INTO {nameof(ConfirmCode)}
 {nameof(ConfirmCode.ExpireDate)}
 )
 VALUES(
-{user.CreatedTicks},
-{user.UpdatedTicks},
-'{user.UserId}',
-{user.Code},
-{user.ExpireDate}
+@{nameof(CreatedTicks)},
+@{nameof(UpdatedTicks)},
+@{nameof(UserId)},
+@{nameof(Code)},
+@{nameof(ExpireDate)}
 )
 ";
             return sql;
         }
-        public static string EmailConfirmCheck(int code)
+        public static string EmailConfirmCheck(int Code)
         {
             string sql = $@"
 SELECT
@@ -71,42 +81,42 @@ SELECT
 {nameof(ConfirmCode.ExpireDate)}
 FROM {nameof(ConfirmCode)}
 WHERE
-{nameof(ConfirmCode.Code)} = {code}
+{nameof(ConfirmCode.Code)} = @{nameof(Code)}
 LIMIT 1
 ";
             return sql;
         }
-        public static string EmailIsConfirmUpdate(User user)
+        public static string EmailIsConfirmUpdate(bool IsEmailConfirm, long UpdatedTicks, Guid UserUpdatedId, Guid Id)
         {
             string sql = $@"
 UPDATE {nameof(User)}
 SET
-{nameof(User.IsEmailConfirm)} = {user.IsEmailConfirm},
-{nameof(User.UpdatedTicks)} = '{user.UpdatedTicks}',
-{nameof(User.UserUpdatedId)} = '{user.UserUpdatedId}'
+{nameof(User.IsEmailConfirm)} = @{nameof(IsEmailConfirm)},
+{nameof(User.UpdatedTicks)} = @{nameof(UpdatedTicks)},
+{nameof(User.UserUpdatedId)} = @{nameof(UserUpdatedId)}
 WHERE
-{nameof(User.Id)} = '{user.Id}'
+{nameof(User.Id)} = @{nameof(Id)}
 ";
             return sql;
         }
-        public static string RemoveExpireCode(long ticksNow)
+        public static string RemoveExpireCode(long TicksNow)
         {
             string sql = $@"
 DELETE
 FROM {nameof(ConfirmCode)}
 WHERE
-{nameof(ConfirmCode.ExpireDate)} < {ticksNow}
+{nameof(ConfirmCode.ExpireDate)} < @{nameof(TicksNow)}
 ";
             return sql;
         }
-        public static string GetEmailFromId(Guid id)
+        public static string GetEmailFromId(Guid Id)
         {
             string sql = $@"
 SELECT
 {nameof(User.Email)}
 FROM {nameof(User)}
 WHERE
-{nameof(User.Id)} = '{id}'
+{nameof(User.Id)} = @{nameof(Id)}
 ";
             return sql;
         }
@@ -116,68 +126,68 @@ WHERE
 
 
 
-        public static string UpdateName(User user)
+        public static string UpdateName(string Name, long UpdatedTicks, Guid UserUpdatedId, Guid Id)
         {
             string sql = $@"
 UPDATE {nameof(User)}
 SET
-{nameof(User.Name)} = '{user.Name}',
-{nameof(User.UpdatedTicks)} = {user.UpdatedTicks},
-{nameof(User.UserUpdatedId)} = '{user.UserUpdatedId}'
+{nameof(User.Name)} = @{nameof(Name)},
+{nameof(User.UpdatedTicks)} = @{nameof(UpdatedTicks)},
+{nameof(User.UserUpdatedId)} = @{nameof(UserUpdatedId)}
 WHERE
-{nameof(User.Id)} = '{user.Id}'
+{nameof(User.Id)} = @{nameof(Id)}
 ";
             return sql;
         }
-        public static string UpdateDescription(User user)
+        public static string UpdateDescription(string Description, long UpdatedTicks, Guid UserUpdatedId, Guid Id)
         {
             string sql = $@"
 UPDATE {nameof(User)}
 SET
-{nameof(User.Description)} = '{user.Description}',
-{nameof(User.UpdatedTicks)} = {user.UpdatedTicks},
-{nameof(User.UserUpdatedId)} = '{user.UserUpdatedId}'
+{nameof(User.Description)} = @{nameof(Description)},
+{nameof(User.UpdatedTicks)} = @{nameof(UpdatedTicks)},
+{nameof(User.UserUpdatedId)} = @{nameof(UserUpdatedId)}
 WHERE
-{nameof(User.Id)} = '{user.Id}'
+{nameof(User.Id)} = @{nameof(Id)}
 ";
             return sql;
         }
-        public static string UpdateEmail(User user)
+        public static string UpdateEmail(string Email, long UpdatedTicks, Guid UserUpdatedId, Guid Id)
         {
             string sql = $@"
 UPDATE {nameof(User)}
 SET
-{nameof(User.Email)} = '{user.Email}',
-{nameof(User.UpdatedTicks)} = {user.UpdatedTicks},
-{nameof(User.UserUpdatedId)} = '{user.UserUpdatedId}'
+{nameof(User.Email)} = @{nameof(Email)},
+{nameof(User.UpdatedTicks)} = @{nameof(UpdatedTicks)},
+{nameof(User.UserUpdatedId)} = @{nameof(UserUpdatedId)}
 WHERE
-{nameof(User.Id)} = '{user.Id}'
-"; 
+{nameof(User.Id)} = @{nameof(Id)}
+";
             return sql;
         }
-        public static string UpdatePhoneNumber(User user)
+        public static string UpdatePhoneNumber(string PhoneNumber, long UpdatedTicks, Guid UserUpdatedId, Guid Id)
         {
             string sql = $@"
 UPDATE {nameof(User)}
 SET
-{nameof(User.PhoneNumber)} = '{user.PhoneNumber}',
-{nameof(User.UpdatedTicks)} = {user.UpdatedTicks},
-{nameof(User.UserUpdatedId)} = '{user.UserUpdatedId}'
+{nameof(User.PhoneNumber)} = @{nameof(PhoneNumber)},
+{nameof(User.UpdatedTicks)} = @{nameof(UpdatedTicks)},
+{nameof(User.UserUpdatedId)} = @{nameof(UserUpdatedId)}
 WHERE
-{nameof(User.Id)} = '{user.Id}'
-"; 
+{nameof(User.Id)} = @{nameof(Id)}
+";
             return sql;
         }
-        public static string UpdateUserType(User user)
+        public static string UpdateUserType(UserType UserType, long UpdatedTicks, Guid UserUpdatedId, Guid Id)
         {
             string sql = $@"
 UPDATE {nameof(User)}
 SET
-{nameof(User.UserType)} = {user.UserType},
-{nameof(User.UpdatedTicks)} = {user.UpdatedTicks},
-{nameof(User.UserUpdatedId)} = '{user.UserUpdatedId}'
+{nameof(User.UserType)} = @{nameof(UserType)},
+{nameof(User.UpdatedTicks)} = @{nameof(UpdatedTicks)},
+{nameof(User.UserUpdatedId)} = @{nameof(UserUpdatedId)}
 WHERE
-{nameof(User.Id)} = '{user.Id}'
+{nameof(User.Id)} = @{nameof(Id)}
 ";
             return sql;
         }

@@ -2,8 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
-using DataBase.Helper;
 using DataBase.Model.EntitiesServer;
+using DataBase.Translated;
 
 using Shared.Data;
 using Shared.Data.ServerHttpClients;

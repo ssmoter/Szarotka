@@ -3,13 +3,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
-using DataBase.Helper;
 using DataBase.Model.EntitiesServer;
+using DataBase.Translated;
 
 using Shared.Data;
 using Shared.Data.ServerHttpClients;
 using Shared.Helper;
-using Shared.Model;
 using Shared.Pages.ConfirmEmail;
 
 using System.Web;
@@ -135,7 +134,6 @@ namespace Shared.Pages.LogIn
                 {
                     await Shell.Current.GoToAsync("MainPage");
                 }
-
             }
             catch (ValidationExceptionClient ex)
             {

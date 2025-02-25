@@ -4,7 +4,7 @@ namespace Server.SqlQuery
 {
     public class LoginQuery
     {
-        public static string In(LoginUser user)
+        public static string In(string Email, string Password)
         {
             string sql = @$"
 SELECT
@@ -20,27 +20,27 @@ SELECT
 {nameof(User.IsEmailConfirm)}
 FROM {nameof(User)}
 WHERE
-{nameof(User.Email)} = '{user.Email}'
+{nameof(User.Email)} = @{nameof(Email)}
 AND
-{nameof(RegisterUser.Password)} = '{user.Password}'
+{nameof(RegisterUser.Password)} = @{nameof(Password)}
 LIMIT 1
 ";
             return sql;
         }
-        public static string UpdateRememberMe(User user)
+        public static string UpdateRememberMe(bool RememberMe, long UpdatedTicks, Guid UserUpdatedId, Guid Id)
         {
             string sql = @$"
 UPDATE {nameof(User)}
 SET
-{nameof(User.RememberMe)} = {user.RememberMe},
-{nameof(User.UpdatedTicks)} = {user.UpdatedTicks},
-{nameof(User.UserUpdatedId)} = '{user.UserUpdatedId}'
+{nameof(User.RememberMe)} = @{nameof(RememberMe)},
+{nameof(User.UpdatedTicks)} = @{nameof(UpdatedTicks)},
+{nameof(User.UserUpdatedId)} = @{nameof(UserUpdatedId)}
 WHERE
-{nameof(User.Id)} = '{user.Id}'
+{nameof(User.Id)} = @{nameof(Id)}
 ";
             return sql;
         }
-        public static string InFromId(string id)
+        public static string InFromId(string Id)
         {
             string sql = @$"
 SELECT
@@ -54,14 +54,39 @@ SELECT
 {nameof(User.PhoneNumber)},
 {nameof(User.IsDelete)},
 {nameof(User.IsEmailConfirm)},
-{nameof(User.RememberMe)}
+{nameof(User.RememberMe)},
+{nameof(User.UserUpdatedId)},
+{nameof(User.UserCreatedId)}
 FROM {nameof(User)}
 WHERE
-{nameof(User.Id)} = '{id}'
+{nameof(User.Id)} = @{nameof(Id)}
 LIMIT 1
 ";
             return sql;
         }
+        public static string PublicUser(string Id)
+        {
+            string sql = @$"
+SELECT
+{nameof(User.Id)},
+{nameof(User.Name)},
+{nameof(User.CreatedTicks)},
+{nameof(User.UpdatedTicks)},
+{nameof(User.UserType)},
+{nameof(User.Description)},
+{nameof(User.PhoneNumber)},
+{nameof(User.IsDelete)},
+{nameof(User.IsEmailConfirm)},
+{nameof(User.UserUpdatedId)},
+{nameof(User.UserCreatedId)}
+FROM {nameof(User)}
+WHERE
+{nameof(User.Id)} = @{nameof(Id)}
+LIMIT 1
+";
+            return sql;
+        }
+
         public static string Out(string user)
         {
             return user;

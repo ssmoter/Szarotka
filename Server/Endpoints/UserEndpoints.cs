@@ -1,0 +1,98 @@
+﻿using DataBase.Model.EntitiesServer;
+
+using Microsoft.AspNetCore.Mvc;
+
+using Server.Requests;
+
+namespace Server.Endpoints
+{
+    public interface IUserEndpoints
+    {
+        void MapEndpoints(WebApplication app);
+    }
+
+    public class UserEndpoints : IUserEndpoints
+    {
+        public void MapEndpoints(WebApplication app)
+        {
+            var user = app.MapGroup("/user");
+            user.MapPost("/register", async ([FromBody] RegisterUser user, IRegisterUserRequests registerUserEndpoint, CancellationToken token = default)
+                =>
+            {
+                return await registerUserEndpoint.InsertUser(user, token);
+            });
+            user.MapGet("/confirm_email/{code}", async (int code, IRegisterUserRequests registerUserEndpoint, CancellationToken token = default)
+                =>
+            {
+                return await registerUserEndpoint.ConfirmEmail(code, token);
+            });
+            user.MapPost("login", async ([FromBody] LoginUser user, HttpContext context, ILoginUserRequests loginUserRequests, CancellationToken token = default)
+                =>
+            {
+                return await loginUserRequests.LogInUser(user, token);
+            });
+            user.MapGet("logout", ( /*ILoginUserEndpoint loginUserEndpoint*/)
+                =>
+            {
+                throw new NotImplementedException();
+                //return await loginUserEndpoint.LogOutUser("user");
+            }).RequireAuthorization();
+            user.MapGet("refresh_token", async (HttpContext context, ILoginUserRequests loginUserRequests, CancellationToken token = default)
+                =>
+            {
+                // Pobierz wartość nagłówka Authorization
+                var authorizationHeader = context.Request.Headers["Authorization"].ToString();
+                if (string.IsNullOrEmpty(authorizationHeader))
+                {
+                    return Results.Unauthorized();
+                }
+                // Sprawdź, czy nagłówek zaczyna się od "Bearer "
+                if (!authorizationHeader.StartsWith("Bearer "))
+                {
+                    return Results.Unauthorized();
+                }
+                // Pobierz token
+                var userToken = DataBase.Helper.ReadToken.RemoveBearer(authorizationHeader);
+                if (userToken is null)
+                {
+                    return Results.Unauthorized();
+                }
+                return await loginUserRequests.RefreshToken(userToken, token);
+            }).RequireAuthorization();
+            user.MapPost("edit", async ([FromBody] User user, IEditUserRequests editUserRequests, HttpContext context, CancellationToken token = default)
+                =>
+            {
+                var authorizationHeader = context.Request.Headers.Authorization.ToString();
+                var userToken = DataBase.Helper.ReadToken.RemoveBearer(authorizationHeader);
+                var tokenModel = DataBase.Helper.ReadToken.GetUserFromToken(userToken);
+
+                user.Id = new Guid(tokenModel.user.Id.ToByteArray());
+                user.UserCreatedId = new Guid(tokenModel.user.Id.ToByteArray());
+                user.UserUpdatedId = new Guid(tokenModel.user.Id.ToByteArray());
+
+                tokenModel.user.UserCreatedId = new Guid(tokenModel.user.Id.ToByteArray());
+                tokenModel.user.UserUpdatedId = new Guid(tokenModel.user.Id.ToByteArray());
+
+                var editUser = new EditUser()
+                {
+                    New = user,
+                    Old = tokenModel.user,
+                };
+                return await editUserRequests.Update(editUser, context, token);
+            }).RequireAuthorization();
+            user.MapGet("/{id}", async (string id, ILoginUserRequests loginUserRequests, CancellationToken token = default)
+                =>
+            {
+                return await loginUserRequests.GetPublicUser(id);
+            }).RequireAuthorization();
+
+        }
+
+
+
+
+
+
+
+    }
+}

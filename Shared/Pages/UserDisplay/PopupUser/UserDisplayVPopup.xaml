@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup
+    x:Class="Shared.Pages.UserDisplay.PopupUser.UserDisplayVPopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:small="clr-namespace:Shared.Pages.UserDisplay.Small"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:Shared.Pages.UserDisplay.PopupUser"
+    x:Name="this"
+    BindingContext="{Reference this}"
+    Color="{AppThemeBinding Light={StaticResource White},
+                            Dark={StaticResource Black}}">
+
+
+    <Grid HorizontalOptions="Center" VerticalOptions="Center">
+
+        <RefreshView IsRefreshing="{Binding IsRefreshing}">
+
+            <Border Padding="5">
+
+                <Grid RowDefinitions="*,auto">
+
+                    <small:UserDisplaySmallV Grid.Row="0" User="{Binding User}" />
+
+                    <Button
+                        Grid.Row="1"
+                        Clicked="Button_Clicked_Close"
+                        Text="Anuluj" />
+
+                </Grid>
+
+            </Border>
+
+        </RefreshView>
+
+    </Grid>
+
+</toolkit:Popup>

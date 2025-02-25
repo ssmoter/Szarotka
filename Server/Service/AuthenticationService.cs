@@ -46,8 +46,9 @@ namespace Server.Service
         public async Task<User> AuthenticateAsync(string token)
         {
             var result = DataBase.Helper.ReadToken.GetUserFromToken(token);
-            var sql = LoginQuery.InFromId(result.user.Id.ToString());
-            var users = await _db.DataBaseAsync.QueryAsync<User>(sql);
+            var id = result.user.Id.ToString();
+            var sql = LoginQuery.InFromId(id);
+            var users = await _db.DataBaseAsync.QueryAsync<User>(sql, new { Id = id });
             var user = users.FirstOrDefault() ?? throw new UnauthorizedAccessException();
 
             if (user.Id == result.user.Id)
@@ -80,7 +81,12 @@ namespace Server.Service
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.PhoneNumber, user.PhoneNumber),
                 new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
-                new Claim(ClaimTypes.Role,user.UserType.ToString())
+                new Claim(ClaimTypes.Role,user.UserType.ToString()),
+                new Claim(JwtRegisteredClaimNames.EmailVerified,user.IsEmailConfirm.ToString()),
+                new Claim(nameof(User.CreatedTicks),user.CreatedTicks.ToString()),
+                new Claim(nameof(User.UpdatedTicks),user.UpdatedTicks.ToString()),
+                new Claim(nameof(User.UserUpdatedId),user.UserUpdatedId.ToString()),
+                new Claim(nameof(User.IsDelete),user.IsDelete.ToString()),
              };
             //  .Union(userClaims)
             //  .Union(roleClaims);

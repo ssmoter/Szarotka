@@ -57,126 +57,126 @@ namespace DriversRoutes.Data
             }
         }
 
-        public async Task<bool> UpdateCustomersTime(IEnumerable<SelectedDayOfWeekRoutes> selectedDays, SelectedDayOfWeekRoutes upddateTime, SelectedDayOfWeekRoutes selectedTime)
+        public async Task<bool> UpdateCustomersTime(IEnumerable<SelectedDayOfWeekRoutes> selectedDays, SelectedDayOfWeekRoutes updateTime, SelectedDayOfWeekRoutes selectedTime)
         {
-            return await UpdateTime(selectedDays, upddateTime, selectedTime);
+            return await UpdateTime(selectedDays, updateTime, selectedTime);
         }
-        public async Task<bool> UpdateCustomersTime(List<SelectedDayOfWeekRoutes> selectedDays, SelectedDayOfWeekRoutes upddateTime, SelectedDayOfWeekRoutes selectedTime)
+        public async Task<bool> UpdateCustomersTime(List<SelectedDayOfWeekRoutes> selectedDays, SelectedDayOfWeekRoutes updateTime, SelectedDayOfWeekRoutes selectedTime)
         {
-            return await UpdateTime(selectedDays, upddateTime, selectedTime);
+            return await UpdateTime(selectedDays, updateTime, selectedTime);
         }
-        public async Task<bool> UpdateCustomersTime(SelectedDayOfWeekRoutes[] selectedDays, SelectedDayOfWeekRoutes upddateTime, SelectedDayOfWeekRoutes selectedTime)
+        public async Task<bool> UpdateCustomersTime(SelectedDayOfWeekRoutes[] selectedDays, SelectedDayOfWeekRoutes updateTime, SelectedDayOfWeekRoutes selectedTime)
         {
-            return await UpdateTime(selectedDays, upddateTime, selectedTime);
+            return await UpdateTime(selectedDays, updateTime, selectedTime);
         }
-        private async Task<bool> UpdateTime(IEnumerable<SelectedDayOfWeekRoutes> selectedDays, SelectedDayOfWeekRoutes upddateTime, SelectedDayOfWeekRoutes selectedTime)
+        private async Task<bool> UpdateTime(IEnumerable<SelectedDayOfWeekRoutes> selectedDays, SelectedDayOfWeekRoutes updateTime, SelectedDayOfWeekRoutes selectedTime)
         {
             IEnumerable<SelectedDayOfWeekRoutes> dayOfs = [];
             var timeZero = new TimeSpan(0);
 
-            if (upddateTime.Sunday)
+            if (updateTime.Sunday)
             {
-                if (upddateTime.SundayTimeSpan > timeZero)
+                if (updateTime.SundayTimeSpan > timeZero)
                 {
                     dayOfs = selectedDays.Where(x => x.Sunday && x.SundayTimeSpan > selectedTime.SundayTimeSpan);
                 }
-                else if (upddateTime.SundayTimeSpan < timeZero)
+                else if (updateTime.SundayTimeSpan < timeZero)
                 {
                     dayOfs = selectedDays.Where(x => x.Sunday && x.SundayTimeSpan < selectedTime.SundayTimeSpan);
                 }
                 foreach (var item in dayOfs)
                 {
-                    item.SundayTimeSpan += upddateTime.SundayTimeSpan;
+                    item.SundayTimeSpan += updateTime.SundayTimeSpan;
                 }
             }
-            if (upddateTime.Monday)
+            if (updateTime.Monday)
             {
-                if (upddateTime.MondayTimeSpan > timeZero)
+                if (updateTime.MondayTimeSpan > timeZero)
                 {
                     dayOfs = selectedDays.Where(x => x.Monday && x.MondayTimeSpan > selectedTime.MondayTimeSpan);
                 }
-                else if (upddateTime.MondayTimeSpan < timeZero)
+                else if (updateTime.MondayTimeSpan < timeZero)
                 {
                     dayOfs = selectedDays.Where(x => x.Monday && x.MondayTimeSpan < selectedTime.MondayTimeSpan);
                 }
                 foreach (var item in dayOfs)
                 {
-                    item.MondayTimeSpan += upddateTime.MondayTimeSpan;
+                    item.MondayTimeSpan += updateTime.MondayTimeSpan;
                 }
             }
-            if (upddateTime.Tuesday)
+            if (updateTime.Tuesday)
             {
-                if (upddateTime.TuesdayTimeSpan > timeZero)
+                if (updateTime.TuesdayTimeSpan > timeZero)
                 {
                     dayOfs = selectedDays.Where(x => x.Tuesday && x.TuesdayTimeSpan > selectedTime.TuesdayTimeSpan);
                 }
-                else if (upddateTime.TuesdayTimeSpan < timeZero)
+                else if (updateTime.TuesdayTimeSpan < timeZero)
                 {
                     dayOfs = selectedDays.Where(x => x.Tuesday && x.TuesdayTimeSpan < selectedTime.TuesdayTimeSpan);
                 }
                 foreach (var item in dayOfs)
                 {
-                    item.TuesdayTimeSpan += upddateTime.TuesdayTimeSpan;
+                    item.TuesdayTimeSpan += updateTime.TuesdayTimeSpan;
                 }
             }
-            if (upddateTime.Wednesday)
+            if (updateTime.Wednesday)
             {
-                if (upddateTime.WednesdayTimeSpan > timeZero)
+                if (updateTime.WednesdayTimeSpan > timeZero)
                 {
                     dayOfs = selectedDays.Where(x => x.Wednesday && x.WednesdayTimeSpan > selectedTime.WednesdayTimeSpan);
                 }
-                else if (upddateTime.WednesdayTimeSpan < timeZero)
+                else if (updateTime.WednesdayTimeSpan < timeZero)
                 {
                     dayOfs = selectedDays.Where(x => x.Wednesday && x.WednesdayTimeSpan < selectedTime.WednesdayTimeSpan);
                 }
                 foreach (var item in dayOfs)
                 {
-                    item.WednesdayTimeSpan += upddateTime.WednesdayTimeSpan;
+                    item.WednesdayTimeSpan += updateTime.WednesdayTimeSpan;
                 }
             }
-            if (upddateTime.Thursday)
+            if (updateTime.Thursday)
             {
-                if (upddateTime.ThursdayTimeSpan > timeZero)
+                if (updateTime.ThursdayTimeSpan > timeZero)
                 {
                     dayOfs = selectedDays.Where(x => x.Thursday && x.ThursdayTimeSpan > selectedTime.ThursdayTimeSpan);
                 }
-                else if (upddateTime.ThursdayTimeSpan < timeZero)
+                else if (updateTime.ThursdayTimeSpan < timeZero)
                 {
                     dayOfs = selectedDays.Where(x => x.Thursday && x.ThursdayTimeSpan < selectedTime.ThursdayTimeSpan);
                 }
                 foreach (var item in dayOfs)
                 {
-                    item.ThursdayTimeSpan += upddateTime.ThursdayTimeSpan;
+                    item.ThursdayTimeSpan += updateTime.ThursdayTimeSpan;
                 }
             }
-            if (upddateTime.Friday)
+            if (updateTime.Friday)
             {
-                if (upddateTime.FridayTimeSpan > timeZero)
+                if (updateTime.FridayTimeSpan > timeZero)
                 {
                     dayOfs = selectedDays.Where(x => x.Friday && x.FridayTimeSpan > selectedTime.FridayTimeSpan);
                 }
-                else if (upddateTime.FridayTimeSpan < timeZero)
+                else if (updateTime.FridayTimeSpan < timeZero)
                 {
                     dayOfs = selectedDays.Where(x => x.Friday && x.FridayTimeSpan < selectedTime.FridayTimeSpan);
                 }
                 foreach (var item in dayOfs)
                 {
-                    item.FridayTimeSpan += upddateTime.FridayTimeSpan;
+                    item.FridayTimeSpan += updateTime.FridayTimeSpan;
                 }
             }
-            if (upddateTime.Saturday)
+            if (updateTime.Saturday)
             {
-                if (upddateTime.SaturdayTimeSpan > timeZero)
+                if (updateTime.SaturdayTimeSpan > timeZero)
                 {
                     dayOfs = selectedDays.Where(x => x.Saturday && x.SaturdayTimeSpan > selectedTime.SaturdayTimeSpan);
                 }
-                else if (upddateTime.SaturdayTimeSpan < timeZero)
+                else if (updateTime.SaturdayTimeSpan < timeZero)
                 {
                     dayOfs = selectedDays.Where(x => x.Saturday && x.SaturdayTimeSpan < selectedTime.SaturdayTimeSpan);
                 }
                 foreach (var item in dayOfs)
                 {
-                    item.SaturdayTimeSpan += upddateTime.SaturdayTimeSpan;
+                    item.SaturdayTimeSpan += updateTime.SaturdayTimeSpan;
                 }
             }
 

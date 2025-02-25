@@ -3,14 +3,26 @@
     x:Class="Shared.Pages.UserDisplay.Small.UserDisplaySmallV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:myConverter="clr-namespace:Shared.Converters"
     xmlns:user="clr-namespace:DataBase.Model.EntitiesServer;assembly=DataBase"
     xmlns:vm="clr-namespace:Shared.Pages.UserDisplay.Small"
     x:Name="this"
     x:DataType="vm:UserDisplaySmallV">
 
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <myConverter:UserTypeTranslated x:Key="userTypeTranslated" />
+
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+
 
     <Grid BindingContext="{x:Reference this}">
-        <Border>
+        <Border
+            x:Name="mBorder"
+            Margin="5"
+            Padding="5">
 
             <ScrollView>
 
@@ -19,7 +31,46 @@
                     <Grid
                         Grid.Row="0"
                         ColumnDefinitions="auto,*"
-                        RowDefinitions="*,*,*,*,*">
+                        ColumnSpacing="5"
+                        RowDefinitions="*,*,*,*,*"
+                        RowSpacing="5">
+
+                        <Line
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray200},
+                                                     Dark={StaticResource Gray500}}"
+                            X1="0"
+                            X2="{Binding MaxMyWidth}"
+                            Y1="0"
+                            Y2="0" />
+                        <Line
+                            Grid.Row="2"
+                            Grid.ColumnSpan="2"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray200},
+                                                     Dark={StaticResource Gray500}}"
+                            X1="0"
+                            X2="{Binding MaxMyWidth}"
+                            Y1="0"
+                            Y2="0" />
+                        <Line
+                            Grid.Row="3"
+                            Grid.ColumnSpan="2"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray200},
+                                                     Dark={StaticResource Gray500}}"
+                            X1="0"
+                            X2="{Binding MaxMyWidth}"
+                            Y1="0"
+                            Y2="0" />
+                        <Line
+                            Grid.Row="4"
+                            Grid.ColumnSpan="2"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray200},
+                                                     Dark={StaticResource Gray500}}"
+                            X1="0"
+                            X2="{Binding MaxMyWidth}"
+                            Y1="0"
+                            Y2="0" />
 
                         <Label
                             Grid.Row="0"
@@ -64,44 +115,92 @@
                         <Label
                             Grid.Row="4"
                             Grid.Column="1"
-                            Text="{Binding User.UserType}" />
+                            Text="{Binding User.UserType, Converter={StaticResource userTypeTranslated}}" />
 
 
                     </Grid>
 
-                    <Border Grid.Row="1" HorizontalOptions="Fill" />
+
+                    <Border
+                        Grid.Row="1"
+                        Margin="5"
+                        HeightRequest="4"
+                        HorizontalOptions="Fill" />
 
                     <Grid
                         Grid.Row="2"
                         ColumnDefinitions="auto,*"
-                        RowDefinitions="*,*,*">
+                        ColumnSpacing="5"
+                        RowDefinitions="*,*,*,*"
+                        RowSpacing="5">
 
+                        <Line
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray200},
+                                                     Dark={StaticResource Gray500}}"
+                            X1="0"
+                            X2="{Binding MaxMyWidth}"
+                            Y1="0"
+                            Y2="0" />
+                        <Line
+                            Grid.Row="2"
+                            Grid.ColumnSpan="2"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray200},
+                                                     Dark={StaticResource Gray500}}"
+                            X1="0"
+                            X2="{Binding MaxMyWidth}"
+                            Y1="0"
+                            Y2="0" />
+                        <Line
+                            Grid.Row="3"
+                            Grid.ColumnSpan="2"
+                            Stroke="{AppThemeBinding Light={StaticResource Gray200},
+                                                     Dark={StaticResource Gray500}}"
+                            X1="0"
+                            X2="{Binding MaxMyWidth}"
+                            Y1="0"
+                            Y2="0" />
                         <Label
                             Grid.Row="0"
                             Grid.Column="0"
-                            Text="Data utworzenia: " />
+                            Text="Id: " />
                         <Label
                             Grid.Row="0"
+                            Grid.Column="1"
+                            Text="{Binding User.Id}" />
+
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Text="Data utworzenia: " />
+                        <Label
+                            Grid.Row="1"
                             Grid.Column="1"
                             Text="{Binding User.Created}" />
 
                         <Label
-                            Grid.Row="1"
+                            Grid.Row="2"
                             Grid.Column="0"
                             Text="Ostatnia edycja: " />
                         <Label
-                            Grid.Row="1"
+                            Grid.Row="2"
                             Grid.Column="1"
                             Text="{Binding User.Updated}" />
 
                         <Label
-                            Grid.Row="2"
+                            Grid.Row="3"
                             Grid.Column="0"
                             Text="Użytkownik który edytował: " />
                         <Label
-                            Grid.Row="2"
+                            Grid.Row="3"
                             Grid.Column="1"
-                            Text="{Binding User.UserUpdatedId}" />
+                            Style="{StaticResource LabelPointerOver}"
+                            Text="{Binding User.UserUpdatedId}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
+                            </Label.GestureRecognizers>
+                        </Label>
 
                     </Grid>
 

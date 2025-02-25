@@ -5,6 +5,7 @@ using Shared.Data.ServerHttpClients;
 using Shared.Pages.ConfirmEmail;
 using Shared.Pages.LogIn;
 using Shared.Pages.UserDisplay;
+using Shared.Pages.UserDisplay.UserEdit;
 
 namespace Shared.Service
 {
@@ -13,7 +14,7 @@ namespace Shared.Service
         public static IServiceCollection AddMyServiceShared(this IServiceCollection services)
         {
             services.AddMudServices();
-            services.AddScoped<HttpClient>();
+            services.AddHttpClient();
 
             services.AddScoped<ICreatedDataBase, CreatedDataBase>();
 
@@ -38,6 +39,7 @@ namespace Shared.Service
 
             services.AddScoped<IRegisterHttp, RegisterHttp>();
             services.AddScoped<ILoginHttp, LoginHttp>();
+            services.AddScoped<IEditUserHttp, EditUserHttp>();
 
             services.AddScoped<ConfirmEmailVM>();
             services.AddScoped<ConfirmEmailV>();
@@ -46,6 +48,9 @@ namespace Shared.Service
 
             services.AddScoped<UserDisplayVM>();
             services.AddScoped<UserDisplayV>();
+
+            services.AddScoped<UserEditVM>();
+            services.AddScoped<UserEditV>();
 
             return services;
         }

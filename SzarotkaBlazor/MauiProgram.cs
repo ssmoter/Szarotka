@@ -4,6 +4,7 @@
 using DriversRoutes.Platforms.Android;
 #endif
 
+using Microsoft.Extensions.DependencyInjection;
 
 using Microsoft.Extensions.Logging;
 
@@ -31,7 +32,6 @@ namespace SzarotkaBlazor
 
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddMyService();
-
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
             builder.Logging.AddDebug();

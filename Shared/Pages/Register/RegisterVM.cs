@@ -2,9 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
-using DataBase.Helper;
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesServer;
+using DataBase.Translated;
 
 using Shared.Data;
 using Shared.Data.ServerHttpClients;
@@ -70,7 +70,7 @@ namespace Shared.Pages.Register
 
 
         #region Methods
-        public void IsPasswordEquels()
+        public void IsPasswordEqual()
         {
             if (RegisterUser.Password != RegisterM.ConfirmPassword)
             {
@@ -82,31 +82,8 @@ namespace Shared.Pages.Register
             }
         }
 
-        private static string PasswordsValidation(EnumsList.Validation valid, string message)
-        {
-            if (valid >= EnumsList.Validation.PasswordIsNull && valid <= EnumsList.Validation.PasswordContainEmail)
-            {
-                if (!string.IsNullOrWhiteSpace(message))
-                {
-                    message += Environment.NewLine;
-                }
-                message += valid.ValidationToPolish();
-            }
-            return message;
-        }
 
-        private static string EmailValidation(EnumsList.Validation valid, string message)
-        {
-            if (valid >= EnumsList.Validation.EmailValidFormat && valid <= EnumsList.Validation.EmailIsNull)
-            {
-                if (!string.IsNullOrWhiteSpace(message))
-                {
-                    message += Environment.NewLine;
-                }
-                message += valid.ValidationToPolish();
-            }
-            return message;
-        }
+
 
         #endregion
         #region Command
@@ -140,12 +117,12 @@ namespace Shared.Pages.Register
 
             if (string.IsNullOrWhiteSpace(RegisterUser.Email))
             {
-                RegisterM.EmailError = EmailValidation(EnumsList.Validation.EmailIsNull, RegisterM.EmailError);
+                RegisterM.EmailError = EnumsList.Validation.EmailIsNull.EmailValidation(RegisterM.EmailError);
                 emailOrPasswordIsNull = true;
             }
             if (string.IsNullOrWhiteSpace(RegisterUser.Password))
             {
-                RegisterM.PasswordError = PasswordsValidation(EnumsList.Validation.PasswordIsNull, RegisterM.PasswordError);
+                RegisterM.PasswordError = EnumsList.Validation.PasswordIsNull.PasswordsValidation(RegisterM.PasswordError);
                 emailOrPasswordIsNull = true;
             }
             if (string.IsNullOrWhiteSpace(RegisterUser.Name))
@@ -175,8 +152,8 @@ namespace Shared.Pages.Register
             {
                 for (int i = 0; i < ex.ValidationErrors.Length; i++)
                 {
-                    RegisterM.EmailError = EmailValidation(ex.ValidationErrors[i].Validation, RegisterM.EmailError);
-                    RegisterM.PasswordError = PasswordsValidation(ex.ValidationErrors[i].Validation, RegisterM.EmailError);
+                    RegisterM.EmailError = ex.ValidationErrors[i].Validation.EmailValidation(RegisterM.EmailError);
+                    RegisterM.PasswordError = ex.ValidationErrors[i].Validation.PasswordsValidation(RegisterM.EmailError);
                 }
             }
             catch (Exception ex)

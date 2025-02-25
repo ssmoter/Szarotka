@@ -10,6 +10,7 @@ namespace Server.Service
 {
     public interface ILoginService
     {
+        Task<User> GetPublicUser(string id);
         Task<User> LogIn(LoginUser user);
         Task<IResult> LogOut(LoginUser user);
     }
@@ -31,9 +32,9 @@ namespace Server.Service
         {
             user.Password = Hash.PasswordSHA256(user.Password);
 
-            var sql = LoginQuery.In(user);
+            var sql = LoginQuery.In(user.Email, user.Password);
 
-            var dbUser = await _db.DataBaseAsync.QueryAsync<User>(sql);
+            var dbUser = await _db.DataBaseAsync.QueryAsync<User>(sql, user.Email, user.Password);
 
             var firstUser = dbUser.FirstOrDefault();
 
@@ -47,8 +48,8 @@ namespace Server.Service
             {
                 firstUser.RememberMe = user.RememberMe;
                 firstUser.Updated = _timeService.UtcNow();
-                sql = LoginQuery.UpdateRememberMe(firstUser);
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql);
+                sql = LoginQuery.UpdateRememberMe(firstUser.RememberMe, firstUser.UpdatedTicks, firstUser.UserUpdatedId, firstUser.Id);
+                _ = await _db.DataBaseAsync.ExecuteAsync(sql, firstUser.RememberMe, firstUser.UpdatedTicks, firstUser.UserUpdatedId, firstUser.Id);
             }
 
             return firstUser;
@@ -59,6 +60,21 @@ namespace Server.Service
             await Task.Delay(1);
             return Results.Ok();
         }
+
+
+        public async Task<User> GetPublicUser(string id)
+        {
+            var sql = LoginQuery.PublicUser(id);
+            string Id = id;
+
+            var users = await _db.DataBaseAsync.QueryAsync<User>(sql, Id);
+            var user = users.FirstOrDefault();
+
+            ArgumentNullException.ThrowIfNull(user, nameof(user));
+            return user;
+
+        }
+
 
     }
 }

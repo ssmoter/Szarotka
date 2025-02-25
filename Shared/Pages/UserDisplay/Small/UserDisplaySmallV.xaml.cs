@@ -1,4 +1,8 @@
+using CommunityToolkit.Maui.Views;
+
 using DataBase.Model.EntitiesServer;
+
+using Shared.Helper;
 
 namespace Shared.Pages.UserDisplay.Small;
 
@@ -17,9 +21,30 @@ public partial class UserDisplaySmallV : ContentView
     }
 
 
+    public double MaxMyWidth { get; set; }
+
+    protected override Size ArrangeOverride(Rect bounds)
+    {
+        MaxMyWidth = bounds.Width;
+        OnPropertyChanged(nameof(MaxMyWidth));
+        OnPropertyChanging(nameof(MaxMyWidth));
+
+        return base.ArrangeOverride(bounds);
+    }
+
     public UserDisplaySmallV()
     {
         //User ??= new();
         InitializeComponent();
+    }
+
+    private async void TapGestureRecognizer_Tapped_UserEdit_Popup(object sender, TappedEventArgs e)
+    {
+        if (sender is not Label item) { return; }
+        await item.BounceOnPressAsync();
+
+        var userId = User.Id;
+        var popup = new Shared.Pages.UserDisplay.PopupUser.UserDisplayVPopup(userId);
+        await Shell.Current.ShowPopupAsync(popup);
     }
 }

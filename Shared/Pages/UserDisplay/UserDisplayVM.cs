@@ -1,6 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Model.EntitiesServer;
+
+using Shared.Pages.UserDisplay.UserEdit;
 
 namespace Shared.Pages.UserDisplay
 {
@@ -27,6 +30,16 @@ namespace Shared.Pages.UserDisplay
         public UserDisplayVM()
         {
             User ??= new();
+        }
+
+        [RelayCommand]
+        async Task GoToEdit()
+        {
+            var navigationParameter = new Dictionary<string, object>
+            {
+                { nameof(User), User }
+            };
+            await Shell.Current.GoToAsync(nameof(UserEditV), navigationParameter);
         }
 
 

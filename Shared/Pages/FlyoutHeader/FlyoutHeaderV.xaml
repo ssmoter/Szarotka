@@ -24,16 +24,23 @@
                 <Label
                     FontSize="Large"
                     HorizontalOptions="Center"
-                    Text="{Binding User.Name}" />
+                    Style="{StaticResource LabelPointerOver}"
+                    Text="{Binding User.Name}">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToUserCommand}" Tapped="TapGestureRecognizer_Tapped" />
+                    </Label.GestureRecognizers>
+                </Label>
+
             </VerticalStackLayout>
             <VerticalStackLayout IsVisible="{Binding IsLogin, Converter={StaticResource InvertedBoolConverter}}">
 
                 <Label
                     FontSize="Large"
                     HorizontalOptions="Center"
+                    Style="{StaticResource LabelPointerOver}"
                     Text="Zaloguj się">
                     <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding GoToLoginCommand}" />
+                        <TapGestureRecognizer Command="{Binding GoToLoginCommand}" Tapped="TapGestureRecognizer_Tapped" />
                     </Label.GestureRecognizers>
                 </Label>
 

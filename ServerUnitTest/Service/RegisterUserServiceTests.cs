@@ -56,13 +56,25 @@ namespace ServerUnitTest.Service
             // Arrange
             var confirmCode = new ConfirmCode { UserId = Guid.NewGuid(), Code = 1234 };
             _mockTimeService.Setup(t => t.UtcNow()).Returns(DateTime.UtcNow);
-            _mockDb.Setup(db => db.DataBaseAsync.ExecuteAsync(It.IsAny<string>())).ReturnsAsync(1);
+            _mockDb.Setup(db => db.DataBaseAsync.ExecuteAsync(It.IsAny<string>(), It.IsAny<long>())).ReturnsAsync(1);
+            _mockDb.Setup(db => db.DataBaseAsync.ExecuteAsync(It.IsAny<string>()
+                , It.IsAny<long>()
+                , It.IsAny<long>()
+                , It.IsAny<Guid>()
+                , It.IsAny<int>()
+                , It.IsAny<long>())).ReturnsAsync(1);
 
             // Act
             await _service.InsertCodeEmailAndRemoveOld(confirmCode);
 
             // Assert
-            _mockDb.Verify(db => db.DataBaseAsync.ExecuteAsync(It.IsAny<string>()), Times.Exactly(2));
+            _mockDb.Verify(db => db.DataBaseAsync.ExecuteAsync(It.IsAny<string>(), It.IsAny<long>()), Times.Exactly(1));
+            _mockDb.Verify(db => db.DataBaseAsync.ExecuteAsync(It.IsAny<string>()
+                , It.IsAny<long>()
+                , It.IsAny<long>()
+                , It.IsAny<Guid>()
+                , It.IsAny<int>()
+                , It.IsAny<long>()), Times.Exactly(1));
         }
 
         [Fact]
@@ -72,9 +84,15 @@ namespace ServerUnitTest.Service
             var code = 1234;
             var confirmCode = new ConfirmCode { UserId = Guid.NewGuid(), Code = code, ExpireDate = DateTime.UtcNow.AddMinutes(10).Ticks };
             var user = new User { Id = confirmCode.UserId, IsEmailConfirm = true };
-            _mockDb.Setup(db => db.DataBaseAsync.QueryAsync<ConfirmCode>(It.IsAny<string>())).ReturnsAsync(new List<ConfirmCode> { confirmCode });
-            _mockDb.Setup(db => db.DataBaseAsync.QueryAsync<User>(It.IsAny<string>())).ReturnsAsync(new List<User> { user });
-            _mockDb.Setup(db => db.DataBaseAsync.ExecuteAsync(It.IsAny<string>())).ReturnsAsync(1);
+            _mockDb.Setup(db => db.DataBaseAsync.QueryAsync<ConfirmCode>(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync([confirmCode]);
+            _mockDb.Setup(db => db.DataBaseAsync.QueryAsync<User>(It.IsAny<string>()
+                , It.IsAny<Guid>())).ReturnsAsync([user]);
+            _mockDb.Setup(db => db.DataBaseAsync.ExecuteAsync(It.IsAny<string>(), It.IsAny<long>())).ReturnsAsync(1);
+            _mockDb.Setup(db => db.DataBaseAsync.ExecuteAsync(It.IsAny<string>()
+                , It.IsAny<bool>()
+                , It.IsAny<long>()
+                , It.IsAny<Guid>()
+                , It.IsAny<Guid>())).ReturnsAsync(1);
             // Act
             var result = await _service.GetUserEmailFromCodeAndRemoveOld(code);
 

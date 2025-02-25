@@ -30,10 +30,10 @@ namespace Server.Service
         {
             user.Updated = _timeService.UtcNow();
 
-            var sql = SqlQuery.UserQuery.UpdateName(user);
+            var sql = SqlQuery.UserQuery.UpdateName(user.Name, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             try
             {
-                await _db.DataBaseAsync.ExecuteAsync(sql);
+                await _db.DataBaseAsync.ExecuteAsync(sql, user.Name, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             }
             catch (Exception)
             {
@@ -44,10 +44,10 @@ namespace Server.Service
         {
             user.Updated = _timeService.UtcNow();
 
-            var sql = SqlQuery.UserQuery.UpdateDescription(user);
+            var sql = SqlQuery.UserQuery.UpdateDescription(user.Description, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             try
             {
-                await _db.DataBaseAsync.ExecuteAsync(sql);
+                await _db.DataBaseAsync.ExecuteAsync(sql, user.Description, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             }
             catch (Exception)
             {
@@ -58,10 +58,10 @@ namespace Server.Service
         {
             user.Updated = _timeService.UtcNow();
 
-            var sql = SqlQuery.UserQuery.UpdateEmail(user);
+            var sql = SqlQuery.UserQuery.UpdateEmail(user.Email, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             try
             {
-                await _db.DataBaseAsync.ExecuteAsync(sql);
+                await _db.DataBaseAsync.ExecuteAsync(sql, user.Email, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             }
             catch (Exception)
             {
@@ -72,10 +72,10 @@ namespace Server.Service
         {
             user.Updated = _timeService.UtcNow();
 
-            var sql = SqlQuery.UserQuery.UpdatePhoneNumber(user);
+            var sql = SqlQuery.UserQuery.UpdatePhoneNumber(user.PhoneNumber, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             try
             {
-                await _db.DataBaseAsync.ExecuteAsync(sql);
+                await _db.DataBaseAsync.ExecuteAsync(sql, user.PhoneNumber, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             }
             catch (Exception)
             {
@@ -86,10 +86,10 @@ namespace Server.Service
         {
             user.Updated = _timeService.UtcNow();
 
-            var sql = SqlQuery.UserQuery.UpdateUserType(user);
+            var sql = SqlQuery.UserQuery.UpdateUserType(user.UserType, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             try
             {
-                await _db.DataBaseAsync.ExecuteAsync(sql);
+                await _db.DataBaseAsync.ExecuteAsync(sql, user.UserType, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             }
             catch (Exception)
             {

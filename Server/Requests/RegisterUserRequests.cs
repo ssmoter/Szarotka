@@ -6,16 +6,16 @@ using Server.Model;
 using Server.Service;
 using Server.Validation;
 
-namespace Server.Endpoints
+namespace Server.Requests
 {
-    public interface IRegisterUserEndpoint
+    public interface IRegisterUserRequests
     {
         Task<IResult> ConfirmEmail(int code, CancellationToken token = default);
         Task<IResult> InsertUser(RegisterUser registerUser, CancellationToken token = default);
     }
 
 
-    public class RegisterUserEndpoint : IRegisterUserEndpoint
+    public class RegisterUserRequests : IRegisterUserRequests
     {
         private readonly IAccessDataBase _db;
         private readonly IRegisterUserService _registerService;
@@ -25,7 +25,7 @@ namespace Server.Endpoints
         private readonly ITimeService _time;
 
 
-        public RegisterUserEndpoint(IAccessDataBase db
+        public RegisterUserRequests(IAccessDataBase db
                                     , IRegisterUserService register
                                     , IUserValidation userValidation
                                     , IEmailService emailService
@@ -64,6 +64,7 @@ namespace Server.Endpoints
                     _userValidation.PasswordNoSpecial(password);
                     _userValidation.PasswordContainEmail(password, registerUser.Email);
                 }
+                _userValidation.NameRequired(registerUser.Name);
                 #endregion
 
                 if (_userValidation.Validation?.ValidationErrors?.Count > 0)

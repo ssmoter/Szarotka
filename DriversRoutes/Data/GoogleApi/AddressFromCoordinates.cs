@@ -15,20 +15,14 @@ namespace DriversRoutes.Data.GoogleApi
 
     public class AddressFromCoordinates : IAddressFromCoordinates
     {
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         private readonly string key;
 
-        public AddressFromCoordinates(HttpClient httpClient)
+        public AddressFromCoordinates(IHttpClientFactory httpClient)
         {
-            _httpClient = httpClient;
+            _httpClientFactory = httpClient;
             key = Shared.Key.GoogleApi.Key;
-            //key = Shared.Helper.Manifest.GetManifestValue("com.google.android.geo.API_KEY");
-        }
-        public AddressFromCoordinates(HttpClient httpClient, string _key)
-        {
-            _httpClient = httpClient;
-            key = _key;
         }
 
         public async Task<GoogleApiAddress> FindGoogleApiAddress(double latitude, double longitude, CancellationToken token = default)
@@ -38,10 +32,12 @@ namespace DriversRoutes.Data.GoogleApi
                 var lat = latitude.ToString().Replace(',', '.');
                 var lon = longitude.ToString().Replace(',', '.');
 
-                var uri = new Uri($"https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lon}&key={key}");
-                _httpClient.BaseAddress = uri;
+                using var client = _httpClientFactory.CreateClient();
 
-                var result = await _httpClient.GetFromJsonAsync<GoogleApiAddress>(uri, GoogleApiAddressJsonSerializerContext.Default.GoogleApiAddress, token) ?? throw new Exception("Wystąpił nieznany błąd przy odwróconej geolokalizacji");
+                var uri = new Uri($"https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lon}&key={key}");
+                client.BaseAddress = uri;
+
+                var result = await client.GetFromJsonAsync<GoogleApiAddress>(uri, GoogleApiAddressJsonSerializerContext.Default.GoogleApiAddress, token) ?? throw new Exception("Wystąpił nieznany błąd przy odwróconej geolokalizacji");
 
                 return result.Status switch
                 {

@@ -29,6 +29,7 @@
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 	  <PackageReference Include="CsvHelper" Version="33.0.1" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.1" />
+	  <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.2" />
 	  <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="9.0.30" />
 	  <PackageReference Include="MudBlazor" Version="7.16.0" />
 	  <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
@@ -42,7 +43,6 @@
 
 
 	<ItemGroup>
-	  <Folder Include="Pages\UserDisplay\Popup\" />
 	  <Folder Include="Platforms\Android\" />
 	  <Folder Include="Platforms\Windows\" />
 	</ItemGroup>
@@ -96,10 +96,19 @@
 	  <MauiXaml Update="Pages\UpdateDataBase\UpdateDataBaseV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\UserDisplay\PopupUser\UserDisplayVPopup.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\UserDisplay\Small\UserDisplaySmallV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\UserDisplay\UserDisplayV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\UserDisplay\UserEdit\UserEditV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Styles\SharedStyles.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

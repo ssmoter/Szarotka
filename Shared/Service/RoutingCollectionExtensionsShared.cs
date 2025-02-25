@@ -6,6 +6,7 @@ using Shared.Pages.LogIn;
 using Shared.Pages.Register;
 using Shared.Pages.UpdateDataBase;
 using Shared.Pages.UserDisplay;
+using Shared.Pages.UserDisplay.UserEdit;
 
 namespace Shared.Service
 {
@@ -25,6 +26,7 @@ namespace Shared.Service
             Routing.RegisterRoute(nameof(ConfirmEmailV), typeof(ConfirmEmailV));
             Routing.RegisterRoute(nameof(LogInV), typeof(LogInV));
             Routing.RegisterRoute(nameof(UserDisplayV), typeof(UserDisplayV));
+            Routing.RegisterRoute(nameof(UserEditV), typeof(UserEditV));
 
 
         }

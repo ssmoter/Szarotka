@@ -53,5 +53,15 @@ namespace Shared.Pages.FlyoutHeader
             await Shell.Current.GoToAsync(nameof(LogIn.LogInV));
         }
 
+        [RelayCommand]
+        async Task GoToUser()
+        {
+            var user = User;
+            await Shell.Current.GoToAsync($"{nameof(UserDisplay.UserDisplayV)}?",
+                new Dictionary<string, object>()
+                {
+                    [nameof(UserDisplay.UserDisplayVM.User)] = user
+                });
+        }
     }
 }

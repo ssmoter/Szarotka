@@ -28,8 +28,7 @@
         <VerticalStackLayout
             Margin="10"
             Padding="10"
-            HorizontalOptions="Fill"
-            MaximumWidthRequest="300">
+            HorizontalOptions="Fill">
 
             <Label Margin="10" Text="Email:" />
             <Border>

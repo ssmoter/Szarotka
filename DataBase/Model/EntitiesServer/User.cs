@@ -102,6 +102,25 @@ public partial class User : BaseEntities<Guid>
     [SQLite.Ignore]
     public string Token { get; set; } = "";
 
+    public User()
+    { }
+    public User(User copy)
+    {
+        this.Id = new Guid(copy.Id.ToByteArray());
+        this.CreatedTicks = copy.CreatedTicks;
+        this.UpdatedTicks = copy.UpdatedTicks;
+        this.UserCreatedId = new Guid(copy.UserCreatedId.ToByteArray());
+        this.UserUpdatedId = new Guid(copy.UserUpdatedId.ToByteArray());
+        this.IsDelete = copy.IsDelete;
+        this.Name = copy.Name;
+        this.Email = copy.Email;
+        this.Description = copy.Description;
+        this.PhoneNumber = copy.PhoneNumber;
+        this.RememberMe = copy.RememberMe;
+        this.UserType = copy.UserType;
+        this.IsEmailConfirm = copy.IsEmailConfirm;
+        this.Token = copy.Token;
+    }
 }
 
 public partial class RegisterUser : User
@@ -185,7 +204,18 @@ public enum UserType
     Confectioner = 1,
     Baker = 2,
 }
+public record struct UserTypeAndFriendlyName(string Name, UserType Type)
+{
+    public static implicit operator (string name, UserType type)(UserTypeAndFriendlyName value)
+    {
+        return (value.Name, value.Type);
+    }
 
+    public static implicit operator UserTypeAndFriendlyName((string name, UserType type) value)
+    {
+        return new UserTypeAndFriendlyName(value.name, value.type);
+    }
+}
 public class EditUser
 {
     public User Old { get; set; } = new();

@@ -22,12 +22,13 @@
                 <Label
                     FontSize="Large"
                     HorizontalOptions="Center"
+                    Style="{StaticResource LabelPointerOver}"
                     Text="Wyloguj">
                     <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding LogOutCommand}" />
+                        <TapGestureRecognizer Command="{Binding LogOutCommand}" Tapped="TapGestureRecognizer_Tapped" />
                     </Label.GestureRecognizers>
-                </Label>
 
+                </Label>
 
             </VerticalStackLayout>
 

@@ -50,6 +50,26 @@ public static class ReadToken
                 {
                     user.Id = Guid.Parse(item.Value);
                 }
+                if (item.Type == nameof(User.CreatedTicks))
+                {
+                    user.CreatedTicks = long.Parse(item.Value);
+                }
+                if (item.Type == nameof(User.UpdatedTicks))
+                {
+                    user.UpdatedTicks = long.Parse(item.Value);
+                }
+                if (item.Type == nameof(User.UserUpdatedId))
+                {
+                    user.UserUpdatedId = Guid.Parse(item.Value);
+                }
+                if (item.Type == nameof(User.IsDelete))
+                {
+                    user.IsDelete = bool.Parse(item.Value);
+                }
+                if (item.Type == JwtRegisteredClaimNames.EmailVerified)
+                {
+                    user.IsEmailConfirm = bool.Parse(item.Value);
+                }
             }
             user.Token = token;
             return (user, jwtToken.ValidTo);

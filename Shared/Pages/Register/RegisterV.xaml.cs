@@ -12,7 +12,7 @@ public partial class RegisterV : ContentPage
     {
         if (BindingContext is RegisterVM vm)
         {
-            vm.IsPasswordEquels();
+            vm.IsPasswordEqual();
         }
     }
 }

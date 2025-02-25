@@ -42,6 +42,7 @@ public interface IUserValidation
     ServerEnums.Result PhoneNumberPattern(string phoneNumber);
     ServerEnums.Result PhoneNumberRequired(string phoneNumber);
     ServerEnums.Result RegisterUserNull(RegisterUser? user);
+    void AddToken(string token);
 }
 
 public class UserValidation : IUserValidation
@@ -65,6 +66,13 @@ public class UserValidation : IUserValidation
             Validation = new ValidationException();
         }
     }
+
+
+    public void AddToken(string token)
+    {
+        Validation.AddError(token, EnumsList.Validation.Token);
+    }
+
     public ServerEnums.Result RegisterUserNull(RegisterUser? user)
     {
         var result = ServerEnums.Result.Success;
@@ -243,7 +251,7 @@ public class UserValidation : IUserValidation
     public async Task<ServerEnums.Result> EmailExist(string email)
     {
         var sql = ValidationUserQuery.SelectEmails(email);
-        var emails = await _db.DataBaseAsync.QueryAsync<User>(sql);
+        var emails = await _db.DataBaseAsync.QueryAsync<User>(sql, email);
 
         var result = ServerEnums.Result.Success;
 

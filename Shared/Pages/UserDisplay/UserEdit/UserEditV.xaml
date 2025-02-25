@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Shared.Pages.UserDisplay.UserEdit.UserEditV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:compatibility="clr-namespace:Microsoft.Maui.Controls.Compatibility;assembly=Microsoft.Maui.Controls"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:user="clr-namespace:DataBase.Model.EntitiesServer;assembly=DataBase"
+    xmlns:vm="clr-namespace:Shared.Pages.UserDisplay.UserEdit"
+    Title="Edycja"
+    x:DataType="vm:UserEditVM">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:IsStringNotNullOrEmptyConverter x:Key="IsStringNotNullOrEmptyConverter" />
+            <toolkit:EnumToIntConverter x:Key="EnumToIntConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+
+
+    <Border
+        x:Name="mBorder"
+        Margin="5"
+        Padding="5">
+
+        <ScrollView>
+
+            <Grid RowDefinitions="auto,auto,auto,*,auto">
+
+                <Grid
+                    Grid.Row="0"
+                    ColumnDefinitions="auto,*"
+                    ColumnSpacing="5"
+                    RowDefinitions="*,*,*,*,auto,*"
+                    RowSpacing="5">
+
+                    <Line
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200},
+                                                 Dark={StaticResource Gray500}}"
+                        X1="0"
+                        X2="{Binding MaxMyWidth}"
+                        Y1="0"
+                        Y2="0" />
+                    <Line
+                        Grid.Row="2"
+                        Grid.ColumnSpan="2"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200},
+                                                 Dark={StaticResource Gray500}}"
+                        X1="0"
+                        X2="{Binding MaxMyWidth}"
+                        Y1="0"
+                        Y2="0" />
+                    <Line
+                        Grid.Row="3"
+                        Grid.ColumnSpan="2"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200},
+                                                 Dark={StaticResource Gray500}}"
+                        X1="0"
+                        X2="{Binding MaxMyWidth}"
+                        Y1="0"
+                        Y2="0" />
+                    <Line
+                        Grid.Row="4"
+                        Grid.ColumnSpan="2"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200},
+                                                 Dark={StaticResource Gray500}}"
+                        X1="0"
+                        X2="{Binding MaxMyWidth}"
+                        Y1="0"
+                        Y2="0" />
+
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Text="Nazwa:"
+                        VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Row="0" Grid.Column="1">
+
+                        <Entry Placeholder="{Binding Old.Name}" Text="{Binding Edit.Name}" />
+
+                        <Label
+                            IsVisible="{Binding UserEditM.NameError, Converter={StaticResource IsStringNotNullOrEmptyConverter}}"
+                            Style="{StaticResource LabelError}"
+                            Text="{Binding UserEditM.NameError}" />
+
+                    </VerticalStackLayout>
+
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Text="Email:"
+                        VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="1">
+
+                        <Entry Placeholder="{Binding Old.Email}" Text="{Binding Edit.Email}" />
+
+                        <Label
+                            IsVisible="{Binding UserEditM.EmailError, Converter={StaticResource IsStringNotNullOrEmptyConverter}}"
+                            Style="{StaticResource LabelError}"
+                            Text="{Binding UserEditM.EmailError}" />
+
+                    </VerticalStackLayout>
+                    <Label
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Text="Opis:"
+                        VerticalOptions="Center" />
+
+                    <Editor
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        AutoSize="TextChanges"
+                        Placeholder="{Binding Old.Description}"
+                        Text="{Binding Edit.Description}" />
+
+                    <Label
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Text="Nr telefonu:"
+                        VerticalOptions="Center" />
+                    <VerticalStackLayout Grid.Row="3" Grid.Column="1">
+
+                        <Entry Placeholder="{Binding Old.PhoneNumber}" Text="{Binding Edit.PhoneNumber}" />
+
+                        <Label
+                            IsVisible="{Binding UserEditM.PhoneError, Converter={StaticResource IsStringNotNullOrEmptyConverter}}"
+                            Style="{StaticResource LabelError}"
+                            Text="{Binding UserEditM.PhoneError}" />
+
+                    </VerticalStackLayout>
+                    <Label
+                        Grid.Row="4"
+                        Grid.Column="0"
+                        Text="Typ użytkownika:"
+                        VerticalOptions="Center" />
+
+
+                    <Picker
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        ItemDisplayBinding="{Binding Name, x:DataType=user:UserTypeAndFriendlyName}"
+                        ItemsSource="{Binding UserTypes}"
+                        SelectedIndex="{Binding Edit.UserType, Converter={StaticResource EnumToIntConverter}, ConverterParameter={x:Type user:UserType}}" />
+
+                    <Label
+                        Grid.Row="5"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        IsVisible="{Binding UserEditM.Error, Converter={StaticResource IsStringNotNullOrEmptyConverter}}"
+                        Style="{StaticResource LabelError}"
+                        Text="{Binding UserEditM.Error}"
+                        VerticalOptions="Center" />
+                </Grid>
+
+                <Border
+                    Grid.Row="1"
+                    Margin="5"
+                    HeightRequest="4"
+                    HorizontalOptions="Fill" />
+
+                <Grid
+                    Grid.Row="2"
+                    ColumnDefinitions="auto,*"
+                    ColumnSpacing="5"
+                    IsEnabled="False"
+                    RowDefinitions="*,*,*,*"
+                    RowSpacing="5">
+
+                    <Line
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200},
+                                                 Dark={StaticResource Gray500}}"
+                        X1="0"
+                        X2="{Binding MaxMyWidth}"
+                        Y1="0"
+                        Y2="0" />
+                    <Line
+                        Grid.Row="2"
+                        Grid.ColumnSpan="2"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200},
+                                                 Dark={StaticResource Gray500}}"
+                        X1="0"
+                        X2="{Binding MaxMyWidth}"
+                        Y1="0"
+                        Y2="0" />
+                    <Line
+                        Grid.Row="3"
+                        Grid.ColumnSpan="2"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200},
+                                                 Dark={StaticResource Gray500}}"
+                        X1="0"
+                        X2="{Binding MaxMyWidth}"
+                        Y1="0"
+                        Y2="0" />
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Text="Id: "
+                        VerticalOptions="Center" />
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Text="{Binding Old.Id}" />
+
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Text="Data utworzenia: " />
+                    <Label
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Text="{Binding Old.Created}" />
+
+                    <Label
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Text="Ostatnia edycja: " />
+                    <Label
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Text="{Binding Old.Updated}" />
+
+                    <Label
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Text="Użytkownik który edytował: "
+                        VerticalOptions="Center" />
+                    <Label
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Text="{Binding Old.UserUpdatedId}" />
+
+                </Grid>
+
+                <Grid
+                    Grid.Row="4"
+                    Padding="10"
+                    ColumnDefinitions="*,*"
+                    ColumnSpacing="15">
+                    <Button
+                        Grid.Column="0"
+                        Command="{Binding SaveCommand}"
+                        Text="Aktualizuj" />
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding CancelCommand}"
+                        Text="Anuluj" />
+
+                </Grid>
+
+
+            </Grid>
+
+        </ScrollView>
+    </Border>
+
+</ContentPage>

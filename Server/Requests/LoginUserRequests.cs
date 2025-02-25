@@ -4,16 +4,17 @@ using DataBase.Model.EntitiesServer;
 using Server.Service;
 using Server.Validation;
 
-namespace Server.Endpoints
+namespace Server.Requests
 {
-    public interface ILoginUserEndpoint
+    public interface ILoginUserRequests
     {
+        Task<IResult> GetPublicUser(string id, CancellationToken token = default);
         Task<IResult> LogInUser(LoginUser user, CancellationToken token = default);
         Task<IResult> LogOutUser(string user, CancellationToken token = default);
         Task<IResult> RefreshToken(string userToken, CancellationToken token = default);
     }
 
-    public class LoginUserEndpoint : ILoginUserEndpoint
+    public class LoginUserRequests : ILoginUserRequests
     {
         private readonly IAccessDataBase _db;
         private readonly ILoginService _loginService;
@@ -21,7 +22,7 @@ namespace Server.Endpoints
         private readonly IAuthenticationService _authenticationService;
         private readonly IUserValidation _userValidation;
 
-        public LoginUserEndpoint(IAccessDataBase db,
+        public LoginUserRequests(IAccessDataBase db,
                                  ILoginService loginService,
                                  IEmailConfirmService emailConfirmService,
                                  IAuthenticationService authenticationService,
@@ -139,6 +140,32 @@ namespace Server.Endpoints
 
         }
 
+        public async Task<IResult> GetPublicUser(string id, CancellationToken token = default)
+        {
+            try
+            {
+                ArgumentNullException.ThrowIfNullOrWhiteSpace(id, nameof(id));
+                token.ThrowIfCancellationRequested();
 
+                User user = await _loginService.GetPublicUser(id);
+
+                return Results.Ok(user);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Results.Unauthorized();
+            }
+            catch (OperationCanceledException ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLog(ex);
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
     }
 }

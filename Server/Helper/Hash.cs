@@ -10,12 +10,13 @@ namespace Server.Helper
         {
             password += _salt;
             byte[] bytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new();
             foreach (byte b in bytes)
             {
                 builder.Append(b.ToString("x2"));
             }
             return builder.ToString();
         }
+
     }
 }

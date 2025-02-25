@@ -1,8 +1,7 @@
 ﻿@Server_HostAddress = http://localhost:5021
 //@Server_HostAddress = http://localhost:32783
 @server_user = user
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJOYW1lIiwianRpIjoiOGE3MWE3NzktODg0OC00NGU3LTg0NzYtYTBhNTQ4ZGJhMGIzIiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5IiwibmFtZWlkIjoiMDE5NGQwZWYtYzU2Yy03MTJlLWI1MDctNWI1NDBmNjM5NzQ5IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQmFrZXIiLCJleHAiOjE3Mzk0NjUzMDMsImlzcyI6ImxvY2FsaG9zdCIsImF1ZCI6ImxvY2FsaG9zdFVzZXJzIn0.u674ahNfbGat8iZtjuf1taxrn-lAd0-UzBDAWwkGe9U
-
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJOYW1lIiwianRpIjoiOGRjODRhY2EtYzZmNC00N2YyLTgyZDktZGU2MDQ4MzQ3OTkzIiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5IiwibmFtZWlkIjoiMDE5NGQwZWYtYzU2Yy03MTJlLWI1MDctNWI1NDBmNjM5NzQ5IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQmFrZXIiLCJleHAiOjE3NDA4NDcxMzcsImlzcyI6ImxvY2FsaG9zdCIsImF1ZCI6ImxvY2FsaG9zdFVzZXJzIn0.jS3Xs8qKnXzQKpu9fnheVOgsHKss7rJIREmqFon2OoE
 
 POST {{Server_HostAddress}}/{{server_user}}/login
 Content-Type: application/json 
@@ -10,7 +9,7 @@ Content-Type: application/json
 { 
     "Email": "user@example.com",
     "Password": "Password1!",
-    "RememberMe": 1
+    "RememberMe": 0
 }
 
 ###
@@ -57,11 +56,18 @@ Authorization: Bearer {{token}}
 Content-Type: application/json 
 
 {
-    "Email": "user@example.com",
-    "Name": "Name",
-    "Description": "Description",
-    "PhoneNumber": "123456789",
-    "UserType":0
+    "Email": "user@example113.com",
+    "Name": "osiem3",
+    "Description": "brak123",
+    "PhoneNumber": "123456789103",
+    "UserType":2
 }
+
+###
+
+
+GET {{Server_HostAddress}}/user/0194d0ef-c56c-712e-b507-5b540f639749
+Authorization: Bearer {{token}}
+Accept: application/json
 
 ###

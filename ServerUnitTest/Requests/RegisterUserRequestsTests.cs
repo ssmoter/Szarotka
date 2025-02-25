@@ -6,14 +6,14 @@ using Microsoft.AspNetCore.Http;
 
 using Moq;
 
-using Server.Endpoints;
 using Server.Model;
+using Server.Requests;
 using Server.Service;
 using Server.Validation;
 
-namespace ServerUnitTest.Endpoints
+namespace ServerUnitTest.Requests
 {
-    public class RegisterUserEndpointTests
+    public class RegisterUserRequestsTests
     {
         private readonly Mock<IAccessDataBase> _mockDb;
         private readonly Mock<IRegisterUserService> _mockRegisterService;
@@ -21,9 +21,9 @@ namespace ServerUnitTest.Endpoints
         private readonly Mock<IEmailService> _mockEmailService;
         private readonly Mock<IEmailConfirmService> _mockEmailConfirmService;
         private readonly Mock<ITimeService> _mockTimeService;
-        private readonly RegisterUserEndpoint _endpoint;
+        private readonly RegisterUserRequests _endpoint;
 
-        public RegisterUserEndpointTests()
+        public RegisterUserRequestsTests()
         {
             _mockDb = new Mock<IAccessDataBase>();
             _mockRegisterService = new Mock<IRegisterUserService>();
@@ -32,7 +32,7 @@ namespace ServerUnitTest.Endpoints
             _mockEmailConfirmService = new Mock<IEmailConfirmService>();
             _mockTimeService = new Mock<ITimeService>();
 
-            _endpoint = new RegisterUserEndpoint(
+            _endpoint = new RegisterUserRequests(
                 _mockDb.Object,
                 _mockRegisterService.Object,
                 _mockUserValidation.Object,

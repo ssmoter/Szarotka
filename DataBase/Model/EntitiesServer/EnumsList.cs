@@ -4,6 +4,8 @@
     {
         public enum Validation
         {
+            Token = -1,
+
             RegisterUserNull = 0,
 
             PasswordIsNull = 1,
@@ -30,6 +32,8 @@
             NameRequired = 51,
             PhoneNumberRequired = 52,
             PhoneNumberInvalid = 53,
+
+
         }
     }
 }

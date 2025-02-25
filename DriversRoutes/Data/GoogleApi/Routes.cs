@@ -10,59 +10,51 @@ namespace DriversRoutes.Data.GoogleApi
         Task<string> ComputeAsString(string FieldMask, ComputeRoutesRequest request, CancellationToken token = default);
         Task<Response> GetOnlyDistanceAndDuration(ComputeRoutesRequest request, CancellationToken token = default);
         Task<Response> GetOnlyRouteStepsDurationDistance(ComputeRoutesRequest request, CancellationToken token = default);
-        void SetKey(string key);
+        void SetKey(HttpClient httpClient, string key);
     }
 
     public class Routes : IRoutes
     {
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         private readonly string _key;
         private static string Uri => "https://routes.googleapis.com/directions/v2:computeRoutes";
 
-        public Routes(HttpClient httpClient)
+        public Routes(IHttpClientFactory httpClient)
         {
-            _httpClient = httpClient;
+            _httpClientFactory = httpClient;
             _key = Shared.Key.GoogleApi.Key;
-
-            if (!_httpClient.DefaultRequestHeaders.Contains("X-Goog-Api-Key"))
-            {
-                _httpClient.DefaultRequestHeaders.Add("X-Goog-Api-Key", _key);
-            }
-        }
-        public Routes(HttpClient httpClient, string _key)
-        {
-            _httpClient = httpClient;
-            this._key = _key;
-            if (!_httpClient.DefaultRequestHeaders.Contains("X-Goog-Api-Key"))
-            {
-                _httpClient.DefaultRequestHeaders.Add("X-Goog-Api-Key", this._key);
-            }
         }
 
-        public void SetKey(string key)
+        public void SetKey(HttpClient httpClient, string key)
         {
-            _httpClient.DefaultRequestHeaders.Remove("X-Goog-Api-Key");
-            _httpClient.DefaultRequestHeaders.Add("X-Goog-Api-Key", key);
+            httpClient.DefaultRequestHeaders.Remove("X-Goog-Api-Key");
+            httpClient.DefaultRequestHeaders.Add("X-Goog-Api-Key", key);
+        }
+
+        private void SetFieldMask(HttpClient httpClient, string fieldMask)
+        {
+            httpClient.DefaultRequestHeaders.Remove("X-Goog-FieldMask");
+            httpClient.DefaultRequestHeaders.Add("X-Goog-FieldMask", fieldMask);
         }
 
         /// <summary>
         /// Metoda do której ręcznie można dodać odpowiednie FieldMask
         /// </summary>
-        /// <param name="FieldMask">Lista pól które ma zwrócić end point. Dodawane po przecinku
+        /// <param name="fieldMask">Lista pól które ma zwrócić end point. Dodawane po przecinku
         ///  Przykład: routes.duration,routes.distanceMeters </param>
         /// <param name="request"></param>
         /// <param name="token"></param>
         /// <returns></returns>
         /// <exception cref="HttpRequestException"></exception>
-        public async Task<string> ComputeAsString(string FieldMask, Model.Route.ComputeRoutesRequest request, CancellationToken token = default)
+        public async Task<string> ComputeAsString(string fieldMask, Model.Route.ComputeRoutesRequest request, CancellationToken token = default)
         {
-            _httpClient.DefaultRequestHeaders.Remove("X-Goog-FieldMask");
-            _httpClient.DefaultRequestHeaders.Add("X-Goog-FieldMask", FieldMask);
+            using var httpClient = _httpClientFactory.CreateClient();
+            SetKey(httpClient, _key);
+            SetFieldMask(httpClient, fieldMask);
 
 
-
-            var result = await _httpClient.PostAsJsonAsync(Uri, request, ComputeRoutesRequestJsonSerializerContext.Default.ComputeRoutesRequest, token);
+            var result = await httpClient.PostAsJsonAsync(Uri, request, ComputeRoutesRequestJsonSerializerContext.Default.ComputeRoutesRequest, token);
 
             var json = await result.Content.ReadAsStringAsync(token);
             if (!result.IsSuccessStatusCode)
@@ -76,18 +68,19 @@ namespace DriversRoutes.Data.GoogleApi
         /// <summary>
         /// Metoda do której ręcznie można dodać odpowiednie FieldMask
         /// </summary>
-        /// <param name="FieldMask">Lista pól które ma zwrócić end point. Dodawane po przecinku
+        /// <param name="fieldMask">Lista pól które ma zwrócić end point. Dodawane po przecinku
         ///  Przykład: routes.duration,routes.distanceMeters </param>
         /// <param name="request"></param>
         /// <param name="token"></param>
         /// <returns></returns>
         /// <exception cref="HttpRequestException"></exception>
-        public async Task<DriversRoutes.Model.Route.Response> Compute(string FieldMask, Model.Route.ComputeRoutesRequest request, CancellationToken token = default)
+        public async Task<DriversRoutes.Model.Route.Response> Compute(string fieldMask, Model.Route.ComputeRoutesRequest request, CancellationToken token = default)
         {
-            _httpClient.DefaultRequestHeaders.Remove("X-Goog-FieldMask");
-            _httpClient.DefaultRequestHeaders.Add("X-Goog-FieldMask", FieldMask);
+            using var httpClient = _httpClientFactory.CreateClient();
+            SetKey(httpClient, _key);
+            SetFieldMask(httpClient, fieldMask);
 
-            var result = await _httpClient.PostAsJsonAsync(Uri, request, ComputeRoutesRequestJsonSerializerContext.Default.ComputeRoutesRequest, token);
+            var result = await httpClient.PostAsJsonAsync(Uri, request, ComputeRoutesRequestJsonSerializerContext.Default.ComputeRoutesRequest, token);
 
             if (!result.IsSuccessStatusCode)
             {

@@ -8,7 +8,7 @@ using Shared.Model;
 
 namespace Shared.Helper
 {
-    public partial class UserAfterLogin
+    public static partial class UserAfterLogin
     {
         public static DateTime Expires { get; private set; } = new();
         public static bool IsLogin { get; private set; } = false;
@@ -39,6 +39,7 @@ namespace Shared.Helper
                 Expires = expires;
 
                 IsLogin = true;
+
                 OnLogin?.Invoke(User, IsLogin);
 
                 var helperTable = new HelperTable(nameof(UserAfterLogin.User.Token), token);
@@ -67,6 +68,17 @@ namespace Shared.Helper
             var helperTable = new HelperTable(nameof(UserAfterLogin.User.Token), "");
             helperTable.Set(_db);
             OnLogin?.Invoke(User, IsLogin);
+        }
+
+
+
+        public static void SetAuthorization(this HttpClient client)
+        {
+            var token = User.Token;
+            if (!string.IsNullOrEmpty(token))
+            {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            }
         }
     }
 }

@@ -10,6 +10,14 @@ public partial class UpdateDataBaseV : ContentPage
         BindingContext = vm;
     }
 
+    public UpdateDataBaseV()
+    {
+        InitializeComponent();
+        var vm = Shared.Service.AppServiceProvider.GetService<UpdateDataBaseVM>();
+        BindingContext = vm;
+    }
+
+
     protected override async void OnAppearing()
     {
         base.OnAppearing();

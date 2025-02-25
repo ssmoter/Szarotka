@@ -4,6 +4,7 @@ using MailKit.Net.Smtp;
 
 using Server.Endpoints;
 using Server.Model;
+using Server.Requests;
 using Server.Validation;
 
 namespace Server.Service
@@ -14,7 +15,6 @@ namespace Server.Service
                                                             , IConfiguration configuration)
         {
             DataBase.Service.ServiceCollectionExtensionsDataBase.AddMyServiceDataBase(services);
-
             services.AddScoped<IAccessDataBase>(options =>
             {
                 var env = options.GetRequiredService<IWebHostEnvironment>();
@@ -25,10 +25,10 @@ namespace Server.Service
 
             services.AddScoped<IUserValidation, UserValidation>();
             services.AddScoped<IRegisterUserService, RegisterUserService>();
-            services.AddScoped<IRegisterUserEndpoint, RegisterUserEndpoint>();
+            services.AddScoped<IRegisterUserRequests, RegisterUserRequests>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<ILoginService, LoginService>();
-            services.AddScoped<ILoginUserEndpoint, LoginUserEndpoint>();
+            services.AddScoped<ILoginUserRequests, LoginUserRequests>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IEmailConfirmService, EmailConfirmService>();
             services.AddScoped<JSONWebTokensSettings>(options =>
@@ -44,8 +44,10 @@ namespace Server.Service
                     );
             });
             services.AddScoped<IEditUserService, EditUserService>();
-            services.AddScoped<IEditUserEndpoint, EditUserEndpoint>();
+            services.AddScoped<IEditUserRequests, EditUserRequests>();
             services.AddScoped<ISmtpClient, SmtpClient>();
+            services.AddSingleton<IUserEndpoints, UserEndpoints>();
+
 
 
             return services;

@@ -2,7 +2,6 @@
 using DataBase.Model.EntitiesServer;
 using DataBase.Model.JsonContext;
 
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 
@@ -16,13 +15,13 @@ namespace Shared.Data.ServerHttpClients
 
     public class RegisterHttp : IRegisterHttp
     {
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IAccessDataBase _db;
         private string _url;
 
-        public RegisterHttp(HttpClient httpClient, IAccessDataBase db)
+        public RegisterHttp(IHttpClientFactory httpClient, IAccessDataBase db)
         {
-            _httpClient = httpClient;
+            _httpClientFactory = httpClient;
             _db = db;
             _url = _db.GetServerUrl();
         }
@@ -37,14 +36,19 @@ namespace Shared.Data.ServerHttpClients
 
             var url = _url + "/user" + "/register";
 
-            var response = await _httpClient.PostAsync(url, content);
+            using var httpClient = _httpClientFactory.CreateClient();
+
+            var response = await httpClient.PostAsync(url, content);
 
             if (response.IsSuccessStatusCode)
             {
                 return response.IsSuccessStatusCode;
             }
             var json = await response.Content.ReadAsStringAsync();
-
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                response.EnsureSuccessStatusCode();
+            }
             throw ValidationExceptionClient.ThrowValidationException(json);
         }
 
@@ -53,11 +57,16 @@ namespace Shared.Data.ServerHttpClients
             ArgumentNullException.ThrowIfNull(code);
 
             var ulr = _url + "/user" + "/confirm_email/" + code;
+            using var httpClient = _httpClientFactory.CreateClient();
 
-            var response = await _httpClient.GetAsync(ulr);
+            var response = await httpClient.GetAsync(ulr);
+            response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
-
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                response.EnsureSuccessStatusCode();
+            }
             if (response.IsSuccessStatusCode)
             {
                 var user = JsonSerializer.Deserialize<User>(json, SzarotkaJsonSerializerContext.Default.User);

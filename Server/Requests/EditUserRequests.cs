@@ -4,11 +4,11 @@ using DataBase.Model.EntitiesServer;
 using Server.Model;
 using Server.Service;
 using Server.Validation;
-namespace Server.Endpoints
+namespace Server.Requests
 {
-    public interface IEditUserEndpoint
+    public interface IEditUserRequests
     {
-        Task<IResult> Update(EditUser edit, CancellationToken token = default);
+        Task<IResult> Update(EditUser edit, HttpContext context, CancellationToken token = default);
         Task<IResult> UpdateDescription(EditUser edit, CancellationToken token = default);
         Task<IResult> UpdateEmail(EditUser edit, CancellationToken token = default);
         Task<IResult> UpdateName(EditUser edit, CancellationToken token = default);
@@ -16,14 +16,14 @@ namespace Server.Endpoints
         Task<IResult> UpdateUserType(EditUser edit, CancellationToken token = default);
     }
 
-    public class EditUserEndpoint : IEditUserEndpoint
+    public class EditUserRequests : IEditUserRequests
     {
         private readonly IAccessDataBase _db;
         private readonly IUserValidation _userValidation;
         private readonly IEditUserService _editUser;
         private readonly IAuthenticationService _authenticationService;
 
-        public EditUserEndpoint(IAccessDataBase db,
+        public EditUserRequests(IAccessDataBase db,
                                 IUserValidation userValidation,
                                 IEditUserService editUser,
                                 IAuthenticationService authenticationService)
@@ -35,7 +35,7 @@ namespace Server.Endpoints
         }
 
 
-        public async Task<IResult> Update(EditUser edit, CancellationToken token = default)
+        public async Task<IResult> Update(EditUser edit, HttpContext context, CancellationToken token = default)
         {
             try
             {
@@ -49,21 +49,27 @@ namespace Server.Endpoints
                     UpdateUserTypeTask(edit)
                 };
 
-                if (_userValidation.Validation.ValidationErrors.Count == 0)
-                {
-                    token.ThrowIfCancellationRequested();
-                    await Task.WhenAll(tasks);
-                    var userToken = await CreatedNewToken(edit.New.Id.ToString());
-                    return Results.Ok(userToken);
-                }
-                else
+                token.ThrowIfCancellationRequested();
+                await Task.WhenAll(tasks);
+
+                if (_userValidation.Validation.ValidationErrors.Count != 0)
                 {
                     throw _userValidation.Validation.Throw();
                 }
+
+                var userToken = await CreatedNewToken(edit.New.Id.ToString());
+                return Results.Ok(userToken);
             }
             catch (ValidationException)
             {
+                var userToken = await CreatedNewToken(edit.New.Id.ToString());
                 Console.WriteLine(_userValidation.Validation.GetError());
+                _userValidation.AddToken(userToken.Token);
+                throw;
+            }
+            catch (OperationCanceledException ex)
+            {
+                Console.WriteLine(ex.Message);
                 throw;
             }
             catch (Exception ex)
@@ -313,7 +319,7 @@ namespace Server.Endpoints
         private async Task<User> CreatedNewToken(string id)
         {
             var sql = SqlQuery.LoginQuery.InFromId(id);
-            var users = await _db.DataBaseAsync.QueryAsync<User>(sql);
+            var users = await _db.DataBaseAsync.QueryAsync<User>(sql, id);
 
             User updateUser = users.FirstOrDefault() ?? throw new UnauthorizedAccessException();
 
