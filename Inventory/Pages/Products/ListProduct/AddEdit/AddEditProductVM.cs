@@ -46,18 +46,55 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             }
         }
 
-        private ObservableCollection<AddEditProductMImg> imgList = [];
-        public ObservableCollection<AddEditProductMImg> ImgList
+        private ObservableCollection<AddEditProductMImg> imgListBread = [];
+        public ObservableCollection<AddEditProductMImg> ImgListBread
         {
-            get => imgList;
+            get => imgListBread;
             set
             {
-                if (SetProperty(ref imgList, value, nameof(ImgList))) { }
+                if (SetProperty(ref imgListBread, value, nameof(ImgListBread))) { }
+            }
+        }
+        private ObservableCollection<AddEditProductMImg> imgListBuns = [];
+        public ObservableCollection<AddEditProductMImg> ImgListBuns
+        {
+            get => imgListBuns;
+            set
+            {
+                if (SetProperty(ref imgListBuns, value, nameof(ImgListBuns))) { }
+            }
+        }
+        private ObservableCollection<AddEditProductMImg> imgListCake = [];
+        public ObservableCollection<AddEditProductMImg> ImgListCake
+        {
+            get => imgListCake;
+            set
+            {
+                if (SetProperty(ref imgListCake, value, nameof(ImgListCake))) { }
+            }
+        }
+        private ObservableCollection<AddEditProductMImg> imgListCookies = [];
+        public ObservableCollection<AddEditProductMImg> ImgListCookies
+        {
+            get => imgListCookies;
+            set
+            {
+                if (SetProperty(ref imgListCookies, value, nameof(ImgListCookies))) { }
+            }
+        }
+        private ObservableCollection<AddEditProductMImg> imgListOther = [];
+        public ObservableCollection<AddEditProductMImg> ImgListOther
+        {
+            get => imgListOther;
+            set
+            {
+                if (SetProperty(ref imgListOther, value, nameof(ImgListOther))) { }
             }
         }
 
-        readonly IAccessDataBase _db;
 
+
+        readonly IAccessDataBase _db;
         public AddEditProductVM(IAccessDataBase db)
         {
             AddEdit = new AddEditProductM();
@@ -71,9 +108,31 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                     Prices = [],
                 };
             }
-            ImgList ??= [];
-            _db = db;
+            ImgListBread ??= [];
 
+            for (int i = 0; i < Shared.Helper.Img.ImgPath.Cakes.Length; i++)
+            {
+                ImgListCake.Add(new(Shared.Helper.Img.ImgPath.Cakes[i]));
+            }
+            for (int i = 0; i < Shared.Helper.Img.ImgPath.Bread.Length; i++)
+            {
+                ImgListBread.Add(new(Shared.Helper.Img.ImgPath.Bread[i]));
+            }
+            for (int i = 0; i < Shared.Helper.Img.ImgPath.Cookies.Length; i++)
+            {
+                ImgListCookies.Add(new(Shared.Helper.Img.ImgPath.Cookies[i]));
+            }
+            for (int i = 0; i < Shared.Helper.Img.ImgPath.Buns.Length; i++)
+            {
+                ImgListBuns.Add(new(Shared.Helper.Img.ImgPath.Buns[i]));
+            }
+            for (int i = 0; i < Shared.Helper.Img.ImgPath.Other.Length; i++)
+            {
+                ImgListOther.Add(new(Shared.Helper.Img.ImgPath.Other[i]));
+            }
+            AddEdit.IsVisibleBread = true;
+
+            _db = db;
         }
 
         private static readonly string[] extensionsValues = ["jpg", "png", "gif"];
@@ -240,8 +299,12 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
         void SwipeViewGesture(string selected)
         {
             var id = int.Parse(selected);
-            string[] newImgList = [];
-            ImgList.Clear();
+            AddEdit.IsVisibleBread = false;
+            AddEdit.IsVisibleBuns = false;
+            AddEdit.IsVisibleCake = false;
+            AddEdit.IsVisibleCookies = false;
+            AddEdit.IsVisibleOther = false;
+
             switch ((FrameToDisplay)id)
             {
                 case FrameToDisplay.frame:
@@ -249,35 +312,23 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                     break;
                 case FrameToDisplay.bread:
                     AddEdit.IsVisibleBread = !AddEdit.IsVisibleBread;
-                    newImgList = (Shared.Helper.Img.ImgPath.Bread);
                     break;
                 case FrameToDisplay.buns:
                     AddEdit.IsVisibleBuns = !AddEdit.IsVisibleBuns;
-                    newImgList = (Shared.Helper.Img.ImgPath.Buns);
                     break;
                 case FrameToDisplay.cake:
                     AddEdit.IsVisibleCake = !AddEdit.IsVisibleCake;
-                    newImgList = (Shared.Helper.Img.ImgPath.Cakes);
                     break;
                 case FrameToDisplay.cookies:
                     AddEdit.IsVisibleCookies = !AddEdit.IsVisibleCookies;
-                    newImgList = (Shared.Helper.Img.ImgPath.Cookies);
                     break;
                 case FrameToDisplay.other:
                     AddEdit.IsVisibleOther = !AddEdit.IsVisibleOther;
-                    newImgList = (Shared.Helper.Img.ImgPath.Other);
                     break;
                 case FrameToDisplay.@default:
                     Product.Name.Img = Shared.Helper.Img.ImgPath.Logo;
-                    ImgList.Clear();
                     break;
             }
-
-            for (int i = 0; i < newImgList.Length; i++)
-            {
-                ImgList.Add(new(newImgList[i]));
-            }
-            OnPropertyChanged(nameof(ImgList));
         }
 
         [RelayCommand]

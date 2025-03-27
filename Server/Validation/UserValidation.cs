@@ -52,7 +52,7 @@ public class UserValidation : IUserValidation
     private readonly string _special = "!@#$%^&*()_+-=[]{}|;:'\",.<>?/\\`~";
     private readonly string _phoneNumberPattern = @"^\+?[1-9]\d{1,14}$"; // E.164 format
 
-    public IValidationException Validation { get; private set; }
+    public IValidationException Validation { get; private set; } = new ValidationException();
     public UserValidation(IAccessDataBase db, ITimeService timeService, IValidationException? validation = null)
     {
         _db = db;
@@ -61,13 +61,7 @@ public class UserValidation : IUserValidation
         {
             Validation = validation;
         }
-        else
-        {
-            Validation = new ValidationException();
-        }
     }
-
-
     public void AddToken(string token)
     {
         Validation.AddError(token, EnumsList.Validation.Token);

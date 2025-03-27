@@ -1,6 +1,6 @@
 ﻿namespace Shared.Helper
 {
-    public class ListOfEnums
+    public static class ListOfEnums
     {
         public enum TypOfOptions
         {

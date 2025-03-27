@@ -48,6 +48,7 @@ namespace ServerUnitTest.Requests
             // Arrange
             var registerUser = new RegisterUser { Email = "test@example.com", Password = "Password123!" };
 
+            _mockUserValidation.Setup(v => v.Validation).Returns(new ValidationException());
             _mockUserValidation.Setup(v => v.RegisterUserNull(registerUser)).Returns(ServerEnums.Result.Success);
             _mockUserValidation.Setup(v => v.EmailIsNull(registerUser.Email)).Returns(ServerEnums.Result.Success);
             _mockUserValidation.Setup(v => v.PasswordIsNull(registerUser.Password)).Returns(ServerEnums.Result.Success);

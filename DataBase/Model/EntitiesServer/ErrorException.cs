@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace DataBase.Model.EntitiesServer
@@ -23,7 +24,7 @@ namespace DataBase.Model.EntitiesServer
         void AddError(string message, EnumsList.Validation valid);
         void AddError(ValidationException.Valid valid);
         string GetError();
-        ValidationException Throw();
+        void Throw();
     }
 
     [Serializable]
@@ -46,11 +47,14 @@ namespace DataBase.Model.EntitiesServer
             string json = JsonSerializer.Serialize([.. ValidationErrors], ValidJsonSerializerContext.Default.ValidArray);
             return json;
         }
-
-        public ValidationException Throw()
+        public void Throw()
         {
-            return this;
+            if (ValidationErrors?.Count > 0)
+            {
+                throw this;
+            }
         }
+
 
         public ValidationException()
         { }
@@ -69,7 +73,16 @@ namespace DataBase.Model.EntitiesServer
 
         }
     }
-
+    public static class ValidationExceptionExtension
+    {
+        public static void Throw(this ValidationException valid)
+        {
+            if (valid?.ValidationErrors?.Count > 0)
+            {
+                throw valid;
+            }
+        }
+    }
 
     [JsonSourceGenerationOptions(WriteIndented = true, PropertyNameCaseInsensitive = true)]
     [JsonSerializable(typeof(ValidationException.Valid[]))]

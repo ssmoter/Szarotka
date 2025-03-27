@@ -11,11 +11,11 @@ namespace Shared.Data.ServerHttpClients
 {
     public interface ILoginHttp
     {
-        Task<User> GetPublicUser(Guid id);
-        Task<User> In(LoginUser register);
+        Task<User> GetPublicUser(Guid id, CancellationToken token = default);
+        Task<User> In(LoginUser register, CancellationToken token = default);
     }
 
-    public class LoginHttp : ILoginHttp
+    public partial class LoginHttp : ILoginHttp, IDisposable
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IAccessDataBase _db;
@@ -28,7 +28,7 @@ namespace Shared.Data.ServerHttpClients
         }
 
 
-        public async Task<User> In(LoginUser login)
+        public async Task<User> In(LoginUser login, CancellationToken token = default)
         {
             string url = _url + "/user/login";
 
@@ -40,9 +40,9 @@ namespace Shared.Data.ServerHttpClients
 
             using var httpClient = _httpClientFactory.CreateClient();
 
-            var response = await httpClient.PostAsync(url, content);
+            var response = await httpClient.PostAsync(url, content, token);
 
-            var json = await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringAsync(token);
 
             if (string.IsNullOrWhiteSpace(json))
             {
@@ -57,15 +57,15 @@ namespace Shared.Data.ServerHttpClients
 
             throw ValidationExceptionClient.ThrowValidationException(json);
         }
-        public async Task<User> GetPublicUser(Guid id)
+        public async Task<User> GetPublicUser(Guid id, CancellationToken token = default)
         {
             string url = _url + $"/user/{id}";
             using var httpClient = _httpClientFactory.CreateClient();
 
             httpClient.SetAuthorization();
 
-            var response = await httpClient.GetAsync(url);
-            var json = await response.Content.ReadAsStringAsync();
+            var response = await httpClient.GetAsync(url, token);
+            var json = await response.Content.ReadAsStringAsync(token);
             if (string.IsNullOrWhiteSpace(json))
             {
                 response.EnsureSuccessStatusCode();
@@ -78,5 +78,9 @@ namespace Shared.Data.ServerHttpClients
             throw ValidationExceptionClient.ThrowValidationException(json);
         }
 
+        public void Dispose()
+        {
+            _db.Dispose();
+        }
     }
 }

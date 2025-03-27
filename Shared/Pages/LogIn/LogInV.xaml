@@ -54,6 +54,13 @@
 
             <Label Text="{Binding Errors}" TextColor="Red" />
 
+            <HorizontalStackLayout HorizontalOptions="End">
+                <Label Style="{StaticResource LabelPointerOver}" Text="Nie pamiętasz hasła?">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GotoForgetPasswordCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
             <HorizontalStackLayout>
                 <CheckBox IsChecked="{Binding User.RememberMe}" />
                 <Label Text="Zapamiętaj mnie" VerticalOptions="Center" />

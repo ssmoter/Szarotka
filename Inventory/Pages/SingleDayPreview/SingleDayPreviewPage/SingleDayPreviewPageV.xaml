@@ -17,7 +17,7 @@
     </ContentPage.ToolbarItems>
 
     <Grid>
-        <smallDay:SingleDayPreviewSmallV Day="{Binding Day}" Driver="{Binding Driver}" />
+        <smallDay:SingleDayPreviewSmallV Day="{Binding Day}" />
     </Grid>
 
 

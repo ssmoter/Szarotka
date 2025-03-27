@@ -4,6 +4,7 @@ using Shared.Data;
 using Shared.Data.ServerHttpClients;
 using Shared.Pages.ConfirmEmail;
 using Shared.Pages.LogIn;
+using Shared.Pages.LogIn.ForgetPassword;
 using Shared.Pages.UserDisplay;
 using Shared.Pages.UserDisplay.UserEdit;
 
@@ -51,6 +52,13 @@ namespace Shared.Service
 
             services.AddScoped<UserEditVM>();
             services.AddScoped<UserEditV>();
+
+            services.AddScoped<ForgetPasswordV>();
+            services.AddScoped<ForgetPasswordVM>();
+
+
+
+            services.AddScoped<IResetPasswordHttp, ResetPasswordHttp>();
 
             return services;
         }

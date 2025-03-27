@@ -44,7 +44,7 @@
                             <SwipeView.LeftItems>
                                 <SwipeItems SwipeBehaviorOnInvoked="RemainOpen">
 
-                                    <SwipeItemView VerticalOptions="FillAndExpand">
+                                    <SwipeItemView VerticalOptions="Fill">
                                         <Grid RowDefinitions="*,*" VerticalOptions="Center">
 
                                             <ImageButton

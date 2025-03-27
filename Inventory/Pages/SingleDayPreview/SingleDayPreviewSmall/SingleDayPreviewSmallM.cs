@@ -56,6 +56,19 @@ namespace Inventory.Pages.SingleDayPreview.SingleDayPreviewSmall
             }
         }
 
+        private ObservableCollection<CakeIsExpanded> cakes = [];
+        public ObservableCollection<CakeIsExpanded> Cakes
+        {
+            get => cakes;
+            set
+            {
+                if (SetProperty(ref cakes, value, nameof(Cakes)))
+                {
+                }
+            }
+        }
+
+
         private View parent;
         public View Parent
         {
@@ -121,4 +134,41 @@ namespace Inventory.Pages.SingleDayPreview.SingleDayPreviewSmall
         }
 
     }
+
+    public partial class CakeIsExpanded : Cake
+    {
+        public CakeIsExpanded()
+        { }
+        public CakeIsExpanded(Cake cake)
+        {
+            Created = cake.Created;
+            CreatedTicks = cake.CreatedTicks;
+            DayId = cake.DayId;
+            Id = cake.Id;
+            Index = cake.Index;
+            IsDelete = cake.IsDelete;
+            IsSell = cake.IsSell;
+            IsExpanded = false;
+            Price = cake.Price;
+            PriceDecimal = cake.PriceDecimal;
+            Updated = cake.Updated;
+            UpdatedTicks = cake.UpdatedTicks;
+            UserCreatedId = cake.UserCreatedId;
+            UserUpdatedId = cake.UserCreatedId;
+        }
+
+        private bool isExpanded;
+        public bool IsExpanded
+        {
+            get => isExpanded;
+            set
+            {
+                if (SetProperty(ref isExpanded, value, nameof(IsExpanded)))
+                {
+                }
+            }
+        }
+
+    }
+
 }

@@ -1,7 +1,8 @@
-﻿using Shared.Helper;
-using DataBase.Model.EntitiesInventory;
+﻿using DataBase.Model.EntitiesInventory;
 
 using Inventory.Pages.RangeDay;
+
+using Shared.Helper;
 
 using System.Globalization;
 
@@ -194,7 +195,10 @@ public class RangeCalculations
 
     public static void GetUniqueDriver(IList<RangeDayM> value)
     {
-        UniqueDriver = value.DistinctBy(x => x.Driver.Id).Select(z => z.Driver).ToList();
+        if (value.Count > 0)
+        {
+            UniqueDriver = value.DistinctBy(x => x.Driver.Id).Select(z => z.Driver).ToList();
+        }
     }
 
     public static IList<RangeDayM> SumDayOfWeek(IList<RangeDayM> value)

@@ -53,38 +53,9 @@ namespace Inventory.Pages.Options.CreateTable
             this._db = dataBase;
             Task.Run(async () =>
             {
-                await CheckTables(); Version = await _db.DataBaseAsync.Table<DataBaseVersion>().FirstOrDefaultAsync();
+                await CheckTables(); 
+                Version = await _db.DataBaseAsync.Table<DataBaseVersion>().FirstOrDefaultAsync();
             });
-        }
-
-        public static async Task OnNavigation(IAccessDataBase db)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(Inventory.Helper.SelectedDriver.Id))
-                {
-                    var tableInfo = db.DataBase.GetTableInfo(nameof(SelectedDriver));
-                    bool exist = tableInfo.Count > 0;
-                    if (exist)
-                    {
-                        var selectedDriver = db.DataBase.Table<SelectedDriver>().FirstOrDefault();
-                        if (selectedDriver is not null)
-                        {
-                            var driver = db.DataBase.Table<Driver>().FirstOrDefault(x => x.Id == selectedDriver.SelectedGuid);
-                            Helper.SelectedDriver.Id = driver.Id.ToString();
-                            Helper.SelectedDriver.Name = driver.Name;
-                            Helper.SelectedDriver.Description = driver.Description;
-                        }
-                    }
-                }
-
-                if (string.IsNullOrWhiteSpace(Inventory.Helper.SelectedDriver.Id))
-                    await CreatedNewDriverMethod(db);
-            }
-            catch (Exception ex)
-            {
-                db.SaveLogExtension(ex);
-            }
         }
 
         #region Command
@@ -128,10 +99,6 @@ namespace Inventory.Pages.Options.CreateTable
 
                 await CheckTables();
 
-                Helper.SelectedDriver.Id = "";
-                Helper.SelectedDriver.Name = "";
-                Helper.SelectedDriver.Description = "";
-                Service.DriverNameUpdateService.OnUpdate();
             }
             catch (Exception ex)
             {
@@ -278,9 +245,7 @@ namespace Inventory.Pages.Options.CreateTable
                     if (!string.IsNullOrWhiteSpace(selected))
                     {
                         var selectedDriver = driver.FirstOrDefault(x => x.Name == selected);
-                        Helper.SelectedDriver.Id = selectedDriver.Id.ToString();
-                        Helper.SelectedDriver.Name = selectedDriver.Name;
-                        Helper.SelectedDriver.Description = selectedDriver.Description;
+
                         await db.DataBaseAsync.InsertOrReplaceAsync(new SelectedDriver() { Id = 1, SelectedGuid = selectedDriver.Id });
                         Service.DriverNameUpdateService.OnUpdate();
                     }

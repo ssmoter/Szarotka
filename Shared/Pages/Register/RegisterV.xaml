@@ -199,7 +199,7 @@
 
                                         <Border.GestureRecognizers>
                                             <TapGestureRecognizer
-                                                x:DataType="vm:RegisterVM"
+                                                x:DataType="modelInverntory:Driver"
                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:RegisterVM}}, Path=SetSelectedDriverCommand, x:DataType=vm:RegisterVM}"
                                                 CommandParameter="{Binding .}"
                                                 NumberOfTapsRequired="1" />

@@ -1,7 +1,10 @@
 ﻿using DataBase.Model.EntitiesServer;
 
+using Microsoft.Extensions.Configuration;
+
 using Moq;
 
+using Server.Model;
 using Server.Service;
 
 namespace ServerUnitTest.Service
@@ -14,9 +17,31 @@ namespace ServerUnitTest.Service
 
         public EmailConfirmServiceTests()
         {
+           var emailConfig = new EmailConfiguration
+            {
+                From = "from@example.com",
+                SmtpServer = "smtp.example.com",
+                Port = 587,
+                UserName = "username",
+                Password = "password"
+            };
+
+            var inMemorySettings = new Dictionary<string, string?>
+            {
+                { "EmailConfiguration:From", emailConfig.From },
+                { "EmailConfiguration:SmtpServer", emailConfig.SmtpServer },
+                { "EmailConfiguration:Port", emailConfig.Port.ToString() },
+                { "EmailConfiguration:UserName", emailConfig.UserName },
+                { "EmailConfiguration:Password", emailConfig.Password }
+            };
+
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
+
             _mockEmailService = new Mock<IEmailService>();
             _mockRegisterUserService = new Mock<IRegisterUserService>();
-            _emailConfirmService = new EmailConfirmService(_mockEmailService.Object, _mockRegisterUserService.Object);
+            _emailConfirmService = new EmailConfirmService(_mockEmailService.Object, _mockRegisterUserService.Object,configuration);
         }
 
         [Fact]

@@ -42,6 +42,8 @@ namespace ServerUnitTest.Service
 
             _mockUserValidation.Setup(v => v.AccountNotFound(It.IsAny<User>()));
 
+            _mockUserValidation.Setup(x => x.Validation).Returns(new ValidationException());
+
             _mockTimeService.Setup(t => t.UtcNow()).Returns(DateTime.UtcNow);
 
             // Act

@@ -6,14 +6,10 @@ using Server.Requests;
 
 namespace Server.Endpoints
 {
-    public interface IUserEndpoints
-    {
-        void MapEndpoints(WebApplication app);
-    }
 
-    public class UserEndpoints : IUserEndpoints
+    public static class UserEndpoints 
     {
-        public void MapEndpoints(WebApplication app)
+        public static void MapEndpoints(WebApplication app)
         {
             var user = app.MapGroup("/user");
             user.MapPost("/register", async ([FromBody] RegisterUser user, IRegisterUserRequests registerUserEndpoint, CancellationToken token = default)
@@ -86,6 +82,21 @@ namespace Server.Endpoints
                 return await loginUserRequests.GetPublicUser(id);
             }).RequireAuthorization();
 
+            user.MapGet("reset_password_email/{email}", async (string email, IResetPasswordRequests resetPasswordRequests, CancellationToken token = default)
+                =>
+            {
+                return await resetPasswordRequests.ResetPasswordEmail(email, token);
+            });
+            user.MapGet("reset_password/{code}", async (int code, IResetPasswordRequests resetPasswordRequests, CancellationToken token = default)
+                =>
+            {
+                return await resetPasswordRequests.ResetPasswordCode(code, token);
+            });
+            user.MapGet("reset_password/{code}/{password}", async (int code, string password, IResetPasswordRequests resetPasswordRequests, CancellationToken token = default)
+                =>
+            {                
+                return await resetPasswordRequests.ResetPasswordNew(code, password, token);
+            });
         }
 
 

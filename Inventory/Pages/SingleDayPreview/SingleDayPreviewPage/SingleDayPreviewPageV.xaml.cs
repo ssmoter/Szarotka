@@ -1,3 +1,5 @@
+using Inventory.Pages.SingleDayPreview.SingleDayPreviewSmall;
+
 namespace Inventory.Pages.SingleDayPreview.SingleDayPreviewPage;
 
 public partial class SingleDayPreviewPageV : ContentPage
@@ -7,4 +9,11 @@ public partial class SingleDayPreviewPageV : ContentPage
         InitializeComponent();
         BindingContext = vm;
     }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        SingleDayPreviewSmallV.OnNavigationTo();
+    }
+
 }

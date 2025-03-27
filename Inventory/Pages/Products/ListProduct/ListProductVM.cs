@@ -245,61 +245,98 @@ namespace Inventory.Pages.Products.ListProduct
         [RelayCommand]
         async Task SetUp(ListProductM value)
         {
-            var index = ProductMs.IndexOf(value);
-            index += 1;
-            if (index >= ProductMs.Count)
+            try
             {
-                return;
+                var index = ProductMs.IndexOf(value);
+                index += 1;
+                if (index >= ProductMs.Count)
+                {
+                    return;
+                }
+                await SetPositions(index, value);
             }
-            await SetPositions(index, value);
+            catch (Exception ex)
+            {
+                _db.SaveLogExtension(ex);
+            }
+
         }
         [RelayCommand]
         async Task SetDown(ListProductM value)
         {
-            var index = ProductMs.IndexOf(value);
-            index -= 1;
-            if (0 > index)
+            try
             {
-                return;
+
+
+                var index = ProductMs.IndexOf(value);
+                index -= 1;
+                if (0 > index)
+                {
+                    return;
+                }
+                await SetPositions(index, value);
             }
-            await SetPositions(index, value);
+            catch (Exception ex)
+            {
+                _db.SaveLogExtension(ex);
+            }
         }
 
 
         [RelayCommand]
         void OnDrag(ListProductM value)
         {
-            if (value is null)
-                return;
+            try
+            {
+                if (value is null)
+                    return;
 
-            DragAndDropProduct = value;
+                DragAndDropProduct = value;
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLogExtension(ex);
+            }
         }
 
         [RelayCommand]
         void OnDropCompleted()
         {
-            if (DragAndDropProduct is null)
-                return;
-
-            if (ProductMs.Count != _db.DataBase.Table<ProductName>().Count())
+            try
             {
-                ProductMs.Clear();
-                SelectAllProducts();
+                if (DragAndDropProduct is null)
+                    return;
+
+                if (ProductMs.Count != _db.DataBase.Table<ProductName>().Count())
+                {
+                    ProductMs.Clear();
+                    SelectAllProducts();
+                }
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLogExtension(ex);
             }
         }
 
         [RelayCommand]
         async Task OnDrop(ListProductM value)
         {
-            if (value is null)
-                return;
+            try
+            {
+                if (value is null)
+                    return;
 
+                var index = ProductMs.IndexOf(value);
 
-            var index = ProductMs.IndexOf(value);
+                await SetPositions(index, DragAndDropProduct);
 
-            await SetPositions(index, DragAndDropProduct);
-
-            DragAndDropProduct = null;
+                DragAndDropProduct = null;
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLogExtension(ex);
+            }
         }
         #endregion
 

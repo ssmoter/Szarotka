@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:CustomControls="clr-namespace:Shared.CustomControls;assembly=Shared"
+    xmlns:CustomConverter="clr-namespace:Shared.Converters;assembly=Shared"
     xmlns:ImgPath="clr-namespace:Shared.Helper.Img;assembly=Shared"
     xmlns:Product="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
     xmlns:local="clr-namespace:Inventory.Pages.SingleDayPreview.SingleDayPreviewSmall"
@@ -15,6 +16,12 @@
         <ResourceDictionary>
             <toolkit:MultiMathExpressionConverter x:Key="MultiMathExpressionConverter" />
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <CustomConverter:LastCharactersConverter x:Key="LastCharactersConverter" />
+            <CustomConverter:CustomIntToBoolConverter x:Key="CustomIntToBoolConverter" />
+
+            <x:Boolean x:Key="True">True</x:Boolean>
+            <x:Boolean x:Key="False">False</x:Boolean>
+
         </ResourceDictionary>
     </ContentView.Resources>
 
@@ -108,7 +115,7 @@
                         ColumnDefinitions="auto,auto"
                         ColumnSpacing="10"
                         HorizontalOptions="Center"
-                        RowDefinitions="*,auto,*,auto,*,auto,*,auto,*,auto,*,auto,*,auto,*,auto,*,auto"
+                        RowDefinitions="*,auto,*,auto,*,auto,*,auto,*,auto,*,auto,*,auto,*,auto,*,auto,auto"
                         RowSpacing="10">
 
 
@@ -199,7 +206,6 @@
                         </Label>
                         <Border Grid.Row="7" Grid.ColumnSpan="2" />
 
-
                         <Label
                             Grid.Row="8"
                             Grid.Column="0"
@@ -221,7 +227,6 @@
                         </Label>
                         <Border Grid.Row="9" Grid.ColumnSpan="2" />
 
-
                         <Label
                             Grid.Row="10"
                             Grid.Column="0"
@@ -242,8 +247,27 @@
                             </Label.FormattedText>
                         </Label>
 
-                        <Border Grid.Row="11" Grid.ColumnSpan="2" />
+                        <local:TransparentToColorGraphicsView
+                            Grid.Row="10"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            Margin="-9"
+                            InputTransparent="True"
+                            IsVisible="{Binding Day.TotalPriceDifference, Converter={StaticResource CustomIntToBoolConverter}, ConverterParameter={StaticResource False}, x:DataType=vm:SingleDayPreviewSmallV}"
+                            Opacity="0.5"
+                            ToColor="Green" />
 
+                        <local:TransparentToColorGraphicsView
+                            Grid.Row="10"
+                            Grid.Column="1"
+                            Grid.ColumnSpan="2"
+                            Margin="-9"
+                            InputTransparent="True"
+                            IsVisible="{Binding Day.TotalPriceDifference, Converter={StaticResource CustomIntToBoolConverter}, ConverterParameter={StaticResource True}, x:DataType=vm:SingleDayPreviewSmallV}"
+                            Opacity="0.5"
+                            ToColor="Red" />
+
+                        <Border Grid.Row="11" Grid.ColumnSpan="2" />
 
                         <Label
                             Grid.Row="12"
@@ -300,23 +324,84 @@
                             Grid.Column="1"
                             FontSize="Medium"
                             LineBreakMode="CharacterWrap"
+                            Style="{StaticResource LabelPointerOver}"
+                            Text="{Binding Day.DriverGuid, x:DataType=vm:SingleDayPreviewSmallV, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8}"
                             VerticalOptions="Center">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="{Binding Driver, x:DataType=vm:SingleDayPreviewSmallV}" />
-                                </FormattedString>
-                            </Label.FormattedText>
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
+                            </Label.GestureRecognizers>
                         </Label>
 
                         <Border Grid.Row="17" Grid.ColumnSpan="2" />
 
+                        <Grid
+                            Grid.Row="18"
+                            Grid.ColumnSpan="2"
+                            ColumnDefinitions="auto,*"
+                            ColumnSpacing="5"
+                            RowDefinitions="*,*,*,*,*">
+
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Text="Czas Utworzenia:" />
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Text="{Binding Day.Created, x:DataType=vm:SingleDayPreviewSmallV}" />
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Text="Czas Edycji:" />
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Text="{Binding Day.Updated, x:DataType=vm:SingleDayPreviewSmallV}" />
+
+                            <Label
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Text="Utworzył: " />
+                            <Label
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Text="{Binding Day.UserCreatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8, x:DataType=vm:SingleDayPreviewSmallV}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                            <Label
+                                Grid.Row="3"
+                                Grid.Column="0"
+                                Text="Edytował: " />
+                            <Label
+                                Grid.Row="3"
+                                Grid.Column="1"
+                                Text="{Binding Day.UserUpdatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8, x:DataType=vm:SingleDayPreviewSmallV}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
+                                </Label.GestureRecognizers>
+                            </Label>
+
+                            <Label
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                Text="Opis:" />
+                            <Label
+                                Grid.Row="4"
+                                Grid.Column="1"
+                                LineBreakMode="WordWrap"
+                                Text="{Binding Day.Description, x:DataType=vm:SingleDayPreviewSmallV}" />
+
+
+                        </Grid>
+
                     </Grid>
 
 
-                    <!--<Border Grid.Column="0" />
-                    <Border Grid.Column="2" />-->
-
                 </Grid>
+
+
             </ScrollView>
 
             <!--
@@ -341,9 +426,14 @@
                                 Padding="10"
                                 ColumnDefinitions=".5*,*,*"
                                 RowDefinitions="auto,*,auto">
+
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped_Product" />
+                                </Grid.GestureRecognizers>
+
                                 <CustomControls:StringImage
                                     Grid.Row="0"
-                                    Grid.RowSpan="3"
+                                    Grid.RowSpan="2"
                                     Grid.Column="0"
                                     MaximumWidthRequest="100"
                                     String64Base="{Binding Name.Img, x:DataType=Product:Product}" />
@@ -446,7 +536,7 @@
                                                         </MultiBinding>
                                                     </Span.Text>
                                                 </Span>
-                                                <Span Text="szt." />
+                                                <Span Text=" szt." />
                                             </FormattedString>
                                         </Label.FormattedText>
                                     </Label>
@@ -542,7 +632,76 @@
 
                                 </Grid>
 
-                                <Border Grid.Row="2" Grid.ColumnSpan="3" />
+                                <Grid
+                                    Grid.Row="2"
+                                    Grid.ColumnSpan="3"
+                                    Padding="5"
+                                    ColumnDefinitions="auto,*"
+                                    ColumnSpacing="5"
+                                    IsVisible="{Binding IsExpanded}"
+                                    RowDefinitions="*,*,*,*,auto">
+
+                                    <Label
+                                        Grid.Row="0"
+                                        Grid.Column="0"
+                                        Text="Czas Utworzenia:" />
+                                    <Label
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        Text="{Binding Created}" />
+                                    <Label
+                                        Grid.Row="1"
+                                        Grid.Column="0"
+                                        Text="Czas Edycji:" />
+                                    <Label
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Text="{Binding Updated}" />
+
+                                    <Label
+                                        Grid.Row="2"
+                                        Grid.Column="0"
+                                        Text="Utworzył: " />
+                                    <Label
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        Text="{Binding UserCreatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8}">
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
+                                        </Label.GestureRecognizers>
+                                    </Label>
+                                    <Label
+                                        Grid.Row="3"
+                                        Grid.Column="0"
+                                        Text="Edytował: " />
+                                    <Label
+                                        Grid.Row="3"
+                                        Grid.Column="1"
+                                        Text="{Binding UserUpdatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8}">
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
+                                        </Label.GestureRecognizers>
+                                    </Label>
+
+                                    <Label
+                                        Grid.Row="4"
+                                        Grid.Column="0"
+                                        Text="Opis: " />
+                                    <Label
+                                        Grid.Row="4"
+                                        Grid.Column="1"
+                                        Text="{Binding Description}" />
+                                </Grid>
+
+                                <Border
+                                    Grid.Row="2"
+                                    Grid.ColumnSpan="3"
+                                    VerticalOptions="Start" />
+                                <Border
+                                    Grid.Row="2"
+                                    Grid.ColumnSpan="3"
+                                    VerticalOptions="End" />
+
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
@@ -598,11 +757,17 @@
                     IsRefreshing="{Binding SingleDayPreviewSmallM.CakesIsRefreshing}"
                     Refreshing="RefreshView_Refreshing">
 
-                    <CollectionView ItemsSource="{Binding Day.Cakes, x:DataType=vm:SingleDayPreviewSmallV}">
+                    <CollectionView ItemsSource="{Binding SingleDayPreviewSmallM.Cakes, x:DataType=vm:SingleDayPreviewSmallV}">
 
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="Product:Cake">
-                                <Grid Margin="0,5,0,5">
+                                <Grid Margin="0,5,0,5" RowDefinitions="*,auto">
+
+
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped_CakeIsExpanded" />
+                                    </Grid.GestureRecognizers>
+
                                     <Grid
                                         Margin="5"
                                         Padding="5"
@@ -644,6 +809,7 @@
                                             Grid.Column="2"
                                             Grid.ColumnSpan="2"
                                             Margin="-9"
+                                            InputTransparent="True"
                                             IsVisible="{Binding IsSell}"
                                             ToColor="Green" />
 
@@ -651,18 +817,74 @@
                                             Grid.Column="2"
                                             Grid.ColumnSpan="2"
                                             Margin="-9"
+                                            InputTransparent="True"
                                             IsVisible="{Binding IsSell, Converter={StaticResource InvertedBoolConverter}}"
                                             ToColor="Red" />
 
                                     </Grid>
 
-                                    <Border
+                                    <Grid
+                                        Grid.Row="1"
                                         Padding="5"
-                                        IsVisible="{Binding IsSell}"
+                                        x:DataType="vm:CakeIsExpanded"
+                                        ColumnDefinitions="auto,*"
+                                        ColumnSpacing="5"
+                                        IsVisible="{Binding IsExpanded, x:DataType=vm:CakeIsExpanded}"
+                                        RowDefinitions="*,*,*,*">
+
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            Text="Czas Utworzenia:" />
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            Text="{Binding Created, x:DataType=vm:CakeIsExpanded}" />
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="0"
+                                            Text="Czas Edycji:" />
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Text="{Binding Updated, x:DataType=vm:CakeIsExpanded}" />
+
+                                        <Label
+                                            Grid.Row="2"
+                                            Grid.Column="0"
+                                            Text="Utworzył: " />
+                                        <Label
+                                            Grid.Row="2"
+                                            Grid.Column="1"
+                                            Text="{Binding UserCreatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8, x:DataType=vm:CakeIsExpanded}">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                        <Label
+                                            Grid.Row="3"
+                                            Grid.Column="0"
+                                            Text="Edytował: " />
+                                        <Label
+                                            Grid.Row="3"
+                                            Grid.Column="1"
+                                            Text="{Binding UserUpdatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8, x:DataType=vm:CakeIsExpanded}">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+
+                                    </Grid>
+
+                                    <Border
+                                        Grid.RowSpan="2"
+                                        Padding="5"
+                                        IsVisible="{Binding IsSell, x:DataType=vm:CakeIsExpanded}"
                                         Stroke="Green" />
                                     <Border
+                                        Grid.RowSpan="2"
                                         Padding="5"
-                                        IsVisible="{Binding IsSell, Converter={StaticResource InvertedBoolConverter}}"
+                                        IsVisible="{Binding IsSell, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:CakeIsExpanded}"
                                         Stroke="Red" />
                                 </Grid>
                             </DataTemplate>

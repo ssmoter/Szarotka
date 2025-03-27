@@ -48,7 +48,7 @@
                 <Button
                     Clicked="Button_Clicked"
                     HorizontalOptions="Center"
-                    Text="user" />
+                    Text="Profil" />
 
             </VerticalStackLayout>
         </ScrollView>

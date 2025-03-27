@@ -56,9 +56,7 @@ app.UseExceptionHandler();
 app.UseRouting();
 app.UseAuthorization();
 
-
-var user = app.Services.GetRequiredService<IUserEndpoints>();
-user.MapEndpoints(app);
+UserEndpoints.MapEndpoints(app);
 
 
 

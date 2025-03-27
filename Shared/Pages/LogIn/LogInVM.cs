@@ -10,6 +10,7 @@ using Shared.Data;
 using Shared.Data.ServerHttpClients;
 using Shared.Helper;
 using Shared.Pages.ConfirmEmail;
+using Shared.Pages.LogIn.ForgetPassword;
 
 using System.Web;
 
@@ -153,6 +154,12 @@ namespace Shared.Pages.LogIn
             {
                 _db.SaveLogExtension(ex);
             }
+        }
+
+        [RelayCommand]
+        async Task GotoForgetPassword()
+        {
+            await Shell.Current.GoToAsync(nameof(ForgetPasswordV));
         }
 
     }

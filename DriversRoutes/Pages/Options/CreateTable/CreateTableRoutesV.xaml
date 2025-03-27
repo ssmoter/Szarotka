@@ -22,24 +22,6 @@
                 </Label.FormattedText>
             </Label>
 
-            <!--<HorizontalStackLayout HorizontalOptions="Center">
-
-                <Button
-                    Command="{Binding CreateTablesCommand}"
-                    HorizontalOptions="Center"
-                    Text="Wygeneruj Tabele" />
-                <Button
-                    Command="{Binding CreateNewTablesCommand}"
-                    HorizontalOptions="Center"
-                    Text="Wygeneruj brakujące Tabele" />
-            </HorizontalStackLayout>-->
-
-
-
-
-
-
-
             <Label
                 HorizontalOptions="Center"
                 Text="Stworzone tabele:"

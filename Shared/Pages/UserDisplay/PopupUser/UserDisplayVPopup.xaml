@@ -7,6 +7,7 @@
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:vm="clr-namespace:Shared.Pages.UserDisplay.PopupUser"
     x:Name="this"
+    x:DataType="vm:UserDisplayVPopup"
     BindingContext="{Reference this}"
     Color="{AppThemeBinding Light={StaticResource White},
                             Dark={StaticResource Black}}">

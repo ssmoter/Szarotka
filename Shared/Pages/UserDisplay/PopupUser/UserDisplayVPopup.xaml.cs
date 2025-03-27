@@ -3,12 +3,14 @@ using CommunityToolkit.Maui.Views;
 using DataBase.Data;
 using DataBase.Model.EntitiesServer;
 
+using Microsoft.Maui.Platform;
+
 using Shared.Data;
 using Shared.Data.ServerHttpClients;
 
 namespace Shared.Pages.UserDisplay.PopupUser;
 
-public partial class UserDisplayVPopup : Popup
+public partial class UserDisplayVPopup : Popup, IDisposable
 {
 
     private bool isRefreshing = true;
@@ -57,7 +59,11 @@ public partial class UserDisplayVPopup : Popup
         GetUserFireAndForget(id);
 
     }
-
+    public UserDisplayVPopup()
+    {
+        Init();
+    }
+    private CancellationTokenSource _tokenSource;
     private IAccessDataBase _db;
     public static Dictionary<Guid, User> Users { get; } = [];
     private ILoginHttp _loginHttp;
@@ -66,13 +72,28 @@ public partial class UserDisplayVPopup : Popup
         InitializeComponent();
 
         IsRefreshing = true;
-
+        _tokenSource = new();
         this.CanBeDismissedByTappingOutsideOfPopup = false;
 
         _db = Shared.Service.AppServiceProvider.GetService<IAccessDataBase>();
         _loginHttp = Shared.Service.AppServiceProvider.GetService<ILoginHttp>();
     }
 
+
+    public async Task<User> GetUser(Guid id)
+    {
+        User user = new();
+        try
+        {
+            user = await GetUserFromServer(id);
+            Users.TryAdd(user.Id, user);
+        }
+        catch (Exception ex)
+        {
+            _db.SaveLogExtension(ex);
+        }
+        return user;
+    }
 
     private async void GetUserFireAndForget(Guid id)
     {
@@ -88,6 +109,7 @@ public partial class UserDisplayVPopup : Popup
                 Users.TryAdd(user.Id, user);
             }
         }
+        catch (TaskCanceledException) { }
         catch (Exception ex)
         {
             _db.SaveLogExtension(ex);
@@ -100,14 +122,21 @@ public partial class UserDisplayVPopup : Popup
 
     private async Task<User> GetUserFromServer(Guid id)
     {
-
-        var user = await _loginHttp.GetPublicUser(id);
+        var token = _tokenSource.Token;
+        var user = await _loginHttp.GetPublicUser(id, token);
 
         return user;
     }
 
     private async void Button_Clicked_Close(object sender, EventArgs e)
     {
+        _tokenSource?.Cancel();
         await CloseAsync();
+    }
+
+    public void Dispose()
+    {
+        _tokenSource?.Dispose();
+        _db?.Dispose();
     }
 }

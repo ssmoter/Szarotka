@@ -34,9 +34,17 @@ public partial class AddEditProductV : ContentPage
 
     private void TapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
     {
-        if (gImg.MaximumHeightRequest == double.PositiveInfinity || gImg.MaximumHeightRequest == 0)
+        //gImg.MaximumHeightRequest = (bImg.Bounds.Height - 10) - ((vslImg.Bounds.Height + 15) );
+    }
+
+    private void BImg_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (sender is Border)
         {
-            gImg.MaximumHeightRequest = gImg.Bounds.Y;
+            if (e.PropertyName == nameof(Border.Bounds.Height))
+            {
+                gImg.MaximumHeightRequest = (bImg.Bounds.Height - 10) - ((vslImg.Bounds.Height + 15));
+            }
         }
     }
 }

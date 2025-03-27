@@ -28,12 +28,14 @@
         <Grid ColumnDefinitions="*,2*" RowDefinitions="auto,auto,*,auto">
 
             <Border
+                x:Name="bImg"
                 Grid.RowSpan="3"
                 Grid.Column="1"
                 Padding="5,5,10,5"
                 BackgroundColor="{AppThemeBinding Light=White,
                                                   Dark=Black}"
                 IsVisible="{Binding AddEdit.IsVisibleFrame}"
+                PropertyChanged="BImg_PropertyChanged"
                 ZIndex="102">
                 <Border.GestureRecognizers>
                     <SwipeGestureRecognizer
@@ -42,18 +44,24 @@
                         Direction="Right" />
                 </Border.GestureRecognizers>
 
-                <Grid Padding="5" RowDefinitions="auto,*">
+                <Grid
+                    x:Name="gImgList"
+                    Padding="5"
+                    RowDefinitions="auto,*">
 
-                    <VerticalStackLayout Padding="5" Spacing="5">
+                    <VerticalStackLayout
+                        x:Name="vslImg"
+                        Padding="5"
+                        Spacing="5">
 
                         <Button
                             Command="{Binding SwipeViewGestureCommand}"
                             CommandParameter="0"
-                            HorizontalOptions="FillAndExpand"
+                            HorizontalOptions="Fill"
                             Text="Schowaj" />
                         <Button
                             Command="{Binding SelectImageFromDeviceCommand}"
-                            HorizontalOptions="FillAndExpand"
+                            HorizontalOptions="Fill"
                             Text="Wybierz z pamięci" />
 
                         <ScrollView
@@ -110,20 +118,20 @@
 
                         <CollectionView
                             x:DataType="vm:AddEditProductVM"
-                            ItemsSource="{Binding ImgList}"
-                            SelectionMode="Single"
-                            VerticalScrollBarVisibility="Always">
-
-
+                            IsVisible="{Binding AddEdit.IsVisibleBread}"
+                            ItemsSource="{Binding ImgListBread}"
+                            VerticalScrollBarVisibility="Always"
+                            ZIndex="104">
                             <CollectionView.ItemTemplate>
 
                                 <DataTemplate>
 
-                                    <VerticalStackLayout HorizontalOptions="Center">
+                                    <StackLayout HorizontalOptions="Center">
 
                                         <CustomControls:StringImage
                                             x:DataType="vm:AddEditProductMImg"
                                             HorizontalOptions="Center"
+                                            MaximumHeightRequest="300"
                                             String64Base="{Binding Img}">
                                             <CustomControls:StringImage.GestureRecognizers>
                                                 <TapGestureRecognizer
@@ -134,13 +142,141 @@
                                         </CustomControls:StringImage>
 
                                         <Border HorizontalOptions="Fill" />
-                                    </VerticalStackLayout>
+                                    </StackLayout>
 
                                 </DataTemplate>
 
                             </CollectionView.ItemTemplate>
-
                         </CollectionView>
+                        <CollectionView
+                            x:DataType="vm:AddEditProductVM"
+                            IsVisible="{Binding AddEdit.IsVisibleBuns}"
+                            ItemsSource="{Binding ImgListBuns}"
+                            VerticalScrollBarVisibility="Always"
+                            ZIndex="104">
+                            <CollectionView.ItemTemplate>
+
+                                <DataTemplate>
+
+                                    <StackLayout HorizontalOptions="Center">
+
+                                        <CustomControls:StringImage
+                                            x:DataType="vm:AddEditProductMImg"
+                                            HorizontalOptions="Center"
+                                            MaximumHeightRequest="300"
+                                            String64Base="{Binding Img}">
+                                            <CustomControls:StringImage.GestureRecognizers>
+                                                <TapGestureRecognizer
+                                                    x:DataType="vm:AddEditProductMImg"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AddEditProductVM}}, Path=SetCurrentImgCommand, x:DataType=vm:AddEditProductVM}"
+                                                    CommandParameter="{Binding Img}" />
+                                            </CustomControls:StringImage.GestureRecognizers>
+                                        </CustomControls:StringImage>
+
+                                        <Border HorizontalOptions="Fill" />
+                                    </StackLayout>
+
+                                </DataTemplate>
+
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                        <CollectionView
+                            x:DataType="vm:AddEditProductVM"
+                            IsVisible="{Binding AddEdit.IsVisibleCake}"
+                            ItemsSource="{Binding ImgListCake}"
+                            VerticalScrollBarVisibility="Always"
+                            ZIndex="104">
+                            <CollectionView.ItemTemplate>
+
+                                <DataTemplate>
+
+                                    <StackLayout HorizontalOptions="Center">
+
+                                        <CustomControls:StringImage
+                                            x:DataType="vm:AddEditProductMImg"
+                                            HorizontalOptions="Center"
+                                            MaximumHeightRequest="300"
+                                            String64Base="{Binding Img}">
+                                            <CustomControls:StringImage.GestureRecognizers>
+                                                <TapGestureRecognizer
+                                                    x:DataType="vm:AddEditProductMImg"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AddEditProductVM}}, Path=SetCurrentImgCommand, x:DataType=vm:AddEditProductVM}"
+                                                    CommandParameter="{Binding Img}" />
+                                            </CustomControls:StringImage.GestureRecognizers>
+                                        </CustomControls:StringImage>
+
+                                        <Border HorizontalOptions="Fill" />
+                                    </StackLayout>
+
+                                </DataTemplate>
+
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                        <CollectionView
+                            x:DataType="vm:AddEditProductVM"
+                            IsVisible="{Binding AddEdit.IsVisibleCookies}"
+                            ItemsSource="{Binding ImgListCookies}"
+                            VerticalScrollBarVisibility="Always"
+                            ZIndex="104">
+                            <CollectionView.ItemTemplate>
+
+                                <DataTemplate>
+
+                                    <StackLayout HorizontalOptions="Center">
+
+                                        <CustomControls:StringImage
+                                            x:DataType="vm:AddEditProductMImg"
+                                            HorizontalOptions="Center"
+                                            MaximumHeightRequest="300"
+                                            String64Base="{Binding Img}">
+                                            <CustomControls:StringImage.GestureRecognizers>
+                                                <TapGestureRecognizer
+                                                    x:DataType="vm:AddEditProductMImg"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AddEditProductVM}}, Path=SetCurrentImgCommand, x:DataType=vm:AddEditProductVM}"
+                                                    CommandParameter="{Binding Img}" />
+                                            </CustomControls:StringImage.GestureRecognizers>
+                                        </CustomControls:StringImage>
+
+                                        <Border HorizontalOptions="Fill" />
+                                    </StackLayout>
+
+                                </DataTemplate>
+
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                        <CollectionView
+                            x:DataType="vm:AddEditProductVM"
+                            IsVisible="{Binding AddEdit.IsVisibleOther}"
+                            ItemsSource="{Binding ImgListOther}"
+                            VerticalScrollBarVisibility="Always"
+                            ZIndex="104">
+                            <CollectionView.ItemTemplate>
+
+                                <DataTemplate>
+
+                                    <StackLayout HorizontalOptions="Center">
+
+                                        <CustomControls:StringImage
+                                            x:DataType="vm:AddEditProductMImg"
+                                            HorizontalOptions="Center"
+                                            MaximumHeightRequest="300"
+                                            String64Base="{Binding Img}">
+                                            <CustomControls:StringImage.GestureRecognizers>
+                                                <TapGestureRecognizer
+                                                    x:DataType="vm:AddEditProductMImg"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AddEditProductVM}}, Path=SetCurrentImgCommand, x:DataType=vm:AddEditProductVM}"
+                                                    CommandParameter="{Binding Img}" />
+                                            </CustomControls:StringImage.GestureRecognizers>
+                                        </CustomControls:StringImage>
+
+                                        <Border HorizontalOptions="Fill" />
+                                    </StackLayout>
+
+                                </DataTemplate>
+
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
                     </Grid>
                 </Grid>
 
@@ -175,7 +311,7 @@
                     Text="{Binding Product.Name.Description}" />
                 <HorizontalStackLayout Grid.Row="2">
                     <Switch IsToggled="{Binding Product.Name.IsVisible}" />
-                    <Label Text="Czy produkt ma być wyświetlany?" VerticalOptions="CenterAndExpand" />
+                    <Label Text="Czy produkt ma być wyświetlany?" VerticalOptions="Center" />
                 </HorizontalStackLayout>
             </Grid>
 

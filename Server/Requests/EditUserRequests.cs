@@ -52,10 +52,7 @@ namespace Server.Requests
                 token.ThrowIfCancellationRequested();
                 await Task.WhenAll(tasks);
 
-                if (_userValidation.Validation.ValidationErrors.Count != 0)
-                {
-                    throw _userValidation.Validation.Throw();
-                }
+                _userValidation.Validation.Throw();
 
                 var userToken = await CreatedNewToken(edit.New.Id.ToString());
                 return Results.Ok(userToken);
@@ -75,7 +72,6 @@ namespace Server.Requests
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
-                Console.WriteLine(ex.Message);
                 throw;
             }
         }
@@ -84,17 +80,11 @@ namespace Server.Requests
         {
             try
             {
-                if (_userValidation.Validation.ValidationErrors.Count == 0)
-                {
-                    token.ThrowIfCancellationRequested();
-                    await UpdateDescriptionTask(edit);
-                    var userToken = await CreatedNewToken(edit.New.Id.ToString());
-                    return Results.Ok(userToken);
-                }
-                else
-                {
-                    throw _userValidation.Validation.Throw();
-                }
+                token.ThrowIfCancellationRequested();
+                _userValidation.Validation.Throw();
+                await UpdateDescriptionTask(edit);
+                var userToken = await CreatedNewToken(edit.New.Id.ToString());
+                return Results.Ok(userToken);
             }
             catch (ValidationException)
             {
@@ -109,7 +99,6 @@ namespace Server.Requests
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
-                Console.WriteLine(ex.Message);
                 throw;
             }
         }
@@ -117,17 +106,11 @@ namespace Server.Requests
         {
             try
             {
-                if (_userValidation.Validation.ValidationErrors.Count == 0)
-                {
-                    token.ThrowIfCancellationRequested();
-                    await UpdateNameTask(edit);
-                    var userToken = await CreatedNewToken(edit.New.Id.ToString());
-                    return Results.Ok(userToken);
-                }
-                else
-                {
-                    throw _userValidation.Validation.Throw();
-                }
+                token.ThrowIfCancellationRequested();
+                await UpdateNameTask(edit);
+                _userValidation.Validation.Throw();
+                var userToken = await CreatedNewToken(edit.New.Id.ToString());
+                return Results.Ok(userToken);
             }
             catch (ValidationException)
             {
@@ -142,7 +125,6 @@ namespace Server.Requests
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
-                Console.WriteLine(ex.Message);
                 throw;
             }
         }
@@ -150,18 +132,11 @@ namespace Server.Requests
         {
             try
             {
-
-                if (_userValidation.Validation.ValidationErrors.Count == 0)
-                {
-                    token.ThrowIfCancellationRequested();
-                    await UpdateEmailTask(edit);
-                    var userToken = await CreatedNewToken(edit.New.Id.ToString());
-                    return Results.Ok(userToken);
-                }
-                else
-                {
-                    throw _userValidation.Validation.Throw();
-                }
+                token.ThrowIfCancellationRequested();
+                await UpdateEmailTask(edit);
+                _userValidation.Validation.Throw();
+                var userToken = await CreatedNewToken(edit.New.Id.ToString());
+                return Results.Ok(userToken);
             }
             catch (ValidationException)
             {
@@ -176,7 +151,6 @@ namespace Server.Requests
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
-                Console.WriteLine(ex.Message);
                 throw;
             }
         }
@@ -184,18 +158,11 @@ namespace Server.Requests
         {
             try
             {
-
-                if (_userValidation.Validation.ValidationErrors.Count == 0)
-                {
-                    token.ThrowIfCancellationRequested();
-                    await UpdatePhoneNumberTask(edit);
-                    var userToken = await CreatedNewToken(edit.New.Id.ToString());
-                    return Results.Ok(userToken);
-                }
-                else
-                {
-                    throw _userValidation.Validation.Throw();
-                }
+                token.ThrowIfCancellationRequested();
+                await UpdatePhoneNumberTask(edit);
+                _userValidation.Validation.Throw();
+                var userToken = await CreatedNewToken(edit.New.Id.ToString());
+                return Results.Ok(userToken);
             }
             catch (ValidationException)
             {
@@ -210,7 +177,6 @@ namespace Server.Requests
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
-                Console.WriteLine(ex.Message);
                 throw;
             }
         }
@@ -218,17 +184,11 @@ namespace Server.Requests
         {
             try
             {
-                if (_userValidation.Validation.ValidationErrors.Count == 0)
-                {
-                    token.ThrowIfCancellationRequested();
-                    await UpdateUserTypeTask(edit);
-                    var userToken = await CreatedNewToken(edit.New.Id.ToString());
-                    return Results.Ok(userToken);
-                }
-                else
-                {
-                    throw _userValidation.Validation.Throw();
-                }
+                token.ThrowIfCancellationRequested();
+                await UpdateUserTypeTask(edit);
+                _userValidation.Validation.Throw();
+                var userToken = await CreatedNewToken(edit.New.Id.ToString());
+                return Results.Ok(userToken);
             }
             catch (ValidationException)
             {
@@ -243,7 +203,6 @@ namespace Server.Requests
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
-                Console.WriteLine(ex.Message);
                 throw;
             }
         }

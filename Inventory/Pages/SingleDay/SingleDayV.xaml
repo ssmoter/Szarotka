@@ -232,6 +232,7 @@
                 </Grid>
             </Border>
 
+
             <!--  Produkty  -->
             <Border
                 Grid.Row="2"
@@ -247,7 +248,6 @@
                         <DataTemplate>
                             <StackLayout>
 
-                                <!--  Nowa wersja  -->
                                 <Border
                                     Margin="0,1,0,1"
                                     Padding="2"
@@ -350,7 +350,7 @@
                                             </Label>
                                         </Grid>
                                         <VerticalStackLayout IsVisible="{Binding IsExpanded}">
-                                            <Border HorizontalOptions="FillAndExpand" />
+                                            <Border HorizontalOptions="Fill" />
 
                                             <Grid ColumnDefinitions="auto,*,auto" RowDefinitions="*,auto">
                                                 <Grid

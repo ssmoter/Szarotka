@@ -47,7 +47,7 @@ namespace Server.Requests
                 #region Validation
                 if (_userValidation.RegisterUserNull(registerUser) == ServerEnums.Result.Error)
                 {
-                    throw _userValidation.Validation.Throw();
+                    _userValidation.Validation.Throw();
                 }
                 if (_userValidation.EmailIsNull(registerUser.Email) == ServerEnums.Result.Success)
                 {
@@ -67,10 +67,8 @@ namespace Server.Requests
                 _userValidation.NameRequired(registerUser.Name);
                 #endregion
 
-                if (_userValidation.Validation?.ValidationErrors?.Count > 0)
-                {
-                    throw _userValidation.Validation.Throw();
-                }
+                _userValidation.Validation.Throw();
+
                 token.ThrowIfCancellationRequested();
                 RegisterUser result = await _registerService.InsertNewUser(registerUser);
 
@@ -90,7 +88,6 @@ namespace Server.Requests
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 _db.SaveLog(ex);
                 throw;
             }
@@ -116,7 +113,6 @@ namespace Server.Requests
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
                 _db.SaveLog(ex);
                 throw;
             }

@@ -3,6 +3,7 @@ using DataBase.Model.EntitiesServer;
 using DataBase.Service;
 
 using Server.Helper;
+using Server.Model;
 using Server.SqlQuery;
 using Server.Validation;
 
@@ -20,11 +21,21 @@ namespace Server.Service
         private readonly IAccessDataBase _db;
         private readonly IUserValidation _userValidation;
         private readonly ITimeService _time;
-        public RegisterUserService(IAccessDataBase db, IUserValidation userValidation, ITimeService time)
+        private readonly EmailConfiguration _emailConfig = new();
+
+        public RegisterUserService(IAccessDataBase db, IUserValidation userValidation, ITimeService time, IConfiguration configuration)
         {
             _db = db;
             _userValidation = userValidation;
             _time = time;
+
+            var section = configuration.GetSection(nameof(EmailConfiguration)).Get<EmailConfiguration>();
+            if (section is not null)
+            {
+                _emailConfig = section;
+            }
+
+
         }
 
         public async Task<RegisterUser> InsertNewUser(RegisterUser registerUser)
@@ -82,9 +93,9 @@ namespace Server.Service
         public async Task InsertCodeEmailAndRemoveOld(ConfirmCode user)
         {
             var now = _time.UtcNow();
-            user.ExpireDate = now.AddMinutes(10).Ticks;
+            user.ExpireDate = now.AddMinutes(_emailConfig.ExpireDateMinutes).Ticks;
             var codeOldTaskSql = UserQuery.RemoveExpireCode(now.Ticks);
-            var codeOldTask = _db.DataBaseAsync.ExecuteAsync(codeOldTaskSql, now.Ticks);
+            var codeOldTask = _db.DataBaseAsync.ExecuteAsync(codeOldTaskSql, now.AddDays(-7).Ticks);
             var codeNewTaskSql = UserQuery.ConfirmCodeInsert(user.CreatedTicks, user.UpdatedTicks, user.UserId, user.Code, user.ExpireDate);
             var codeNewTask = _db.DataBaseAsync.ExecuteAsync(codeNewTaskSql, user.CreatedTicks, user.UpdatedTicks, user.UserId, user.Code, user.ExpireDate);
 
@@ -92,25 +103,22 @@ namespace Server.Service
         }
         public async Task<User> GetUserEmailFromCodeAndRemoveOld(int code)
         {
-            var sql = UserQuery.EmailConfirmCheck(code);
+            var sql = UserQuery.CodeConfirmCheck(code);
             var userEmails = await _db.DataBaseAsync.QueryAsync<ConfirmCode>(sql, code);
             var userEmail = userEmails.FirstOrDefault();
 
             _userValidation.CodeNotExist(userEmail);
-            if (userEmail is null)
-            {
-                throw _userValidation.Validation.Throw();
-            }
-            _userValidation.CodeIsExpire(userEmail);
 
-            if (_userValidation.Validation.ValidationErrors.Count > 0)
-            {
-                throw _userValidation.Validation.Throw();
-            }
+            _userValidation.Validation.Throw();
+
+            _userValidation.CodeIsExpire(userEmail!);
+
+            _userValidation.Validation.Throw();
+
 
             var user = new User()
             {
-                Id = userEmail.UserId,
+                Id = userEmail!.UserId,
                 IsEmailConfirm = true,
                 Updated = _time.UtcNow(),
                 UserUpdatedId = userEmail.UserId
@@ -139,12 +147,9 @@ namespace Server.Service
 
             _userValidation.AccountNotFound(email);
 
-            if (email is null)
-            {
-                throw _userValidation.Validation.Throw();
-            }
+            _userValidation.Validation.Throw();
 
-            return email;
+            return email!;
         }
     }
 }

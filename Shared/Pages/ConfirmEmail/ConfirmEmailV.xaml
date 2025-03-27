@@ -52,7 +52,7 @@
                 Grid.Row="1"
                 HorizontalOptions="Center"
                 MaximumWidthRequest="300"
-                Text="Jeżeli kod wygasł albo email nie przyszedł spróbuj się zalogować wtedy wtedy zostanie wysłany nowy mail z kodem aktywacyjnym"
+                Text="Jeżeli kod wygasł albo email nie przyszedł spróbuj się zalogować wtedy zostanie wysłany nowy mail z kodem aktywacyjnym"
                 VerticalOptions="End" />
 
 

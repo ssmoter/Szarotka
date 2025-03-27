@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Model.EntitiesServer;
 
+using Shared.Pages.UserDisplay.PopupUser;
 using Shared.Pages.UserDisplay.UserEdit;
 
 namespace Shared.Pages.UserDisplay
@@ -16,6 +17,11 @@ namespace Shared.Pages.UserDisplay
                 if (user is User _user)
                 {
                     User = _user;
+                    Task.Run(async () =>
+                    {
+                        var description = await userDisplayVPopup.GetUser(_user.Id);
+                        User.Description = description.Description;
+                    });
                 }
             }
         }
@@ -27,6 +33,7 @@ namespace Shared.Pages.UserDisplay
             set => SetProperty(ref user, value, nameof(User));
         }
 
+        private UserDisplayVPopup userDisplayVPopup = new();
         public UserDisplayVM()
         {
             User ??= new();

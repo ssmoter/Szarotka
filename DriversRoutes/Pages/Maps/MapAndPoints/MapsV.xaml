@@ -243,6 +243,7 @@
                                             x:Name="YourLocation"
                                             Grid.Row="0"
                                             Padding="5"
+                                            x:DataType="VM:MapsVM"
                                             Command="{Binding CurrentLocationNewPinCommand}"
                                             HorizontalOptions="Fill"
                                             Text="Dodaj z twoją lokalizacją" />
@@ -255,6 +256,7 @@
                                         <Button
                                             Grid.Row="2"
                                             Padding="0"
+                                            x:DataType="VM:MapsVM"
                                             Command="{Binding ChangeAddLocationIsCommand}"
                                             HorizontalOptions="Fill"
                                             Text="{Binding AddLocationIsText}" />
@@ -264,7 +266,7 @@
                                         <toolkit:Expander.Header>
                                             <Button
                                                 Padding="0"
-                                                x:DataType="VM:MapsV"
+                                                x:DataType="Button"
                                                 BindingContext="{x:Reference YourLocation}"
                                                 HorizontalOptions="Center"
                                                 Text="Opcje mapy"
@@ -379,6 +381,7 @@
 
             <Button
                 Margin="5,5,0,0"
+                x:DataType="VM:MapsVM"
                 Command="{Binding ChangeDayCommand}"
                 CornerRadius="50"
                 LineBreakMode="WordWrap"

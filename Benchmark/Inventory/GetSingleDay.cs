@@ -23,7 +23,6 @@ namespace Benchmark.Inventory
         {
             _db = new AccessDataBase();
             _selectDay = new SelectDayService(_db);
-            SelectedDriver.Id = "ae86aaeb-1080-4ae2-9226-62cf3a042ca8";
         }
 
         [Benchmark]

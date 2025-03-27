@@ -1,7 +1,7 @@
 ﻿@Server_HostAddress = http://localhost:5021
 //@Server_HostAddress = http://localhost:32783
 @server_user = user
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJOYW1lIiwianRpIjoiOGRjODRhY2EtYzZmNC00N2YyLTgyZDktZGU2MDQ4MzQ3OTkzIiwiZW1haWwiOiJ1c2VyQGV4YW1wbGUuY29tIiwicGhvbmVfbnVtYmVyIjoiMTIzNDU2Nzg5IiwibmFtZWlkIjoiMDE5NGQwZWYtYzU2Yy03MTJlLWI1MDctNWI1NDBmNjM5NzQ5IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQmFrZXIiLCJleHAiOjE3NDA4NDcxMzcsImlzcyI6ImxvY2FsaG9zdCIsImF1ZCI6ImxvY2FsaG9zdFVzZXJzIn0.jS3Xs8qKnXzQKpu9fnheVOgsHKss7rJIREmqFon2OoE
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkd2EiLCJqdGkiOiI2MDc3YjZmZi03ODUwLTRiYTQtYTExYi1lOWZmM2U0ODIxZjUiLCJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJwaG9uZV9udW1iZXIiOiIxMjM0NTY3ODkxMDMiLCJuYW1laWQiOiIwMTk0ZDBlZi1jNTZjLTcxMmUtYjUwNy01YjU0MGY2Mzk3NDkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJEcml2ZXIiLCJlbWFpbF92ZXJpZmllZCI6IlRydWUiLCJDcmVhdGVkVGlja3MiOiI2Mzg3NDI2ODk2MjE1NjQzODMiLCJVcGRhdGVkVGlja3MiOiI2Mzg3NjcwODMxODU2NDcxMTkiLCJVc2VyVXBkYXRlZElkIjoiMDE5NGQwZWYtYzU2Yy03MTJlLWI1MDctNWI1NDBmNjM5NzQ5IiwiSXNEZWxldGUiOiJGYWxzZSIsImV4cCI6MTc0MTgwMTQ0MiwiaXNzIjoibG9jYWxob3N0IiwiYXVkIjoibG9jYWxob3N0VXNlcnMifQ.jplfGpV51ifrRlMCgJQLNAAvN5zRwp3KbVpMfog4ops
 
 POST {{Server_HostAddress}}/{{server_user}}/login
 Content-Type: application/json 
@@ -13,6 +13,9 @@ Content-Type: application/json
 }
 
 ###
+
+
+
 
 
 GET {{Server_HostAddress}}/todos/
@@ -71,3 +74,17 @@ Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
+
+GET {{Server_HostAddress}}/user/reset_password_email/user@example.com
+Accept: application/json
+
+###
+GET {{Server_HostAddress}}/user/reset_password/74091
+Accept: application/json
+
+###
+GET {{Server_HostAddress}}/user/reset_password/74091/Password1!
+Accept: application/json
+
+###
+

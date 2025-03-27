@@ -22,8 +22,20 @@
     </Style>
 
 
-    <Style x:Key="LabelError" TargetType="Label">
+    <Style
+        x:Key="LabelError"
+        x:DataType="Label"
+        TargetType="Label">
         <Setter Property="TextColor" Value="Red" />
+        <Setter Property="IsVisible" Value="True" />
+        <Style.Triggers>
+            <DataTrigger
+                Binding="{Binding Text.Length, Source={RelativeSource Self}}"
+                TargetType="Label"
+                Value="0">
+                <Setter Property="IsVisible" Value="False" />
+            </DataTrigger>
+        </Style.Triggers>
     </Style>
 
 

@@ -98,6 +98,10 @@ namespace Inventory.Pages.SingleDay
             {
                 Day.Products[i].PropertyChanged += SingleDayVM_PropertyChanged;
             }
+            for (int i = 0; i < Day.Cakes.Count; i++)
+            {
+                Day.Cakes[i].PropertyChanged += SingleDayVM_PropertyChanged;
+            }
             if (Day.Id == Guid.Empty)
             {
                 await SaveDay();
@@ -109,6 +113,10 @@ namespace Inventory.Pages.SingleDay
             for (int i = 0; i < Day.Products.Count; i++)
             {
                 Day.Products[i].PropertyChanged -= SingleDayVM_PropertyChanged;
+            }
+            for (int i = 0; i < Day.Cakes.Count; i++)
+            {
+                Day.Cakes[i].PropertyChanged -= SingleDayVM_PropertyChanged;
             }
         }
         private bool isPropertyChanged;
@@ -362,12 +370,12 @@ namespace Inventory.Pages.SingleDay
                         Updated = DateTime.Now,
                         IsSell = true
                     };
+                    cake.PropertyChanged += SingleDayVM_PropertyChanged;
                     Day.Cakes.Add(cake);
                     Day.Cakes.LastOrDefault().IsSell = true;
                     Day.UpdateTotalPrice();
                     await CommunityToolkit.Maui.Alerts.Toast.Make($"Dodano ciasto z ceną {value}", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
                     await _saveInventoryAoT.SaveCake(cake, Day.Id.ToByteArray());
-                    cake.PropertyChanged += SingleDayVM_PropertyChanged;
                 }
             }
             catch (Exception ex)

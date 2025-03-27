@@ -23,7 +23,6 @@
             Grid.Row="0"
             x:DataType="vm:SingleDayPreviewPopUpV"
             Day="{Binding Day}"
-            Driver="{Binding Driver}"
             HorizontalOptions="Fill" />
 
         <Grid Grid.Row="1" ColumnDefinitions="*,*">

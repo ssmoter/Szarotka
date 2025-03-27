@@ -73,7 +73,7 @@ VALUES(
 ";
             return sql;
         }
-        public static string EmailConfirmCheck(int Code)
+        public static string CodeConfirmCheck(int Code)
         {
             string sql = $@"
 SELECT
@@ -117,6 +117,18 @@ SELECT
 FROM {nameof(User)}
 WHERE
 {nameof(User.Id)} = @{nameof(Id)}
+";
+            return sql;
+        }
+        public static string GetIdFromEmail(string Email)
+        {
+            string sql = $@"
+SELECT
+{nameof(User.Id)},
+{nameof(User.Email)}
+FROM {nameof(User)}
+WHERE
+{nameof(User.Email)} = @{nameof(Email)}
 ";
             return sql;
         }
@@ -191,5 +203,19 @@ WHERE
 ";
             return sql;
         }
+        public static string UpdatePassword(string Password, long UpdatedTicks, Guid UserUpdatedId, Guid Id)
+        {
+            string sql = $@"
+UPDATE {nameof(User)}
+SET
+{nameof(RegisterUser.Password)} = @{nameof(Password)},
+{nameof(User.UpdatedTicks)} = @{nameof(UpdatedTicks)},
+{nameof(User.UserUpdatedId)} = @{nameof(UserUpdatedId)}
+WHERE
+{nameof(User.Id)} = @{nameof(Id)}
+";
+            return sql;
+        }
+
     }
 }

@@ -42,18 +42,16 @@ namespace Server.Requests
             try
             {
                 _userValidation.LoginIsNull(user);
-                if (user is null)
-                {
-                    throw _userValidation.Validation.Throw();
-                }
+
+                _userValidation.Validation.Throw();
+
                 _userValidation.EmailIsNull(user.Email);
                 _userValidation.PasswordIsNull(user.Password);
 
 
-                if (_userValidation.Validation.ValidationErrors.Count > 0)
-                {
-                    throw _userValidation.Validation.Throw();
-                }
+
+                _userValidation.Validation.Throw();
+
                 token.ThrowIfCancellationRequested();
 
                 var dbUser = await _loginService.LogIn(user);
@@ -64,10 +62,9 @@ namespace Server.Requests
                     await _emailConfirmService.SendVerificationEmailCode(dbUser, token);
                 }
 
-                if (_userValidation.Validation.ValidationErrors.Count > 0)
-                {
-                    throw _userValidation.Validation.Throw();
-                }
+
+                _userValidation.Validation.Throw();
+
 
                 var userToken = await _authenticationService.AuthenticateAsync(dbUser);
 
@@ -86,7 +83,6 @@ namespace Server.Requests
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
-                Console.WriteLine(ex.Message);
                 throw;
             }
         }
@@ -113,7 +109,6 @@ namespace Server.Requests
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
-                Console.WriteLine(ex.Message);
                 throw;
             }
         }
@@ -134,7 +129,6 @@ namespace Server.Requests
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
-                Console.WriteLine(ex.Message);
                 throw;
             }
 
@@ -163,7 +157,6 @@ namespace Server.Requests
             catch (Exception ex)
             {
                 _db.SaveLog(ex);
-                Console.WriteLine(ex.Message);
                 throw;
             }
         }

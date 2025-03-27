@@ -39,11 +39,10 @@ namespace Server.Service
             var firstUser = dbUser.FirstOrDefault();
 
             _userValidation.AccountNotFound(firstUser);
-            if (firstUser is null)
-            {
-                throw _userValidation.Validation.Throw();
-            }
-            firstUser.UserUpdatedId = firstUser.Id;
+
+            _userValidation.Validation.Throw();
+
+            firstUser!.UserUpdatedId = firstUser.Id;
             if (user.RememberMe != firstUser.RememberMe)
             {
                 firstUser.RememberMe = user.RememberMe;

@@ -46,7 +46,9 @@ namespace Server.Service
             services.AddScoped<IEditUserService, EditUserService>();
             services.AddScoped<IEditUserRequests, EditUserRequests>();
             services.AddScoped<ISmtpClient, SmtpClient>();
-            services.AddSingleton<IUserEndpoints, UserEndpoints>();
+
+            services.AddScoped<IResetPasswordRequests, ResetPasswordRequests>();
+            services.AddScoped<IResetPasswordService, ResetPasswordService>();
 
 
 

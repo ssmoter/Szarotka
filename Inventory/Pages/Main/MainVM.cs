@@ -56,38 +56,13 @@ namespace Inventory.Pages.Main
             _db = db;
             _selectDayService = selectDay;
             MainM = new MainM();
-            Name = "wybierz kierowcę";
-            LookingForSelectedDriver();
+            Name = "Wybierz kierowcę";
             Service.DriverNameUpdateService.Update += SetName;
         }
 
         #region Method
 
 
-        public void LookingForSelectedDriver()
-        {
-            try
-            {
-                var tableInfo = _db.DataBase.GetTableInfo(nameof(SelectedDriver));
-                bool exist = tableInfo.Count > 0;
-                if (exist)
-                {
-                    var selectedDriver = _db.DataBase.Table<SelectedDriver>().FirstOrDefault();
-                    if (selectedDriver is not null)
-                    {
-                        var driver = _db.DataBase.Table<Driver>().FirstOrDefault(x => x.Id == selectedDriver.SelectedGuid);
-                        Helper.SelectedDriver.Id = driver.Id.ToString();
-                        Helper.SelectedDriver.Name = driver.Name;
-                        Helper.SelectedDriver.Description = driver.Description;
-                        SetName();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
-        }
         void SetName()
         {
             Name = Shared.Helper.UserAfterLogin.User.Name;

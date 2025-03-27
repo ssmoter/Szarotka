@@ -242,11 +242,11 @@
                     ColumnDefinitions="*,*"
                     ColumnSpacing="15">
                     <Button
-                        Grid.Column="0"
+                        Grid.Column="1"
                         Command="{Binding SaveCommand}"
                         Text="Aktualizuj" />
                     <Button
-                        Grid.Column="1"
+                        Grid.Column="0"
                         Command="{Binding CancelCommand}"
                         Text="Anuluj" />
 
