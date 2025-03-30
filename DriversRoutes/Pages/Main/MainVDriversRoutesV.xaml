@@ -33,17 +33,17 @@
                             <VerticalStackLayout Padding="5" HorizontalOptions="Center">
 
                                 <Label
-                                    FontAttributes="Bold"
                                     FontSize="Title"
                                     HorizontalOptions="Center"
-                                    Text="{Binding Name}"
-                                    TextDecorations="Underline">
+                                    Style="{StaticResource LabelPointerOver}"
+                                    Text="{Binding Name}">
                                     <Label.GestureRecognizers>
                                         <TapGestureRecognizer
                                             x:DataType="Route:Routes"
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type VM:MainVDriversRoutesVM}}, Path=ChangeNameCommand, x:DataType=VM:MainVDriversRoutesVM}"
                                             CommandParameter="{Binding .}"
-                                            NumberOfTapsRequired="2" />
+                                            NumberOfTapsRequired="1"
+                                            Tapped="TapGestureRecognizer_Tapped" />
                                     </Label.GestureRecognizers>
                                 </Label>
 

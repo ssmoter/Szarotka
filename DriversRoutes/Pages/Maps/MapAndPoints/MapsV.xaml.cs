@@ -40,8 +40,9 @@ public partial class MapsV : ContentPage, IDisposable
         base.OnNavigatedFrom(args);
         if (BindingContext is MapsVM vm)
         {
-            vm.RoutesToken?.Cancel();
-            vm.RoutesToken?.Dispose();
+            if (!vm.RoutesToken.IsCancellationRequested)
+                vm?.RoutesToken?.Cancel();
+            vm?.RoutesToken?.Dispose();
             vm.RouteIsVisible = false;
             ClearPolyline();
             Data.ActionLocation.MapGeolocation.OnStopListeningLocation();

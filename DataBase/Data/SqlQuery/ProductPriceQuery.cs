@@ -4,7 +4,15 @@ namespace DataBase.Data.SqlQuery
 {
     public class ProductPriceQuery
     {
-        public static string SaveOrUpdate(ProductPrice productPrice)
+        public static string SaveOrUpdate(
+            Guid Id,
+            int Price,
+            long CreatedTicks,
+            long UpdatedTicks,
+            Guid UserCreatedId,
+            Guid UserUpdatedId,
+            Guid ProductNameId,
+            bool IsDelete)
         {
             string sql = $@"
                 INSERT INTO {nameof(ProductPrice)} (
@@ -19,23 +27,23 @@ namespace DataBase.Data.SqlQuery
                     {nameof(ProductPrice.ProductNameId)}
                 )
                 VALUES (
-                    '{productPrice.Id}', 
-                    {productPrice.Price}, 
-                    {productPrice.CreatedTicks}, 
-                    {productPrice.UpdatedTicks}, 
-                    '{productPrice.UserCreatedId}', 
-                    '{productPrice.UserUpdatedId}',
-                    '{productPrice.ProductNameId}',
-                    {productPrice.IsDelete},
-                    '{productPrice.ProductNameId}'
+                    @{nameof(Id)}, 
+                    @{nameof(Price)}, 
+                    @{nameof(CreatedTicks)}, 
+                    @{nameof(UpdatedTicks)}, 
+                    @{nameof(UserCreatedId)}, 
+                    @{nameof(UserUpdatedId)},
+                    @{nameof(ProductNameId)},
+                    @{nameof(IsDelete)},
+                    @{nameof(ProductNameId)}
                 )
                 ON CONFLICT({nameof(ProductPrice.Id)}) DO UPDATE SET
-                    {nameof(ProductPrice.Price)} = {productPrice.Price},
-                    {nameof(ProductPrice.UpdatedTicks)} = {productPrice.UpdatedTicks},
-                    {nameof(ProductPrice.UserUpdatedId)} = '{productPrice.UserUpdatedId}',
-                    {nameof(ProductPrice.ProductNameId)} = '{productPrice.ProductNameId}',
-                    {nameof(ProductPrice.IsDelete)} = {productPrice.IsDelete},
-                    {nameof(ProductPrice.ProductNameId)} = '{productPrice.ProductNameId}';
+                    {nameof(ProductPrice.Price)} = @{nameof(Price)},
+                    {nameof(ProductPrice.UpdatedTicks)} = @{nameof(UpdatedTicks)},
+                    {nameof(ProductPrice.UserUpdatedId)} = @{nameof(UserUpdatedId)},
+                    {nameof(ProductPrice.ProductNameId)} = @{nameof(ProductNameId)},
+                    {nameof(ProductPrice.IsDelete)} = @{nameof(IsDelete)},
+                    {nameof(ProductPrice.ProductNameId)} = @{nameof(ProductNameId)};
             ";
             return sql;
         }

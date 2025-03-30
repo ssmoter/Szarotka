@@ -82,20 +82,50 @@ namespace DataBase.Data.Save
                 customerRoutes.Updated = now;
             }
             ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveCustomerRoutes)}");
-            if (driverId == Guid.Empty.ToByteArray())
+
+            if (new Guid(driverId) == Guid.Empty)
             {
-                throw new ArgumentOutOfRangeException(nameof(driverId), nameof(SaveCustomerRoutes));
+                throw new ArgumentNullException(nameof(driverId), nameof(SaveCustomerRoutes));
             }
+            if (customerRoutes.RoutesId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(customerRoutes), nameof(customerRoutes.RoutesId));
+            }
+
             if (customerRoutes.UserCreatedId == Guid.Empty)
             {
                 customerRoutes.UserCreatedId = new Guid(driverId);
             }
+
             customerRoutes.UserUpdatedId = new Guid(driverId);
 
-            var sql = CustomerRoutesQuery.SaveOrUpdate(customerRoutes);
+            var sql = CustomerRoutesQuery.SaveOrUpdate(customerRoutes.Id,
+                                                       customerRoutes.RoutesId,
+                                                       customerRoutes.Name,
+                                                       customerRoutes.Description,
+                                                       customerRoutes.PhoneNumber,
+                                                       customerRoutes.Longitude,
+                                                       customerRoutes.Latitude,
+                                                       customerRoutes.CreatedTicks,
+                                                       customerRoutes.UpdatedTicks,
+                                                       customerRoutes.IsDelete,
+                                                       customerRoutes.UserCreatedId,
+                                                       customerRoutes.UserUpdatedId);
             try
             {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql);
+                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
+                                                         customerRoutes.Id,
+                                                         customerRoutes.RoutesId,
+                                                         customerRoutes.Name,
+                                                         customerRoutes.Description,
+                                                         customerRoutes.PhoneNumber,
+                                                         customerRoutes.Longitude,
+                                                         customerRoutes.Latitude,
+                                                         customerRoutes.CreatedTicks,
+                                                         customerRoutes.UpdatedTicks,
+                                                         customerRoutes.IsDelete,
+                                                         customerRoutes.UserCreatedId,
+                                                         customerRoutes.UserUpdatedId);
             }
             catch (Exception)
             {
@@ -122,9 +152,13 @@ namespace DataBase.Data.Save
                 residentialAddress.Updated = now;
             }
             ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveResidentialAddress)}");
-            if (driverId == Guid.Empty.ToByteArray())
+            if (new Guid(driverId) == Guid.Empty)
             {
-                throw new ArgumentOutOfRangeException(nameof(driverId), nameof(SaveResidentialAddress));
+                throw new ArgumentNullException(nameof(driverId), nameof(SaveResidentialAddress));
+            }
+            if (residentialAddress.CustomerId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(residentialAddress), nameof(residentialAddress.CustomerId));
             }
             if (residentialAddress.UserCreatedId == Guid.Empty)
             {
@@ -132,10 +166,39 @@ namespace DataBase.Data.Save
             }
             residentialAddress.UserUpdatedId = new Guid(driverId);
 
-            var sql = ResidentialAddressQuery.SaveOrUpdate(residentialAddress);
+            var sql = ResidentialAddressQuery.SaveOrUpdate(residentialAddress.Id,
+                                                           residentialAddress.CustomerId,
+                                                           residentialAddress.Name,
+                                                           residentialAddress.Surname,
+                                                           residentialAddress.Street,
+                                                           residentialAddress.HouseNumber,
+                                                           residentialAddress.ApartmentNumber,
+                                                           residentialAddress.PostalCode,
+                                                           residentialAddress.City,
+                                                           residentialAddress.Country,
+                                                           residentialAddress.CreatedTicks,
+                                                           residentialAddress.UpdatedTicks,
+                                                           residentialAddress.IsDelete,
+                                                           residentialAddress.UserCreatedId,
+                                                           residentialAddress.UserUpdatedId);
             try
             {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql);
+                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
+                                                         residentialAddress.Id,
+                                                         residentialAddress.CustomerId,
+                                                         residentialAddress.Name,
+                                                         residentialAddress.Surname,
+                                                         residentialAddress.Street,
+                                                         residentialAddress.HouseNumber,
+                                                         residentialAddress.ApartmentNumber,
+                                                         residentialAddress.PostalCode,
+                                                         residentialAddress.City,
+                                                         residentialAddress.Country,
+                                                         residentialAddress.CreatedTicks,
+                                                         residentialAddress.UpdatedTicks,
+                                                         residentialAddress.IsDelete,
+                                                         residentialAddress.UserCreatedId,
+                                                         residentialAddress.UserUpdatedId);
             }
             catch (Exception)
             {
@@ -162,9 +225,9 @@ namespace DataBase.Data.Save
                 routes.Updated = now;
             }
             ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveRoutes)}");
-            if (driverId == Guid.Empty.ToByteArray())
+            if (new Guid(driverId) == Guid.Empty)
             {
-                throw new ArgumentOutOfRangeException(nameof(driverId), nameof(SaveRoutes));
+                throw new ArgumentNullException(nameof(driverId), nameof(SaveRoutes));
             }
             if (routes.UserCreatedId == Guid.Empty)
             {
@@ -172,10 +235,23 @@ namespace DataBase.Data.Save
             }
             routes.UserUpdatedId = new Guid(driverId);
 
-            var sql = RoutesQuery.SaveOrUpdate(routes);
+            var sql = RoutesQuery.SaveOrUpdate(routes.Id,
+                                               routes.Name,
+                                               routes.CreatedTicks,
+                                               routes.UpdatedTicks,
+                                               routes.IsDelete,
+                                               routes.UserCreatedId,
+                                               routes.UserUpdatedId);
             try
             {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql);
+                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
+                                               routes.Id,
+                                               routes.Name,
+                                               routes.CreatedTicks,
+                                               routes.UpdatedTicks,
+                                               routes.IsDelete,
+                                               routes.UserCreatedId,
+                                               routes.UserUpdatedId);
             }
             catch (Exception)
             {
@@ -202,20 +278,68 @@ namespace DataBase.Data.Save
                 selectedDayOfWeek.Updated = now;
             }
             ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveSelectedDayOfWeekRoutes)}");
-            if (driverId == Guid.Empty.ToByteArray())
+            if (new Guid(driverId) == Guid.Empty)
             {
-                throw new ArgumentOutOfRangeException(nameof(driverId), nameof(SaveSelectedDayOfWeekRoutes));
+                throw new ArgumentNullException(nameof(driverId), nameof(SaveSelectedDayOfWeekRoutes));
             }
+            if (selectedDayOfWeek.CustomerId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(selectedDayOfWeek), nameof(selectedDayOfWeek.CustomerId));
+            }
+
             if (selectedDayOfWeek.UserCreatedId == Guid.Empty)
             {
                 selectedDayOfWeek.UserCreatedId = new Guid(driverId);
             }
             selectedDayOfWeek.UserUpdatedId = new Guid(driverId);
 
-            var sql = SelectedDayOfWeekRoutesQuery.SaveOrUpdate(selectedDayOfWeek);
+            var sql = SelectedDayOfWeekRoutesQuery.SaveOrUpdate(selectedDayOfWeek.Id,
+                                                                selectedDayOfWeek.CustomerId,
+                                                                selectedDayOfWeek.Sunday,
+                                                                selectedDayOfWeek.SundayTicks,
+                                                                selectedDayOfWeek.Monday,
+                                                                selectedDayOfWeek.MondayTicks,
+                                                                selectedDayOfWeek.Tuesday,
+                                                                selectedDayOfWeek.TuesdayTicks,
+                                                                selectedDayOfWeek.Wednesday,
+                                                                selectedDayOfWeek.WednesdayTicks,
+                                                                selectedDayOfWeek.Thursday,
+                                                                selectedDayOfWeek.ThursdayTicks,
+                                                                selectedDayOfWeek.Friday,
+                                                                selectedDayOfWeek.FridayTicks,
+                                                                selectedDayOfWeek.Saturday,
+                                                                selectedDayOfWeek.SaturdayTicks,
+                                                                selectedDayOfWeek.Optional,
+                                                                selectedDayOfWeek.CreatedTicks,
+                                                                selectedDayOfWeek.UpdatedTicks,
+                                                                selectedDayOfWeek.IsDelete,
+                                                                selectedDayOfWeek.UserCreatedId,
+                                                                selectedDayOfWeek.UserUpdatedId);
             try
             {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql);
+                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
+                                                         selectedDayOfWeek.Id,
+                                                         selectedDayOfWeek.CustomerId,
+                                                         selectedDayOfWeek.Sunday,
+                                                         selectedDayOfWeek.SundayTicks,
+                                                         selectedDayOfWeek.Monday,
+                                                         selectedDayOfWeek.MondayTicks,
+                                                         selectedDayOfWeek.Tuesday,
+                                                         selectedDayOfWeek.TuesdayTicks,
+                                                         selectedDayOfWeek.Wednesday,
+                                                         selectedDayOfWeek.WednesdayTicks,
+                                                         selectedDayOfWeek.Thursday,
+                                                         selectedDayOfWeek.ThursdayTicks,
+                                                         selectedDayOfWeek.Friday,
+                                                         selectedDayOfWeek.FridayTicks,
+                                                         selectedDayOfWeek.Saturday,
+                                                         selectedDayOfWeek.SaturdayTicks,
+                                                         selectedDayOfWeek.Optional,
+                                                         selectedDayOfWeek.CreatedTicks,
+                                                         selectedDayOfWeek.UpdatedTicks,
+                                                         selectedDayOfWeek.IsDelete,
+                                                         selectedDayOfWeek.UserCreatedId,
+                                                         selectedDayOfWeek.UserUpdatedId);
             }
             catch (Exception)
             {

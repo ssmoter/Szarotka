@@ -92,9 +92,9 @@ namespace DataBase.Data.Save
                 day.Id = Guid.CreateVersion7();
             }
             ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveDay)}");
-            if (driverId == Guid.Empty.ToByteArray())
+            if (new Guid(driverId) == Guid.Empty)
             {
-                throw new ArgumentOutOfRangeException(nameof(driverId), nameof(SaveDay));
+                throw new ArgumentNullException(nameof(driverId), nameof(SaveDay));
             }
             if (day.DriverGuid == Guid.Empty)
             {
@@ -104,10 +104,43 @@ namespace DataBase.Data.Save
             var userUpdateId = day.UserUpdatedId.ToByteArray();
             day.UserUpdatedId = new Guid(driverId);
 
-            var sql = DayQuery.SaveOrUpdate(day);
+            var sql = DayQuery.SaveOrUpdate(day.Id,
+                                            day.Description,
+                                            day.DriverGuid,
+                                            day.SelectedDateString,
+                                            day.SelectedDateTicks,
+                                            day.TotalPriceProducts,
+                                            day.TotalPriceCake,
+                                            day.TotalPrice,
+                                            day.TotalPriceCorrect,
+                                            day.TotalPriceAfterCorrect,
+                                            day.TotalPriceMoney,
+                                            day.TotalPriceDifference,
+                                            day.CreatedTicks,
+                                            day.UpdatedTicks,
+                                            day.IsDelete,
+                                            day.UserCreatedId,
+                                            day.UserUpdatedId);
             try
             {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql);
+                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
+                                                         day.Id,
+                                                         day.Description,
+                                                         day.DriverGuid,
+                                                         day.SelectedDateString,
+                                                         day.SelectedDateTicks,
+                                                         day.TotalPriceProducts,
+                                                         day.TotalPriceCake,
+                                                         day.TotalPrice,
+                                                         day.TotalPriceCorrect,
+                                                         day.TotalPriceAfterCorrect,
+                                                         day.TotalPriceMoney,
+                                                         day.TotalPriceDifference,
+                                                         day.CreatedTicks,
+                                                         day.UpdatedTicks,
+                                                         day.IsDelete,
+                                                         day.UserCreatedId,
+                                                         day.UserUpdatedId);
             }
             catch (Exception)
             {
@@ -135,21 +168,66 @@ namespace DataBase.Data.Save
             }
             ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveProduct)}");
 
-            if (driverId == Guid.Empty.ToByteArray())
+            if (new Guid(driverId) == Guid.Empty)
             {
-                throw new ArgumentOutOfRangeException(nameof(driverId), nameof(SaveProduct));
+                throw new ArgumentNullException(nameof(driverId), nameof(SaveProduct));
             }
+            if (product.DayId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(product), nameof(product.DayId));
+            }
+            if (product.ProductNameId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(product), nameof(product.ProductNameId));
+            }
+            if (product.ProductPriceId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(product), nameof(product.ProductPriceId));
+            }
+
             if (product.UserCreatedId == Guid.Empty)
             {
                 product.UserCreatedId = new Guid(driverId);
             }
+
             var userUpdateId = product.UserUpdatedId.ToByteArray();
             product.UserUpdatedId = new Guid(driverId);
 
-            var sql = ProductQuery.SaveOrUpdate(product);
+            var sql = ProductQuery.SaveOrUpdate(product.Id,
+                                                product.DayId,
+                                                product.ProductNameId,
+                                                product.ProductPriceId,
+                                                product.Description,
+                                                product.PriceTotal,
+                                                product.PriceTotalCorrect,
+                                                product.PriceTotalAfterCorrect,
+                                                product.Number,
+                                                product.NumberEdit,
+                                                product.NumberReturn,
+                                                product.CreatedTicks,
+                                                product.UpdatedTicks,
+                                                product.IsDelete,
+                                                product.UserCreatedId,
+                                                product.UserUpdatedId);
             try
             {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql);
+                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
+                                                         product.Id,
+                                                         product.DayId,
+                                                         product.ProductNameId,
+                                                         product.ProductPriceId,
+                                                         product.Description,
+                                                         product.PriceTotal,
+                                                         product.PriceTotalCorrect,
+                                                         product.PriceTotalAfterCorrect,
+                                                         product.Number,
+                                                         product.NumberEdit,
+                                                         product.NumberReturn,
+                                                         product.CreatedTicks,
+                                                         product.UpdatedTicks,
+                                                         product.IsDelete,
+                                                         product.UserCreatedId,
+                                                         product.UserUpdatedId);
             }
             catch (Exception)
             {
@@ -177,9 +255,13 @@ namespace DataBase.Data.Save
             }
             ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveProduct)}");
 
-            if (driverId == Guid.Empty.ToByteArray())
+            if (new Guid(driverId) == Guid.Empty)
             {
-                throw new ArgumentOutOfRangeException(nameof(driverId), nameof(SaveProduct));
+                throw new ArgumentNullException(nameof(driverId), nameof(SaveProduct));
+            }
+            if (cake.DayId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(cake), nameof(cake.DayId));
             }
             if (cake.UserCreatedId == Guid.Empty)
             {
@@ -188,10 +270,27 @@ namespace DataBase.Data.Save
             var userUpdateId = cake.UserUpdatedId.ToByteArray();
             cake.UserUpdatedId = new Guid(driverId);
 
-            var sql = CakeQuery.SaveOrUpdate(cake);
+            var sql = CakeQuery.SaveOrUpdate(cake.Id,
+                                             cake.DayId,
+                                             cake.IsSell,
+                                             cake.Price,
+                                             cake.CreatedTicks,
+                                             cake.UpdatedTicks,
+                                             cake.IsDelete,
+                                             cake.UserCreatedId,
+                                             cake.UserUpdatedId);
             try
             {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql);
+                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
+                                                         cake.Id,
+                                                         cake.DayId,
+                                                         cake.IsSell,
+                                                         cake.Price,
+                                                         cake.CreatedTicks,
+                                                         cake.UpdatedTicks,
+                                                         cake.IsDelete,
+                                                         cake.UserCreatedId,
+                                                         cake.UserUpdatedId);
             }
             catch (Exception)
             {
@@ -219,9 +318,9 @@ namespace DataBase.Data.Save
             }
             ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveProductName)}");
 
-            if (driverId == Guid.Empty.ToByteArray())
+            if (new Guid(driverId) == Guid.Empty)
             {
-                throw new ArgumentOutOfRangeException(nameof(driverId), nameof(SaveProductName));
+                throw new ArgumentNullException(nameof(driverId), nameof(SaveProductName));
             }
             if (productName.UserCreatedId == Guid.Empty)
             {
@@ -230,10 +329,31 @@ namespace DataBase.Data.Save
             var userUpdateId = productName.UserUpdatedId.ToByteArray();
             productName.UserUpdatedId = new Guid(driverId);
 
-            var sql = ProductNameQuery.SaveOrUpdate(productName);
+            var sql = ProductNameQuery.SaveOrUpdate(productName.Id,
+                                                    productName.Arrangement,
+                                                    productName.Name,
+                                                    productName.Description,
+                                                    productName.Img,
+                                                    productName.IsVisible,
+                                                    productName.CreatedTicks,
+                                                    productName.UpdatedTicks,
+                                                    productName.UserCreatedId,
+                                                    productName.UserUpdatedId,
+                                                    productName.IsDelete);
             try
             {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql);
+                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
+                                                         productName.Id,
+                                                         productName.Arrangement,
+                                                         productName.Name,
+                                                         productName.Description,
+                                                         productName.Img,
+                                                         productName.IsVisible,
+                                                         productName.CreatedTicks,
+                                                         productName.UpdatedTicks,
+                                                         productName.UserCreatedId,
+                                                         productName.UserUpdatedId,
+                                                         productName.IsDelete);
             }
             catch (Exception)
             {
@@ -261,9 +381,9 @@ namespace DataBase.Data.Save
             }
             ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveProductPrice)}");
 
-            if (driverId == Guid.Empty.ToByteArray())
+            if (new Guid(driverId) == Guid.Empty)
             {
-                throw new ArgumentOutOfRangeException(nameof(driverId), nameof(SaveProductPrice));
+                throw new ArgumentNullException(nameof(driverId), nameof(SaveProductPrice));
             }
             if (productPrice.UserCreatedId == Guid.Empty)
             {
@@ -272,10 +392,25 @@ namespace DataBase.Data.Save
             var userUpdateId = productPrice.UserUpdatedId.ToByteArray();
             productPrice.UserUpdatedId = new Guid(driverId);
 
-            var sql = ProductPriceQuery.SaveOrUpdate(productPrice);
+            var sql = ProductPriceQuery.SaveOrUpdate(productPrice.Id,
+                                                     productPrice.Price,
+                                                     productPrice.CreatedTicks,
+                                                     productPrice.UpdatedTicks,
+                                                     productPrice.UserCreatedId,
+                                                     productPrice.UserUpdatedId,
+                                                     productPrice.ProductNameId,
+                                                     productPrice.IsDelete);
             try
             {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql);
+                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
+                                                         productPrice.Id,
+                                                         productPrice.Price,
+                                                         productPrice.CreatedTicks,
+                                                         productPrice.UpdatedTicks,
+                                                         productPrice.UserCreatedId,
+                                                         productPrice.UserUpdatedId,
+                                                         productPrice.ProductNameId,
+                                                         productPrice.IsDelete);
             }
             catch (Exception)
             {

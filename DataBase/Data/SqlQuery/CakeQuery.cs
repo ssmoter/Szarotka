@@ -4,7 +4,16 @@ namespace DataBase.Data.SqlQuery
 {
     public class CakeQuery
     {
-        public static string SaveOrUpdate(Cake cake)
+        public static string SaveOrUpdate(
+            Guid Id,
+            Guid DayId,
+            bool IsSell,
+            int Price,
+            long CreatedTicks,
+            long UpdatedTicks,
+            bool IsDelete,
+            Guid UserCreatedId,
+            Guid UserUpdatedId)
         {
             string sql = $@"
             INSERT INTO {nameof(Cake)} (
@@ -19,25 +28,23 @@ namespace DataBase.Data.SqlQuery
                 {nameof(Cake.UserUpdatedId)}
             )
             VALUES (
-                '{cake.Id}', 
-                '{cake.DayId}', 
-                {cake.IsSell}, 
-                {cake.Price}, 
-                {cake.CreatedTicks}, 
-                {cake.UpdatedTicks},
-                {cake.IsDelete},
-                '{cake.UserCreatedId}',
-                '{cake.UserUpdatedId}'
+                @{nameof(Id)}, 
+                @{nameof(DayId)}, 
+                @{nameof(IsSell)}, 
+                @{nameof(Price)}, 
+                @{nameof(CreatedTicks)}, 
+                @{nameof(UpdatedTicks)},
+                @{nameof(IsDelete)},
+                @{nameof(UserCreatedId)},
+                @{nameof(UserUpdatedId)}
             )
             ON CONFLICT({nameof(Cake.Id)}) DO UPDATE SET
-                {nameof(Cake.DayId)} = '{cake.DayId}',
-                {nameof(Cake.IsSell)} = {cake.IsSell},
-                {nameof(Cake.Price)} = {cake.Price},
-                {nameof(Cake.CreatedTicks)} = {cake.CreatedTicks},
-                {nameof(Cake.UpdatedTicks)} = {cake.UpdatedTicks},
-                {nameof(Cake.IsDelete)} = {cake.IsDelete},
-                {nameof(Cake.UserCreatedId)} = '{cake.UserCreatedId}',
-                {nameof(Cake.UserUpdatedId)} = '{cake.UserUpdatedId}';
+                {nameof(Cake.DayId)} = @{nameof(DayId)},
+                {nameof(Cake.IsSell)} = @{nameof(IsSell)},
+                {nameof(Cake.Price)} = @{nameof(Price)},
+                {nameof(Cake.UpdatedTicks)} = @{nameof(UpdatedTicks)},
+                {nameof(Cake.IsDelete)} = @{nameof(IsDelete)},
+                {nameof(Cake.UserUpdatedId)} = @{nameof(UserUpdatedId)};
             ";
             return sql;
         }

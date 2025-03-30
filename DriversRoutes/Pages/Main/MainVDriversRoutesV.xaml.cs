@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 
+using Shared.Helper;
+
 namespace DriversRoutes.Pages.Main;
 
 public partial class MainVDriversRoutesV : ContentPage
@@ -43,5 +45,11 @@ public partial class MainVDriversRoutesV : ContentPage
 
 #endif
 
+    }
+
+    private async void TapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+    {
+        if (sender is not Label item) { return; }
+        await item.BounceOnPressAsync();
     }
 }

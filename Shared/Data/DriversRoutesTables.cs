@@ -88,13 +88,5 @@ namespace Shared.Data
             ];
         }
 
-        Guid GetGuidSed()
-        {
-            byte[] guidBytes = new byte[16];
-            _random.NextBytes(guidBytes);
-            return new Guid(guidBytes);
-        }
-
-
     }
 }

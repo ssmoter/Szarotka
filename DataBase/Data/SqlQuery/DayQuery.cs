@@ -5,7 +5,24 @@ namespace DataBase.Data.SqlQuery
     public class DayQuery
     {
 
-        public static string SaveOrUpdate(Day day)
+        public static string SaveOrUpdate(
+            Guid Id,
+            string Description,
+            Guid DriverGuid,
+            string SelectedDateString,
+            long SelectedDateTicks,
+            int TotalPriceProducts,
+            int TotalPriceCake,
+            int TotalPrice,
+            int TotalPriceCorrect,
+            int TotalPriceAfterCorrect,
+            int TotalPriceMoney,
+            int TotalPriceDifference,
+            long CreatedTicks,
+            long UpdatedTicks,
+            bool IsDelete,
+            Guid UserCreatedId,
+            Guid UserUpdatedId)
         {
             return $@"
                 INSERT INTO {nameof(Day)} (
@@ -28,40 +45,39 @@ namespace DataBase.Data.SqlQuery
                     {nameof(Day.UserUpdatedId)}
                 )
                 VALUES (
-                    '{day.Id}', 
-                    '{day.Description}', 
-                    '{day.DriverGuid}', 
-                    '{day.SelectedDateString}', 
-                    {day.SelectedDateTicks}, 
-                    {day.TotalPriceProducts}, 
-                    {day.TotalPriceCake}, 
-                    {day.TotalPrice}, 
-                    {day.TotalPriceCorrect}, 
-                    {day.TotalPriceAfterCorrect}, 
-                    {day.TotalPriceMoney}, 
-                    {day.TotalPriceDifference},
-                    {day.CreatedTicks},
-                    {day.UpdatedTicks},
-                    {day.IsDelete},
-                    '{day.UserCreatedId}',
-                    '{day.UserUpdatedId}'
+                    @{nameof(Id)}, 
+                    @{nameof(Description)}, 
+                    @{nameof(DriverGuid)}, 
+                    @{nameof(SelectedDateString)}, 
+                    @{nameof(SelectedDateTicks)}, 
+                    @{nameof(TotalPriceProducts)}, 
+                    @{nameof(TotalPriceCake)}, 
+                    @{nameof(TotalPrice)}, 
+                    @{nameof(TotalPriceCorrect)}, 
+                    @{nameof(TotalPriceAfterCorrect)}, 
+                    @{nameof(TotalPriceMoney)}, 
+                    @{nameof(TotalPriceDifference)},
+                    @{nameof(CreatedTicks)},
+                    @{nameof(UpdatedTicks)},
+                    @{nameof(IsDelete)},
+                    @{nameof(UserCreatedId)},
+                    @{nameof(UserUpdatedId)}
                 )
                 ON CONFLICT({nameof(Day.Id)}) DO UPDATE SET
-                    {nameof(Day.Description)} = '{day.Description}',
-                    {nameof(Day.DriverGuid)} = '{day.DriverGuid}',
-                    {nameof(Day.SelectedDateString)} = '{day.SelectedDateString}',
-                    {nameof(Day.SelectedDateTicks)} = {day.SelectedDateTicks},
-                    {nameof(Day.TotalPriceProducts)} = {day.TotalPriceProducts},
-                    {nameof(Day.TotalPriceCake)} = {day.TotalPriceCake},
-                    {nameof(Day.TotalPrice)} = {day.TotalPrice},
-                    {nameof(Day.TotalPriceCorrect)} = {day.TotalPriceCorrect},
-                    {nameof(Day.TotalPriceAfterCorrect)} = {day.TotalPriceAfterCorrect},
-                    {nameof(Day.TotalPriceMoney)} = {day.TotalPriceMoney},
-                    {nameof(Day.TotalPriceDifference)} = {day.TotalPriceDifference},
-                    {nameof(Day.UpdatedTicks)} = {day.UpdatedTicks},
-                    {nameof(Day.IsDelete)} = {day.IsDelete},
-                    {nameof(Day.UserCreatedId)} = '{day.UserCreatedId}',
-                    {nameof(Day.UserUpdatedId)} = '{day.UserUpdatedId}';
+                    {nameof(Day.Description)} = @{nameof(Description)},
+                    {nameof(Day.DriverGuid)} = {nameof(DriverGuid)},
+                    {nameof(Day.SelectedDateString)} = @{nameof(SelectedDateString)},
+                    {nameof(Day.SelectedDateTicks)} = @{nameof(SelectedDateTicks)},
+                    {nameof(Day.TotalPriceProducts)} = @{nameof(TotalPriceProducts)},
+                    {nameof(Day.TotalPriceCake)} = @{nameof(TotalPriceCake)},
+                    {nameof(Day.TotalPrice)} = @{nameof(TotalPrice)},
+                    {nameof(Day.TotalPriceCorrect)} = @{nameof(TotalPriceCorrect)},
+                    {nameof(Day.TotalPriceAfterCorrect)} = @{nameof(TotalPriceAfterCorrect)},
+                    {nameof(Day.TotalPriceMoney)} = @{nameof(TotalPriceMoney)},
+                    {nameof(Day.TotalPriceDifference)} = @{nameof(TotalPriceDifference)},
+                    {nameof(Day.UpdatedTicks)} = @{nameof(UpdatedTicks)},
+                    {nameof(Day.IsDelete)} = @{nameof(IsDelete)},
+                    {nameof(Day.UserUpdatedId)} = @{nameof(UserUpdatedId)};
             ";
         }
 

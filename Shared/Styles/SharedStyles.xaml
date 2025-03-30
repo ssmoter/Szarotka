@@ -9,7 +9,10 @@
             <VisualStateGroupList>
                 <VisualStateGroup Name="CommonStates">
                     <VisualState Name="Normal">
-                        <VisualState.Setters />
+                        <VisualState.Setters>
+                            <Setter Property="FontAttributes" Value="Bold" />
+                            <Setter Property="TextDecorations" Value="Underline" />
+                        </VisualState.Setters>
                     </VisualState>
                     <VisualState Name="PointerOver">
                         <VisualState.Setters>
