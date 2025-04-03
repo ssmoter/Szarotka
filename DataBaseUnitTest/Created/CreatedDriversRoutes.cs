@@ -1,39 +1,18 @@
-﻿using FluentAssertions;
+﻿using DataBase.Model.EntitiesRoutes;
+
+using FluentAssertions;
 
 using Shared.Data;
-using DataBase.Model.EntitiesRoutes;
-using DataBase.Data;
 
 namespace DataBaseUnitTest.Created
 {
-    public class CreatedDriversRoutes : IAsyncLifetime
+    public class CreatedDriversRoutes
     {
-        private readonly IAccessDataBase _db;
-        private readonly DriversRoutesTables _driversRoutesTables;
-        public CreatedDriversRoutes()
-        {
-            _db = new AccessDataBase(CreatedDataBaseMain.Path);
-            _driversRoutesTables = new DriversRoutesTables(_db);
-        }
-
-        public Task DisposeAsync()
-        {
-            _db.DataBase.DropTable<CustomerRoutes>();
-            _db.DataBase.DropTable<ResidentialAddress>();
-            _db.DataBase.DropTable<Routes>();
-            _db.DataBase.DropTable<SelectedDayOfWeekRoutes>();
-
-            _db.Dispose();
-            return Task.CompletedTask;
-        }
-
-        public async Task InitializeAsync()
-        {
-            await _driversRoutesTables.Update(0, 1, null);
-        }
         [Fact]
-        public void CreatedExist()
+        public async Task CreatedExist()
         {
+            var _db = await DataBaseUnitTest.DataGet.Helper.CreateDataBaseForTest(nameof(CreatedExist));
+
             List<bool> list = [];
             var obj = _db.DataBase.GetTableInfo(nameof(CustomerRoutes));
             var exist = obj.Count > 0;
@@ -53,8 +32,10 @@ namespace DataBaseUnitTest.Created
         }
 
         [Fact]
-        public void CreatedDefaultRoutes()
+        public async Task CreatedDefaultRoutes()
         {
+            var _db = await DataBaseUnitTest.DataGet.Helper.CreateDataBaseForTest(nameof(CreatedDefaultRoutes));
+
             var obj = _db.DataBase.Table<Routes>().ToArray();
 
             var length = DriversRoutesTables.GetDefaultRoutes().Length;

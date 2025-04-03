@@ -6,11 +6,11 @@ namespace InventoryUnitTest.ModelTest
 {
     public class BaseEntitiesTest
     {
-        static readonly DateTime dateTime = DateTime.Now;
+        static readonly DateTime dateTime = DateTime.UtcNow;
         public static IEnumerable<object[]> TestDateTime =>
          [
-              [dateTime, dateTime.ToLocalTime().Ticks],
-              [dateTime, dateTime.ToLocalTime().Ticks],
+              [dateTime.ToLocalTime(), dateTime.Ticks],
+              [dateTime.ToLocalTime(), dateTime.Ticks],
           ];
 
         [Theory]

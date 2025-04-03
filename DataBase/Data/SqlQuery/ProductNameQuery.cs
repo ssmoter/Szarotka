@@ -57,5 +57,27 @@ namespace DataBase.Data.SqlQuery
 
             return sql;
         }
+
+
+        public static string GetNameAndPrice()
+        {
+            var sql = @"
+SELECT pn.*, 
+       COALESCE((
+           SELECT json_group_array(json_object(
+               'Id', pp.Id,
+               'Price', pp.Price,
+               'CreatedTicks', pp.CreatedTicks,
+               'UpdatedTicks', pp.UpdatedTicks
+           )) 
+           FROM ProductPrice pp 
+           WHERE pp.ProductNameId = pn.Id
+       ), '[]') AS JsonPrice
+FROM ProductName pn;
+";
+
+            return sql;
+        }
+
     }
 }

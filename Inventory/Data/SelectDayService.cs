@@ -118,7 +118,6 @@ namespace Inventory.Data
         private async Task<Day> GetSingleDay(Guid id)
         {
             var day = await _db.DataBaseAsync.Table<Day>().FirstOrDefaultAsync(x => x.Id == id);
-
             if (day is not null)
             {
                 var products = await _db.DataBaseAsync.QueryAsync<GetProduct>(StoredProcedure.GetProductWitchPriceAndName(), id.ToString());

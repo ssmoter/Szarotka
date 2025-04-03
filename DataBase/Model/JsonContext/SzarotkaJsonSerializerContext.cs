@@ -1,4 +1,6 @@
-﻿using DataBase.Model.EntitiesInventory;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+
+using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesRoutes;
 using DataBase.Model.EntitiesServer;
 
@@ -17,6 +19,7 @@ namespace DataBase.Model.JsonContext;
 [JsonSerializable(typeof(CustomerRoutes[]))]
 
 [JsonSerializable(typeof(ProductPrice))]
+[JsonSerializable(typeof(ProductPrices))]
 [JsonSerializable(typeof(Day))]
 [JsonSerializable(typeof(Driver))]
 [JsonSerializable(typeof(Product))]

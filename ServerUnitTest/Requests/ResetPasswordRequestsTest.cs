@@ -123,7 +123,7 @@ public class ResetPasswordRequestsTests
         var errors = new ValidationException();
         errors.ValidationErrors.Add(error[0]);
 
-        _mockResetPasswordService.Setup(s => s.GetConfirmCode(code)).ReturnsAsync((ConfirmCode)null);
+        _mockResetPasswordService.Setup(s => s.GetConfirmCode(code)).ReturnsAsync((ConfirmCode)null!);
         _mockUserValidation.Setup(v => v.CodeNotExist(null)).Returns(ServerEnums.Result.Error);
         _mockUserValidation.Setup(x => x.Validation).Returns(new ValidationException());
         _mockUserValidation.Setup(v => v.Validation.GetError()).Returns("Invalid code");
@@ -150,7 +150,7 @@ public class ResetPasswordRequestsTests
 
         _mockUserValidation.Setup(x => x.Validation).Returns(new ValidationException());
         _mockUserValidation.Setup(x => x.Validation.ValidationErrors).Returns([]);
-        _mockResetPasswordService.Setup(s => s.GetConfirmCode(code)).ReturnsAsync((ConfirmCode)null);
+        _mockResetPasswordService.Setup(s => s.GetConfirmCode(code)).ReturnsAsync((ConfirmCode)null!);
         _mockUserValidation.Setup(v => v.CodeNotExist(null)).Returns(ServerEnums.Result.Error);
         _mockUserValidation.Setup(v => v.Validation.ValidationErrors).Returns(error);
         _mockUserValidation.Setup(x => x.Validation.Throw()).Throws(errors);

@@ -1,4 +1,6 @@
-﻿namespace Inventory.Helper
+﻿using DataBase.Model.EntitiesInventory;
+
+namespace Inventory.Helper
 {
     public static class StoredProcedure
     {

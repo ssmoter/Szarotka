@@ -1,5 +1,7 @@
 ﻿using SQLite;
 
+using System.Collections.ObjectModel;
+
 namespace DataBase.Model.EntitiesInventory;
 
 public partial class ProductPrice : BaseEntities<Guid>
@@ -45,5 +47,20 @@ public partial class ProductPrice : BaseEntities<Guid>
             }
         }
     }
+}
 
+public partial class ProductPrices : BaseEntities<int>
+{
+    private ObservableCollection<ProductPrice> prices = [];
+    [Ignore]
+    public ObservableCollection<ProductPrice> Prices
+    {
+        get => prices;
+        set
+        {
+            if (SetProperty(ref prices, value, nameof(Prices)))
+            {
+            }
+        }
+    }
 }
