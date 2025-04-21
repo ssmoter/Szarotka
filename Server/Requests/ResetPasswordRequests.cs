@@ -34,7 +34,7 @@ namespace Server.Requests
         {
             try
             {
-                if (_userValidation.EmailIsNull(email) == Model.ServerEnums.Result.Success)
+                if (_userValidation.EmailIsNull(email) == ServerEnums.Result.Success)
                 {
                     _userValidation.EmailValidFormat(email);
                 }

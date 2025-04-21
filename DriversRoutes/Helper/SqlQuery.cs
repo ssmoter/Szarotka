@@ -212,7 +212,6 @@ WHERE CustomerRoutes.RoutesId == ");
 
             return sb.ToString();
         }
-
         public static string GetSelectedDayOfWeekRoutesNearestDate(DateTime date, char sing,string orderBy)
         {
             SelectedDayOfWeekRoutes today = new();
@@ -232,21 +231,21 @@ WHERE CustomerRoutes.RoutesId == ");
             sb.AppendLine("SELECT * FROM ");
             sb.Append(nameof(SelectedDayOfWeekRoutes));
             sb.AppendLine(" WHERE ");
-            AddParametr(sb, nameof(today.SundayTicks), today.SundayTicks.ToString(), today.Sunday, sing);
-            AddParametr(sb, nameof(today.MondayTicks), today.MondayTicks.ToString(), today.Monday, sing);
-            AddParametr(sb, nameof(today.TuesdayTicks), today.TuesdayTicks.ToString(), today.Tuesday, sing);
-            AddParametr(sb, nameof(today.WednesdayTicks), today.WednesdayTicks.ToString(), today.Wednesday, sing);
-            AddParametr(sb, nameof(today.ThursdayTicks), today.ThursdayTicks.ToString(), today.Thursday, sing);
-            AddParametr(sb, nameof(today.FridayTicks), today.FridayTicks.ToString(), today.Friday, sing);
-            AddParametr(sb, nameof(today.SaturdayTicks), today.SaturdayTicks.ToString(), today.Saturday, sing);
+            AddParameter(sb, nameof(today.SundayTicks), today.SundayTicks.ToString(), today.Sunday, sing);
+            AddParameter(sb, nameof(today.MondayTicks), today.MondayTicks.ToString(), today.Monday, sing);
+            AddParameter(sb, nameof(today.TuesdayTicks), today.TuesdayTicks.ToString(), today.Tuesday, sing);
+            AddParameter(sb, nameof(today.WednesdayTicks), today.WednesdayTicks.ToString(), today.Wednesday, sing);
+            AddParameter(sb, nameof(today.ThursdayTicks), today.ThursdayTicks.ToString(), today.Thursday, sing);
+            AddParameter(sb, nameof(today.FridayTicks), today.FridayTicks.ToString(), today.Friday, sing);
+            AddParameter(sb, nameof(today.SaturdayTicks), today.SaturdayTicks.ToString(), today.Saturday, sing);
             sb.Append(" AND ");
-            AddParametr(sb, nameof(today.Sunday), today.Sunday.ToString(), today.Sunday, _equals);
-            AddParametr(sb, nameof(today.Monday), today.Monday.ToString(), today.Monday, _equals);
-            AddParametr(sb, nameof(today.Tuesday), today.Tuesday.ToString(), today.Tuesday, _equals);
-            AddParametr(sb, nameof(today.Wednesday), today.Wednesday.ToString(), today.Wednesday, _equals);
-            AddParametr(sb, nameof(today.Thursday), today.Thursday.ToString(), today.Thursday, _equals);
-            AddParametr(sb, nameof(today.Friday), today.Friday.ToString(), today.Friday, _equals);
-            AddParametr(sb, nameof(today.Saturday), today.Saturday.ToString(), today.Saturday, _equals);
+            AddParameter(sb, nameof(today.Sunday), today.Sunday.ToString(), today.Sunday, _equals);
+            AddParameter(sb, nameof(today.Monday), today.Monday.ToString(), today.Monday, _equals);
+            AddParameter(sb, nameof(today.Tuesday), today.Tuesday.ToString(), today.Tuesday, _equals);
+            AddParameter(sb, nameof(today.Wednesday), today.Wednesday.ToString(), today.Wednesday, _equals);
+            AddParameter(sb, nameof(today.Thursday), today.Thursday.ToString(), today.Thursday, _equals);
+            AddParameter(sb, nameof(today.Friday), today.Friday.ToString(), today.Friday, _equals);
+            AddParameter(sb, nameof(today.Saturday), today.Saturday.ToString(), today.Saturday, _equals);
 
             sb.Append(' ');
 
@@ -261,7 +260,7 @@ WHERE CustomerRoutes.RoutesId == ");
 
             return sb.ToString();
         }
-        private static void AddParametr(StringBuilder sb, string columnName, string value, bool isEnable, char sign)
+        private static void AddParameter(StringBuilder sb, string columnName, string value, bool isEnable, char sign)
         {
             if (isEnable)
             {

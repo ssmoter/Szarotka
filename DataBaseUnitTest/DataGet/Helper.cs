@@ -22,17 +22,20 @@ namespace DataBaseUnitTest.DataGet
 
             var names = await db.DataBaseAsync.Table<ProductName>().ToArrayAsync();
             var prices = await db.DataBaseAsync.Table<ProductPrice>().ToArrayAsync();
-
+            var rnd = new Random();
             for (int i = 0; i < n; i++)
             {
                 var id = Guid.CreateVersion7();
-                var time = DateTime.Now;
+                var time = DateTime.Now.AddDays(rnd.Next(0,100));
+                var user = Guid.CreateVersion7();
                 var day = new Day
                 {
                     Id = id,
                     SelectedDate = time,
                     Updated = time,
                     Created = time,
+                    UserCreatedId = user,
+                    UserUpdatedId = user,
                     TotalPriceMoney = rnd.Next(0, 1000),
                     Products = [.. GetExampleProducts(names, prices, id)],
                     Cakes = [.. GetExampleCakes(id, rnd.Next(0, 5))]

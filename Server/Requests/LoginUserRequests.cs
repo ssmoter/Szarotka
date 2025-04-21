@@ -91,7 +91,7 @@ namespace Server.Requests
         {
             try
             {
-                ArgumentNullException.ThrowIfNullOrWhiteSpace(userToken, nameof(userToken));
+                ArgumentException.ThrowIfNullOrWhiteSpace(userToken, nameof(userToken));
                 token.ThrowIfCancellationRequested();
                 var newToken = await _authenticationService.AuthenticateAsync(userToken);
 
@@ -138,7 +138,7 @@ namespace Server.Requests
         {
             try
             {
-                ArgumentNullException.ThrowIfNullOrWhiteSpace(id, nameof(id));
+                ArgumentException.ThrowIfNullOrWhiteSpace(id, nameof(id));
                 token.ThrowIfCancellationRequested();
 
                 User user = await _loginService.GetPublicUser(id);

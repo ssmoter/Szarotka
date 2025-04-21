@@ -68,7 +68,9 @@ SELECT pn.*,
                'Id', pp.Id,
                'Price', pp.Price,
                'CreatedTicks', pp.CreatedTicks,
-               'UpdatedTicks', pp.UpdatedTicks
+               'UpdatedTicks', pp.UpdatedTicks,
+               'UserCreatedId', pp.UserCreatedId,
+               'UserUpdatedId', pp.UserUpdatedId
            )) 
            FROM ProductPrice pp 
            WHERE pp.ProductNameId = pn.Id

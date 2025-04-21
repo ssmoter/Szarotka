@@ -9,7 +9,7 @@ namespace DataBaseUnitTest.DataGet
         {
             var db = await Helper.CreateDataBaseForTest(nameof(GetDays_ShouldGet));
 
-            var excepted = await Helper.SetExampleDays(1, db);
+            var excepted = await Helper.SetExampleDays(15, db);
 
             var aot = new GetInventoryAoT(db);
 

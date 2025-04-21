@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-
-using DataBase.Model.EntitiesInventory;
+﻿using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesRoutes;
 using DataBase.Model.EntitiesServer;
 
@@ -21,10 +19,16 @@ namespace DataBase.Model.JsonContext;
 [JsonSerializable(typeof(ProductPrice))]
 [JsonSerializable(typeof(ProductPrices))]
 [JsonSerializable(typeof(Day))]
+[JsonSerializable(typeof(Day[]))]
+[JsonSerializable(typeof(IList<Day>))]
+
 [JsonSerializable(typeof(Driver))]
 [JsonSerializable(typeof(Product))]
 [JsonSerializable(typeof(ProductName))]
 [JsonSerializable(typeof(Cake))]
+
+[JsonSerializable(typeof(EmptyProduct))]
+[JsonSerializable(typeof(EmptyProducts))]
 
 [JsonSourceGenerationOptions(
    WriteIndented = true,
@@ -105,5 +109,30 @@ public class CustomDateTimeConverter : JsonConverter<DateTime>
         {
             writer.WriteStringValue(value);
         }
+    }
+}
+
+public class CustomGuidConverter : JsonConverter<Guid>
+{
+    public override Guid Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        if (reader.TokenType == JsonTokenType.String)
+        {
+            var str = reader.GetString();
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return Guid.Empty;
+            }
+        }
+        if (reader.TokenType == JsonTokenType.Null)
+        {
+            return Guid.Empty;
+        }
+        return reader.GetGuid();
+    }
+
+    public override void Write(Utf8JsonWriter writer, Guid value, JsonSerializerOptions options)
+    {
+        writer.WriteStringValue(value);
     }
 }

@@ -53,7 +53,7 @@ namespace DataBase.Data.Get
 
             var result = await _db.DataBaseAsync.QueryAsync<ProductNameAndPrice>(sql);
 
-            var product = new (ProductName name, IList<ProductPrice> prices)[result.Count];
+            (ProductName name, IList<ProductPrice> prices)[] product = new (ProductName name, IList<ProductPrice> prices)[result.Count];
 
 
             for (int i = 0; i < result.Count; i++)

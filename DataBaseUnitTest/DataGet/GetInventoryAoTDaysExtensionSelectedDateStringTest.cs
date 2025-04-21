@@ -13,7 +13,7 @@ namespace DataBaseUnitTest.DataGet
 
             var aot = new GetInventoryAoT(db);
 
-            var result = await aot.DaySelectedDateString(excepted[0].SelectedDateString);
+            var result = await aot.DaySelectedDateString(excepted[0].SelectedDateString, excepted[0].UserCreatedId);
 
             var exceptedJson = System.Text.Json.JsonSerializer.Serialize(excepted[0]);
             var resultJson = System.Text.Json.JsonSerializer.Serialize(result);
@@ -28,7 +28,7 @@ namespace DataBaseUnitTest.DataGet
 
             var aot = new GetInventoryAoT(db);
             await Assert.ThrowsAsync<ArgumentNullException>(
-                    () => aot.DaySelectedDateString(""));
+                    () => aot.DaySelectedDateString("", Guid.CreateVersion7()));
         }
     }
 }

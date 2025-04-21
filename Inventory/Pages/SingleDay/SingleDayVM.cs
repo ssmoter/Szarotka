@@ -498,6 +498,8 @@ namespace Inventory.Pages.SingleDay
                         Day.Products.Add(item);
                     }
                 }
+                RemovePropertyChangedEvent();
+                AddPropertyChangedEvent();
             }
             catch (Exception ex) { _db.SaveLogExtension(ex); }
             finally { SingleDayM.ProductIsRefreshing = false; }

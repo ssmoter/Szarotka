@@ -1,4 +1,5 @@
 ﻿using DataBase.Data;
+using DataBase.Data.Get;
 using DataBase.Data.Save;
 using DataBase.Model.EntitiesServer;
 
@@ -16,6 +17,9 @@ namespace DataBase.Service
             services.AddScoped<ISaveDriverRoutesAoT, SaveDriverRoutesAoT>();
             services.AddScoped<ITimeService, CurrentUtc>();
             services.AddScoped<IValidationException, ValidationException>();
+
+            services.AddScoped<IGetInventoryAoT, GetInventoryAoT>();
+
 
             return services;
         }

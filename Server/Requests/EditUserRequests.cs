@@ -4,6 +4,7 @@ using DataBase.Model.EntitiesServer;
 using Server.Model;
 using Server.Service;
 using Server.Validation;
+
 namespace Server.Requests
 {
     public interface IEditUserRequests

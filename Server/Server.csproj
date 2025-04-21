@@ -14,6 +14,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="http\**" />
+	  <Content Remove="http\**" />
+	  <EmbeddedResource Remove="http\**" />
+	  <None Remove="http\**" />
+	</ItemGroup>
+
+	<ItemGroup>
     <PackageReference Include="MailKit" Version="4.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />

@@ -2,7 +2,6 @@
 
 using MailKit.Net.Smtp;
 
-using Server.Endpoints;
 using Server.Model;
 using Server.Requests;
 using Server.Validation;
@@ -50,7 +49,8 @@ namespace Server.Service
             services.AddScoped<IResetPasswordRequests, ResetPasswordRequests>();
             services.AddScoped<IResetPasswordService, ResetPasswordService>();
 
-
+            services.AddScoped<IInventoryProductsRequests, InventoryProductsRequests>();
+            services.AddScoped<IInventoryDayRequests, InventoryDayRequests>();
 
             return services;
         }

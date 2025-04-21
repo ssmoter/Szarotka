@@ -1,7 +1,8 @@
-﻿using Shared.Helper.Img;
+﻿using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
+
+using Shared.Helper.Img;
 using Shared.Service;
-using DataBase.Data;
 
 namespace Shared.Data
 {
@@ -44,10 +45,43 @@ namespace Shared.Data
                 oldVersion = 2;
                 updateInventory?.Invoke(progressBar, oldVersion);
             }
-
+            if (oldVersion < 3)
+            {
+                await CopyDriverGuidToUserCreatedIdAndUserUpdateId();
+                progressBar += updateProgressBar;
+                oldVersion = 3;
+                updateInventory?.Invoke(progressBar, oldVersion);
+            }
 
 
             updateInventory?.Invoke(1, oldVersion);
+        }
+
+        private async Task CopyDriverGuidToUserCreatedIdAndUserUpdateId()
+        {
+            var query = $"PRAGMA table_info('{nameof(Day)}')";
+            var result = await _db.DataBaseAsync.QueryAsync<TableInfo>(query);
+
+            if (result.Any(row => row.Name == "DriverGuid"))
+            {
+                await _db.DataBaseAsync.ExecuteAsync(@"
+UPDATE Day
+SET 
+UserCreatedId = DriverGuid,
+UserUpdatedId = DriverGuid
+");
+            }
+
+        }
+
+        private class TableInfo
+        {
+            public int Cid { get; set; }
+            public string Name { get; set; } = "";
+            public string Type { get; set; } = "";
+            public int NotNull { get; set; }
+            public string DefaultValue { get; set; } = "";
+            public int PrimaryKey { get; set; }
         }
 
         private async Task CreateInventoryTables()

@@ -101,6 +101,8 @@ SELECT
   D.Id,
   D.CreatedTicks,
   D.UpdatedTicks,
+  D.UserCreatedId,
+  D.UserUpdatedId,
   (
     SELECT json_group_array(
       json_object(
@@ -117,6 +119,8 @@ SELECT
         'NumberReturn', P.NumberReturn,
         'CreatedTicks', P.CreatedTicks,
         'UpdatedTicks', P.UpdatedTicks,
+        'UserCreatedId',P.UserCreatedId,
+        'UserUpdatedId',P.UserUpdatedId,
         'Name', json_object(
           'Id', PN.Id,
           'Name', PN.Name,
@@ -124,14 +128,18 @@ SELECT
           'Img', PN.Img,
           'Arrangement', PN.Arrangement,
           'CreatedTicks', PN.CreatedTicks,
-          'UpdatedTicks', PN.UpdatedTicks
+          'UpdatedTicks', PN.UpdatedTicks,
+          'UserCreatedId', PN.UserCreatedId,
+          'UserUpdatedId', PN.UserUpdatedId
         ),
         'Price', json_object(
           'Id', PP.Id,
           'ProductNameId', PP.ProductNameId,
           'Price', PP.Price,
           'CreatedTicks', PP.CreatedTicks,
-          'UpdatedTicks', PP.UpdatedTicks
+          'UpdatedTicks', PP.UpdatedTicks,
+          'UserUpdatedId', PP.UserCreatedId,
+          'UserCreatedId', PP.UserUpdatedId
         )
       )
     )
@@ -148,7 +156,9 @@ SELECT
         'DayId', C.DayId,
         'Id', C.Id,
         'CreatedTicks', C.CreatedTicks,
-        'UpdatedTicks', C.UpdatedTicks
+        'UpdatedTicks', C.UpdatedTicks,
+        'UserCreatedId', C.UserCreatedId,
+        'UserUpdatedId', C.UserUpdatedId
       )
     )
     FROM Cake C

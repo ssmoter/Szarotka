@@ -77,3 +77,33 @@ public partial class ProductName : BaseEntities<Guid>, IEquatable<ProductName>
         return Id == other.Id && Name == other.Name;
     }
 }
+
+
+public partial class EmptyProduct
+{
+    public ProductName Name { get; set; } = new();
+    public IList<ProductPrice> Prices { get; set; } = [];
+}
+public partial class EmptyProducts
+{
+    public IList<EmptyProduct> Products { get; set; } = [];
+
+    public EmptyProducts()
+    { }
+    public EmptyProducts(IList<(ProductName Name, IList<ProductPrice> Prices)> emptyProducts)
+    {
+        int count = emptyProducts.Count;
+        Products = new EmptyProduct[count];
+
+        for (int i = 0; i < count; i++)
+        {
+            Products[i] = new()
+            {
+                Name = emptyProducts[i].Name,
+                Prices = emptyProducts[i].Prices
+            };
+        }
+
+    }
+
+}

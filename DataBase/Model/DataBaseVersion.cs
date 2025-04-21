@@ -20,7 +20,7 @@ namespace DataBase.Model
         public DataBaseVersion()
         {
             DataBase = 2;
-            Inventory = 2;
+            Inventory = 3;
             DriversRoutes = 2;
         }
 

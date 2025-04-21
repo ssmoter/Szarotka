@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataBase.Data.Get
 {
-    internal class GetDriverRoutesAoT
+    public class GetDriverRoutesAoT
     {
     }
 }

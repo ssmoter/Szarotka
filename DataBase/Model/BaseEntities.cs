@@ -87,6 +87,7 @@ namespace DataBase.Model
         }
 
         private Guid userCreatedId;
+        [JsonConverter(typeof(JsonContext.CustomGuidConverter))]
         public Guid UserCreatedId
         {
             get => userCreatedId;
@@ -97,6 +98,7 @@ namespace DataBase.Model
         }
 
         private Guid userUpdatedId;
+        [JsonConverter(typeof(JsonContext.CustomGuidConverter))]
         public Guid UserUpdatedId
         {
             get => userUpdatedId;
