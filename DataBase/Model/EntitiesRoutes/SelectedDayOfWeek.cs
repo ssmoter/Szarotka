@@ -280,6 +280,7 @@ public partial class SelectedDayOfWeekRoutes : BaseEntities<Guid>
 
     long _setAllTicks;
     [Ignore]
+    [JsonIgnore]
     public TimeSpan SetAllTimeSpan
     {
         get

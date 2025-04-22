@@ -40,12 +40,24 @@ D.UserCreatedId = ?";
         public static async Task<IList<Day>> Days(this IGetInventoryAoT get, long from, long to, IList<Guid> userIds)
         {
             StringBuilder where = new();
-            where.AppendLine(" WHERE D.SelectedDateTicks >= ? AND D.SelectedDateTicks <= ? ");
+            if (to > 0 || userIds.Count > 0)
+            {
+                where.AppendLine(" WHERE ");
+            }
+            if (to > 0)
+            {
+                where.AppendLine(" D.SelectedDateTicks >= ? AND D.SelectedDateTicks <= ? ");
+            }
             for (int i = 0; i < userIds.Count; i++)
             {
                 if (i == 0)
                 {
-                    where.AppendLine(" AND ( D.UserCreatedId = ? ");
+                    if (to > 0)
+                    {
+                        where.Append(" AND ");
+                    }
+
+                    where.AppendLine(" ( D.UserCreatedId = ? ");
                 }
                 if (i > 0)
                 {
@@ -57,7 +69,22 @@ D.UserCreatedId = ?";
                 where.Append(')');
             }
 
-            var result = await get.Days(where.ToString(), [from, to, .. userIds]);
+            object[]? args = null!;
+
+            if (to > 0)
+            {
+                args = [from, to];
+            }
+            if (userIds.Count > 0)
+            {
+                args = [.. userIds];
+            }
+            if (to > 0 && userIds.Count > 0)
+            {
+                args = [from, to, .. userIds];
+            }
+
+            var result = await get.Days(where.ToString(), args);
             return result;
         }
 

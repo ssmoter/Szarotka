@@ -15,6 +15,7 @@ namespace DataBase.Model.JsonContext;
 [JsonSerializable(typeof(ResidentialAddress))]
 [JsonSerializable(typeof(CustomerRoutes))]
 [JsonSerializable(typeof(CustomerRoutes[]))]
+[JsonSerializable(typeof(IList<CustomerRoutes>))]
 
 [JsonSerializable(typeof(ProductPrice))]
 [JsonSerializable(typeof(ProductPrices))]
@@ -32,10 +33,8 @@ namespace DataBase.Model.JsonContext;
 
 [JsonSourceGenerationOptions(
    WriteIndented = true,
-   DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+   DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault | JsonIgnoreCondition.WhenWritingNull,
    PropertyNameCaseInsensitive = true)]
-//[JsonConverter(typeof(CustomDateTimeConverter))]
-//[JsonConverter(typeof(CustomBoolConverter))]
 public partial class SzarotkaJsonSerializerContext : JsonSerializerContext
 { }
 public class CustomBoolConverter : JsonConverter<bool>
@@ -56,7 +55,10 @@ public class CustomBoolConverter : JsonConverter<bool>
                 return result;
             }
         }
-
+        if (reader.TokenType == JsonTokenType.Null)
+        {
+            return false;
+        }
         return reader.GetBoolean();
     }
 

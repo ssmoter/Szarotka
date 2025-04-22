@@ -58,5 +58,74 @@ namespace DataBase.Data.SqlQuery
             ";
             return sql;
         }
+
+
+
+        public static string GetFullProcedureWithoutWhere()
+        {
+            string sql = @"
+        SELECT 
+            CustomerRoutes.Id,
+            CustomerRoutes.RoutesId,
+            CustomerRoutes.Name,
+            CustomerRoutes.Description,
+            CustomerRoutes.PhoneNumber,
+            CustomerRoutes.CreatedTicks,
+            CustomerRoutes.UpdatedTicks,
+            CustomerRoutes.Longitude,
+            CustomerRoutes.Latitude,
+            CustomerRoutes.IsDelete,
+            CustomerRoutes.UserCreatedId,
+            CustomerRoutes.UserUpdatedId,
+            json_object(
+                'Id', SelectedDayOfWeekRoutes.Id,
+                'CustomerId', SelectedDayOfWeekRoutes.CustomerId,
+                'Sunday', SelectedDayOfWeekRoutes.Sunday,
+                'SundayTicks', SelectedDayOfWeekRoutes.SundayTicks,
+                'Monday', SelectedDayOfWeekRoutes.Monday,
+                'MondayTicks', SelectedDayOfWeekRoutes.MondayTicks,
+                'Tuesday', SelectedDayOfWeekRoutes.Tuesday,
+                'TuesdayTicks', SelectedDayOfWeekRoutes.TuesdayTicks,
+                'Wednesday', SelectedDayOfWeekRoutes.Wednesday,
+                'WednesdayTicks', SelectedDayOfWeekRoutes.WednesdayTicks,
+                'Thursday', SelectedDayOfWeekRoutes.Thursday,
+                'ThursdayTicks', SelectedDayOfWeekRoutes.ThursdayTicks,
+                'Friday', SelectedDayOfWeekRoutes.Friday,
+                'FridayTicks', SelectedDayOfWeekRoutes.FridayTicks,
+                'Saturday', SelectedDayOfWeekRoutes.Saturday,
+                'SaturdayTicks', SelectedDayOfWeekRoutes.SaturdayTicks,
+                'Optional', SelectedDayOfWeekRoutes.Optional,
+                'CreatedTicks', SelectedDayOfWeekRoutes.CreatedTicks,
+                'UpdatedTicks', SelectedDayOfWeekRoutes.UpdatedTicks,
+                'UserCreatedId', SelectedDayOfWeekRoutes.UserCreatedId,
+                'UserUpdatedId', SelectedDayOfWeekRoutes.UserUpdatedId,
+                'IsDelete', SelectedDayOfWeekRoutes.IsDelete
+            ) AS JsonDayOfWeek,
+            json_object(
+                'Id', ResidentialAddress.Id,
+                'CustomerId', ResidentialAddress.CustomerId,
+                'Name', ResidentialAddress.Name,
+                'Surname', ResidentialAddress.Surname,
+                'Street', ResidentialAddress.Street,
+                'HouseNumber', ResidentialAddress.HouseNumber,
+                'ApartmentNumber', ResidentialAddress.ApartmentNumber,
+                'PostalCode', ResidentialAddress.PostalCode,
+                'City', ResidentialAddress.City,
+                'Country', ResidentialAddress.Country,
+                'CreatedTicks', ResidentialAddress.CreatedTicks,
+                'UpdatedTicks', ResidentialAddress.UpdatedTicks,
+                'UserCreatedId', ResidentialAddress.UserCreatedId,
+                'UserUpdatedId', ResidentialAddress.UserUpdatedId,
+                'IsDelete', ResidentialAddress.IsDelete
+            ) AS JsonAddress
+        FROM 
+            CustomerRoutes
+        LEFT JOIN 
+            SelectedDayOfWeekRoutes ON CustomerRoutes.Id = SelectedDayOfWeekRoutes.CustomerId
+        LEFT JOIN 
+            ResidentialAddress ON CustomerRoutes.Id = ResidentialAddress.CustomerId
+        ";
+            return sql;
+        }
     }
 }

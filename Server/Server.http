@@ -2,7 +2,7 @@
 //@Server_HostAddress = http://localhost:32783
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkd2EiLCJqdGkiOiJjZTdlNDMxYy00NjEwLTQxYjctOGQ0ZC02OWU4OTVkYWZmYjgiLCJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJwaG9uZV9udW1iZXIiOiIxMjM0NTY3ODkxMDMiLCJuYW1laWQiOiIwMTk0ZDBlZi1jNTZjLTcxMmUtYjUwNy01YjU0MGY2Mzk3NDkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJEcml2ZXIiLCJlbWFpbF92ZXJpZmllZCI6IlRydWUiLCJDcmVhdGVkVGlja3MiOiI2Mzg3NDI2ODk2MjE1NjQzODMiLCJVcGRhdGVkVGlja3MiOiI2Mzg4MDY3NjUxMDk3Mjk4MTciLCJVc2VyVXBkYXRlZElkIjoiMDE5NGQwZWYtYzU2Yy03MTJlLWI1MDctNWI1NDBmNjM5NzQ5IiwiSXNEZWxldGUiOiJGYWxzZSIsImV4cCI6MTc0NTY4NDUxMCwiaXNzIjoibG9jYWxob3N0IiwiYXVkIjoibG9jYWxob3N0VXNlcnMifQ._ZPnVBishimbSx0M1PhTnvJ7uWpVEKoMqQmaryJ46P4
 
-POST {{Server_HostAddress}}/{{server_user}}/login
+POST {{Server_HostAddress}}/user/login
 Content-Type: application/json 
 
 { 
@@ -12,7 +12,7 @@ Content-Type: application/json
 }
 ###
 
-GET {{Server_HostAddress}}/inventory/empty_products
+GET {{Server_HostAddress}}/inventory/empty-products
 Accept: application/json
 
 ###
@@ -26,12 +26,24 @@ Accept: application/json
 Authorization: bearer {{token}}
 
 ###
+GET {{Server_HostAddress}}/inventory/days
+Accept: application/json
+Authorization: bearer {{token}}
+###
 GET {{Server_HostAddress}}/inventory/days?to=638684857021318544&from=638670998602305712&userid=ae86aaeb-1080-4ae2-9226-62cf3a042ca8&userid=ae86aaeb-1080-4ae2-9226-62cf3a042ca8
 Accept: application/json
 Authorization: bearer {{token}}
 
 ### 
 
+GET {{Server_HostAddress}}/driver-routes/customer-route/7834daec-27b6-4ad1-8eda-dcfa77d118f4
+Accept: application/json
+Authorization: bearer {{token}}
+###
+GET {{Server_HostAddress}}/driver-routes/customer-routes/baf3bb5a-59f6-5524-10d6-2d4c3c84b98b?selected_day=Monday&selected_day=4
+Accept: application/json
+Authorization: bearer {{token}}
+###
 
 GET {{Server_HostAddress}}/todos/
 Accept: application/json
@@ -55,7 +67,7 @@ Content-Type: application/json
 }
 
 ###
-GET {{Server_HostAddress}}/user/confirm_email/57179
+GET {{Server_HostAddress}}/user/confirm-email/57179
 Accept: application/json
 
 ###
@@ -64,7 +76,7 @@ Accept: application/json
 Authorization: Bearer {{token}}
 
 ###
-GET {{Server_HostAddress}}/user/refresh_token
+GET {{Server_HostAddress}}/user/refresh-token
 Authorization: Bearer {{token}}
 
 ### 
@@ -86,15 +98,15 @@ Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
-GET {{Server_HostAddress}}/user/reset_password_email/user@example.com
+GET {{Server_HostAddress}}/user/reset-password-email/user@example.com
 Accept: application/json
 
 ###
-GET {{Server_HostAddress}}/user/reset_password/74091
+GET {{Server_HostAddress}}/user/reset-password/74091
 Accept: application/json
 
 ###
-GET {{Server_HostAddress}}/user/reset_password/74091/Password1!
+GET {{Server_HostAddress}}/user/reset-password/74091/Password1!
 Accept: application/json
 
 ###

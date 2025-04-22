@@ -58,7 +58,7 @@ app.UseAuthorization();
 
 UserEndpoints.MapEndpoints(app);
 InventoryEndpoints.MapEndpoints(app);
-
+DriverRoutesEndpoints.MapEndpoints(app);
 
 
 

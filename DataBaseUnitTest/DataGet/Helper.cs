@@ -1,5 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
+using DataBase.Model.EntitiesRoutes;
 
 namespace DataBaseUnitTest.DataGet
 {
@@ -26,7 +27,7 @@ namespace DataBaseUnitTest.DataGet
             for (int i = 0; i < n; i++)
             {
                 var id = Guid.CreateVersion7();
-                var time = DateTime.Now.AddDays(rnd.Next(0,100));
+                var time = DateTime.Now.AddDays(rnd.Next(0, 100));
                 var user = Guid.CreateVersion7();
                 var day = new Day
                 {
@@ -48,8 +49,6 @@ namespace DataBaseUnitTest.DataGet
                 db.DataBase.InsertAll(day.Products);
                 db.DataBase.InsertAll(day.Cakes);
             }
-
-
             return days;
         }
 
@@ -98,5 +97,101 @@ namespace DataBaseUnitTest.DataGet
             return cakes;
         }
 
+        public static IList<CustomerRoutes> SetExampleCustomerRoutes(int n, IAccessDataBase db, int sameRouteId = 5)
+        {
+            var customers = new List<CustomerRoutes>();
+            var rnd = new Random();
+            var routeId = Guid.CreateVersion7();
+            for (int i = 0; i < n; i++)
+            {
+                var id = Guid.CreateVersion7();
+                var time = DateTime.Now.AddDays(rnd.Next(0, 100));
+                var user = Guid.CreateVersion7();
+
+                var customer = new CustomerRoutes()
+                {
+                    Id = id,
+                    RoutesId = routeId,
+                    Created = time,
+                    Updated = time,
+                    UserCreatedId = user,
+                    UserUpdatedId = user,
+                    ResidentialAddress = SetExampleResidentialAddress(id, user, time),
+                    DayOfWeek = SetExampleDayOfWeek(id, user, time, rnd)
+                };
+
+                customers.Add(customer);
+                db.DataBase.Insert(customer);
+                db.DataBase.Insert(customer.ResidentialAddress);
+                db.DataBase.Insert(customer.DayOfWeek);
+                if (i % sameRouteId == 0 && i > 0)
+                {
+                    routeId = Guid.CreateVersion7();
+                }
+            }
+            return customers;
+        }
+
+        public static ResidentialAddress SetExampleResidentialAddress(Guid id, Guid user, DateTime time)
+        {
+            var obj = new ResidentialAddress()
+            {
+                CustomerId = id,
+                UserCreatedId = user,
+                UserUpdatedId = user,
+                Created = time,
+                Updated = time,
+                Id = Guid.CreateVersion7(),
+            };
+            return obj;
+        }
+        public static SelectedDayOfWeekRoutes SetExampleDayOfWeek(Guid id, Guid user, DateTime time, Random rnd)
+        {
+            var obj = new SelectedDayOfWeekRoutes()
+            {
+                CustomerId = id,
+                UserCreatedId = user,
+                UserUpdatedId = user,
+                Created = time,
+                Updated = time,
+                Id = Guid.CreateVersion7(),
+                Monday = RandomBool(rnd),
+                MondayTimeSpan = RandomTime(rnd),
+                Thursday = RandomBool(rnd),
+                ThursdayTimeSpan = RandomTime(rnd),
+                Wednesday = RandomBool(rnd),
+                WednesdayTimeSpan = RandomTime(rnd),
+                Tuesday = RandomBool(rnd),
+                TuesdayTimeSpan = RandomTime(rnd),
+                Friday = RandomBool(rnd),
+                FridayTimeSpan = RandomTime(rnd),
+                Saturday = RandomBool(rnd),
+                SaturdayTimeSpan = RandomTime(rnd),
+                Sunday = RandomBool(rnd),
+                SundayTimeSpan = RandomTime(rnd),
+                Optional = RandomBool(rnd),
+                SetAll = false,
+                SetAllTimeSpan = new TimeSpan()
+            };
+            return obj;
+
+            static bool RandomBool(Random rnd)
+            {
+                var next = rnd.Next(0, 10);
+                if (next > 5)
+                {
+                    return true;
+                }
+                return false;
+            }
+            static TimeSpan RandomTime(Random rnd)
+            {
+                TimeSpan time = new(
+                    rnd.Next(0, 24),
+                    rnd.Next(0, 60),
+                    rnd.Next(0, 60));
+                return time;
+            }
+        }
     }
 }

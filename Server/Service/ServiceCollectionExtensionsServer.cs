@@ -1,4 +1,5 @@
 ﻿using DataBase.Data;
+using DataBase.Data.Get;
 
 using MailKit.Net.Smtp;
 
@@ -51,6 +52,10 @@ namespace Server.Service
 
             services.AddScoped<IInventoryProductsRequests, InventoryProductsRequests>();
             services.AddScoped<IInventoryDayRequests, InventoryDayRequests>();
+            services.AddScoped<IGetDriverRoutesAoT, GetDriverRoutesAoT>();
+            services.AddScoped<IDriverRoutesCustomerRoutesRequests, DriverRoutesCustomerRoutesRequests>();
+
+
 
             return services;
         }

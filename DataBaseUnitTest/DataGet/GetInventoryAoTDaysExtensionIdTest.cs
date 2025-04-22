@@ -30,6 +30,5 @@ namespace DataBaseUnitTest.DataGet
             await Assert.ThrowsAsync<ArgumentNullException>(
                     () => aot.Day(Guid.Empty));
         }
-
     }
 }

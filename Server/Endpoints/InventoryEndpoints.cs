@@ -10,7 +10,7 @@ namespace Server.Endpoints
         {
             var map = app.MapGroup("/inventory");
 
-            map.MapGet("empty_products", async (IInventoryProductsRequests iInventoryProducts, CancellationToken token = default)
+            map.MapGet("empty-products", async (IInventoryProductsRequests iInventoryProducts, CancellationToken token = default)
                 =>
             {
                 var products = await iInventoryProducts.GetEmptyProducts(token);

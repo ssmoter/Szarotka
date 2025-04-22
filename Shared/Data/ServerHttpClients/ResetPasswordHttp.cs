@@ -24,7 +24,7 @@ namespace Shared.Data.ServerHttpClients
 
         public async Task SendEmail(string email)
         {
-            string url = _url + "/user/reset_password_email/" + email;
+            string url = _url + "/user/reset-password-email/" + email;
 
             using var httpClient = _httpClientFactory.CreateClient();
 
@@ -42,7 +42,7 @@ namespace Shared.Data.ServerHttpClients
         }
         public async Task SendCode(int code)
         {
-            string url = _url + "/user/reset_password/" + code;
+            string url = _url + "/user/reset-password/" + code;
 
             using var httpClient = _httpClientFactory.CreateClient();
 
@@ -59,7 +59,7 @@ namespace Shared.Data.ServerHttpClients
         }
         public async Task ResetPassword(int code, string password)
         {
-            string url = $"{_url}/user/reset_password/{code}/{password}";
+            string url = $"{_url}/user/reset-password/{code}/{password}";
 
             using var httpClient = _httpClientFactory.CreateClient();
 

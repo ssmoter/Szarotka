@@ -77,6 +77,7 @@ namespace DataBase.Model
         private long _updatedTicks;
 
         private bool isDelete;
+        [JsonConverter(typeof(JsonContext.CustomBoolConverter))]
         public bool IsDelete
         {
             get => isDelete;

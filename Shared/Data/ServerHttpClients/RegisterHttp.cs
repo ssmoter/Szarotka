@@ -56,7 +56,7 @@ namespace Shared.Data.ServerHttpClients
         {
             ArgumentNullException.ThrowIfNull(code);
 
-            var ulr = _url + "/user" + "/confirm_email/" + code;
+            var ulr = _url + "/user" + "/confirm-email/" + code;
             using var httpClient = _httpClientFactory.CreateClient();
 
             var response = await httpClient.GetAsync(ulr);

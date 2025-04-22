@@ -17,7 +17,7 @@ namespace Server.Endpoints
             {
                 return await registerUserEndpoint.InsertUser(user, token);
             });
-            user.MapGet("/confirm_email/{code}", async (int code, IRegisterUserRequests registerUserEndpoint, CancellationToken token = default)
+            user.MapGet("/confirm-email/{code}", async (int code, IRegisterUserRequests registerUserEndpoint, CancellationToken token = default)
                 =>
             {
                 return await registerUserEndpoint.ConfirmEmail(code, token);
@@ -33,7 +33,7 @@ namespace Server.Endpoints
                 throw new NotImplementedException();
                 //return await loginUserEndpoint.LogOutUser("user");
             }).RequireAuthorization();
-            user.MapGet("refresh_token", async (HttpContext context, ILoginUserRequests loginUserRequests, CancellationToken token = default)
+            user.MapGet("refresh-token", async (HttpContext context, ILoginUserRequests loginUserRequests, CancellationToken token = default)
                 =>
             {
                 // Pobierz wartość nagłówka Authorization
@@ -82,17 +82,17 @@ namespace Server.Endpoints
                 return await loginUserRequests.GetPublicUser(id);
             }).RequireAuthorization();
 
-            user.MapGet("reset_password_email/{email}", async (string email, IResetPasswordRequests resetPasswordRequests, CancellationToken token = default)
+            user.MapGet("reset-password-email/{email}", async (string email, IResetPasswordRequests resetPasswordRequests, CancellationToken token = default)
                 =>
             {
                 return await resetPasswordRequests.ResetPasswordEmail(email, token);
             });
-            user.MapGet("reset_password/{code}", async (int code, IResetPasswordRequests resetPasswordRequests, CancellationToken token = default)
+            user.MapGet("reset-password/{code}", async (int code, IResetPasswordRequests resetPasswordRequests, CancellationToken token = default)
                 =>
             {
                 return await resetPasswordRequests.ResetPasswordCode(code, token);
             });
-            user.MapGet("reset_password/{code}/{password}", async (int code, string password, IResetPasswordRequests resetPasswordRequests, CancellationToken token = default)
+            user.MapGet("reset-password/{code}/{password}", async (int code, string password, IResetPasswordRequests resetPasswordRequests, CancellationToken token = default)
                 =>
             {                
                 return await resetPasswordRequests.ResetPasswordNew(code, password, token);
