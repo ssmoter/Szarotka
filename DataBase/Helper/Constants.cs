@@ -95,7 +95,7 @@ namespace DataBase.Helper
             }
         }
 
-        public static CultureInfo CultureInfo => new("pl");
+        public static CultureInfo CultureInfo => new("pl-PL");
 
         public static string ServerUrl
         {

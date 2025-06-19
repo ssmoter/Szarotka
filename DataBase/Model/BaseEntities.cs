@@ -15,10 +15,8 @@ namespace DataBase.Model
             get => id;
             set
             {
-                if (SetProperty(ref id, value))
-                {
-                    OnPropertyChanged(nameof(Id));
-                }
+                if (SetProperty(ref id, value,nameof(Id)))
+                {}
             }
         }
         [Ignore]
@@ -36,10 +34,8 @@ namespace DataBase.Model
             }
             set
             {
-                if (SetProperty(ref _createdTicks, value.ToUniversalTime().Ticks))
-                {
-                    OnPropertyChanged(nameof(Created));
-                }
+                if (SetProperty(ref _createdTicks, value.ToUniversalTime().Ticks,nameof(Created)))
+                {}
             }
         }
         [Ignore]
@@ -57,7 +53,7 @@ namespace DataBase.Model
             }
             set
             {
-                if (SetProperty(ref _updatedTicks, value.ToUniversalTime().Ticks))
+                if (SetProperty(ref _updatedTicks, value.ToUniversalTime().Ticks,nameof(Updated)))
                 {
                     OnPropertyChanged(nameof(Updated));
                 }

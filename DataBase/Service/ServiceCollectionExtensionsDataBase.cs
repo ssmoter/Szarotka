@@ -19,6 +19,7 @@ namespace DataBase.Service
             services.AddScoped<IValidationException, ValidationException>();
 
             services.AddScoped<IGetInventoryAoT, GetInventoryAoT>();
+            services.AddScoped<IUpdateLogService, UpdateLogService>();
 
 
             return services;

@@ -1,0 +1,256 @@
+@Server_HostAddress = http://localhost:5021
+//@Server_HostAddress = http://localhost:32783
+
+### Login
+
+# @name login
+
+POST {{Server_HostAddress}}/user/login
+Content-Type: application/json 
+
+{
+    "Email": "user@example.com",
+    "Password": "Password1!",
+    "RememberMe": 1
+}
+
+
+###
+
+@token = {{login.response.body.$.token}}
+
+
+GET {{Server_HostAddress}}/driver-routes/customer-route/7834daec-27b6-4ad1-8eda-dcfa77d118f4
+Accept: application/json
+Authorization: Bearer {{token}}
+###
+GET {{Server_HostAddress}}/driver-routes/customer-routes/baf3bb5a-59f6-5524-10d6-2d4c3c84b98b?selected_day=Monday&selected_day=4
+Accept: application/json
+Authorization: Bearer {{token}}
+###
+
+
+POST {{Server_HostAddress}}/driver-routes/update
+Authorization: Bearer {{token}}
+Content-Type: application/json 
+
+{ 
+  "routesId": "baf3bb5a-59f6-5524-10d6-2d4c3c84b98b",
+  "queueNumber": 0,
+  "name": "",
+  "description": "",
+  "phoneNumber": "",
+  "dayOfWeek": {
+    "customerId": "7834daec-27b6-4ad1-8eda-dcfa77d118f4",
+    "sunday": false,
+    "sundayTicks": 303915837141,
+    "sundayTimeSpan": "08:26:31.5837141",
+    "monday": false,
+    "mondayTicks": 303915837141,
+    "mondayTimeSpan": "08:26:31.5837141",
+    "tuesday": true,
+    "tuesdayTicks": 303915837141,
+    "tuesdayTimeSpan": "08:26:31.5837141",
+    "wednesday": false,
+    "wednesdayTicks": 303915837141,
+    "wednesdayTimeSpan": "08:26:31.5837141",
+    "thursday": true,
+    "thursdayTicks": 303915837141,
+    "thursdayTimeSpan": "08:26:31.5837141",
+    "friday": false,
+    "fridayTicks": 303915837141,
+    "fridayTimeSpan": "08:26:31.5837141",
+    "saturday": true,
+    "saturdayTicks": 348000000000,
+    "saturdayTimeSpan": "09:40:00",
+    "setAll": false,
+    "optional": false,
+    "id": "a3f01edd-5611-4c21-81eb-4634f62ab86e",
+    "created": "2024-04-16T10:26:41.0115559+02:00",
+    "updated": "2024-04-16T10:26:41.0116092+02:00",
+    "createdTicks": 638488528010115559,
+    "updatedTicks": 638488528010116092,
+    "isDelete": false,
+    "userCreatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8",
+    "userUpdatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8"
+  },
+  "residentialAddress": {
+    "customerId": "7834daec-27b6-4ad1-8eda-dcfa77d118f4",
+    "name": null,
+    "surname": null,
+    "street": null,
+    "houseNumber": null,
+    "apartmentNumber": null,
+    "postalCode": null,
+    "city": null,
+    "country": null,
+    "id": "638c8b60-d707-471e-b5d0-74f81318ef6e",
+    "created": "2024-04-16T10:26:41.0281215+02:00",
+    "updated": "2024-04-16T10:26:41.0281411+02:00",
+    "createdTicks": 638488528010281215,
+    "updatedTicks": 638488528010281411,
+    "isDelete": false,
+    "userCreatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8",
+    "userUpdatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8"
+  },
+  "longitude": 20.37150018,
+  "latitude": 49.75617374,
+  "id": "7834daec-27b6-4ad1-8eda-dcfa77d118f4",
+  "created": "2024-04-16T10:26:40.9869332+02:00",
+  "updated": "2024-04-16T10:26:40.9870343+02:00",
+  "createdTicks": 638488528009869332,
+  "updatedTicks": 638488528009870344,
+  "isDelete": false,
+  "userCreatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8",
+  "userUpdatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8"
+}
+
+###
+POST {{Server_HostAddress}}/driver-routes/updates?forceUpdate=true
+Authorization: Bearer {{token}}
+Content-Type: application/json 
+
+[
+    {
+    "routesId": "baf3bb5a-59f6-5524-10d6-2d4c3c84b98b",
+    "queueNumber": 0,
+    "name": "",
+    "description": "",
+    "phoneNumber": "",
+    "dayOfWeek": {
+      "customerId": "7834daec-27b6-4ad1-8eda-dcfa77d118f4",
+      "sunday": false,
+      "sundayTicks": 303915837141,
+      "sundayTimeSpan": "08:26:31.5837141",
+      "monday": false,
+      "mondayTicks": 303915837141,
+      "mondayTimeSpan": "08:26:31.5837141",
+      "tuesday": true,
+      "tuesdayTicks": 303915837141,
+      "tuesdayTimeSpan": "08:26:31.5837141",
+      "wednesday": false,
+      "wednesdayTicks": 303915837141,
+      "wednesdayTimeSpan": "08:26:31.5837141",
+      "thursday": true,
+      "thursdayTicks": 303915837141,
+      "thursdayTimeSpan": "08:26:31.5837141",
+      "friday": false,
+      "fridayTicks": 303915837141,
+      "fridayTimeSpan": "08:26:31.5837141",
+      "saturday": true,
+      "saturdayTicks": 348000000000,
+      "saturdayTimeSpan": "09:40:00",
+      "setAll": false,
+      "optional": false,
+      "id": "a3f01edd-5611-4c21-81eb-4634f62ab86e",
+      "created": "2024-04-16T10:26:41.0115559+02:00",
+      "updated": "2024-04-16T10:26:41.0116092+02:00",
+      "createdTicks": 638488528010115559,
+      "updatedTicks": 638488528010116092,
+      "isDelete": false,
+      "userCreatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8",
+      "userUpdatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8"
+    },
+    "residentialAddress": {
+      "customerId": "7834daec-27b6-4ad1-8eda-dcfa77d118f4",
+      "name": null,
+      "surname": null,
+      "street": null,
+      "houseNumber": null,
+      "apartmentNumber": null,
+      "postalCode": null,
+      "city": null,
+      "country": null,
+      "id": "638c8b60-d707-471e-b5d0-74f81318ef6e",
+      "created": "2024-04-16T10:26:41.0281215+02:00",
+      "updated": "2024-04-16T10:26:41.0281411+02:00",
+      "createdTicks": 638488528010281215,
+      "updatedTicks": 638488528010281411,
+      "isDelete": false,
+      "userCreatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8",
+      "userUpdatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8"
+    },
+    "longitude": 20.37150018,
+    "latitude": 49.75617374,
+    "id": "7834daec-27b6-4ad1-8eda-dcfa77d118f4",
+    "created": "2024-04-16T10:26:40.9869332+02:00",
+    "updated": "2024-04-16T10:26:40.9870343+02:00",
+    "createdTicks": 638488528009869332,
+    "updatedTicks": 638488528009870343,
+    "isDelete": false,
+    "userCreatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8",
+    "userUpdatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8"
+  },
+  {
+    "routesId": "baf3bb5a-59f6-5524-10d6-2d4c3c84b98b",
+    "queueNumber": 0,
+    "name": "",
+    "description": "",
+    "phoneNumber": "",
+    "dayOfWeek": {
+      "customerId": "a5fbf13e-e931-4cfd-b847-c046978b1d1f",
+      "sunday": false,
+      "sundayTicks": 313991319534,
+      "sundayTimeSpan": "08:43:19.1319534",
+      "monday": false,
+      "mondayTicks": 313991319534,
+      "mondayTimeSpan": "08:43:19.1319534",
+      "tuesday": true,
+      "tuesdayTicks": 313991319534,
+      "tuesdayTimeSpan": "08:43:19.1319534",
+      "wednesday": false,
+      "wednesdayTicks": 313991319534,
+      "wednesdayTimeSpan": "08:43:19.1319534",
+      "thursday": true,
+      "thursdayTicks": 313991319534,
+      "thursdayTimeSpan": "08:43:19.1319534",
+      "friday": false,
+      "fridayTicks": 313991319534,
+      "fridayTimeSpan": "08:43:19.1319534",
+      "saturday": true,
+      "saturdayTicks": 351000000000,
+      "saturdayTimeSpan": "09:45:00",
+      "setAll": false,
+      "optional": true,
+      "id": "0bb383da-199a-463d-843f-28d5f117f235",
+      "created": "2024-04-16T10:43:27.5769465+02:00",
+      "updated": "2024-04-16T10:43:27.5769933+02:00",
+      "createdTicks": 638488538075769465,
+      "updatedTicks": 638488538075769933,
+      "isDelete": false,
+      "userCreatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8",
+      "userUpdatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8"
+    },
+    "residentialAddress": {
+      "customerId": "a5fbf13e-e931-4cfd-b847-c046978b1d1f",
+      "name": null,
+      "surname": null,
+      "street": null,
+      "houseNumber": null,
+      "apartmentNumber": null,
+      "postalCode": null,
+      "city": null,
+      "country": null,
+      "id": "d9a85c53-1beb-40d9-be2c-63559bf43b69",
+      "created": "2024-04-16T10:43:27.5935214+02:00",
+      "updated": "2024-04-16T10:43:27.5935392+02:00",
+      "createdTicks": 638488538075935214,
+      "updatedTicks": 638488538075935392,
+      "isDelete": false,
+      "userCreatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8",
+      "userUpdatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8"
+    },
+    "longitude": 20.37681386,
+    "latitude": 49.75068396,
+    "id": "a5fbf13e-e931-4cfd-b847-c046978b1d1f",
+    "created": "2024-04-16T10:43:27.5609409+02:00",
+    "updated": "2024-04-16T10:43:27.5610312+02:00",
+    "createdTicks": 638488538075609409,
+    "updatedTicks": 638488538075610312,
+    "isDelete": false,
+    "userCreatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8",
+    "userUpdatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8"
+  }
+]
+
+###

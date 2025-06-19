@@ -2,6 +2,7 @@
 
 using DataBase.Data;
 using DataBase.Model;
+using DataBase.Service;
 
 using Shared.Service;
 
@@ -12,12 +13,17 @@ namespace Shared.Data
         private readonly IAccessDataBase _db;
         private readonly InventoryTables _inventoryTables;
         private readonly DriversRoutesTables _driversRoutesTables;
-
-        public CreatedDataBase(IAccessDataBase accessData)
+        private readonly IUpdateLogService _updateLogService;
+        public CreatedDataBase(IAccessDataBase accessData, IUpdateLogService updateLogService = null)
         {
             this._db = accessData;
             _inventoryTables ??= new InventoryTables(_db);
             _driversRoutesTables ??= new DriversRoutesTables(_db);
+            if (updateLogService is not null)
+            {
+                _updateLogService = updateLogService;
+            }
+            _updateLogService ??= new UpdateLogService(_db, new CurrentUtc());
         }
         public DataBaseVersion GetCurrentVersion()
         {
@@ -93,11 +99,16 @@ namespace Shared.Data
             {
                 await _db.DataBaseAsync.CreateTableAsync<LogsModel>();
                 await _db.DataBaseAsync.CreateTableAsync<Model.HelperTable>();
+                await _db.DataBaseAsync.CreateTableAsync<UpdateLog>();
+
                 progressBar += updateProgressBar;
                 oldVersion = 2;
                 updateAction?.Invoke(progressBar, oldVersion);
             }
-                updateAction?.Invoke(1, oldVersion);
+
+
+
+            updateAction?.Invoke(1, oldVersion);
         }
     }
 }

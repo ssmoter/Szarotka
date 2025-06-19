@@ -7,6 +7,10 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <PublishAot>true</PublishAot>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+
+	  <InvariantGlobalization>false</InvariantGlobalization>
+	  <EnableI18n>true</EnableI18n>
+	  <IncludeLocales>pl-PL</IncludeLocales>
   </PropertyGroup>
 
 	<PropertyGroup>

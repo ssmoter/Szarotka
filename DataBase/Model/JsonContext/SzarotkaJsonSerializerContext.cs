@@ -7,6 +7,12 @@ using System.Text.Json.Serialization;
 
 namespace DataBase.Model.JsonContext;
 
+[JsonSerializable(typeof(UpdateLog))]
+
+[JsonSerializable(typeof(UpdateDifferences))]
+[JsonSerializable(typeof(UpdateDifferencesDriverRoutes))]
+
+
 [JsonSerializable(typeof(User))]
 [JsonSerializable(typeof(RegisterUser))]
 [JsonSerializable(typeof(LoginUser))]

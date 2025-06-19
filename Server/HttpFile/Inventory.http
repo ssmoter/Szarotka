@@ -1,0 +1,47 @@
+@Server_HostAddress = http://localhost:5021
+//@Server_HostAddress = http://localhost:32783
+
+### Login
+
+# @name login
+
+POST {{Server_HostAddress}}/user/login
+Content-Type: application/json 
+
+{
+    "Email": "user@example.com",
+    "Password": "Password1!",
+    "RememberMe": 1
+}
+
+
+###
+
+@token = {{login.response.body.$.token}}
+
+
+
+GET {{Server_HostAddress}}/inventory/empty-products
+Accept: application/json
+
+###
+
+GET {{Server_HostAddress}}/inventory/day/7329b642-feb2-4931-944a-c4b1616351de
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+GET {{Server_HostAddress}}/inventory/day?selectedDateString=30.09.2023&userId=ae86aaeb-1080-4ae2-9226-62cf3a042ca8
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+GET {{Server_HostAddress}}/inventory/days
+Accept: application/json
+Authorization: Bearer {{token}}
+###
+GET {{Server_HostAddress}}/inventory/days?to=638684857021318544&from=638670998602305712&userid=ae86aaeb-1080-4ae2-9226-62cf3a042ca8&userid=ae86aaeb-1080-4ae2-9226-62cf3a042ca8
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 

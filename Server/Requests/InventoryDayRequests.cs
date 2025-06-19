@@ -57,14 +57,18 @@ namespace Server.Requests
                     return Results.BadRequest("selectedDateString is empty");
                 }
 
-                if (!DateTime.TryParse(selectedDateString, out DateTime dateTime))
+                if (!DateTime.TryParse(selectedDateString, DataBase.Helper.Constants.CultureInfo, out DateTime dateTime))
                 {
                     return Results.BadRequest("selectedDateString is not a valid DateTime");
                 }
 
-                token.ThrowIfCancellationRequested();
 
-                _ = Guid.TryParse(userId, out Guid user);
+                if (!Guid.TryParse(userId, out Guid user))
+                {
+                    return Results.BadRequest("userId is not a valid format Guid");
+                }
+
+                token.ThrowIfCancellationRequested();
 
                 var day = await _getInventoryAoT.DaySelectedDateString(selectedDateString, user);
 
@@ -103,7 +107,6 @@ namespace Server.Requests
                         userIdGuids.Add(result);
                     }
                 }
-
                 token.ThrowIfCancellationRequested();
 
                 var days = await _getInventoryAoT.Days(fromLong, toLong, userIdGuids);

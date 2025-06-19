@@ -1,0 +1,92 @@
+﻿@Server_HostAddress = http://localhost:5021
+//@Server_HostAddress = http://localhost:32783
+
+### Login
+
+# @name login
+
+POST {{Server_HostAddress}}/user/login
+Content-Type: application/json 
+
+{
+    "Email": "user@example.com",
+    "Password": "Password1!",
+    "RememberMe": 1
+}
+
+
+###
+
+@token = {{login.response.body.$.token}}
+
+
+
+
+
+
+GET {{Server_HostAddress}}/todos/
+Accept: application/json
+Authorization: Bearer {{token}}
+###
+GET {{Server_HostAddress}}/todos/1
+Accept: application/json
+
+###
+
+
+POST  {{Server_HostAddress}}/user/register
+Content-Type: application/json 
+
+{ 
+    "Email": "user@example.com",
+    "Name": "Name",
+    "Description": "Description",
+    "PhoneNumber": "123456789",
+    "Password": "Password1!"
+}
+
+###
+GET {{Server_HostAddress}}/user/confirm-email/57179
+Accept: application/json
+
+###
+GET {{Server_HostAddress}}/user/logout/
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+GET {{Server_HostAddress}}/user/refresh-token
+Authorization: Bearer {{token}}
+
+### 
+POST {{Server_HostAddress}}/user/edit
+Authorization: Bearer {{token}}
+Content-Type: application/json 
+
+{
+    "Email": "user@example113.com",
+    "Name": "osiem3",
+    "Description": "brak123",
+    "PhoneNumber": "123456789103",
+    "UserType":2
+}
+
+###
+GET {{Server_HostAddress}}/user/0194d0ef-c56c-712e-b507-5b540f639749
+Authorization: Bearer {{token}}
+Accept: application/json
+
+###
+GET {{Server_HostAddress}}/user/reset-password-email/user@example.com
+Accept: application/json
+
+###
+GET {{Server_HostAddress}}/user/reset-password/74091
+Accept: application/json
+
+###
+GET {{Server_HostAddress}}/user/reset-password/74091/Password1!
+Accept: application/json
+
+###
+
