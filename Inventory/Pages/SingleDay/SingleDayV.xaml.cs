@@ -35,6 +35,7 @@ public partial class SingleDayV : ContentPage
             vm.RemovePropertyChangedEvent();
         }
     }
+
     private void Entry_TextChanged_SetValueToSecondPositionEmptyIsZero(object sender, TextChangedEventArgs e)
     {
         try

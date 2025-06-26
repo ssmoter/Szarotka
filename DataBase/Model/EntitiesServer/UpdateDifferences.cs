@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
+using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesRoutes;
 
 namespace DataBase.Model.EntitiesServer
@@ -17,29 +18,67 @@ namespace DataBase.Model.EntitiesServer
                 }
             }
         }
+
+        private IList<UpdateDifferencesInventory>? updateDifferencesInventory;
+        public IList<UpdateDifferencesInventory>? UpdateDifferencesInventory
+        {
+            get => updateDifferencesInventory;
+            set
+            {
+                if (SetProperty(ref updateDifferencesInventory, value, nameof(UpdateDifferencesInventory)))
+                {
+                }
+            }
+        }
     }
 
 
     public class UpdateDifferencesDriverRoutes : ObservableObject
     {
-        private CustomerRoutes? customerOrigin;
-        public CustomerRoutes? CustomerOrigin
+        private CustomerRoutes server = new();
+        public CustomerRoutes Server
         {
-            get => customerOrigin;
+            get => server;
             set
             {
-                if (SetProperty(ref customerOrigin, value, nameof(CustomerOrigin)))
+                if (SetProperty(ref server, value, nameof(Server)))
                 {
                 }
             }
         }
-        private CustomerRoutes? customerUpdate;
-        public CustomerRoutes? CustomerUpdate
+        private CustomerRoutes update = new();
+        public CustomerRoutes Update
         {
-            get => customerUpdate;
+            get => update;
             set
             {
-                if (SetProperty(ref customerUpdate, value, nameof(CustomerUpdate)))
+                if (SetProperty(ref update, value, nameof(Update)))
+                {
+                }
+            }
+        }
+
+    }
+    public class UpdateDifferencesInventory : ObservableObject
+    {
+        private Day server = new();
+        public Day Server
+        {
+            get => server;
+            set
+            {
+                if (SetProperty(ref server, value, nameof(Server)))
+                {
+                }
+            }
+        }
+        private Day update = new();
+        public Day Update
+        {
+            get => update;
+            set
+            {
+                if (SetProperty(ref update, value, nameof(Update)))
                 {
                 }
             }

@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
+using DataBase.Data.Get;
 using DataBase.Model.EntitiesRoutes;
 
 using DriversRoutes.Helper;
@@ -48,7 +49,7 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
         }
     }
 
-    private ObservableCollection<MapsM> allPoints = new();
+    private ObservableCollection<MapsM> allPoints = [];
     public ObservableCollection<MapsM> AllPoints
     {
         get => allPoints;
@@ -193,22 +194,22 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
     public Action ClearRoutesPolilineAction;
     public Microsoft.Maui.Controls.Maps.Map GetMap { get; set; }
     private readonly IAccessDataBase _db;
-    private readonly Service.ISelectRoutes _selectRoutes;
-    private readonly Service.ISaveRoutes _saveRoutes;
+    private readonly DataBase.Data.Get.IGetDriverRoutesAoT _get;
+    private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _save;
     private readonly Data.GoogleApi.IRoutes _routes;
 
     #endregion
     public MapsVM(IAccessDataBase db,
-                  Service.ISelectRoutes selectRoutes,
-                  Service.ISaveRoutes saveRoutes,
-                  Data.GoogleApi.IRoutes routes)
+                  Data.GoogleApi.IRoutes routes,
+                  DataBase.Data.Get.IGetDriverRoutesAoT get,
+                  DataBase.Data.Save.ISaveDriverRoutesAoT save)
     {
         _db = db;
         MapType = MapType.Street;
         AllPoints ??= [];
-        _selectRoutes = selectRoutes;
-        _saveRoutes = saveRoutes;
         _routes = routes;
+        _get = get;
+        _save = save;
     }
 
     public void Dispose()
@@ -310,8 +311,8 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
             var width = 40 * scaleX;
             var height = 58 * scaleY;
 
-            var result = await _selectRoutes.GetCustomerRoutesQueryAsync(Routes, week);
-            for (int i = 0; i < result.Length; i++)
+            var result = await _get.CustomerRoutes(Routes.Id, week.GetDayOfWeeks());
+            for (int i = 0; i < result.Count; i++)
             {
                 points.Add(result[i].ParseAsCustomerM());
 #if !DEBUG
@@ -661,7 +662,7 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
     {
         try
         {
-            var result = await MoveTimeOnCustomersV.ShowPopUp(Routes, selectDayMs, _selectRoutes, _saveRoutes);
+            var result = await MoveTimeOnCustomersV.ShowPopUp(Routes, selectDayMs, _get, _save);
             if (result)
             {
                 GetSelectedDaysAndForget(LastSelectedDayOfWeek);

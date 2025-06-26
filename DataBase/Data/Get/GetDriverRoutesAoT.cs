@@ -6,6 +6,7 @@ namespace DataBase.Data.Get
     public interface IGetDriverRoutesAoT
     {
         Task<IList<CustomerRoutes>> CustomerRoutes(string where, params object[] args);
+        Task<IList<Routes>> Routes();
     }
 
     public class GetDriverRoutesAoT : IGetDriverRoutesAoT
@@ -51,6 +52,16 @@ namespace DataBase.Data.Get
             }
             return [.. result.Select(x => x as CustomerRoutes)];
         }
+        public async Task<IList<Routes>> Routes()
+        {
+            var sql = $"SELECT * FROM {nameof(Routes)}";
+
+            var result = await _db.DataBaseAsync.QueryAsync<Routes>(sql);
+
+            return result;
+        }
+
+
 
         class CustomerRoutesFromQuery : CustomerRoutes
         {

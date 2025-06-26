@@ -11,14 +11,19 @@ using Shared.Service;
 
 namespace SzarotkaBlazor
 {
-    public partial class AppShell : Shell
+    public partial class AppShell : Shell, IDisposable
     {
         public AppShell()
         {
             InitializeComponent();
-            BindingContext = new AppShellVM();
+            var vm = new AppShellVM();
+            BindingContext = vm;
             _createdDataBase = Shared.Service.AppServiceProvider.GetService<ICreatedDataBase>();
             _db = Shared.Service.AppServiceProvider.GetService<IAccessDataBase>();
+
+
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.ActionToolbarItemSet += SetToolbarItem;
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.ActionToolbarItemRemove += RemoveToolbarItem;
         }
 
         private readonly ICreatedDataBase _createdDataBase;
@@ -44,6 +49,8 @@ namespace SzarotkaBlazor
                 await GotToLogin();
             }
         }
+
+
 
         private async Task GotToLogin()
         {
@@ -101,11 +108,41 @@ namespace SzarotkaBlazor
                     [nameof(Shared.Pages.UserDisplay.UserDisplayVM.User)] = user
                 });
         }
+
+        private void SetToolbarItem(ToolbarItem toolbarItem)
+        {
+            if (!ToolbarItems.Contains(toolbarItem))
+                ToolbarItems.Add(toolbarItem);
+
+            if (ToolbarItems.Count > 2)
+            {
+                foreach (var item in ToolbarItems)
+                {
+                    item.Order = ToolbarItemOrder.Secondary;
+                }
+            }
+            else
+            {
+                foreach (var item in ToolbarItems)
+                {
+                    item.Order = ToolbarItemOrder.Primary;
+                }
+            }
+        }
+        private void RemoveToolbarItem(ToolbarItem toolbarItem)
+        {
+            ToolbarItems.Remove(toolbarItem);
+        }
+        public void Dispose()
+        {
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.ActionToolbarItemSet -= SetToolbarItem;
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.ActionToolbarItemRemove -= RemoveToolbarItem;
+        }
     }
 
 
 
-    public partial class AppShellVM : ObservableObject
+    public partial class AppShellVM : ObservableObject, IDisposable
     {
         private bool isLogin;
         public bool IsLogin
@@ -142,6 +179,7 @@ namespace SzarotkaBlazor
             }
         }
 
+
         public AppShellVM()
         {
             UserAfterLogin.OnLogin += UserAfterLogin_OnLogin;
@@ -149,9 +187,14 @@ namespace SzarotkaBlazor
 
         private void UserAfterLogin_OnLogin(User user, bool isLogin)
         {
-            this.user = user;
+            User = user;
             IsLogin = isLogin;
             UserName = $"Konto {user.Name}";
+        }
+
+        public void Dispose()
+        {
+            UserAfterLogin.OnLogin -= UserAfterLogin_OnLogin;
         }
     }
 }

@@ -1,0 +1,457 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="Shared.Pages.UpdateDifference.DriverRoutesUpdate"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Shared.CustomControls"
+    xmlns:convert="clr-namespace:Shared.Converters"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:user="[user ]clr-namespace:Shared.Pages.UserDisplay.Small"
+    xmlns:vm="clr-namespace:Shared.Pages.UpdateDifference"
+    x:Name="this"
+    x:DataType="vm:DriverRoutesUpdate">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+
+            <convert:DisplayDayAndHourFromOneWeek x:Key="DayAndHour" />
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+
+    </ContentView.Resources>
+
+    <Grid
+        BindingContext="{x:Reference this}"
+        ColumnDefinitions="auto,*,10,auto,*"
+        RowSpacing="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border
+            Grid.RowSpan="20"
+            Grid.Column="2"
+            HorizontalOptions="Center"
+            VerticalOptions="Fill" />
+
+
+
+
+        <controls:BoxViewColorsFromBool
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            IsVisible="False"
+            SelectedColor="{Binding UpdateBool.BoolUpdate, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:BoxViewColorsFromBool
+            Grid.Row="0"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            IsVisible="False"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolUpdate}" />
+
+        <CheckBox
+            Grid.Row="0"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolUpdate, Converter={StaticResource InvertedBoolConverter}}"
+            IsEnabled="False"
+            VerticalOptions="End" />
+        <CheckBox
+            Grid.Row="0"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolUpdate}"
+            IsEnabled="False"
+            VerticalOptions="End" />
+        <Grid
+            Grid.Row="0"
+            Grid.Column="1"
+            RowDefinitions="*,*,*,*">
+            <controls:NameOrIdUser UserId="{Binding CustomerRoutesServer.UserCreatedId}" />
+            <controls:LabelAndTitle
+                Title="Utworzono"
+                Grid.Row="1"
+                Content="{Binding CustomerRoutesServer.Created}" />
+            <controls:NameOrIdUser Grid.Row="2" UserId="{Binding CustomerRoutesServer.UserUpdatedId}" />
+            <controls:LabelAndTitle
+                Title="Edytowano"
+                Grid.Row="3"
+                Content="{Binding CustomerRoutesServer.Updated}" />
+        </Grid>
+        <Grid
+            Grid.Row="0"
+            Grid.Column="4"
+            RowDefinitions="*,*,*,*">
+            <controls:NameOrIdUser UserId="{Binding CustomerRoutesUpdate.UserCreatedId}" />
+            <controls:LabelAndTitle
+                Title="Utworzono"
+                Grid.Row="1"
+                Content="{Binding CustomerRoutesUpdate.Created}" />
+            <controls:NameOrIdUser Grid.Row="2" UserId="{Binding CustomerRoutesUpdate.UserUpdatedId}" />
+            <controls:LabelAndTitle
+                Title="Edytowano"
+                Grid.Row="3"
+                Content="{Binding CustomerRoutesUpdate.Updated}" />
+        </Grid>
+        <Border
+            Grid.Row="0"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+
+
+
+
+
+
+
+
+        <controls:BoxViewColorsFromBool
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            SelectedColor="{Binding UpdateBool.BoolName, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:BoxViewColorsFromBool
+            Grid.Row="1"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolName}" />
+
+        <CheckBox
+            Grid.Row="1"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolName, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:LabelAndTitle
+            Title="Nazwa"
+            Grid.Row="1"
+            Grid.Column="1"
+            Content="{Binding CustomerRoutesServer.Name}"
+            VerticalOptions="Center" />
+        <CheckBox
+            Grid.Row="1"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolName}" />
+        <controls:LabelAndTitle
+            Title="Nazwa"
+            Grid.Row="1"
+            Grid.Column="4"
+            Content="{Binding CustomerRoutesUpdate.Name}"
+            VerticalOptions="Center" />
+        <Border
+            Grid.Row="1"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+
+
+        <controls:BoxViewColorsFromBool
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolDayOfWeek, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:BoxViewColorsFromBool
+            Grid.Row="2"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolDayOfWeek}" />
+        <CheckBox
+            Grid.Row="2"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolDayOfWeek, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:LabelAndTitle
+            Title="Dni tygodnia"
+            Grid.Row="2"
+            Grid.Column="1"
+            Content="{Binding CustomerRoutesServer.DayOfWeek, Converter={StaticResource DayAndHour}}"
+            VerticalOptions="Center" />
+        <CheckBox
+            Grid.Row="2"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolDayOfWeek}" />
+        <controls:LabelAndTitle
+            Title="Dni tygodnia"
+            Grid.Row="2"
+            Grid.Column="4"
+            Content="{Binding CustomerRoutesUpdate.DayOfWeek, Converter={StaticResource DayAndHour}}"
+            VerticalOptions="Center" />
+        <Border
+            Grid.Row="2"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+
+
+
+        <controls:BoxViewColorsFromBool
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolPhoneNumber, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:BoxViewColorsFromBool
+            Grid.Row="3"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolPhoneNumber}" />
+        <CheckBox
+            Grid.Row="3"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolPhoneNumber, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:LabelAndTitle
+            Title="Nr. telefonu"
+            Grid.Row="3"
+            Grid.Column="1"
+            Content="{Binding CustomerRoutesServer.PhoneNumber}"
+            VerticalOptions="Center" />
+        <CheckBox
+            Grid.Row="3"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolPhoneNumber}" />
+        <controls:LabelAndTitle
+            Title="Nr. telefonu"
+            Grid.Row="3"
+            Grid.Column="4"
+            Content="{Binding CustomerRoutesUpdate.PhoneNumber}"
+            VerticalOptions="Center" />
+        <Border
+            Grid.Row="3"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+
+
+
+        <controls:BoxViewColorsFromBool
+            Grid.Row="4"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolDescription, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:BoxViewColorsFromBool
+            Grid.Row="4"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolDescription}" />
+        <CheckBox
+            Grid.Row="4"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolDescription, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:LabelAndTitle
+            Title="Opis"
+            Grid.Row="4"
+            Grid.Column="1"
+            Content="{Binding CustomerRoutesServer.Description}"
+            VerticalOptions="Center" />
+        <CheckBox
+            Grid.Row="4"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolDescription}" />
+        <controls:LabelAndTitle
+            Title="Opis"
+            Grid.Row="4"
+            Grid.Column="4"
+            Content="{Binding CustomerRoutesUpdate.Description}"
+            VerticalOptions="Center" />
+        <Border
+            Grid.Row="4"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+
+
+        <controls:BoxViewColorsFromBool
+            Grid.Row="5"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolResidentialAddress, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:BoxViewColorsFromBool
+            Grid.Row="5"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolResidentialAddress}" />
+        <CheckBox
+            Grid.Row="5"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolResidentialAddress, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:LabelAndTitle
+            Title="Adres"
+            Grid.Row="5"
+            Grid.Column="1"
+            Content="{Binding CustomerRoutesServer.ResidentialAddress}"
+            VerticalOptions="Center" />
+        <CheckBox
+            Grid.Row="5"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolResidentialAddress}" />
+        <controls:LabelAndTitle
+            Title="Adres"
+            Grid.Row="5"
+            Grid.Column="4"
+            Content="{Binding CustomerRoutesUpdate.ResidentialAddress}"
+            VerticalOptions="Center" />
+        <Border
+            Grid.Row="5"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+
+
+
+
+
+        <controls:BoxViewColorsFromBool
+            Grid.Row="6"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolLatitude, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:BoxViewColorsFromBool
+            Grid.Row="6"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolLatitude}" />
+        <CheckBox
+            Grid.Row="6"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolLatitude, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:LabelAndTitle
+            Title="Latitude"
+            Grid.Row="6"
+            Grid.Column="1"
+            Content="{Binding CustomerRoutesServer.Latitude}"
+            VerticalOptions="Center" />
+        <CheckBox
+            Grid.Row="6"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolLatitude}" />
+        <controls:LabelAndTitle
+            Title="Latitude"
+            Grid.Row="6"
+            Grid.Column="4"
+            Content="{Binding CustomerRoutesUpdate.Latitude}"
+            VerticalOptions="Center" />
+        <Border
+            Grid.Row="6"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+
+
+
+
+
+        <controls:BoxViewColorsFromBool
+            Grid.Row="6"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolLongitude, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:BoxViewColorsFromBool
+            Grid.Row="6"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolLongitude}" />
+        <CheckBox
+            Grid.Row="6"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolLongitude, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:LabelAndTitle
+            Title="Longitude"
+            Grid.Row="6"
+            Grid.Column="1"
+            Content="{Binding CustomerRoutesServer.Longitude}"
+            VerticalOptions="Center" />
+        <CheckBox
+            Grid.Row="6"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolLongitude}" />
+        <controls:LabelAndTitle
+            Title="Longitude"
+            Grid.Row="6"
+            Grid.Column="4"
+            Content="{Binding CustomerRoutesUpdate.Longitude}"
+            VerticalOptions="Center" />
+
+
+    </Grid>
+
+
+</ContentView>

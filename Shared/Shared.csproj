@@ -60,6 +60,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="CustomControls\NameOrIdUser.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="CustomControls\StringImage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -97,6 +100,12 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\UpdateDataBase\UpdateDataBaseV.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\UpdateDifference\DriverRoutesUpdate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\UpdateDifference\UpdateDifferenceV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\UserDisplay\PopupUser\UserDisplayVPopup.xaml">

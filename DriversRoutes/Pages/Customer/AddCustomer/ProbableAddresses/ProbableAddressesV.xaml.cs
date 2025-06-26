@@ -12,7 +12,7 @@ public partial class ProbableAddressesV : Popup
         ProbableAddressesVM vm = new();
         vm.Close += CloseAsync;
         vm.ProbableAddressesM.ResidentialAddresses =
-            new System.Collections.ObjectModel.ObservableCollection<ResidentialAddress>(residentialAddresses);
+            [.. residentialAddresses];
         BindingContext = vm;
     }
 }

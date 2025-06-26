@@ -7,7 +7,7 @@ using Shared.Helper;
 
 namespace Shared.Pages.FlyoutHeader
 {
-    public partial class FlyoutHeaderVM : ObservableObject
+    public partial class FlyoutHeaderVM : ObservableObject, IDisposable
     {
         private bool isLogin;
         public bool IsLogin
@@ -34,11 +34,82 @@ namespace Shared.Pages.FlyoutHeader
             }
         }
 
+        private IView customContent;
+        public IView CustomContent
+        {
+            get => customContent;
+            set
+            {
+                if (SetProperty(ref customContent, value, nameof(CustomContent))) { }
+            }
+        }
+        public static List<ToolbarItem> ToolbarItems { get; set; } = [];
+        public static Action<ToolbarItem> ActionToolbarItemSet;
+        public static Action<ToolbarItem> ActionToolbarItemRemove;
+        private void _OnSetToolbarItem(ToolbarItem item)
+        {
+            ToolbarItems ??= [];
+            ToolbarItems.Add(item);
+        }
+        public static void SetToolbarItem(ToolbarItem item)
+        {
+            ActionToolbarItemSet?.Invoke(item);
+        }
+        private void _RemoveSetToolbarItem(ToolbarItem item)
+        {
+            ToolbarItems.Remove(item);
+        }
+        public static void RemoveToolbarItem(ToolbarItem item)
+        {
+            ActionToolbarItemRemove?.Invoke(item);
+        }
+        private void _onCustomContent(IView view)
+        {
+            if (view is null)
+            {
+                FadeOutElementThrowAndForget(CustomContent);
+            }
+            if (view is not null)
+            {
+                CustomContent = view;
+            }
+        }
+        private static Action<IView> actionCustomContent;
+        public static void OnCustomContent(IView view = null)
+        {
+            actionCustomContent?.Invoke(view);
+        }
 
-
+        private async void FadeOutElementThrowAndForget(IView view)
+        {
+            try
+            {
+                await FadeOutElement(view);
+                CustomContent = null;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        private async Task FadeOutElement(IView view)
+        {
+            if (view is VisualElement element)
+            {
+                await Task.WhenAll(
+                    element.FadeTo(0, 500),
+                    element.TranslateTo(0, -20, 500)
+                );
+            }
+        }
         public FlyoutHeaderVM()
         {
             UserAfterLogin.OnLogin += UserAfterLogin_OnLogin;
+
+            actionCustomContent += _onCustomContent;
+
+            ActionToolbarItemSet += _OnSetToolbarItem;
+            ActionToolbarItemRemove += _RemoveSetToolbarItem;
         }
 
         private void UserAfterLogin_OnLogin(User user, bool arg2)
@@ -62,6 +133,15 @@ namespace Shared.Pages.FlyoutHeader
                 {
                     [nameof(UserDisplay.UserDisplayVM.User)] = user
                 });
+        }
+
+        public void Dispose()
+        {
+            UserAfterLogin.OnLogin -= UserAfterLogin_OnLogin;
+            actionCustomContent -= _onCustomContent;
+            ActionToolbarItemSet -= _OnSetToolbarItem;
+            ActionToolbarItemRemove -= _RemoveSetToolbarItem;
+
         }
     }
 }

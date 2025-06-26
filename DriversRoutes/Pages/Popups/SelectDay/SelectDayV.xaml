@@ -78,7 +78,7 @@
             <Grid ColumnDefinitions="*,*">
                 <Button
                     Grid.Column="0"
-                    Command="{Binding CancelAndReturCommand}"
+                    Command="{Binding CancelAndReturnCommand}"
                     Text="Anuluj" />
                 <Button
                     Grid.Column="1"

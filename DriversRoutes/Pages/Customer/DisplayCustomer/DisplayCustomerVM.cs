@@ -5,6 +5,7 @@ using DataBase.Data;
 using DataBase.Model.EntitiesRoutes;
 
 using Shared.Data;
+using Shared.Helper;
 
 namespace DriversRoutes.Pages.Customer.DisplayCustomer;
 public partial class DisplayCustomerVM : ObservableObject, IQueryAttributable
@@ -46,15 +47,15 @@ public partial class DisplayCustomerVM : ObservableObject, IQueryAttributable
             if (SetProperty(ref displayCustomerM, value, nameof(DisplayCustomerM))) { }
         }
     }
-    readonly IAccessDataBase _db;
-    readonly Service.ISaveRoutes _saveRoutes;
+    private readonly IAccessDataBase _db;
+    private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _save;
     public SelectedDayOfWeekRoutes LastSelectedDayOfWeek { get; set; }
 
-    public DisplayCustomerVM(IAccessDataBase db, Service.ISaveRoutes saveRoutes)
+    public DisplayCustomerVM(IAccessDataBase db, DataBase.Data.Save.ISaveDriverRoutesAoT save)
     {
         _db = db;
         DisplayCustomerM ??= new();
-        _saveRoutes = saveRoutes;
+        _save = save;
     }
 
 
@@ -74,11 +75,7 @@ public partial class DisplayCustomerVM : ObservableObject, IQueryAttributable
                 return;
 
 
-            var taskDay = _db.DataBaseAsync.DeleteAsync(Customer.DayOfWeek);
-            var taskAddress = _db.DataBaseAsync.DeleteAsync(Customer.ResidentialAddress);
-            var taskCustomer = _db.DataBaseAsync.DeleteAsync(Customer);
-
-            var taskReady = await Task.WhenAll(taskDay, taskAddress, taskCustomer);
+            await Update(true);
 
             result = await Shell.Current.DisplayAlert("Usunięto", "Obiekt został usunięty. Czy chcesz przywrócić", "Przywróć", "Nie");
 
@@ -86,12 +83,24 @@ public partial class DisplayCustomerVM : ObservableObject, IQueryAttributable
                 await Shell.Current.GoToAsync("..");
             if (result)
             {
-                await _saveRoutes.SaveCustomer(Customer, Customer.RoutesId.ToByteArray());
+                await Update(false);
             }
         }
         catch (Exception ex)
         {
             _db.SaveLogExtension(ex);
+        }
+
+        async Task Update(bool delete)
+        {
+            customer.IsDelete = delete;
+            customer.ResidentialAddress.IsDelete = delete;
+            customer.DayOfWeek.IsDelete = delete;
+
+            var user = UserAfterLogin.User;
+            await _save.SaveCustomerRoutes(Customer, user.Id.ToByteArray());
+            await _save.SaveResidentialAddress(Customer.ResidentialAddress, user.Id.ToByteArray());
+            await _save.SaveSelectedDayOfWeekRoutes(Customer.DayOfWeek, user.Id.ToByteArray());
         }
     }
 

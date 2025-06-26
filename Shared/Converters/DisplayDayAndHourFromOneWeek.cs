@@ -2,7 +2,7 @@
 
 using System.Globalization;
 
-namespace DriversRoutes.Helper
+namespace Shared.Converters
 {
     public class DisplayDayAndHourFromOneWeek : IValueConverter
     {

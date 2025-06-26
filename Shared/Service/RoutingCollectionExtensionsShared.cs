@@ -6,6 +6,7 @@ using Shared.Pages.LogIn;
 using Shared.Pages.LogIn.ForgetPassword;
 using Shared.Pages.Register;
 using Shared.Pages.UpdateDataBase;
+using Shared.Pages.UpdateDifference;
 using Shared.Pages.UserDisplay;
 using Shared.Pages.UserDisplay.UserEdit;
 
@@ -29,6 +30,7 @@ namespace Shared.Service
             Routing.RegisterRoute(nameof(UserDisplayV), typeof(UserDisplayV));
             Routing.RegisterRoute(nameof(UserEditV), typeof(UserEditV));
             Routing.RegisterRoute(nameof(ForgetPasswordV), typeof(ForgetPasswordV));
+            Routing.RegisterRoute(nameof(UpdateDifferenceV), typeof(UpdateDifferenceV));
 
 
         }

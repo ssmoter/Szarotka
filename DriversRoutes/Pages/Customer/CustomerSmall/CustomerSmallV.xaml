@@ -6,7 +6,7 @@
     xmlns:DayOfWeekControl="clr-namespace:DriversRoutes.Pages.Customer.CustomerSmall.DayOfWeek"
     xmlns:ResidentialAddressCotrol="clr-namespace:DriversRoutes.Pages.Customer.CustomerSmall.Address"
     xmlns:VM="clr-namespace:DriversRoutes.Pages.Customer.CustomerSmall"
-    xmlns:convert="clr-namespace:DriversRoutes.Helper"
+    xmlns:convert="clr-namespace:Shared.Converters;assembly=Shared"
     x:Name="this">
 
     <ContentView.Resources>

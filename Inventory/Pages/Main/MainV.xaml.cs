@@ -1,3 +1,5 @@
+using Shared.CustomControls;
+
 namespace Inventory.Pages.Main;
 
 public partial class MainV : ContentPage

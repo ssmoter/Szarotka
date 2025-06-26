@@ -17,15 +17,15 @@ namespace DriversRoutes.Helper
             var sb = new StringBuilder();
             sb.Append(@"
 SELECT 
-CustomerRoutes.Id,
-CustomerRoutes.RoutesId,
-CustomerRoutes.Name,
-CustomerRoutes.Description,
-CustomerRoutes.PhoneNumber,
-CustomerRoutes.CreatedTicks,
-CustomerRoutes.UpdatedTicks,
-CustomerRoutes.Longitude,
-CustomerRoutes.Latitude,
+CustomerRoutesServer.Id,
+CustomerRoutesServer.RoutesId,
+CustomerRoutesServer.Name,
+CustomerRoutesServer.Description,
+CustomerRoutesServer.PhoneNumber,
+CustomerRoutesServer.CreatedTicks,
+CustomerRoutesServer.UpdatedTicks,
+CustomerRoutesServer.Longitude,
+CustomerRoutesServer.Latitude,
 json_object(
 	'Id',SelectedDayOfWeekRoutes.Id,
 	'CustomerId',SelectedDayOfWeekRoutes.CustomerId,
@@ -53,8 +53,8 @@ json_object(
 
 	'Optional',SelectedDayOfWeekRoutes.Optional,
 	
-	'CreatedTicks',CustomerRoutes.CreatedTicks,
-	'UpdatedTicks',CustomerRoutes.UpdatedTicks
+	'CreatedTicks',CustomerRoutesServer.CreatedTicks,
+	'UpdatedTicks',CustomerRoutesServer.UpdatedTicks
 	
 
 ) as 'JsonDayOfWeek',
@@ -72,19 +72,19 @@ json_object(
 	'City',ResidentialAddress.City,
 	'Country',ResidentialAddress.Country,
 	
-	'CreatedTicks',CustomerRoutes.CreatedTicks,
-	'UpdatedTicks',CustomerRoutes.UpdatedTicks
+	'CreatedTicks',CustomerRoutesServer.CreatedTicks,
+	'UpdatedTicks',CustomerRoutesServer.UpdatedTicks
 
 ) as 'JsonAddress'
 
-FROM CustomerRoutes 
+FROM CustomerRoutesServer 
 
-JOIN SelectedDayOfWeekRoutes on CustomerRoutes.Id = SelectedDayOfWeekRoutes.CustomerId 
+JOIN SelectedDayOfWeekRoutes on CustomerRoutesServer.Id = SelectedDayOfWeekRoutes.CustomerId 
 
-JOIN ResidentialAddress on CustomerRoutes.Id = ResidentialAddress.CustomerId
+JOIN ResidentialAddress on CustomerRoutesServer.Id = ResidentialAddress.CustomerId
 
 
-WHERE CustomerRoutes.RoutesId == ");
+WHERE CustomerRoutesServer.RoutesId == ");
 
             sb.Append('\'');
             sb.Append(id);

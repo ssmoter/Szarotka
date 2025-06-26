@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="Shared.CustomControls.NameOrIdUser"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:CustomControls="clr-namespace:Shared.CustomControls;assembly=Shared"
+    xmlns:CustomConverter="clr-namespace:Shared.Converters;assembly=Shared"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:vm="clr-namespace:Shared.CustomControls"
+    x:Name="this"
+    x:DataType="vm:NameOrIdUser">
+
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <CustomConverter:LastCharactersConverter x:Key="LastCharactersConverter" />
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+
+    <Grid BindingContext="{x:Reference this}">
+
+        <Label Style="{StaticResource LabelPointerOver}" Text="{Binding User, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8}">
+            <Label.GestureRecognizers>
+                <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped" />
+            </Label.GestureRecognizers>
+        </Label>
+
+
+    </Grid>
+
+
+</ContentView>

@@ -11,44 +11,55 @@
     <ContentView.Resources>
         <ResourceDictionary>
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <toolkit:IsNotNullConverter x:Key="IsNotNullConverter" />
         </ResourceDictionary>
     </ContentView.Resources>
 
-    <StackLayout>
+    <Grid RowDefinitions="*,auto">
 
-        <VerticalStackLayout
-            Margin="10"
-            Padding="10"
-            HorizontalOptions="Center">
-            <VerticalStackLayout IsVisible="{Binding IsLogin}">
-                <Label
-                    FontSize="Large"
-                    HorizontalOptions="Center"
-                    Style="{StaticResource LabelPointerOver}"
-                    Text="{Binding User.Name}">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding GoToUserCommand}" Tapped="TapGestureRecognizer_Tapped" />
-                    </Label.GestureRecognizers>
-                </Label>
+        <VerticalStackLayout>
+
+            <VerticalStackLayout
+                Margin="10"
+                Padding="10"
+                HorizontalOptions="Center">
+                <VerticalStackLayout IsVisible="{Binding IsLogin}">
+                    <Label
+                        FontSize="Large"
+                        HorizontalOptions="Center"
+                        Style="{StaticResource LabelPointerOver}"
+                        Text="{Binding User.Name}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToUserCommand}" Tapped="TapGestureRecognizer_Tapped" />
+                        </Label.GestureRecognizers>
+                    </Label>
+
+                </VerticalStackLayout>
+                <VerticalStackLayout IsVisible="{Binding IsLogin, Converter={StaticResource InvertedBoolConverter}}">
+
+                    <Label
+                        FontSize="Large"
+                        HorizontalOptions="Center"
+                        Style="{StaticResource LabelPointerOver}"
+                        Text="Zaloguj się">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToLoginCommand}" Tapped="TapGestureRecognizer_Tapped" />
+                        </Label.GestureRecognizers>
+                    </Label>
+
+                </VerticalStackLayout>
 
             </VerticalStackLayout>
-            <VerticalStackLayout IsVisible="{Binding IsLogin, Converter={StaticResource InvertedBoolConverter}}">
 
-                <Label
-                    FontSize="Large"
-                    HorizontalOptions="Center"
-                    Style="{StaticResource LabelPointerOver}"
-                    Text="Zaloguj się">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding GoToLoginCommand}" Tapped="TapGestureRecognizer_Tapped" />
-                    </Label.GestureRecognizers>
-                </Label>
+            <Border HorizontalOptions="Fill" />
 
-            </VerticalStackLayout>
 
         </VerticalStackLayout>
 
-        <Border HorizontalOptions="Fill" />
+        <VerticalStackLayout Grid.Row="1" IsVisible="{Binding CustomContent, Converter={StaticResource IsNotNullConverter}}">
 
-    </StackLayout>
+            <ContentView Content="{Binding CustomContent}" />
+            <Border HorizontalOptions="Fill" />
+        </VerticalStackLayout>
+    </Grid>
 </ContentView>

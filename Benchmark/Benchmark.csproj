@@ -18,4 +18,8 @@
     <ProjectReference Include="..\Inventory\Inventory.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DriversRoutes\" />
+  </ItemGroup>
+
 </Project>

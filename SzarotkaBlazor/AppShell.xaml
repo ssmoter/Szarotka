@@ -39,11 +39,15 @@
     </Shell.FlyoutFooter>
 
 
+
     <FlyoutItem
         FlyoutDisplayOptions="AsMultipleItems"
         IsVisible="{Binding IsLogin}"
         Shell.TabBarIsVisible="{OnPlatform Android=true,
                                            Default=false}">
+
+
+
 
         <ShellContent Title="Home" ContentTemplate="{DataTemplate local:MainPage}" />
 

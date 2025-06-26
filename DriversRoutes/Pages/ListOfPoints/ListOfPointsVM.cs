@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
+using DataBase.Data.Get;
 using DataBase.Model.EntitiesRoutes;
 using DataBase.Model.JsonContext;
 
@@ -155,17 +156,18 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
     }
 
     readonly IAccessDataBase _db;
-    readonly Service.ISelectRoutes _selectRoutes;
-    readonly Service.ISaveRoutes _saveRoutes;
 
+    private readonly DataBase.Data.Get.IGetDriverRoutesAoT _get;
+    private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _save;
     public Action CalculateRoute;
 
-    public ListOfPointsVM(IAccessDataBase db, Service.ISelectRoutes selectRoutes, Service.ISaveRoutes saveRoutes)
+    public ListOfPointsVM(IAccessDataBase db, DataBase.Data.Get.IGetDriverRoutesAoT get, DataBase.Data.Save.ISaveDriverRoutesAoT save)
     {
         _db = db;
-        _selectRoutes = selectRoutes;
+
         CustomerRoutes ??= [];
-        _saveRoutes = saveRoutes;
+        _get = get;
+        _save = save;
     }
 
     #region Method
@@ -182,32 +184,14 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
         }
     }
 
-    public ObservableCollection<CustomerRoutes> GetPoints(Routes routes, SelectedDayOfWeekRoutes week)
-    {
-        try
-        {
-            CustomerListRefresh = true;
-            lastSelectedDayOfWeekRoutes = week;
-            var result = _selectRoutes.GetCustomerRoutesQuery(routes, week);
-            return new ObservableCollection<CustomerRoutes>(result);
-        }
-        catch (Exception)
-        {
-            throw;
-        }
-        finally
-        {
-            CustomerListRefresh = false;
-        }
-    }
     public async Task<ObservableCollection<CustomerRoutes>> GetPointsAsync(Routes routes, SelectedDayOfWeekRoutes week)
     {
         try
         {
             CustomerListRefresh = true;
             lastSelectedDayOfWeekRoutes = week;
-            var result = await _selectRoutes.GetCustomerRoutesQueryAsync(routes, week);
-            return new ObservableCollection<CustomerRoutes>(result);
+            var result = await _get.CustomerRoutes(routes.Id, week.GetDayOfWeeks());
+            return [.. result];
         }
         catch (Exception)
         {
@@ -353,12 +337,12 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
                 return;
             await Toast.Make("Trwa zapisywanie zmian", ToastDuration.Long).Show();
 
-            Task[] task = new Task[CustomerRoutes.Count];
             for (int i = 0; i < CustomerRoutes.Count; i++)
             {
-                task[i] = _saveRoutes.SaveCustomer(CustomerRoutes[i], CustomerRoutes[i].RoutesId.ToByteArray());
+                await _save.SaveCustomerRoutes(CustomerRoutes[i], CustomerRoutes[i].UserUpdatedId.ToByteArray());
+                await _save.SaveResidentialAddress(CustomerRoutes[i].ResidentialAddress, CustomerRoutes[i].ResidentialAddress.UserUpdatedId.ToByteArray());
+                await _save.SaveSelectedDayOfWeekRoutes(CustomerRoutes[i].DayOfWeek, CustomerRoutes[i].DayOfWeek.UserUpdatedId.ToByteArray());
             }
-            await Task.WhenAll(task);
         }
         catch (Exception ex)
         {
@@ -438,7 +422,7 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
     {
         try
         {
-            var result = await MoveTimeOnCustomersV.ShowPopUp(Route, selectDayMs, _selectRoutes, _saveRoutes);
+            var result = await MoveTimeOnCustomersV.ShowPopUp(Route, selectDayMs, _get, _save);
             if (result)
             {
                 Refresh();

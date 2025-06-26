@@ -7,6 +7,7 @@ using DataBase.Model.EntitiesRoutes;
 using DriversRoutes.Helper;
 
 using Shared.Data;
+using Shared.Helper;
 using Shared.Service;
 
 using System.Collections.ObjectModel;
@@ -25,12 +26,17 @@ namespace DriversRoutes.Pages.Main
             }
         }
 
-        readonly IAccessDataBase _db;
-        readonly Service.ISelectRoutes selectRoutes;
-        public MainVDriversRoutesVM(IAccessDataBase db, Service.ISelectRoutes selectRoutes)
+        private readonly IAccessDataBase _db;
+        private readonly DataBase.Data.Get.IGetDriverRoutesAoT _get;
+        private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _save;
+
+        public MainVDriversRoutesVM(IAccessDataBase db,
+                                    DataBase.Data.Get.IGetDriverRoutesAoT get,
+                                    DataBase.Data.Save.ISaveDriverRoutesAoT save)
         {
             _db = db;
-            this.selectRoutes = selectRoutes;
+            _get = get;
+            _save = save;
         }
 
 
@@ -38,8 +44,8 @@ namespace DriversRoutes.Pages.Main
         {
             try
             {
-                var result = await _db.DataBaseAsync.Table<Routes>().ToArrayAsync();
-                return new(result);
+                var result = await _get.Routes();
+                return [.. result];
             }
             catch (Exception ex)
             {
@@ -109,11 +115,14 @@ namespace DriversRoutes.Pages.Main
             {
                 var result = await Shell.Current.DisplayPromptAsync(routes.Name, "Zmień nazwę", "Tak", "Nie", routes.Name, initialValue: routes.Name);
 
+                var user = UserAfterLogin.User;
+
                 if (!string.IsNullOrWhiteSpace(result))
                 {
                     routes.Name = result;
                     routes.Updated = DateTime.UtcNow;
-                    await _db.DataBaseAsync.UpdateAsync(routes);
+                    routes.UserUpdatedId = user.Id;
+                    await _save.SaveRoutes(routes, user.Id.ToByteArray());
                 }
             }
             catch (Exception ex)

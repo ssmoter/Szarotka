@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Maui.Views;
 
+using DataBase.Data.Get;
+using DataBase.Data.Save;
 using DataBase.Model.EntitiesRoutes;
 
 namespace DriversRoutes.Pages.Popups.MoveTimeOnCustomers;
@@ -23,8 +25,6 @@ public partial class MoveTimeOnCustomersV : Popup, IDisposable
         }
         GC.SuppressFinalize(this);
     }
-
-
 
     private void RadioButton_CheckedChanged(object sender, CheckedChangedEventArgs e)
     {
@@ -63,14 +63,11 @@ public partial class MoveTimeOnCustomersV : Popup, IDisposable
     }
 
 
-
-
-
     public static async Task<bool> ShowPopUp(
         Routes route,
         SelectedDayOfWeekRoutes selectDayMs,
-        Service.ISelectRoutes _selectRoutes,
-        Service.ISaveRoutes _saveRoutes)
+        DataBase.Data.Get.IGetDriverRoutesAoT _get,
+        DataBase.Data.Save.ISaveDriverRoutesAoT _save)
     {
         var popup = new MoveTimeOnCustomersV(selectDayMs);
 
@@ -91,13 +88,12 @@ public partial class MoveTimeOnCustomersV : Popup, IDisposable
 
             IEnumerable<SelectedDayOfWeekRoutes> dayOfs;
 
-            var customers = await _selectRoutes.GetCustomerRoutesQueryAsync(route, dayOf);
+            var customers = await _get.CustomerRoutes(route.Id, dayOf.GetDayOfWeeks());
 
             dayOfs = customers.Select(x => x.DayOfWeek);
 
-            var isComplited = await _saveRoutes.UpdateCustomersTime(dayOfs, dayOf, selectDayMs);
-
-            if (isComplited)
+            var isComplete = await _save.UpdateCustomersTime(dayOfs, dayOf, selectDayMs);
+            if (isComplete)
             {
                 toast = new()
                 {

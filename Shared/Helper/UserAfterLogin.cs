@@ -49,9 +49,9 @@ namespace Shared.Helper
             {
                 RemoveLoginUser();
             }
-            catch (ArgumentException)
+            catch (ArgumentException ex)
             {
-
+                Toast.Make(ex.Message, CommunityToolkit.Maui.Core.ToastDuration.Long).Show();
             }
             catch (Exception ex)
             {

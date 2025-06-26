@@ -475,5 +475,40 @@ public partial class SelectedDayOfWeekRoutes : BaseEntities<Guid>
         SaturdayTimeSpan = timeSpan;
         SetAllTimeSpan = timeSpan;
     }
-}
 
+
+    public DayOfWeek[] GetDayOfWeeks()
+    {
+        List<DayOfWeek> list = [];
+
+        if (Sunday)
+        {
+            list.Add(DayOfWeek.Sunday);
+        }
+        if (Monday)
+        {
+            list.Add(DayOfWeek.Monday);
+        }
+        if (Tuesday)
+        {
+            list.Add(DayOfWeek.Tuesday);
+        }
+        if (Wednesday)
+        {
+            list.Add(DayOfWeek.Wednesday);
+        }
+        if (Thursday)
+        {
+            list.Add(DayOfWeek.Thursday);
+        }
+        if (Friday)
+        {
+            list.Add(DayOfWeek.Friday);
+        }
+        if (Saturday)
+        {
+            list.Add(DayOfWeek.Saturday);
+        }
+        return [.. list];
+    }
+}

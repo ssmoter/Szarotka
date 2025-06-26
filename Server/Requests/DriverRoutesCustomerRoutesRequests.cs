@@ -240,8 +240,8 @@ namespace Server.Requests
                     {
                         exists.UpdateDifferencesDriverRoutes.Add(new()
                         {
-                            CustomerUpdate = customer,
-                            CustomerOrigin = isExist
+                            Update = customer,
+                            Server = isExist!
                         });
                     }
                 }

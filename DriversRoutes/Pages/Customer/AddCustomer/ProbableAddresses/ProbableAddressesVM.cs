@@ -36,7 +36,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses
             await OnClose(address);
         }
         [RelayCommand]
-        async Task CancelAndRetur()
+        async Task CancelAndReturn()
         {
             await OnClose(null);
         }

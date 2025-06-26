@@ -17,9 +17,6 @@ namespace DriversRoutes.Service
             services.AddScoped<Pages.Options.CreateTable.CreateTableRoutesV>();
             services.AddScoped<Pages.Options.CreateTable.CreateTableRoutesVM>();
 
-            services.AddScoped<ISelectRoutes, Data.SelectRoutes>();
-            services.AddScoped<ISaveRoutes, Data.SaveRoutes>();
-
             services.AddScoped<IAddressFromCoordinates, AddressFromCoordinates>();
             services.AddScoped<IRoutes, Routes>();
 
@@ -37,6 +34,9 @@ namespace DriversRoutes.Service
 
             services.AddScoped<Pages.Maps.Navigate.NavigateV>();
             services.AddScoped<Pages.Maps.Navigate.NavigateVM>();
+
+
+            services.AddScoped<Data.RouteApi.IGetCustomersHttp, Data.RouteApi.GetCustomersHttp>();
 
             services.AddSingleton<BlazorMap>();
 

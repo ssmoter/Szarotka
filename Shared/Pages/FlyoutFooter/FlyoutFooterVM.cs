@@ -10,7 +10,7 @@ using Shared.Model;
 
 namespace Shared.Pages.FlyoutFooter
 {
-    public partial class FlyoutFooterVM : ObservableObject
+    public partial class FlyoutFooterVM : ObservableObject, IDisposable
     {
         private bool isLogin;
         public bool IsLogin
@@ -73,5 +73,9 @@ namespace Shared.Pages.FlyoutFooter
             await Task.WhenAll(toast.Show(), navigation);
         }
 
+        public void Dispose()
+        {
+            UserAfterLogin.OnLogin -= UserAfterLogin_OnLogin;
+        }
     }
 }

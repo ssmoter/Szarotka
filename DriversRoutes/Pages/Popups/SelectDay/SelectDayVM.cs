@@ -46,7 +46,7 @@ namespace DriversRoutes.Pages.Popups.SelectDay
             await OnClose(SelectDayMs);
         }
         [RelayCommand]
-        async Task CancelAndRetur()
+        async Task CancelAndReturn()
         {
             await OnClose(null);
         }

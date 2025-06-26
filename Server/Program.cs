@@ -29,7 +29,6 @@ builder.Services.AddProblemDetails(options =>
 builder.Services.AddExceptionHandler<Server.Handler.ProblemExceptionHandler>();
 builder.Services.AddMyServiceServer(builder.Configuration);
 builder.Services.AddSecurityServicesServer(builder.Configuration);
-
 builder.Services.AddAuthorization();
 
 #if DEBUG
@@ -55,6 +54,8 @@ app.UseExceptionHandler();
 
 app.UseRouting();
 app.UseAuthorization();
+
+app.UseMiddleware<AutoContentLengthMiddleware>();
 
 UserEndpoints.MapEndpoints(app);
 InventoryEndpoints.MapEndpoints(app);

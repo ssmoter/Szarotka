@@ -3,11 +3,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
+using DataBase.Data.Get;
 using DataBase.Model.EntitiesRoutes;
 
 using DriversRoutes.Helper;
 
 using Shared.Data;
+using Shared.Helper;
 
 namespace DriversRoutes.Pages.Customer.AddCustomer
 {
@@ -134,21 +136,24 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         List<SelectedDayOfWeekRoutes> DayOfWeekCustomerBeforeList;
         List<SelectedDayOfWeekRoutes> DayOfWeekCustomerAfterList;
 
-        readonly Service.ISaveRoutes _saveRoutes;
-        readonly Data.GoogleApi.IAddressFromCoordinates _IAddressFromCoordinates;
-        readonly IAccessDataBase _db;
+
+        private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _save;
+        private readonly DataBase.Data.Get.IGetDriverRoutesAoT _get;
+        private readonly Data.GoogleApi.IAddressFromCoordinates _IAddressFromCoordinates;
+        private readonly IAccessDataBase _db;
         internal ResidentialAddress[] _address { get; set; } = [];
         internal CustomerRoutes originCustomer { get; set; }
         #endregion
 
-        public AddCustomerVM(Service.ISaveRoutes saveRoutes, IAccessDataBase db, Data.GoogleApi.IAddressFromCoordinates IAddressFromCoordinates)
+        public AddCustomerVM(IAccessDataBase db, Data.GoogleApi.IAddressFromCoordinates IAddressFromCoordinates, DataBase.Data.Save.ISaveDriverRoutesAoT save, DataBase.Data.Get.IGetDriverRoutesAoT get)
         {
             AddCustomer ??= new();
             Customer ??= new();
             Customer.Name = NewPoint;
-            _saveRoutes = saveRoutes;
             _db = db;
             _IAddressFromCoordinates = IAddressFromCoordinates;
+            _save = save;
+            _get = get;
         }
 
 
@@ -218,7 +223,15 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         {
             try
             {
-                await _saveRoutes.SaveCustomer(Customer, RouteId.Id.ToByteArray());
+                var user = UserAfterLogin.User;
+                customer.RoutesId = RouteId.Id;
+                customer.UserUpdatedId = user.Id;
+                customer.DayOfWeek.UserUpdatedId = user.Id;
+                customer.ResidentialAddress.UserUpdatedId = user.Id;
+
+                await _save.SaveCustomerRoutes(customer, user.Id.ToByteArray());
+                await _save.SaveResidentialAddress(customer.ResidentialAddress, user.Id.ToByteArray());
+                await _save.SaveSelectedDayOfWeekRoutes(customer.DayOfWeek, user.Id.ToByteArray());
 
                 await Shell.Current.GoToAsync($"..?", new Dictionary<string, object>()
                 {
@@ -430,7 +443,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
 
             if (AddCustomer.MapIsVisibleHelperTime)
             {
-                CustomerHelperMap = await _db.DataBaseAsync.Table<CustomerRoutes>().FirstOrDefaultAsync(x => x.Id == DayOfWeekCustomerBefore.CustomerId);
+                CustomerHelperMap = await _get.CustomerRoute(DayOfWeekCustomerBefore.CustomerId);
                 if (CustomerHelperMap is null)
                 {
                     AddCustomer.MapIsVisible = false;
@@ -486,7 +499,8 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             }
             if (AddCustomer.MapIsVisibleHelperTime)
             {
-                CustomerHelperMap = await _db.DataBaseAsync.Table<CustomerRoutes>().FirstOrDefaultAsync(x => x.Id == DayOfWeekCustomerAfter.CustomerId);
+                CustomerHelperMap = await _get.CustomerRoute(DayOfWeekCustomerAfter.CustomerId);
+
                 if (CustomerHelperMap is null)
                 {
                     AddCustomer.MapIsVisible = false;
@@ -501,7 +515,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             {
                 if (AddCustomer.MapIsVisibleHelperTime && CustomerHelperMap.Id != id)
                 {
-                    CustomerHelperMap = await _db.DataBaseAsync.Table<CustomerRoutes>().FirstOrDefaultAsync(x => x.Id == id);
+                    CustomerHelperMap = await _get.CustomerRoute(id);
                     if (CustomerHelperMap is not null)
                     {
                         if (AddCustomer.MapIsVisibleHelperTime)
@@ -517,7 +531,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
 
             if (AddCustomer.MapIsVisibleHelperTime)
             {
-                CustomerHelperMap = await _db.DataBaseAsync.Table<CustomerRoutes>().FirstOrDefaultAsync(x => x.Id == id);
+                CustomerHelperMap = await _get.CustomerRoute(id);
             }
             if (CustomerHelperMap is null)
             {

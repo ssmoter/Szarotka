@@ -106,10 +106,11 @@ public partial class ResidentialAddress : BaseEntities<Guid>, IDisposable
 
     public override string ToString()
     {
-        string to = $"{Name} {Surname}{Environment.NewLine}" +
-            $"{Street} {HouseNumber} {(string.IsNullOrWhiteSpace(ApartmentNumber) ? "" : "/")} {ApartmentNumber}{Environment.NewLine}" +
-            $"{PostalCode} {City}{Environment.NewLine}" +
-            $"{Country}";
+        var _name = $"{Name} {Surname}";
+        var _street = $"{Street} {HouseNumber} {(string.IsNullOrWhiteSpace(ApartmentNumber) ? "" : "/")} {ApartmentNumber}";
+        var _city = $"{PostalCode} {City}";
+
+        string to = $"{_name}{(!string.IsNullOrWhiteSpace(_name) ? Environment.NewLine : "")}{_street}{(!string.IsNullOrWhiteSpace(_street) ? Environment.NewLine : "")}{_city}{(!string.IsNullOrWhiteSpace(_city) ? Environment.NewLine : "")}{Country}";
 
         return to;
     }

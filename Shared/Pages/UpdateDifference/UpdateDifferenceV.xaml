@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Shared.Pages.UpdateDifference.UpdateDifferenceV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:modelInventory="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
+    xmlns:modelRoutes="clr-namespace:DataBase.Model.EntitiesRoutes;assembly=DataBase"
+    xmlns:modelServer="clr-namespace:DataBase.Model.EntitiesServer;assembly=DataBase"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:update="clr-namespace:Shared.Pages.UpdateDifference"
+    Title="Różnice"
+    x:DataType="update:UpdateDifferenceVM">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <toolkit:IsNotNullConverter x:Key="IsNotNullConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior Command="{Binding BackCommand}" />
+    </Shell.BackButtonBehavior>
+
+    <Grid ColumnDefinitions="*,*" RowDefinitions="auto,*,auto">
+
+        <Grid
+            Grid.Row="0"
+            Grid.ColumnSpan="2"
+            ColumnDefinitions="*,*"
+            RowDefinitions="*,*">
+            <Label
+                Grid.ColumnSpan="3"
+                HorizontalOptions="Center"
+                Text="Wybierz które wartości danych mają zostać zapisane" />
+
+            <Border
+                Grid.Row="2"
+                Grid.ColumnSpan="3"
+                VerticalOptions="End" />
+
+            <Grid
+                Grid.Row="1"
+                Grid.Column="1"
+                ColumnDefinitions="auto,*"
+                HorizontalOptions="Center">
+
+                <CheckBox
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    IsChecked="{Binding SelectAllValue}" />
+                <Label
+                    Grid.Column="1"
+                    Text="Dane lokalne"
+                    VerticalOptions="Center" />
+            </Grid>
+            <Grid
+                Grid.Row="1"
+                Grid.Column="0"
+                ColumnDefinitions="auto,*"
+                HorizontalOptions="Center">
+                <CheckBox
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    IsChecked="{Binding SelectAllValue, Converter={StaticResource InvertedBoolConverter}}" />
+                <Label
+                    Grid.Column="1"
+                    Text="Dane z serwera"
+                    VerticalOptions="Center" />
+            </Grid>
+
+        </Grid>
+
+        <Grid Grid.Row="2" Grid.ColumnSpan="2">
+            <Button Command="{Binding SaveCommand}" Text="Zapisz" />
+        </Grid>
+
+        <CollectionView
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            IsVisible="{Binding UpdateDifferences.UpdateDifferencesDriverRoutes, Converter={StaticResource IsNotNullConverter}}"
+            ItemsSource="{Binding UpdateDifferences.UpdateDifferencesDriverRoutes}">
+
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout ItemSpacing="10" Orientation="Vertical" />
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <Grid RowDefinitions="*,auto">
+
+                        <update:DriverRoutesUpdate
+                            Grid.Row="0"
+                            Margin="5"
+                            x:DataType="modelServer:UpdateDifferencesDriverRoutes"
+                            CustomerRoutesServer="{Binding Server}"
+                            CustomerRoutesUpdate="{Binding Update}" />
+                        <Border
+                            Grid.Row="1"
+                            Margin="0"
+                            Padding="0"
+                            StrokeThickness="2" />
+                    </Grid>
+
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+
+
+    </Grid>
+
+
+</ContentPage>

@@ -19,7 +19,6 @@ Content-Type: application/json
 
 @token = {{login.response.body.$.token}}
 
-
 GET {{Server_HostAddress}}/driver-routes/customer-route/7834daec-27b6-4ad1-8eda-dcfa77d118f4
 Accept: application/json
 Authorization: Bearer {{token}}
@@ -28,8 +27,12 @@ GET {{Server_HostAddress}}/driver-routes/customer-routes/baf3bb5a-59f6-5524-10d6
 Accept: application/json
 Authorization: Bearer {{token}}
 ###
+GET {{Server_HostAddress}}/driver-routes/customer-routes/baf3bb5a-59f6-5524-10d6-2d4c3c84b98b
+Accept: application/json
+Authorization: Bearer {{token}}
 
 
+###
 POST {{Server_HostAddress}}/driver-routes/update
 Authorization: Bearer {{token}}
 Content-Type: application/json 

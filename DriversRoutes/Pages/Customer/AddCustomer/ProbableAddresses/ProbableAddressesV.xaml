@@ -27,7 +27,7 @@
 
                 <Button
                     Grid.Row="0"
-                    Command="{Binding CancelAndReturCommand}"
+                    Command="{Binding CancelAndReturnCommand}"
                     Text="Anuluj" />
 
                 <ScrollView Grid.Row="1">

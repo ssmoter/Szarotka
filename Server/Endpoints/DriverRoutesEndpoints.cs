@@ -20,7 +20,7 @@ namespace Server.Endpoints
             map.MapGet("customer-routes/{routeId}", async (string routeId, [FromQuery] DayOfWeek[] selected_day, IDriverRoutesCustomerRoutesRequests getDriverRoutesAoT, CancellationToken token = default) =>
             {
                 var customers = await getDriverRoutesAoT.GetCustomers(routeId, selected_day, token);
-                return customers;
+                return customers; 
             }).RequireAuthorization();
             map.MapGet("customer-routes", async (string[] ids, IDriverRoutesCustomerRoutesRequests getDriverRoutesAoT, CancellationToken token = default) =>
             {

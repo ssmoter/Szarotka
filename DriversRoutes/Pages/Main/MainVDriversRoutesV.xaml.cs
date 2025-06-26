@@ -21,29 +21,29 @@ public partial class MainVDriversRoutesV : ContentPage
             vm.Routes = await vm.GetRoutes();
         }
 
-#if ANDROID
+//#if ANDROID
 
-        try
-        {
-            var android = DeviceInfo.Current.VersionString;
+//        try
+//        {
+//            var android = DeviceInfo.Current.VersionString;
 
-            if (double.TryParse(android, out double result))
-            {
-                if (result < 9)
-                {
-                    var snack = new Snackbar()
-                    {
-                        Text = "Z daną wersję Androida (7,8) mapy google nie są kompatybilne",
-                        ActionButtonText = "OK",
-                        Duration = TimeSpan.FromSeconds(60),
-                    };
-                    await snack.Show();
-                }
-            }
-        }
-        catch (Exception) { }
+//            if (double.TryParse(android, out double result))
+//            {
+//                if (result < 9)
+//                {
+//                    var snack = new Snackbar()
+//                    {
+//                        Text = "Z daną wersję Androida (7,8) mapy google nie są kompatybilne",
+//                        ActionButtonText = "OK",
+//                        Duration = TimeSpan.FromSeconds(60),
+//                    };
+//                    await snack.Show();
+//                }
+//            }
+//        }
+//        catch (Exception) { }
 
-#endif
+//#endif
 
     }
 
