@@ -15,10 +15,14 @@ namespace DataBase.Service
 
             services.AddScoped<ISaveInventoryAoT, SaveInventoryAoT>();
             services.AddScoped<ISaveDriverRoutesAoT, SaveDriverRoutesAoT>();
+
             services.AddScoped<ITimeService, CurrentUtc>();
             services.AddScoped<IValidationException, ValidationException>();
 
             services.AddScoped<IGetInventoryAoT, GetInventoryAoT>();
+            services.AddScoped<IGetDriverRoutesAoT, GetDriverRoutesAoT>();
+
+
             services.AddScoped<IUpdateLogService, UpdateLogService>();
 
 

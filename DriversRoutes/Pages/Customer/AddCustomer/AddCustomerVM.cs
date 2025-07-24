@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using DataBase.Data;
 using DataBase.Data.Get;
 using DataBase.Model.EntitiesRoutes;
+using DataBase.Service;
 
 using DriversRoutes.Helper;
 
@@ -141,11 +142,16 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         private readonly DataBase.Data.Get.IGetDriverRoutesAoT _get;
         private readonly Data.GoogleApi.IAddressFromCoordinates _IAddressFromCoordinates;
         private readonly IAccessDataBase _db;
+        private readonly DataBase.Service.IUpdateLogService _update;
         internal ResidentialAddress[] _address { get; set; } = [];
         internal CustomerRoutes originCustomer { get; set; }
         #endregion
 
-        public AddCustomerVM(IAccessDataBase db, Data.GoogleApi.IAddressFromCoordinates IAddressFromCoordinates, DataBase.Data.Save.ISaveDriverRoutesAoT save, DataBase.Data.Get.IGetDriverRoutesAoT get)
+        public AddCustomerVM(IAccessDataBase db,
+                             Data.GoogleApi.IAddressFromCoordinates IAddressFromCoordinates,
+                             DataBase.Data.Save.ISaveDriverRoutesAoT save,
+                             DataBase.Data.Get.IGetDriverRoutesAoT get,
+                             DataBase.Service.IUpdateLogService update)
         {
             AddCustomer ??= new();
             Customer ??= new();
@@ -154,6 +160,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             _IAddressFromCoordinates = IAddressFromCoordinates;
             _save = save;
             _get = get;
+            _update = update;
         }
 
 
@@ -229,9 +236,19 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
                 customer.DayOfWeek.UserUpdatedId = user.Id;
                 customer.ResidentialAddress.UserUpdatedId = user.Id;
 
+
                 await _save.SaveCustomerRoutes(customer, user.Id.ToByteArray());
+
+                customer.ResidentialAddress.CustomerId = customer.Id;
+                customer.DayOfWeek.CustomerId = customer.Id;
+
                 await _save.SaveResidentialAddress(customer.ResidentialAddress, user.Id.ToByteArray());
                 await _save.SaveSelectedDayOfWeekRoutes(customer.DayOfWeek, user.Id.ToByteArray());
+
+                await _update.Insert(new DataBase.Model.UpdateLog()
+                {
+                    IsServer = false,
+                }, Customer);
 
                 await Shell.Current.GoToAsync($"..?", new Dictionary<string, object>()
                 {
@@ -250,13 +267,12 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         {
             try
             {
-
-                // await Shell.Current.GoToAsync("..");
-                await Shell.Current.GoToAsync($"..?", new Dictionary<string, object>()
-                {
-                    [nameof(CustomerRoutes)] = originCustomer,
-                    [nameof(Routes)] = RouteId
-                });
+                await Shell.Current.GoToAsync("..");
+                //await Shell.Current.GoToAsync($"..?", new Dictionary<string, object>()
+                //{
+                //    [nameof(CustomerRoutes)] = originCustomer,
+                //    [nameof(Routes)] = RouteId
+                //});
             }
             catch (Exception ex)
             {

@@ -1,4 +1,6 @@
-﻿using MudBlazor.Services;
+﻿using DataBase.Service;
+
+using MudBlazor.Services;
 
 using Shared.Data;
 using Shared.Data.ServerHttpClients;
@@ -61,6 +63,7 @@ namespace Shared.Service
             services.AddSingleton<UpdateDifferenceVM>();
 
             services.AddScoped<IResetPasswordHttp, ResetPasswordHttp>();
+            services.AddScoped<IUpdateLogsHttp, UpdateLogsHttp>();
 
             return services;
         }

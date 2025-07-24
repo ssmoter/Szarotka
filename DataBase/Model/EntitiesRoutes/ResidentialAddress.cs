@@ -88,7 +88,7 @@ public partial class ResidentialAddress : BaseEntities<Guid>, IDisposable
     public ResidentialAddress()
     { }
 
-    public ResidentialAddress(ResidentialAddress copy)
+    public ResidentialAddress(ResidentialAddress copy):base(copy)
     {
         this.CustomerId = copy.CustomerId;
         this.Name = copy.Name;

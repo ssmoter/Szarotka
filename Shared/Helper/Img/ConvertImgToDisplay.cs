@@ -8,7 +8,7 @@ namespace Shared.Helper.Img
             if (value is string imgString)
             {
                 var imageBytes = System.Convert.FromBase64String(imgString);
-                using MemoryStream imageStream = new MemoryStream(imageBytes);
+                using MemoryStream imageStream = new(imageBytes);
                 //  var image = ImageSource.FromStream(() => imageStream);
                 var image = new Image() { Source = imgString };
                 return image;

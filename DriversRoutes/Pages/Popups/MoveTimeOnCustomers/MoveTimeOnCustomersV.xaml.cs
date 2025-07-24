@@ -3,6 +3,8 @@
 using DataBase.Data.Get;
 using DataBase.Data.Save;
 using DataBase.Model.EntitiesRoutes;
+using DataBase.Model.JsonContext;
+using DataBase.Service;
 
 namespace DriversRoutes.Pages.Popups.MoveTimeOnCustomers;
 
@@ -66,8 +68,9 @@ public partial class MoveTimeOnCustomersV : Popup, IDisposable
     public static async Task<bool> ShowPopUp(
         Routes route,
         SelectedDayOfWeekRoutes selectDayMs,
-        DataBase.Data.Get.IGetDriverRoutesAoT _get,
-        DataBase.Data.Save.ISaveDriverRoutesAoT _save)
+        IGetDriverRoutesAoT _get,
+        ISaveDriverRoutesAoT _save,
+        IUpdateLogService _update)
     {
         var popup = new MoveTimeOnCustomersV(selectDayMs);
 
@@ -92,19 +95,29 @@ public partial class MoveTimeOnCustomersV : Popup, IDisposable
 
             dayOfs = customers.Select(x => x.DayOfWeek);
 
-            var isComplete = await _save.UpdateCustomersTime(dayOfs, dayOf, selectDayMs);
-            if (isComplete)
+            var updates = await _save.UpdateCustomersTime(dayOfs, dayOf, selectDayMs);
+
+            foreach (var item in updates)
             {
-                toast = new()
+                await _update.Insert(new()
                 {
-                    Text = "Aktualizawanie zakończone",
-                    Duration = CommunityToolkit.Maui.Core.ToastDuration.Short,
-                };
-                await toast.Show();
-                customers = null;
-                dayOfs = null;
-                return true;
+                    IsServer = false,
+                    JsonUpdate = System.Text.Json.JsonSerializer.Serialize(item, SzarotkaJsonSerializerContext.Default.SelectedDayOfWeekRoutes),
+                    UpdateEnum = DataBase.Model.UpdateEnum.SelectedDayOfWeek,
+                    UpdateId = item.CustomerId.ToString(),
+                });
             }
+
+            toast = new()
+            {
+                Text = "Aktualizawanie zakończone",
+                Duration = CommunityToolkit.Maui.Core.ToastDuration.Short,
+            };
+            await toast.Show();
+            customers = null;
+            dayOfs = null;
+            return true;
+
         }
         return false;
     }

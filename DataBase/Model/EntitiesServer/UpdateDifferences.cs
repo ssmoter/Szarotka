@@ -3,6 +3,8 @@
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesRoutes;
 
+using System.Text.Json.Serialization;
+
 namespace DataBase.Model.EntitiesServer
 {
     public class UpdateDifferences : ObservableObject
@@ -58,6 +60,27 @@ namespace DataBase.Model.EntitiesServer
             }
         }
 
+        private int index;
+        public int Index
+        {
+            get => index;
+            set
+            {
+                if (SetProperty(ref index, value, nameof(Index)))
+                {
+                }
+            }
+        }
+        private object? updateSelect = null;
+        [JsonIgnore]
+        public object? UpdateSelect
+        {
+            get => updateSelect;
+            set
+            {
+                if (SetProperty(ref updateSelect, value, nameof(UpdateSelect))) { }
+            }
+        }
     }
     public class UpdateDifferencesInventory : ObservableObject
     {
@@ -81,6 +104,28 @@ namespace DataBase.Model.EntitiesServer
                 if (SetProperty(ref update, value, nameof(Update)))
                 {
                 }
+            }
+        }
+        private int index;
+        public int Index
+        {
+            get => index;
+            set
+            {
+                if (SetProperty(ref index, value, nameof(Index)))
+                {
+                }
+            }
+        }
+
+        private object? updateSelect = null;
+        [JsonIgnore]
+        public object? UpdateSelect
+        {
+            get => updateSelect;
+            set
+            {
+                if (SetProperty(ref updateSelect, value, nameof(UpdateSelect))) { }
             }
         }
     }

@@ -10,8 +10,8 @@ public partial class MapsV : ContentPage, IDisposable
     {
         InitializeComponent();
         vm.GoToLocationAction += Map.MoveToRegion;
-        vm.AddRoutesPolilineAction += SetPolyline;
-        vm.ClearRoutesPolilineAction += ClearPolyline;
+        vm.AddRoutesPolylineAction += SetPolyline;
+        vm.ClearRoutesPolylineAction += ClearPolyline;
         vm.GetMap = Map;
         BindingContext = vm;
     }
@@ -20,8 +20,8 @@ public partial class MapsV : ContentPage, IDisposable
         if (BindingContext is MapsVM vm)
         {
             vm.GoToLocationAction -= Map.MoveToRegion;
-            vm.AddRoutesPolilineAction -= SetPolyline;
-            vm.ClearRoutesPolilineAction -= ClearPolyline;
+            vm.AddRoutesPolylineAction -= SetPolyline;
+            vm.ClearRoutesPolylineAction -= ClearPolyline;
         }
         GC.SuppressFinalize(this);
     }
@@ -46,10 +46,6 @@ public partial class MapsV : ContentPage, IDisposable
             vm.RouteIsVisible = false;
             ClearPolyline();
             Data.ActionLocation.MapGeolocation.OnStopListeningLocation();
-            if (vm.LastSelectedDayOfWeek is not null)
-            {
-                vm.LastSelectedDayOfWeekWhenNavigation = vm.LastSelectedDayOfWeek;
-            }
             Data.DrawIconOnMap.DisposeImagePinStreams();
         }
     }
@@ -62,20 +58,7 @@ public partial class MapsV : ContentPage, IDisposable
         if (BindingContext is MapsVM vm)
         {
             vm.RoutesToken = new();
-
-            if (vm.Routes is null)
-                return;
-
-            vm.DriversRoutesName = vm.Routes.Name;
-
-            if (vm.LastSelectedDayOfWeekWhenNavigation is not null)
-            {
-                vm.GetSelectedDaysAndForget(vm.LastSelectedDayOfWeekWhenNavigation);
-            }
-            else if (vm.LastSelectedDayOfWeek is not null)
-            {
-                vm.GetSelectedDaysAndForget(vm.LastSelectedDayOfWeek);
-            }
+            vm.DriversRoutesName = vm?.Routes?.Name;
         }
     }
 

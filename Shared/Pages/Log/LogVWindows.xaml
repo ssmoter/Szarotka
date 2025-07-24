@@ -67,16 +67,14 @@
                                     VerticalOptions="Center" />
                                 <HorizontalStackLayout Grid.Column="3">
                                     <Button
-                                        x:DataType="VM:LogVM"
                                         BackgroundColor="Red"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:LogVM}}, Path=DeleteLogCommand}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:LogVM}}, Path=DeleteLogCommand, x:DataType=VM:LogVM}"
                                         CommandParameter="{Binding .}"
                                         Text="Usuń"
                                         VerticalOptions="Center" />
                                     <Button
-                                        x:DataType="VM:LogVM"
                                         BackgroundColor="Green"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:LogVM}}, Path=OpenSelectedLogCommand}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:LogVM}}, Path=OpenSelectedLogCommand, x:DataType=VM:LogVM}"
                                         CommandParameter="{Binding .}"
                                         Text="Więcej danych"
                                         VerticalOptions="Center" />

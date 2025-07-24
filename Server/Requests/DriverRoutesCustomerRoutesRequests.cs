@@ -1,4 +1,5 @@
 ﻿using DataBase.Data;
+using DataBase.Data.CheckUpdateDifferences;
 using DataBase.Data.Get;
 using DataBase.Data.Save;
 using DataBase.Model;
@@ -11,7 +12,7 @@ namespace Server.Requests
     public interface IDriverRoutesCustomerRoutesRequests
     {
         Task<IResult> GetCustomer(string id, CancellationToken token = default);
-        Task<IResult> GetCustomers(string routeId, DayOfWeek[] selected_day, CancellationToken token);
+        Task<IResult> GetCustomers(string routeId, DayOfWeek[] selected_day, bool isDelete = false, CancellationToken token = default);
         Task<IResult> GetCustomers(string[] ids, CancellationToken token = default);
         Task<IResult> UpdateCustomer(CustomerRoutes customer, bool forceUpdate, CancellationToken token = default);
         Task<IResult> UpdateCustomers(IList<CustomerRoutes> customers, bool forceUpdate, CancellationToken token = default);
@@ -62,7 +63,7 @@ namespace Server.Requests
                 throw;
             }
         }
-        public async Task<IResult> GetCustomers(string routeId, DayOfWeek[] selected_day, CancellationToken token = default)
+        public async Task<IResult> GetCustomers(string routeId, DayOfWeek[] selected_day, bool isDelete = false, CancellationToken token = default)
         {
             try
             {
@@ -75,7 +76,7 @@ namespace Server.Requests
 
                 selected_day ??= [];
 
-                var customer = await _get.CustomerRoutes(idGuid, selected_day);
+                var customer = await _get.CustomerRoutes(idGuid, selected_day, isDelete);
 
                 if (customer is not null && customer.Count > 0)
                 {
@@ -99,9 +100,10 @@ namespace Server.Requests
         {
             try
             {
-                List<CustomerRoutes> customers = [];
-                foreach (var id in ids)
+                CustomerRoutes[] customers = new CustomerRoutes[ids.Length];
+                for (int i = 0; i < ids.Length; i++)
                 {
+                    string? id = ids[i];
                     token.ThrowIfCancellationRequested();
 
                     if (!Guid.TryParse(id, out Guid guidId))
@@ -114,9 +116,9 @@ namespace Server.Requests
                     {
                         continue;
                     }
-                    customers.Add(customer);
+                    customers[i] = customer;
                 }
-                return Results.Ok(customers);
+                return Results.Ok(customers.Where(x => x is not null).ToList());
             }
             catch (OperationCanceledException ex)
             {
@@ -141,28 +143,8 @@ namespace Server.Requests
                 }
 
                 token.ThrowIfCancellationRequested();
-                CustomerRoutes? isExist = null;
-                bool canUpdate = true;
 
-
-                if (!forceUpdate)
-                {
-                    isExist = await _get.CustomerRoute(customer.Id);
-
-                }
-
-                //sprawdzenie czy inny użytkownik edytował dany rekord
-                if (isExist is not null)
-                {
-                    if (customer.UserUpdatedId != isExist.UserUpdatedId)
-                    {
-                        canUpdate = false;
-                    }
-                    if (customer.UpdatedTicks < isExist.UpdatedTicks)
-                    {
-                        canUpdate = false;
-                    }
-                }
+                (bool canUpdate, CustomerRoutes? isExist) = await RoutesDifferences.Check(_get, customer, forceUpdate);
 
                 if (canUpdate)
                 {
@@ -203,26 +185,8 @@ namespace Server.Requests
                 UpdateLog? firstLog = null;
                 foreach (CustomerRoutes customer in customers)
                 {
-                    CustomerRoutes? isExist = null;
-                    bool canUpdate = true;
+                    (bool canUpdate, CustomerRoutes? isExist) = await RoutesDifferences.Check(_get, customer, forceUpdate);
 
-                    if (!forceUpdate)
-                    {
-                        isExist = await _get.CustomerRoute(customer.Id);
-                    }
-
-                    //sprawdzenie czy inny użytkownik edytował dany rekord
-                    if (isExist is not null)
-                    {
-                        if (customer.UserUpdatedId != isExist.UserUpdatedId)
-                        {
-                            canUpdate = false;
-                        }
-                        if (customer.UpdatedTicks < isExist.UpdatedTicks)
-                        {
-                            canUpdate = false;
-                        }
-                    }
                     if (canUpdate)
                     {
                         await _save.SaveCustomerRoutes(customer, customer.UserUpdatedId.ToByteArray(), true);

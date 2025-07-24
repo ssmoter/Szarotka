@@ -42,7 +42,5 @@ namespace DriversRoutes.Pages.Customer.CustomerSmall
                 if (SetProperty(ref coordinates, value, nameof(Coordinates))) { }
             }
         }
-
-
     }
 }

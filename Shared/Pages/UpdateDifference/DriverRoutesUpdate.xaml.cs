@@ -13,6 +13,7 @@ public partial class DriverRoutesUpdate : ContentView, IDisposable
             typeof(DriverRoutesUpdate),
             propertyChanged: (bindable, oldValue, newValue) =>
             {
+
             });
 
     public CustomerRoutes CustomerRoutesServer
@@ -37,9 +38,21 @@ public partial class DriverRoutesUpdate : ContentView, IDisposable
         set => SetValue(CustomerRoutesUpdateProperty, value);
     }
 
-    public CustomerRoutesUpdate UpdateBool { get; set; }
+    public static readonly BindableProperty UpdateBoolProperty =
+BindableProperty.Create(
+    nameof(UpdateBool),
+    typeof(CustomerRoutesUpdate),
+    typeof(DriverRoutesUpdate),
+    defaultBindingMode: BindingMode.TwoWay,
+    propertyChanged: (bindable, oldValue, newValue) =>
+    {
+    });
 
-
+    public CustomerRoutesUpdate UpdateBool
+    {
+        get => (CustomerRoutesUpdate)GetValue(UpdateBoolProperty);
+        set => SetValue(UpdateBoolProperty, value);
+    }
 
     public static readonly BindableProperty SelectedBoolProperty =
     BindableProperty.Create(
@@ -52,6 +65,7 @@ public partial class DriverRoutesUpdate : ContentView, IDisposable
             {
                 if (newValue is bool value)
                 {
+                    view.UpdateBool.BoolUpdate = value;
                     view.UpdateBool.BoolRoutesId = value;
                     view.UpdateBool.BoolName = value;
                     view.UpdateBool.BoolDescription = value;
@@ -69,43 +83,7 @@ public partial class DriverRoutesUpdate : ContentView, IDisposable
         get => (bool)GetValue(SelectedBoolProperty);
         set => SetValue(SelectedBoolProperty, value);
     }
-    private static Action<bool> ActionSelectedChange;
-    private void _SelectedChange(bool value)
-    {
-        SelectedBool = value;
-    }
-    public static void OnSelectedChange(bool value)
-    {
-        ActionSelectedChange?.Invoke(value);
-    }
 
-    private static Func<CustomerRoutes> ReturnCustomerRoutes;
-    public static CustomerRoutes OnReturnCustomerRoute()
-    {
-        return ReturnCustomerRoutes?.Invoke();
-    }
-    private CustomerRoutes _ReturnCustomerRoutes()
-    {
-        CustomerRoutes customer = new();
-
-        ApplyUpdateBoolToCustomerRoutes(customer);
-
-        return customer;
-    }
-    private static List<Func<CustomerRoutes>> ReturnCustomerRoutesList = new();
-
-    public static void Register(Func<CustomerRoutes> func)
-    {
-        ReturnCustomerRoutesList.Add(func);
-    }
-    public static void Remove(Func<CustomerRoutes> func)
-    {
-        ReturnCustomerRoutesList.Remove(func);
-    }
-    public static List<CustomerRoutes> OnReturnCustomerRoutes()
-    {
-        return ReturnCustomerRoutesList.Select(f => f()).ToList();
-    }
 
 
     public DriverRoutesUpdate()
@@ -114,9 +92,6 @@ public partial class DriverRoutesUpdate : ContentView, IDisposable
         CustomerRoutesUpdate ??= new();
         UpdateBool ??= new();
         UpdateBool.PropertyChanged += UpdateBool_PropertyChanged;
-        ActionSelectedChange += _SelectedChange;
-        ReturnCustomerRoutes += _ReturnCustomerRoutes;
-        Register(ReturnCustomerRoutes);
         InitializeComponent();
     }
 
@@ -127,43 +102,78 @@ public partial class DriverRoutesUpdate : ContentView, IDisposable
 
     public void Dispose()
     {
-        ActionSelectedChange -= _SelectedChange;
-        ReturnCustomerRoutes -= _ReturnCustomerRoutes;
         UpdateBool.PropertyChanged -= UpdateBool_PropertyChanged;
-        Remove(ReturnCustomerRoutes);
     }
-    public void ApplyUpdateBoolToCustomerRoutes(CustomerRoutes target)
+
+    public static CustomerRoutes ApplyUpdateBoolToCustomerRoutes(CustomerRoutes server,
+                                                          CustomerRoutes update,
+                                                          object updateSelected)
     {
-        if (target == null) return;
+        var updateBool = updateSelected as CustomerRoutesUpdate;
+        ArgumentNullException.ThrowIfNull(updateBool);
+        SetUpdateBool(updateBool);
+        CustomerRoutes target = new()
+        {
+            Id = updateBool.BoolUpdate ? update.Id : server.Id,
+            IsDelete = updateBool.BoolUpdate ? update.IsDelete : server.IsDelete,
 
-        SetUpdateBool();
-        target.Created = CustomerRoutesServer.Created;
-        target.UserCreatedId = CustomerRoutesServer.UserCreatedId;
+            Created = updateBool.BoolUpdate ? update.Created : server.Created,
+            UserCreatedId = updateBool.BoolUpdate ? update.UserCreatedId : server.UserCreatedId,
 
-        target.Updated = UpdateBool.BoolUpdate ? CustomerRoutesUpdate.Updated : CustomerRoutesServer.Updated;
-        target.UserUpdatedId = UpdateBool.BoolUpdate ? CustomerRoutesUpdate.UserUpdatedId : CustomerRoutesServer.UserUpdatedId;
-        // RoutesId
-        target.RoutesId = UpdateBool.BoolRoutesId ? CustomerRoutesUpdate.RoutesId : CustomerRoutesServer.RoutesId;
-        // Name
-        target.Name = UpdateBool.BoolName ? CustomerRoutesUpdate.Name : CustomerRoutesServer.Name;
-        // Description
-        target.Description = UpdateBool.BoolDescription ? CustomerRoutesUpdate.Description : CustomerRoutesServer.Description;
-        // PhoneNumber
-        target.PhoneNumber = UpdateBool.BoolPhoneNumber ? CustomerRoutesUpdate.PhoneNumber : CustomerRoutesServer.PhoneNumber;
-        // DayOfWeek
-        target.DayOfWeek = UpdateBool.BoolDayOfWeek
-            ? (CustomerRoutesUpdate.DayOfWeek != null ? new SelectedDayOfWeekRoutes(CustomerRoutesUpdate.DayOfWeek) : null)
-            : (CustomerRoutesServer.DayOfWeek != null ? new SelectedDayOfWeekRoutes(CustomerRoutesServer.DayOfWeek) : null);
-        // ResidentialAddress
-        target.ResidentialAddress = UpdateBool.BoolResidentialAddress
-            ? (CustomerRoutesUpdate.ResidentialAddress != null ? new ResidentialAddress(CustomerRoutesUpdate.ResidentialAddress) : null)
-            : (CustomerRoutesServer.ResidentialAddress != null ? new ResidentialAddress(CustomerRoutesServer.ResidentialAddress) : null);
-        // Longitude
-        target.Longitude = UpdateBool.BoolLongitude ? CustomerRoutesUpdate.Longitude : CustomerRoutesServer.Longitude;
-        // Latitude
-        target.Latitude = UpdateBool.BoolLatitude ? CustomerRoutesUpdate.Latitude : CustomerRoutesServer.Latitude;
+            Updated = updateBool.BoolUpdate ? update.Updated : server.Updated,
+            UserUpdatedId = updateBool.BoolUpdate ? update.UserUpdatedId : server.UserUpdatedId,
+            // RoutesId
+            RoutesId = updateBool.BoolRoutesId ? update.RoutesId : server.RoutesId,
+            // Name
+            Name = updateBool.BoolName ? update.Name : server.Name,
+            // Description
+            Description = updateBool.BoolDescription ? update.Description : server.Description,
+            // PhoneNumber
+            PhoneNumber = updateBool.BoolPhoneNumber ? update.PhoneNumber : server.PhoneNumber,
+            // DayOfWeek
+            DayOfWeek = updateBool.BoolDayOfWeek ? update.DayOfWeek : server.DayOfWeek,
+            // ResidentialAddress
+            ResidentialAddress = updateBool.BoolResidentialAddress ? update.ResidentialAddress : server.ResidentialAddress,
+            // Longitude
+            Longitude = updateBool.BoolLongitude ? update.Longitude : server.Longitude,
+            // Latitude
+            Latitude = updateBool.BoolLatitude ? update.Latitude : server.Latitude
+        };
+        return target;
     }
+    public static void SetUpdateBool(object updateSelected, bool? setAll = null)
+    {
+        var updateBool = updateSelected as CustomerRoutesUpdate;
+        ArgumentNullException.ThrowIfNull(updateBool);
 
+        if (setAll is not null)
+        {
+            updateBool.BoolUpdate = setAll.Value;
+            updateBool.BoolRoutesId = setAll.Value;
+            updateBool.BoolName = setAll.Value;
+            updateBool.BoolDescription = setAll.Value;
+            updateBool.BoolPhoneNumber = setAll.Value;
+            updateBool.BoolDayOfWeek = setAll.Value;
+            updateBool.BoolResidentialAddress = setAll.Value;
+            updateBool.BoolLongitude = setAll.Value;
+            updateBool.BoolLatitude = setAll.Value;
+        }
+        if (updateBool.BoolRoutesId ||
+            updateBool.BoolName ||
+            updateBool.BoolDescription ||
+            updateBool.BoolPhoneNumber ||
+            updateBool.BoolDayOfWeek ||
+            updateBool.BoolResidentialAddress ||
+            updateBool.BoolLongitude ||
+            updateBool.BoolLatitude)
+        {
+            updateBool.BoolUpdate = true;
+        }
+        else
+        {
+            updateBool.BoolUpdate = false;
+        }
+    }
     private void SetUpdateBool()
     {
         if (UpdateBool.BoolRoutesId ||

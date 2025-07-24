@@ -37,6 +37,7 @@ namespace DriversRoutes.Service
 
 
             services.AddScoped<Data.RouteApi.IGetCustomersHttp, Data.RouteApi.GetCustomersHttp>();
+            services.AddScoped<Data.RouteApi.ISendCustomersHttp, Data.RouteApi.SendCustomersHttp>();
 
             services.AddSingleton<BlazorMap>();
 

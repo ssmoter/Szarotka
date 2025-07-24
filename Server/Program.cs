@@ -60,7 +60,7 @@ app.UseMiddleware<AutoContentLengthMiddleware>();
 UserEndpoints.MapEndpoints(app);
 InventoryEndpoints.MapEndpoints(app);
 DriverRoutesEndpoints.MapEndpoints(app);
-
+UpdateLogEndpoints.MapEndpoints(app);
 
 
 

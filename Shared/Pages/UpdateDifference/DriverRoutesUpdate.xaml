@@ -33,6 +33,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Border
@@ -44,7 +45,7 @@
 
 
 
-        <controls:BoxViewColorsFromBool
+        <controls:BorderColorsFromBool
             Grid.Row="0"
             Grid.Column="0"
             Grid.ColumnSpan="2"
@@ -53,7 +54,7 @@
             IsGradient="True"
             IsVisible="False"
             SelectedColor="{Binding UpdateBool.BoolUpdate, Converter={StaticResource InvertedBoolConverter}}" />
-        <controls:BoxViewColorsFromBool
+        <controls:BorderColorsFromBool
             Grid.Row="0"
             Grid.Column="3"
             Grid.ColumnSpan="2"
@@ -121,7 +122,7 @@
 
 
 
-        <controls:BoxViewColorsFromBool
+        <controls:BorderColorsFromBool
             Grid.Row="1"
             Grid.Column="0"
             Grid.ColumnSpan="2"
@@ -129,7 +130,7 @@
             BackgroundColorSecond="Red"
             IsGradient="True"
             SelectedColor="{Binding UpdateBool.BoolName, Converter={StaticResource InvertedBoolConverter}}" />
-        <controls:BoxViewColorsFromBool
+        <controls:BorderColorsFromBool
             Grid.Row="1"
             Grid.Column="3"
             Grid.ColumnSpan="2"
@@ -168,7 +169,7 @@
 
 
 
-        <controls:BoxViewColorsFromBool
+        <controls:BorderColorsFromBool
             Grid.Row="2"
             Grid.Column="0"
             Grid.ColumnSpan="2"
@@ -177,7 +178,7 @@
             IsGradient="True"
             Opacity="1"
             SelectedColor="{Binding UpdateBool.BoolDayOfWeek, Converter={StaticResource InvertedBoolConverter}}" />
-        <controls:BoxViewColorsFromBool
+        <controls:BorderColorsFromBool
             Grid.Row="2"
             Grid.Column="3"
             Grid.ColumnSpan="2"
@@ -216,7 +217,7 @@
 
 
 
-        <controls:BoxViewColorsFromBool
+        <controls:BorderColorsFromBool
             Grid.Row="3"
             Grid.Column="0"
             Grid.ColumnSpan="2"
@@ -225,7 +226,7 @@
             IsGradient="True"
             Opacity="1"
             SelectedColor="{Binding UpdateBool.BoolPhoneNumber, Converter={StaticResource InvertedBoolConverter}}" />
-        <controls:BoxViewColorsFromBool
+        <controls:BorderColorsFromBool
             Grid.Row="3"
             Grid.Column="3"
             Grid.ColumnSpan="2"
@@ -264,7 +265,7 @@
 
 
 
-        <controls:BoxViewColorsFromBool
+        <controls:BorderColorsFromBool
             Grid.Row="4"
             Grid.Column="0"
             Grid.ColumnSpan="2"
@@ -273,7 +274,7 @@
             IsGradient="True"
             Opacity="1"
             SelectedColor="{Binding UpdateBool.BoolDescription, Converter={StaticResource InvertedBoolConverter}}" />
-        <controls:BoxViewColorsFromBool
+        <controls:BorderColorsFromBool
             Grid.Row="4"
             Grid.Column="3"
             Grid.ColumnSpan="2"
@@ -311,7 +312,7 @@
 
 
 
-        <controls:BoxViewColorsFromBool
+        <controls:BorderColorsFromBool
             Grid.Row="5"
             Grid.Column="0"
             Grid.ColumnSpan="2"
@@ -320,7 +321,7 @@
             IsGradient="True"
             Opacity="1"
             SelectedColor="{Binding UpdateBool.BoolResidentialAddress, Converter={StaticResource InvertedBoolConverter}}" />
-        <controls:BoxViewColorsFromBool
+        <controls:BorderColorsFromBool
             Grid.Row="5"
             Grid.Column="3"
             Grid.ColumnSpan="2"
@@ -361,7 +362,7 @@
 
 
 
-        <controls:BoxViewColorsFromBool
+        <controls:BorderColorsFromBool
             Grid.Row="6"
             Grid.Column="0"
             Grid.ColumnSpan="2"
@@ -370,7 +371,7 @@
             IsGradient="True"
             Opacity="1"
             SelectedColor="{Binding UpdateBool.BoolLatitude, Converter={StaticResource InvertedBoolConverter}}" />
-        <controls:BoxViewColorsFromBool
+        <controls:BorderColorsFromBool
             Grid.Row="6"
             Grid.Column="3"
             Grid.ColumnSpan="2"
@@ -411,8 +412,8 @@
 
 
 
-        <controls:BoxViewColorsFromBool
-            Grid.Row="6"
+        <controls:BorderColorsFromBool
+            Grid.Row="7"
             Grid.Column="0"
             Grid.ColumnSpan="2"
             BackgroundColorFirst="Green"
@@ -420,8 +421,8 @@
             IsGradient="True"
             Opacity="1"
             SelectedColor="{Binding UpdateBool.BoolLongitude, Converter={StaticResource InvertedBoolConverter}}" />
-        <controls:BoxViewColorsFromBool
-            Grid.Row="6"
+        <controls:BorderColorsFromBool
+            Grid.Row="7"
             Grid.Column="3"
             Grid.ColumnSpan="2"
             BackgroundColorFirst="Green"
@@ -430,22 +431,22 @@
             Opacity="1"
             SelectedColor="{Binding UpdateBool.BoolLongitude}" />
         <CheckBox
-            Grid.Row="6"
+            Grid.Row="7"
             Grid.Column="0"
             IsChecked="{Binding UpdateBool.BoolLongitude, Converter={StaticResource InvertedBoolConverter}}" />
         <controls:LabelAndTitle
             Title="Longitude"
-            Grid.Row="6"
+            Grid.Row="7"
             Grid.Column="1"
             Content="{Binding CustomerRoutesServer.Longitude}"
             VerticalOptions="Center" />
         <CheckBox
-            Grid.Row="6"
+            Grid.Row="7"
             Grid.Column="3"
             IsChecked="{Binding UpdateBool.BoolLongitude}" />
         <controls:LabelAndTitle
             Title="Longitude"
-            Grid.Row="6"
+            Grid.Row="7"
             Grid.Column="4"
             Content="{Binding CustomerRoutesUpdate.Longitude}"
             VerticalOptions="Center" />

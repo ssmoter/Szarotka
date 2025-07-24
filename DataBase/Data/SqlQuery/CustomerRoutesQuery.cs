@@ -63,68 +63,68 @@ namespace DataBase.Data.SqlQuery
 
         public static string GetFullProcedureWithoutWhere()
         {
-            string sql = @"
-        SELECT 
-            CustomerRoutes.Id,
-            CustomerRoutes.RoutesId,
-            CustomerRoutes.Name,
-            CustomerRoutes.Description,
-            CustomerRoutes.PhoneNumber,
-            CustomerRoutes.CreatedTicks,
-            CustomerRoutes.UpdatedTicks,
-            CustomerRoutes.Longitude,
-            CustomerRoutes.Latitude,
-            CustomerRoutes.IsDelete,
-            CustomerRoutes.UserCreatedId,
-            CustomerRoutes.UserUpdatedId,
-            json_object(
-                'Id', SelectedDayOfWeekRoutes.Id,
-                'CustomerId', SelectedDayOfWeekRoutes.CustomerId,
-                'Sunday', SelectedDayOfWeekRoutes.Sunday,
-                'SundayTicks', SelectedDayOfWeekRoutes.SundayTicks,
-                'Monday', SelectedDayOfWeekRoutes.Monday,
-                'MondayTicks', SelectedDayOfWeekRoutes.MondayTicks,
-                'Tuesday', SelectedDayOfWeekRoutes.Tuesday,
-                'TuesdayTicks', SelectedDayOfWeekRoutes.TuesdayTicks,
-                'Wednesday', SelectedDayOfWeekRoutes.Wednesday,
-                'WednesdayTicks', SelectedDayOfWeekRoutes.WednesdayTicks,
-                'Thursday', SelectedDayOfWeekRoutes.Thursday,
-                'ThursdayTicks', SelectedDayOfWeekRoutes.ThursdayTicks,
-                'Friday', SelectedDayOfWeekRoutes.Friday,
-                'FridayTicks', SelectedDayOfWeekRoutes.FridayTicks,
-                'Saturday', SelectedDayOfWeekRoutes.Saturday,
-                'SaturdayTicks', SelectedDayOfWeekRoutes.SaturdayTicks,
-                'Optional', SelectedDayOfWeekRoutes.Optional,
-                'CreatedTicks', SelectedDayOfWeekRoutes.CreatedTicks,
-                'UpdatedTicks', SelectedDayOfWeekRoutes.UpdatedTicks,
-                'UserCreatedId', SelectedDayOfWeekRoutes.UserCreatedId,
-                'UserUpdatedId', SelectedDayOfWeekRoutes.UserUpdatedId,
-                'IsDelete', SelectedDayOfWeekRoutes.IsDelete
-            ) AS JsonDayOfWeek,
-            json_object(
-                'Id', ResidentialAddress.Id,
-                'CustomerId', ResidentialAddress.CustomerId,
-                'Name', ResidentialAddress.Name,
-                'Surname', ResidentialAddress.Surname,
-                'Street', ResidentialAddress.Street,
-                'HouseNumber', ResidentialAddress.HouseNumber,
-                'ApartmentNumber', ResidentialAddress.ApartmentNumber,
-                'PostalCode', ResidentialAddress.PostalCode,
-                'City', ResidentialAddress.City,
-                'Country', ResidentialAddress.Country,
-                'CreatedTicks', ResidentialAddress.CreatedTicks,
-                'UpdatedTicks', ResidentialAddress.UpdatedTicks,
-                'UserCreatedId', ResidentialAddress.UserCreatedId,
-                'UserUpdatedId', ResidentialAddress.UserUpdatedId,
-                'IsDelete', ResidentialAddress.IsDelete
-            ) AS JsonAddress
-        FROM 
-            CustomerRoutes
-        LEFT JOIN 
-            SelectedDayOfWeekRoutes ON CustomerRoutes.Id = SelectedDayOfWeekRoutes.CustomerId
-        LEFT JOIN 
-            ResidentialAddress ON CustomerRoutes.Id = ResidentialAddress.CustomerId
-        ";
+            string sql = $@"
+                SELECT 
+                    {nameof(CustomerRoutes.Id)},
+                    {nameof(CustomerRoutes.RoutesId)},
+                    {nameof(CustomerRoutes.Name)},
+                    {nameof(CustomerRoutes.Description)},
+                    {nameof(CustomerRoutes.PhoneNumber)},
+                    {nameof(CustomerRoutes.CreatedTicks)},
+                    {nameof(CustomerRoutes.UpdatedTicks)},
+                    {nameof(CustomerRoutes.Longitude)},
+                    {nameof(CustomerRoutes.Latitude)},
+                    {nameof(CustomerRoutes.IsDelete)},
+                    {nameof(CustomerRoutes.UserCreatedId)},
+                    {nameof(CustomerRoutes.UserUpdatedId)},
+                    json_object(
+                        '{nameof(SelectedDayOfWeekRoutes.Id)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.Id)},
+                        '{nameof(SelectedDayOfWeekRoutes.CustomerId)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.CustomerId)},
+                        '{nameof(SelectedDayOfWeekRoutes.Sunday)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.Sunday)},
+                        '{nameof(SelectedDayOfWeekRoutes.SundayTicks)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.SundayTicks)},
+                        '{nameof(SelectedDayOfWeekRoutes.Monday)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.Monday)},
+                        '{nameof(SelectedDayOfWeekRoutes.MondayTicks)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.MondayTicks)},
+                        '{nameof(SelectedDayOfWeekRoutes.Tuesday)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.Tuesday)},
+                        '{nameof(SelectedDayOfWeekRoutes.TuesdayTicks)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.TuesdayTicks)},
+                        '{nameof(SelectedDayOfWeekRoutes.Wednesday)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.Wednesday)},
+                        '{nameof(SelectedDayOfWeekRoutes.WednesdayTicks)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.WednesdayTicks)},
+                        '{nameof(SelectedDayOfWeekRoutes.Thursday)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.Thursday)},
+                        '{nameof(SelectedDayOfWeekRoutes.ThursdayTicks)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.ThursdayTicks)},
+                        '{nameof(SelectedDayOfWeekRoutes.Friday)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.Friday)},
+                        '{nameof(SelectedDayOfWeekRoutes.FridayTicks)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.FridayTicks)},
+                        '{nameof(SelectedDayOfWeekRoutes.Saturday)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.Saturday)},
+                        '{nameof(SelectedDayOfWeekRoutes.SaturdayTicks)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.SaturdayTicks)},
+                        '{nameof(SelectedDayOfWeekRoutes.Optional)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.Optional)},
+                        '{nameof(SelectedDayOfWeekRoutes.CreatedTicks)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.CreatedTicks)},
+                        '{nameof(SelectedDayOfWeekRoutes.UpdatedTicks)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.UpdatedTicks)},
+                        '{nameof(SelectedDayOfWeekRoutes.UserCreatedId)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.UserCreatedId)},
+                        '{nameof(SelectedDayOfWeekRoutes.UserUpdatedId)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.UserUpdatedId)},
+                        '{nameof(SelectedDayOfWeekRoutes.IsDelete)}', {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.IsDelete)}
+                    ) AS JsonDayOfWeek,
+                    json_object(
+                        '{nameof(ResidentialAddress.Id)}', {nameof(ResidentialAddress)}.{nameof(ResidentialAddress.Id)},
+                        '{nameof(ResidentialAddress.CustomerId)}', {nameof(ResidentialAddress)}.{nameof(ResidentialAddress.CustomerId)},
+                        '{nameof(ResidentialAddress.Name)}', {nameof(ResidentialAddress)}.{nameof(ResidentialAddress.Name)},
+                        '{nameof(ResidentialAddress.Surname)}', {nameof(ResidentialAddress)}.{nameof(ResidentialAddress.Surname)},
+                        '{nameof(ResidentialAddress.Street)}', {nameof(ResidentialAddress)}.{nameof(ResidentialAddress.Street)},
+                        '{nameof(ResidentialAddress.HouseNumber)}', {nameof(ResidentialAddress)}.{nameof(ResidentialAddress.HouseNumber)},
+                        '{nameof(ResidentialAddress.ApartmentNumber)}', {nameof(ResidentialAddress)}.{nameof(ResidentialAddress.ApartmentNumber)},
+                        '{nameof(ResidentialAddress.PostalCode)}', {nameof(ResidentialAddress)}.{nameof(ResidentialAddress.PostalCode)},
+                        '{nameof(ResidentialAddress.City)}', {nameof(ResidentialAddress)}.{nameof(ResidentialAddress.City)},
+                        '{nameof(ResidentialAddress.Country)}', {nameof(ResidentialAddress)}.{nameof(ResidentialAddress.Country)},
+                        '{nameof(ResidentialAddress.CreatedTicks)}', {nameof(ResidentialAddress)}.{nameof(ResidentialAddress.CreatedTicks)},
+                        '{nameof(ResidentialAddress.UpdatedTicks)}', {nameof(ResidentialAddress)}.{nameof(ResidentialAddress.UpdatedTicks)},
+                        '{nameof(ResidentialAddress.UserCreatedId)}', {nameof(ResidentialAddress)}.{nameof(ResidentialAddress.UserCreatedId)},
+                        '{nameof(ResidentialAddress.UserUpdatedId)}', {nameof(ResidentialAddress)}.{nameof(ResidentialAddress.UserUpdatedId)},
+                        '{nameof(ResidentialAddress.IsDelete)}', {nameof(ResidentialAddress)}.{nameof(ResidentialAddress.IsDelete)}
+                    ) AS JsonAddress
+                FROM 
+                    {nameof(CustomerRoutes)}
+                LEFT JOIN 
+                    {nameof(SelectedDayOfWeekRoutes)} ON {nameof(CustomerRoutes)}.{nameof(CustomerRoutes.Id)} = {nameof(SelectedDayOfWeekRoutes)}.{nameof(SelectedDayOfWeekRoutes.CustomerId)}
+                LEFT JOIN 
+                    {nameof(ResidentialAddress)} ON {nameof(CustomerRoutes)}.{nameof(CustomerRoutes.Id)} = {nameof(ResidentialAddress)}.{nameof(ResidentialAddress.CustomerId)}
+                ";
             return sql;
         }
     }

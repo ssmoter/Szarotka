@@ -13,6 +13,9 @@
             }
         }
         private string updateId = "";
+        /// <summary>
+        /// Ustawiać tylko id głównych modeli
+        /// </summary>
         public string UpdateId
         {
             get => updateId;

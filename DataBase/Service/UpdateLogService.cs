@@ -8,7 +8,7 @@ namespace DataBase.Service
     {
         Task<UpdateLog> Insert(UpdateLog update);
         Task<IList<UpdateLog>> Select(Guid id);
-        Task<UpdateLog> SelectFirstFromServer();
+        Task<UpdateLog> SelectFirst(bool isServer, params UpdateEnum[] updateEnum);
     }
 
     public class UpdateLogService : IUpdateLogService
@@ -109,7 +109,7 @@ namespace DataBase.Service
             return results;
         }
 
-        public async Task<UpdateLog> SelectFirstFromServer()
+        public async Task<UpdateLog> SelectFirst(bool isServer, params UpdateEnum[] updateEnum)
         {
             string select = $@"SELECT 
                 {nameof(UpdateLog.Id)}, 
@@ -127,12 +127,35 @@ namespace DataBase.Service
             string sql = $@"
                 {select}
                 FROM {nameof(UpdateLog)}  
-                WHERE {nameof(UpdateLog.IsServer)} == {true}
-                ORDER By {nameof(UpdateLog.CreatedTicks)} DESC
-                LIMIT 1
+                WHERE {nameof(UpdateLog.IsServer)} == ?
             ";
 
-            var result = await _db.DataBaseAsync.QueryAsync<UpdateLog>(sql);
+            if (updateEnum.Length > 1)
+            {
+
+                sql += " AND (";
+                for (int i = 0; i < updateEnum.Length; i++)
+                {
+                    if (i > 0)
+                    {
+                        sql += " OR ";
+                    }
+                    sql += $@" {nameof(UpdateLog.UpdateEnum)} == ?";
+                }
+                sql += ")";
+            }
+            else
+            {
+                sql += $@" AND {nameof(UpdateLog.UpdateEnum)} == ?";
+            }
+
+
+            sql += $@"
+                ORDER By {nameof(UpdateLog.CreatedTicks)} DESC
+                LIMIT 1";
+
+            var parameters = (new object[] { isServer }).Concat(updateEnum.Cast<object>()).ToArray();
+            var result = await _db.DataBaseAsync.QueryAsync<UpdateLog>(sql, parameters);
 
             ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(result.Count, 0, "Don't find a record");
 
@@ -142,6 +165,16 @@ namespace DataBase.Service
 
     public static class UpdateLogServiceExtensions
     {
+        public static async Task<UpdateLog> SelectFirstFromDriversRoutes(this IUpdateLogService service, bool isServer)
+        {
+            UpdateLog result = await service.SelectFirst(isServer
+                , UpdateEnum.CustomerRoutes
+                , UpdateEnum.SelectedDayOfWeek
+                , UpdateEnum.ResidentialAddress);
+
+            return result;
+        }
+
         public static async Task<UpdateLog> Insert(this IUpdateLogService service, UpdateLog update, CustomerRoutes customer)
         {
             var json = System.Text.Json.JsonSerializer.Serialize(customer, Model.JsonContext.SzarotkaJsonSerializerContext.Default.CustomerRoutes);

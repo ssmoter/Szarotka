@@ -3,14 +3,26 @@
     x:Class="Inventory.Pages.RangeDay.RangeDayVWindows"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:Controls="clr-namespace:Shared.CustomControls;assembly=Shared"
     xmlns:Convert="clr-namespace:Shared.Helper;assembly=Shared"
     xmlns:VM="clr-namespace:Inventory.Pages.RangeDay"
     xmlns:VMD="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     Title="Zakres dat"
     x:DataType="VM:RangeDayVM">
 
     <ContentPage.Resources>
-        <Convert:TranslateDayOfWeek x:Key="ANGToPL" />
+        <ResourceDictionary>
+
+            <Convert:TranslateDayOfWeek x:Key="ANGToPL" />
+            <x:Array x:Key="PageSizeOptions" Type="{x:Type sys:Int32}">
+                <sys:Int32>7</sys:Int32>
+                <sys:Int32>14</sys:Int32>
+                <sys:Int32>31</sys:Int32>
+                <sys:Int32>0</sys:Int32>
+            </x:Array>
+
+        </ResourceDictionary>
     </ContentPage.Resources>
 
     <Shell.BackButtonBehavior>
@@ -56,8 +68,8 @@
                 <RoundRectangle CornerRadius="10" />
             </Border.StrokeShape>
 
-            <CollectionView ItemsSource="{Binding Sum}">
-                <CollectionView.ItemTemplate>
+            <Controls:CollectionViewPagination ItemsSourcePagination="{Binding Sum}">
+                <Controls:CollectionViewPagination.ItemTemplate>
                     <DataTemplate x:DataType="VM:RangeDayM">
 
                         <VerticalStackLayout>
@@ -105,8 +117,8 @@
                         </VerticalStackLayout>
 
                     </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                </Controls:CollectionViewPagination.ItemTemplate>
+            </Controls:CollectionViewPagination>
 
         </Border>
 
@@ -126,11 +138,12 @@
                     </Grid>
                 </Border>
 
-                <CollectionView
+                <Controls:CollectionViewPagination
                     Grid.Row="1"
                     Margin="5"
-                    ItemsSource="{Binding RangeDays}">
-                    <CollectionView.ItemTemplate>
+                    ItemsSourcePagination="{Binding RangeDays}"
+                    PageSizeOptions="{StaticResource PageSizeOptions}">
+                    <Controls:CollectionViewPagination.ItemTemplate>
                         <DataTemplate>
                             <Border>
                                 <Border.StrokeShape>
@@ -167,9 +180,9 @@
                                 </Grid>
                             </Border>
                         </DataTemplate>
-                    </CollectionView.ItemTemplate>
+                    </Controls:CollectionViewPagination.ItemTemplate>
 
-                </CollectionView>
+                </Controls:CollectionViewPagination>
 
             </Grid>
         </Border>

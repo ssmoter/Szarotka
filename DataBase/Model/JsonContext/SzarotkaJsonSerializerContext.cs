@@ -8,6 +8,10 @@ using System.Text.Json.Serialization;
 namespace DataBase.Model.JsonContext;
 
 [JsonSerializable(typeof(UpdateLog))]
+[JsonSerializable(typeof(UpdateLog[]))]
+[JsonSerializable(typeof(IList<UpdateLog>))]
+[JsonSerializable(typeof(List<UpdateLog>))]
+[JsonSerializable(typeof(IEnumerable<UpdateLog>))]
 
 [JsonSerializable(typeof(UpdateDifferences))]
 [JsonSerializable(typeof(UpdateDifferencesDriverRoutes))]
@@ -22,17 +26,22 @@ namespace DataBase.Model.JsonContext;
 [JsonSerializable(typeof(CustomerRoutes))]
 [JsonSerializable(typeof(CustomerRoutes[]))]
 [JsonSerializable(typeof(IList<CustomerRoutes>))]
+[JsonSerializable(typeof(List<CustomerRoutes>))]
 
 [JsonSerializable(typeof(ProductPrice))]
 [JsonSerializable(typeof(ProductPrices))]
 [JsonSerializable(typeof(Day))]
 [JsonSerializable(typeof(Day[]))]
 [JsonSerializable(typeof(IList<Day>))]
+[JsonSerializable(typeof(List<Day>))]
 
 [JsonSerializable(typeof(Driver))]
 [JsonSerializable(typeof(Product))]
 [JsonSerializable(typeof(ProductName))]
 [JsonSerializable(typeof(Cake))]
+[JsonSerializable(typeof(Cake[]))]
+[JsonSerializable(typeof(IList<Cake>))]
+[JsonSerializable(typeof(List<Cake>))]
 
 [JsonSerializable(typeof(EmptyProduct))]
 [JsonSerializable(typeof(EmptyProducts))]

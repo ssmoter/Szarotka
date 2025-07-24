@@ -1,15 +1,14 @@
 ﻿namespace Shared.CustomControls
 {
-    public partial class BoxViewColorsFromBool : BoxView
+    public partial class BorderColorsFromBool : Border
     {
         public static readonly BindableProperty SelectedColorProperty =
-        BindableProperty.Create(nameof(SelectedColor), typeof(bool), typeof(BoxViewColorsFromBool), propertyChanged: (bindable, oldValu, newValue) =>
+        BindableProperty.Create(nameof(SelectedColor), typeof(bool), typeof(BorderColorsFromBool), propertyChanged: (bindable, oldValu, newValue) =>
         {
-            if (bindable is BoxViewColorsFromBool view)
+            if (bindable is BorderColorsFromBool view)
             {
                 view.SelectOption();
             }
-
         });
 
         public bool SelectedColor
@@ -18,7 +17,7 @@
             set => SetValue(SelectedColorProperty, value);
         }
         public static readonly BindableProperty IsAnimationProperty =
-                BindableProperty.Create(nameof(IsAnimation), typeof(bool), typeof(BoxViewColorsFromBool), propertyChanged: (bindable, oldValu, newValue) =>
+                BindableProperty.Create(nameof(IsAnimation), typeof(bool), typeof(BorderColorsFromBool), propertyChanged: (bindable, oldValu, newValue) =>
                 {
                 });
 
@@ -28,11 +27,11 @@
             set => SetValue(IsAnimationProperty, value);
         }
         public static readonly BindableProperty BackgroundColorFirstProperty =
-        BindableProperty.Create(nameof(BackgroundColorFirst), typeof(Color), typeof(BoxViewColorsFromBool), propertyChanged: (bindable, oldValu, newValue) =>
+        BindableProperty.Create(nameof(BackgroundColorFirst), typeof(Color), typeof(BorderColorsFromBool), defaultValue: SetDefault(), propertyChanged: (bindable, oldValu, newValue) =>
         {
-            if (bindable is BoxViewColorsFromBool view)
+            if (bindable is BorderColorsFromBool view)
             {
-                view.SetGradient();
+                view.SelectOption();
             }
         });
 
@@ -44,11 +43,11 @@
 
 
         public static readonly BindableProperty BackgroundColorSecondProperty =
-        BindableProperty.Create(nameof(BackgroundColorSecond), typeof(Color), typeof(BoxViewColorsFromBool), propertyChanged: (bindable, oldValu, newValue) =>
+        BindableProperty.Create(nameof(BackgroundColorSecond), typeof(Color), typeof(BorderColorsFromBool), defaultValue: SetDefault(), propertyChanged: (bindable, oldValu, newValue) =>
         {
-            if (bindable is BoxViewColorsFromBool view)
+            if (bindable is BorderColorsFromBool view)
             {
-                view.SetGradient();
+                view.SelectOption();
             }
         });
 
@@ -59,10 +58,11 @@
         }
 
         public static readonly BindableProperty IsGradientProperty =
-        BindableProperty.Create(nameof(IsGradient), typeof(bool), typeof(BoxViewColorsFromBool), propertyChanged: (bindable, oldValu, newValue) =>
+        BindableProperty.Create(nameof(IsGradient), typeof(bool), typeof(BorderColorsFromBool), propertyChanged: (bindable, oldValu, newValue) =>
         {
-            if (bindable is BoxViewColorsFromBool view)
+            if (bindable is BorderColorsFromBool view)
             {
+                view.SelectOption();
             }
         });
 
@@ -72,6 +72,12 @@
             set => SetValue(IsGradientProperty, value);
         }
 
+        public BorderColorsFromBool()
+        {
+            SelectOption();
+
+            this.Stroke = SetDefault();
+        }
 
         private void SelectOption()
         {
@@ -92,7 +98,6 @@
 
         private LinearGradientBrush CreatedGradient()
         {
-            this.Color = Colors.Transparent;
             return new LinearGradientBrush
             {
                 StartPoint = new Point(0, 0.5),
@@ -119,7 +124,6 @@
         {
             var gradientBrush = CreatedGradient();
 
-            this.Color = Colors.Transparent;
             this.Background = gradientBrush;
 
             var stop = gradientBrush.GradientStops[0];
@@ -132,6 +136,23 @@
             ).Commit(this, "GradientAnim", length: 500, easing: Easing.CubicInOut);
         }
 
+        static private Color SetDefault()
+        {
+            Color grayColor200 = Colors.Gray;
+            Color grayColor500 = Colors.Gray;
+            if (Application.Current.Resources.TryGetValue("Gray200", out var value2) && value2 is Color grayColor2)
+            {
+                grayColor200 = grayColor2;
+            }
+            if (Application.Current.Resources.TryGetValue("Gray500", out var value5) && value5 is Color grayColor5)
+            {
+                grayColor500 = grayColor5;
+            }
+
+            return Application.Current.RequestedTheme != AppTheme.Light
+                    ? grayColor500
+                    : grayColor200;
+        }
 
     }
 }

@@ -608,7 +608,7 @@
 
                         <toolkit:Expander Grid.RowSpan="2" Grid.Column="1">
                             <toolkit:Expander.Header>
-                                <ImageButton Source="{AppThemeBinding Light={Static ImgPath:ImgFilte.OutlineFilterListBlack}, Dark={Static ImgPath:ImgFilte.OutlineFilterListWhite}}" />
+                                <ImageButton Source="{AppThemeBinding Light={Static ImgPath:ImgFilter.OutlineFilterListBlack}, Dark={Static ImgPath:ImgFilter.OutlineFilterListWhite}}" />
                             </toolkit:Expander.Header>
                             <toolkit:Expander.Content>
                                 <VerticalStackLayout>
@@ -618,16 +618,16 @@
                                         <ImageButton
                                             Command="{Binding SortCakesAfterPriceCommand}"
                                             RotationX="{Binding SingleDayM.CakeSortPriceRotateX}"
-                                            Source="{AppThemeBinding Light={Static ImgPath:ImgFilte.OutlineSortBlack},
-                                                                     Dark={Static ImgPath:ImgFilte.OutlineSortWhite}}" />
+                                            Source="{AppThemeBinding Light={Static ImgPath:ImgFilter.OutlineSortBlack},
+                                                                     Dark={Static ImgPath:ImgFilter.OutlineSortWhite}}" />
                                     </HorizontalStackLayout>
                                     <HorizontalStackLayout>
                                         <Label Text="Po dacie " VerticalOptions="Center" />
                                         <ImageButton
                                             Command="{Binding SortCakesAfterDateCommand}"
                                             RotationX="{Binding SingleDayM.CakeSortDateRotateX}"
-                                            Source="{AppThemeBinding Light={Static ImgPath:ImgFilte.OutlineSortBlack},
-                                                                     Dark={Static ImgPath:ImgFilte.OutlineSortWhite}}" />
+                                            Source="{AppThemeBinding Light={Static ImgPath:ImgFilter.OutlineSortBlack},
+                                                                     Dark={Static ImgPath:ImgFilter.OutlineSortWhite}}" />
                                     </HorizontalStackLayout>
                                 </VerticalStackLayout>
                             </toolkit:Expander.Content>

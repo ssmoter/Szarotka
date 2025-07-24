@@ -16,7 +16,6 @@
 
 
         <ScrollView Grid.Row="1">
-
             <VerticalStackLayout
                 Padding="30,0"
                 Spacing="25"
@@ -51,6 +50,7 @@
                     Text="Profil" />
 
             </VerticalStackLayout>
+
         </ScrollView>
 
     </Grid>

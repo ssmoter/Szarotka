@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
 using DataBase.Model.EntitiesRoutes;
+using DataBase.Service;
 
 using Shared.Data;
 using Shared.Helper;
@@ -17,13 +18,6 @@ public partial class DisplayCustomerVM : ObservableObject, IQueryAttributable
             if (customer is CustomerRoutes _customer)
             {
                 Customer = _customer;
-            }
-        }
-        if (query.TryGetValue(nameof(LastSelectedDayOfWeek), out object lastSelectedDayOfWeek))
-        {
-            if (lastSelectedDayOfWeek is SelectedDayOfWeekRoutes _lastSelectedDayOfWeek)
-            {
-                LastSelectedDayOfWeek = _lastSelectedDayOfWeek;
             }
         }
     }
@@ -49,13 +43,14 @@ public partial class DisplayCustomerVM : ObservableObject, IQueryAttributable
     }
     private readonly IAccessDataBase _db;
     private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _save;
-    public SelectedDayOfWeekRoutes LastSelectedDayOfWeek { get; set; }
+    private readonly DataBase.Service.IUpdateLogService _update;
 
-    public DisplayCustomerVM(IAccessDataBase db, DataBase.Data.Save.ISaveDriverRoutesAoT save)
+    public DisplayCustomerVM(IAccessDataBase db, DataBase.Data.Save.ISaveDriverRoutesAoT save, DataBase.Service.IUpdateLogService update)
     {
         _db = db;
         DisplayCustomerM ??= new();
         _save = save;
+        _update = update;
     }
 
 
@@ -97,10 +92,16 @@ public partial class DisplayCustomerVM : ObservableObject, IQueryAttributable
             customer.ResidentialAddress.IsDelete = delete;
             customer.DayOfWeek.IsDelete = delete;
 
-            var user = UserAfterLogin.User;
-            await _save.SaveCustomerRoutes(Customer, user.Id.ToByteArray());
-            await _save.SaveResidentialAddress(Customer.ResidentialAddress, user.Id.ToByteArray());
-            await _save.SaveSelectedDayOfWeekRoutes(Customer.DayOfWeek, user.Id.ToByteArray());
+            var user = UserAfterLogin.User.Id.ToByteArray();
+            await _save.SaveCustomerRoutes(Customer, user);
+            await _save.SaveResidentialAddress(Customer.ResidentialAddress, user);
+            await _save.SaveSelectedDayOfWeekRoutes(Customer.DayOfWeek, user);
+
+            await _update.Insert(new DataBase.Model.UpdateLog()
+            {
+                IsServer = false,
+            }, Customer);
+
         }
     }
 
@@ -130,20 +131,7 @@ public partial class DisplayCustomerVM : ObservableObject, IQueryAttributable
             await Shell.Current.GoToAsync($"{nameof(Pages.Customer.AddCustomer.AddCustomerV)}?",
                 new Dictionary<string, object>()
                 {
-                    [nameof(CustomerRoutes)] = new CustomerRoutes()
-                    {
-                        Id = new Guid(point.Id.ToByteArray()),
-                        RoutesId = new Guid(point.RoutesId.ToByteArray()),
-                        QueueNumber = point.QueueNumber,
-                        Name = point.Name,
-                        Description = point.Description,
-                        PhoneNumber = point.PhoneNumber,
-                        Created = point.Created,
-                        DayOfWeek = point.DayOfWeek,
-                        ResidentialAddress = point.ResidentialAddress,
-                        Longitude = point.Longitude,
-                        Latitude = point.Latitude,
-                    },
+                    [nameof(CustomerRoutes)] = new CustomerRoutes(point),
                     [nameof(Routes)] = new Routes() { Id = new Guid(point.RoutesId.ToByteArray()), }
                 });
 

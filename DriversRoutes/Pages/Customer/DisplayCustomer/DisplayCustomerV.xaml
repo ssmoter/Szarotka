@@ -7,6 +7,7 @@
     xmlns:CustomerData="clr-namespace:DataBase.Model.EntitiesRoutes;assembly=DataBase"
     xmlns:MapSmall="clr-namespace:DriversRoutes.Pages.Maps.MapSmall"
     xmlns:Vm="clr-namespace:DriversRoutes.Pages.Customer.DisplayCustomer"
+    xmlns:controls="clr-namespace:Shared.CustomControls;assembly=Shared"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     Title="{Binding Customer.Name}"
     x:DataType="Vm:DisplayCustomerVM">
@@ -26,27 +27,48 @@
 
         <ScrollView Grid.Row="{Binding DisplayCustomerM.ShowLocationThisCustomerInt}" Grid.RowSpan="2">
 
-            <Customer:CustomerSmallV
-                Name="{Binding Customer.Name}"
-                CreatedDate="{Binding Customer.Created}"
-                DayOfWeek="{Binding Customer.DayOfWeek}"
-                DeleteButtonCommand="{Binding DeleteCommand}"
-                DeleteButtonCommandParameter="{Binding Customer}"
-                DeleteIsVisible="True"
-                Description="{Binding Customer.Description}"
-                DisplayIsVisible="False"
-                EditButtonCommand="{Binding EditPinCommand}"
-                EditButtonCommandParameter="{Binding Customer}"
-                EditIsVisible="True"
-                Latitude="{Binding Customer.Latitude}"
-                LocationButtonCommand="{Binding LocationOfPinCommand}"
-                LocationButtonCommandParameter="{Binding Customer}"
-                LocationIsVisible="True"
-                Longitude="{Binding Customer.Longitude}"
-                PhoneNumber="{Binding Customer.PhoneNumber}"
-                QueueNumber="{Binding Customer.QueueNumber}"
-                ResidentialAddress="{Binding Customer.ResidentialAddress}" />
+            <Grid RowDefinitions="*,auto">
+                <Customer:CustomerSmallV
+                    Name="{Binding Customer.Name}"
+                    CreatedDate="{Binding Customer.Created}"
+                    DayOfWeek="{Binding Customer.DayOfWeek}"
+                    DeleteButtonCommand="{Binding DeleteCommand}"
+                    DeleteButtonCommandParameter="{Binding Customer}"
+                    DeleteIsVisible="True"
+                    Description="{Binding Customer.Description}"
+                    DisplayIsVisible="False"
+                    EditButtonCommand="{Binding EditPinCommand}"
+                    EditButtonCommandParameter="{Binding Customer}"
+                    EditIsVisible="True"
+                    IsDelete="{Binding Customer.IsDelete}"
+                    Latitude="{Binding Customer.Latitude}"
+                    LocationButtonCommand="{Binding LocationOfPinCommand}"
+                    LocationButtonCommandParameter="{Binding Customer}"
+                    LocationIsVisible="True"
+                    Longitude="{Binding Customer.Longitude}"
+                    PhoneNumber="{Binding Customer.PhoneNumber}"
+                    QueueNumber="{Binding Customer.QueueNumber}"
+                    ResidentialAddress="{Binding Customer.ResidentialAddress}" />
 
+                <Grid
+                    Grid.Row="1"
+                    Padding="5"
+                    RowDefinitions="*,*,*,*">
+
+                    <controls:LabelAndTitle
+                        Title="Utworzono"
+                        Grid.Row="0"
+                        Content="{Binding Customer.Created}" />
+                    <controls:NameOrIdUser Grid.Row="1" UserId="{Binding Customer.UserCreatedId}" />
+                    <controls:LabelAndTitle
+                        Title="Edytowano"
+                        Grid.Row="2"
+                        Content="{Binding Customer.Updated}" />
+                    <controls:NameOrIdUser Grid.Row="3" UserId="{Binding Customer.UserUpdatedId}" />
+
+                </Grid>
+
+            </Grid>
         </ScrollView>
 
     </Grid>

@@ -4,19 +4,19 @@ namespace DataBase.Data.Save
 {
     public static class SaveDriverRoutesAoTExtension
     {
-        public async static Task<bool> UpdateCustomersTime(this ISaveDriverRoutesAoT save, IEnumerable<SelectedDayOfWeekRoutes> selectedDays, SelectedDayOfWeekRoutes updateTime, SelectedDayOfWeekRoutes selectedTime)
+        public async static Task<IEnumerable<SelectedDayOfWeekRoutes>> UpdateCustomersTime(this ISaveDriverRoutesAoT save, IEnumerable<SelectedDayOfWeekRoutes> selectedDays, SelectedDayOfWeekRoutes updateTime, SelectedDayOfWeekRoutes selectedTime)
         {
             return await UpdateTime(save, selectedDays, updateTime, selectedTime);
         }
-        public async static Task<bool> UpdateCustomersTime(this ISaveDriverRoutesAoT save, List<SelectedDayOfWeekRoutes> selectedDays, SelectedDayOfWeekRoutes updateTime, SelectedDayOfWeekRoutes selectedTime)
+        public async static Task<IEnumerable<SelectedDayOfWeekRoutes>> UpdateCustomersTime(this ISaveDriverRoutesAoT save, List<SelectedDayOfWeekRoutes> selectedDays, SelectedDayOfWeekRoutes updateTime, SelectedDayOfWeekRoutes selectedTime)
         {
             return await UpdateTime(save, selectedDays, updateTime, selectedTime);
         }
-        public async static Task<bool> UpdateCustomersTime(this ISaveDriverRoutesAoT save, SelectedDayOfWeekRoutes[] selectedDays, SelectedDayOfWeekRoutes updateTime, SelectedDayOfWeekRoutes selectedTime)
+        public async static Task<IEnumerable<SelectedDayOfWeekRoutes>> UpdateCustomersTime(this ISaveDriverRoutesAoT save, SelectedDayOfWeekRoutes[] selectedDays, SelectedDayOfWeekRoutes updateTime, SelectedDayOfWeekRoutes selectedTime)
         {
             return await UpdateTime(save, selectedDays, updateTime, selectedTime);
         }
-        private async static Task<bool> UpdateTime(this ISaveDriverRoutesAoT save, IEnumerable<SelectedDayOfWeekRoutes> selectedDays, SelectedDayOfWeekRoutes updateTime, SelectedDayOfWeekRoutes selectedTime)
+        private async static Task<IEnumerable<SelectedDayOfWeekRoutes>> UpdateTime(this ISaveDriverRoutesAoT save, IEnumerable<SelectedDayOfWeekRoutes> selectedDays, SelectedDayOfWeekRoutes updateTime, SelectedDayOfWeekRoutes selectedTime)
         {
             IEnumerable<SelectedDayOfWeekRoutes> dayOfs = [];
             var timeZero = new TimeSpan(0);
@@ -130,12 +130,12 @@ namespace DataBase.Data.Save
             var task = new Task[dayOfs.Count()];
             int taskCount = 0;
             foreach (var item in dayOfs)
-            {
+            {                
                 task[taskCount] = save.SaveSelectedDayOfWeekRoutes(item, item.UserUpdatedId.ToByteArray());
                 taskCount++;
             }
             await Task.WhenAll(task);
-            return true;
+            return dayOfs;
         }
 
 

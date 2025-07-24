@@ -102,6 +102,7 @@ namespace DataBase.Helper
             get
             {
 #if ANDROID
+               // return "http://192.168.1.102:5021";
                 return "http://10.0.2.2:5021";
 #else
                 return "http://localhost:5021";

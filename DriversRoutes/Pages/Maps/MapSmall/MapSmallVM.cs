@@ -4,11 +4,13 @@ using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
 using DataBase.Model.EntitiesRoutes;
+using DataBase.Service;
 
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 
 using Shared.Data;
+using Shared.Helper;
 
 
 namespace DriversRoutes.Pages.Maps.MapSmall;
@@ -74,11 +76,14 @@ public partial class MapSmallVM : ObservableObject
     public Action<Polyline> AddRoute;
     public Func<MapSpan> VisibleRegion;
 
+
+    private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _save;
+    private readonly DataBase.Service.IUpdateLogService _update;
     private readonly IAccessDataBase _db;
     private readonly Data.GoogleApi.IRoutes _routes;
     private Pin _pin;
     CancellationTokenSource _tokenSource;
-    public MapSmallVM(IAccessDataBase db, Data.GoogleApi.IRoutes routes)
+    public MapSmallVM(IAccessDataBase db, Data.GoogleApi.IRoutes routes, DataBase.Data.Save.ISaveDriverRoutesAoT save, DataBase.Service.IUpdateLogService update)
     {
         MapSmallM = new();
         _tokenSource = new();
@@ -89,6 +94,8 @@ public partial class MapSmallVM : ObservableObject
             Label = "Nowa lokalizacja"
         };
         _routes = routes;
+        _save = save;
+        _update = update;
     }
 
 
@@ -278,8 +285,12 @@ public partial class MapSmallVM : ObservableObject
 
             MapSmallM.SaveLocation = false;
             MapSmallM.ChangeLocation = true;
-            await _db.DataBaseAsync.UpdateAsync(customer);
 
+            var user = UserAfterLogin.User.Id.ToByteArray();
+
+            await _save.SaveCustomerRoutes(customer, user);
+
+            await _update.Insert(new() { IsServer = false }, customer);
         }
         catch (Exception ex)
         {

@@ -3,6 +3,7 @@
     x:Class="Inventory.Pages.RangeDay.RangeDayV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:Controls="clr-namespace:Shared.CustomControls;assembly=Shared"
     xmlns:Convert="clr-namespace:Shared.Helper;assembly=Shared"
     xmlns:VM="clr-namespace:Inventory.Pages.RangeDay"
     xmlns:VMD="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
@@ -178,9 +179,10 @@
                     <RoundRectangle CornerRadius="10" />
                 </Border.StrokeShape>
                 <Grid RowDefinitions="*">
-                    <CollectionView Grid.Row="0" ItemsSource="{Binding RangeDays}">
 
-                        <CollectionView.HeaderTemplate>
+                    <Controls:CollectionViewPagination Grid.Row="0" ItemsSource="{Binding RangeDays}">
+
+                        <Controls:CollectionViewPagination.HeaderTemplate>
                             <DataTemplate>
                                 <Border Padding="5,5,5,0">
                                     <Border.StrokeShape>
@@ -212,9 +214,9 @@
                                     </Grid>
                                 </Border>
                             </DataTemplate>
-                        </CollectionView.HeaderTemplate>
+                        </Controls:CollectionViewPagination.HeaderTemplate>
 
-                        <CollectionView.ItemTemplate>
+                        <Controls:CollectionViewPagination.ItemTemplate>
                             <DataTemplate>
                                 <SwipeView>
                                     <SwipeView.RightItems>
@@ -255,9 +257,9 @@
                                     </Border>
                                 </SwipeView>
                             </DataTemplate>
-                        </CollectionView.ItemTemplate>
+                        </Controls:CollectionViewPagination.ItemTemplate>
 
-                    </CollectionView>
+                    </Controls:CollectionViewPagination>
 
                 </Grid>
             </Border>

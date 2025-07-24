@@ -115,7 +115,7 @@ namespace DataBaseUnitTest.DataSave
 
 
             var jsonInsert = System.Text.Json.JsonSerializer.Serialize(updateLogs[5]);
-            var dbLogs = await updateService.SelectFirstFromServer();
+            var dbLogs = await updateService.SelectFirst(true, DataBase.Model.UpdateEnum.CustomerRoutes, DataBase.Model.UpdateEnum.CustomerRoutes);
             var jsonDb = System.Text.Json.JsonSerializer.Serialize(dbLogs);
 
             Assert.Equal(jsonInsert, jsonDb);

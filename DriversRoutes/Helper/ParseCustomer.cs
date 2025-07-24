@@ -50,7 +50,12 @@ namespace DriversRoutes.Helper
             to.ResidentialAddress = from.CustomerRoutes.ResidentialAddress;
         }
 
-
+        public static MapsM ParseAsCustomerM(this CustomerRoutes from, ImageSource image)
+        {
+            var to = from.ParseAsCustomerM();
+            to.Pin.ImageSource = image;
+            return to;
+        }
         public static MapsM ParseAsCustomerM(this CustomerRoutes from)
         {
             if (from is null)

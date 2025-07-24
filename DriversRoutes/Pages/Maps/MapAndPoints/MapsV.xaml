@@ -230,117 +230,6 @@
 
 
                             <Grid ColumnDefinitions="*" RowDefinitions="auto,*">
-                                <VerticalStackLayout
-                                    Grid.Row="0"
-                                    Grid.Column="0"
-                                    VerticalOptions="Center">
-                                    <Grid
-                                        ColumnDefinitions="*"
-                                        HorizontalOptions="Center"
-                                        RowDefinitions="auto,auto,auto">
-
-                                        <Button
-                                            x:Name="YourLocation"
-                                            Grid.Row="0"
-                                            Padding="5"
-                                            x:DataType="VM:MapsVM"
-                                            Command="{Binding CurrentLocationNewPinCommand}"
-                                            HorizontalOptions="Fill"
-                                            Text="Dodaj z twoją lokalizacją" />
-
-
-                                        <Label
-                                            Grid.Row="1"
-                                            HorizontalOptions="Center"
-                                            Text="Dodaj z mapy:" />
-                                        <Button
-                                            Grid.Row="2"
-                                            Padding="0"
-                                            x:DataType="VM:MapsVM"
-                                            Command="{Binding ChangeAddLocationIsCommand}"
-                                            HorizontalOptions="Fill"
-                                            Text="{Binding AddLocationIsText}" />
-                                    </Grid>
-
-                                    <toolkit:Expander>
-                                        <toolkit:Expander.Header>
-                                            <Button
-                                                Padding="0"
-                                                x:DataType="Button"
-                                                BindingContext="{x:Reference YourLocation}"
-                                                HorizontalOptions="Center"
-                                                Text="Opcje mapy"
-                                                WidthRequest="{Binding Width}" />
-                                            <!--  Command="{Binding DisplayTypeOfMapCommand}"  -->
-                                        </toolkit:Expander.Header>
-                                        <toolkit:Expander.Content>
-                                            <Border Margin="5" StrokeThickness="2">
-                                                <Border.StrokeShape>
-                                                    <RoundRectangle CornerRadius="10" />
-                                                </Border.StrokeShape>
-                                                <!--  IsVisible="{Binding IsVisibleTypeOfMap}"  -->
-
-                                                <VerticalStackLayout Padding="0">
-                                                    <VerticalStackLayout>
-                                                        <RadioButton
-                                                            CheckedChanged="RadioButton_CheckedChanged"
-                                                            Content="Ulica"
-                                                            IsChecked="True"
-                                                            Value="0" />
-                                                        <RadioButton
-                                                            CheckedChanged="RadioButton_CheckedChanged"
-                                                            Content="Satelita"
-                                                            Value="1" />
-                                                        <RadioButton
-                                                            CheckedChanged="RadioButton_CheckedChanged"
-                                                            Content="Hybryda"
-                                                            Value="2" />
-                                                    </VerticalStackLayout>
-
-                                                    <Border />
-
-                                                    <Grid Margin="5" ColumnDefinitions="*,*">
-                                                        <Label
-                                                            Grid.Column="1"
-                                                            LineBreakMode="WordWrap"
-                                                            Text="Natężenie ruchu"
-                                                            VerticalOptions="Center" />
-                                                        <Switch
-                                                            Grid.Column="0"
-                                                            HorizontalOptions="Start"
-                                                            IsToggled="{Binding IsTrafficEnabled}" />
-                                                    </Grid>
-                                                </VerticalStackLayout>
-                                            </Border>
-
-                                        </toolkit:Expander.Content>
-
-                                    </toolkit:Expander>
-
-                                    <VerticalStackLayout IsVisible="{Binding RouteIsVisible}">
-                                        <Label>
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="Dystans: " />
-                                                    <Span Text="{Binding RouteDistance}" />
-                                                    <Span Text="km" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                        <Label>
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="Czas: " />
-                                                    <Span Text="{Binding RouteDuration.Hours}" />
-                                                    <Span Text="." />
-                                                    <Span Text="{Binding RouteDuration.Minutes}" />
-                                                    <Span Text="h" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                    </VerticalStackLayout>
-
-                                </VerticalStackLayout>
 
                                 <customer:CustomerSmallV
                                     Name="{Binding SelectedPoint.CustomerRoutes.Name}"
@@ -351,6 +240,7 @@
                                     DisplayButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:MapsVM}}, Path=DisplayDescriptionPinCommand}"
                                     DisplayButtonCommandParameter="{Binding SelectedPoint}"
                                     DisplayIsVisible="True"
+                                    IsDelete="{Binding SelectedPoint.CustomerRoutes.IsDelete}"
                                     LocationButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:MapsVM}}, Path=LocationOfPinCommand}"
                                     LocationButtonCommandParameter="{Binding SelectedPoint}"
                                     LocationIsVisible="True"
@@ -374,20 +264,169 @@
         </controls:MovingViewInSteps>
 
 
-        <VerticalStackLayout
+        <Grid
             HorizontalOptions="Start"
+            IsVisible="True"
+            MaximumWidthRequest="200"
+            RowDefinitions="*"
             VerticalOptions="Start"
             ZIndex="101">
+            <toolkit:Expander Command="{Binding RotateAnimationCommand}" CommandParameter="{x:Reference OptionsImage}">
+                <toolkit:Expander.Header>
+                    <Image
+                        x:Name="OptionsImage"
+                        HorizontalOptions="Start"
+                        MaximumHeightRequest="50"
+                        MaximumWidthRequest="50"
+                        Source="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
+                                                 Dark={Static img:TabBarImg.OptionBlack}}" />
+                </toolkit:Expander.Header>
+                <toolkit:Expander.Content>
+                    <Grid
+                        Padding="5"
+                        Background="{AppThemeBinding Light=AliceBlue,
+                                                     Dark=Grey}"
+                        RowSpacing="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
 
-            <Button
-                Margin="5,5,0,0"
-                x:DataType="VM:MapsVM"
-                Command="{Binding ChangeDayCommand}"
-                CornerRadius="50"
-                LineBreakMode="WordWrap"
-                Text="{Binding SelectedDayName}" />
+                        <Button
+                            Grid.Row="0"
+                            x:DataType="VM:MapsVM"
+                            Command="{Binding ChangeDayCommand}"
+                            LineBreakMode="WordWrap"
+                            Text="{Binding SelectedDayName}" />
 
-        </VerticalStackLayout>
+
+                        <Button
+                            x:Name="YourLocation"
+                            Grid.Row="1"
+                            Padding="5"
+                            x:DataType="VM:MapsVM"
+                            Command="{Binding CurrentLocationNewPinCommand}"
+                            HorizontalOptions="Fill"
+                            Text="Dodaj z twoją lokalizacją" />
+
+
+                        <HorizontalStackLayout Grid.Row="2">
+                            <Label
+                                Grid.Row="2"
+                                HorizontalOptions="Center"
+                                Text="Dodaj z mapy:"
+                                VerticalOptions="Center" />
+                            <CheckBox IsChecked="{Binding AddLocationIs}" />
+                        </HorizontalStackLayout>
+
+                        <Label
+                            Grid.Row="2"
+                            HorizontalOptions="Center"
+                            IsVisible="False"
+                            Text="Dodaj z mapy:" />
+                        <Button
+                            Grid.Row="3"
+                            Padding="0"
+                            x:DataType="VM:MapsVM"
+                            Command="{Binding ChangeAddLocationIsCommand}"
+                            HorizontalOptions="Fill"
+                            IsVisible="False"
+                            Text="{Binding AddLocationIsText}" />
+
+                        <toolkit:Expander Grid.Row="4">
+                            <toolkit:Expander.Header>
+                                <Button
+                                    Padding="0"
+                                    x:DataType="Button"
+                                    BindingContext="{x:Reference YourLocation}"
+                                    HorizontalOptions="Center"
+                                    Text="Opcje mapy"
+                                    WidthRequest="{Binding Width}" />
+                                <!--  Command="{Binding DisplayTypeOfMapCommand}"  -->
+                            </toolkit:Expander.Header>
+                            <toolkit:Expander.Content>
+                                <Border Margin="5" StrokeThickness="2">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10" />
+                                    </Border.StrokeShape>
+                                    <!--  IsVisible="{Binding IsVisibleTypeOfMap}"  -->
+
+                                    <VerticalStackLayout Padding="0">
+                                        <VerticalStackLayout>
+                                            <RadioButton
+                                                CheckedChanged="RadioButton_CheckedChanged"
+                                                Content="Ulica"
+                                                IsChecked="True"
+                                                Value="0" />
+                                            <RadioButton
+                                                CheckedChanged="RadioButton_CheckedChanged"
+                                                Content="Satelita"
+                                                Value="1" />
+                                            <RadioButton
+                                                CheckedChanged="RadioButton_CheckedChanged"
+                                                Content="Hybryda"
+                                                Value="2" />
+                                        </VerticalStackLayout>
+
+                                        <Border />
+
+                                        <Grid Margin="5" ColumnDefinitions="*,*">
+                                            <Label
+                                                Grid.Column="1"
+                                                LineBreakMode="WordWrap"
+                                                Text="Natężenie ruchu"
+                                                VerticalOptions="Center" />
+                                            <Switch
+                                                Grid.Column="0"
+                                                HorizontalOptions="Start"
+                                                IsToggled="{Binding IsTrafficEnabled}" />
+                                        </Grid>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                            </toolkit:Expander.Content>
+
+                        </toolkit:Expander>
+
+                        <Grid
+                            Grid.Row="5"
+                            IsVisible="{Binding RouteIsVisible}"
+                            RowDefinitions="*,*">
+                            <Label Grid.Row="0">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Dystans: " />
+                                        <Span Text="{Binding RouteDistance}" />
+                                        <Span Text="km" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                            <Label Grid.Row="1">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Czas: " />
+                                        <Span Text="{Binding RouteDuration.Hours}" />
+                                        <Span Text="." />
+                                        <Span Text="{Binding RouteDuration.Minutes}" />
+                                        <Span Text="h" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </Grid>
+
+
+
+                    </Grid>
+                </toolkit:Expander.Content>
+            </toolkit:Expander>
+
+
+
+        </Grid>
 
 
 

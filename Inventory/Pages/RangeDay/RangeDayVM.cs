@@ -14,6 +14,8 @@ using Shared.Data.File;
 using Shared.Pages.ExistingFiles;
 using Shared.Service;
 
+using System.Collections.ObjectModel;
+
 namespace Inventory.Pages.RangeDay;
 
 public partial class RangeDayVM : ObservableObject, IQueryAttributable
@@ -30,8 +32,8 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
     }
 
 
-    private RangeDayM[] rangeDays;
-    public RangeDayM[] RangeDays
+    private ObservableCollection<RangeDayM> rangeDays;
+    public ObservableCollection<RangeDayM> RangeDays
     {
         get => rangeDays;
         set
@@ -40,8 +42,8 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
         }
     }
 
-    private IList<RangeDayM> sum = [];
-    public IList<RangeDayM> Sum
+    private ObservableCollection<RangeDayM> sum = [];
+    public ObservableCollection<RangeDayM> Sum
     {
         get => sum;
         set
@@ -109,12 +111,12 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
                 var extension = Path.GetExtension(filesPath);
                 if (extension == FileHelper.jsonTyp)
                 {
-                    RangeDays = JsonFile.GetFileJson<RangeDayM[]>(filesPath, RangeDayMJsonSerializerContext.Default.RangeDayMArray);
+                    RangeDays = [..JsonFile.GetFileJson<RangeDayM[]>(filesPath, RangeDayMJsonSerializerContext.Default.RangeDayMArray)];
                     Calculate(RangeDays);
                 }
                 if (extension == FileHelper.csvTyp)
                 {
-                    RangeDays = CSVFile.GetFileCSV(filesPath);
+                    RangeDays = [..CSVFile.GetFileCSV(filesPath)];
                     Calculate(RangeDays);
                 }
 
@@ -175,7 +177,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
             Helper.RangeCalculations.GetUniqueDriver(value);
             UniqueDriver = Helper.RangeCalculations.UniqueDriver;
 
-            Sum = Helper.RangeCalculations.SumTotalOfRangeCalculateAverages(value);
+            Sum = [..Helper.RangeCalculations.SumTotalOfRangeCalculateAverages(value)];
             if (Sum.Count > 0)
             {
                 ProductsAll = Sum.MaxBy(x => x.Day.Products.Count).Day.Products;
@@ -212,7 +214,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
 
     string CreateFileName()
     {
-        if (RangeDays.Length == 1)
+        if (RangeDays.Count == 1)
         {
             return string.Join('_', "Szarotka", RangeDays[0].Day.Created.ToString("dd.MM.yyyy"));
         }
@@ -270,13 +272,13 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
                 if (response == null)
                     return;
                 var file = JsonFile.GetFileJson<RangeDayM[]>(response.FullPath, RangeDayMJsonSerializerContext.Default.RangeDayMArray);
-                RangeDays = file;
+                RangeDays = [..file];
                 Calculate(RangeDays);
                 EnableSave = true;
             }
             if (result == "Eksport")
             {
-                for (int i = 0; i < RangeDays.Length; i++)
+                for (int i = 0; i < RangeDays.Count; i++)
                 {
                     if (RangeDays[i].Day.Products.Count <= 0)
                         RangeDays[i].Day = await _selectDayService.GetDayProcedure(RangeDays[i].Day.Id);
@@ -335,13 +337,13 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
                 if (response == null)
                     return;
                 var file = CSVFile.GetFileCSV(response.FullPath);
-                RangeDays = file;
+                RangeDays = [.. file];
                 Calculate(RangeDays);
                 EnableSave = true;
             }
             if (result == "Eksport")
             {
-                for (int i = 0; i < RangeDays.Length; i++)
+                for (int i = 0; i < RangeDays.Count; i++)
                 {
                     if (RangeDays[i].Day.Products.Count <= 0)
                         RangeDays[i].Day = await _selectDayService.GetDayProcedure(RangeDays[i].Day.Id);
@@ -378,7 +380,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
     {
         try
         {
-            for (int i = 0; i < RangeDays.Length; i++)
+            for (int i = 0; i < RangeDays.Count; i++)
             {
                 await Task.Delay(1);
             }
@@ -401,7 +403,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
             if (result is PopupDateModel model)
             {
                 PopupDate = model;
-                RangeDays = await SelectDays(PopupDate.From, PopupDate.To, PopupDate.DriverId, PopupDate.MoreData);
+                RangeDays = [.. await SelectDays(PopupDate.From, PopupDate.To, PopupDate.DriverId, PopupDate.MoreData)];
                 // RangeDays = await SelectDays(0, DateTime.Today.Ticks, [], true);
 
                 Calculate(RangeDays);

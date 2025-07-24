@@ -1,13 +1,5 @@
-﻿using System.Text.Json.Serialization;
-
-namespace DriversRoutes.Model.Route
+﻿namespace DriversRoutes.Model.Route
 {
-    [JsonSerializable(typeof(ComputeRoutesRequest))]
-    [JsonSourceGenerationOptions(WriteIndented = true,
-    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-    PropertyNameCaseInsensitive = true)]
-    public partial class ComputeRoutesRequestJsonSerializerContext : JsonSerializerContext
-    { }
     public class ComputeRoutesRequest
     {
         /// <summary>

@@ -20,7 +20,7 @@
 
 
 
-    <Grid ColumnDefinitions="*,3*" RowDefinitions="*,*,*">
+    <Grid ColumnDefinitions="*,3*" RowDefinitions="*,*,*,auto">
 
         <MapSmall:MapSmallV
             Grid.Row="0"
@@ -36,13 +36,13 @@
         <ScrollView
             Grid.RowSpan="3"
             Grid.ColumnSpan="2"
-            HorizontalOptions="CenterAndExpand">
+            HorizontalOptions="Center">
 
             <Border
                 Margin="10"
                 Padding="10"
-                HorizontalOptions="FillAndExpand"
-                VerticalOptions="FillAndExpand">
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill">
 
                 <VerticalStackLayout>
 
@@ -518,7 +518,7 @@
                             <Entry
                                 Grid.Row="0"
                                 Grid.Column="1"
-                                HorizontalOptions="FillAndExpand"
+                                HorizontalOptions="Fill"
                                 Placeholder="Imię"
                                 Text="{Binding Customer.ResidentialAddress.Name}" />
 
@@ -530,7 +530,7 @@
                             <Entry
                                 Grid.Row="1"
                                 Grid.Column="1"
-                                HorizontalOptions="FillAndExpand"
+                                HorizontalOptions="Fill"
                                 Placeholder="Nazwisko"
                                 Text="{Binding Customer.ResidentialAddress.Surname}" />
 
@@ -542,7 +542,7 @@
                             <Entry
                                 Grid.Row="2"
                                 Grid.Column="1"
-                                HorizontalOptions="FillAndExpand"
+                                HorizontalOptions="Fill"
                                 Placeholder="Ulica"
                                 Text="{Binding Customer.ResidentialAddress.Street}" />
 
@@ -565,7 +565,7 @@
                             <Entry
                                 Grid.Row="4"
                                 Grid.Column="1"
-                                HorizontalOptions="FillAndExpand"
+                                HorizontalOptions="Fill"
                                 Placeholder="Numer mieszkania"
                                 Text="{Binding Customer.ResidentialAddress.ApartmentNumber}" />
 
@@ -628,16 +628,26 @@
 
 
                     <Border />
-                    <HorizontalStackLayout HorizontalOptions="Center">
-                        <Button Command="{Binding CancelAndExitCommand}" Text="Analuj" />
-                        <Button Command="{Binding SaveAndExitCommand}" Text="Zapisz" />
-                    </HorizontalStackLayout>
 
                 </VerticalStackLayout>
 
             </Border>
 
         </ScrollView>
+
+        <Grid
+            Grid.Row="3"
+            Grid.ColumnSpan="2"
+            ColumnDefinitions="*,*">
+            <Button
+                Grid.Column="0"
+                Command="{Binding CancelAndExitCommand}"
+                Text="Analuj" />
+            <Button
+                Grid.Column="1"
+                Command="{Binding SaveAndExitCommand}"
+                Text="Zapisz" />
+        </Grid>
 
         <MapSmall:MapSmallV
             Grid.Row="2"

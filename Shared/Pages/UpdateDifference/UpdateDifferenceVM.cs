@@ -1,9 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Model.EntitiesRoutes;
 using DataBase.Model.EntitiesServer;
 
 using Shared.Data;
+
+using System.Collections;
 
 namespace Shared.Pages.UpdateDifference
 {
@@ -16,9 +20,28 @@ namespace Shared.Pages.UpdateDifference
                 if (value is UpdateDifferences update)
                 {
                     UpdateDifferences = update;
+                    for (int i = 0; i < UpdateDifferences?.UpdateDifferencesInventory?.Count; i++)
+                    {
+                        UpdateDifferences.UpdateDifferencesInventory[i].Index = i + 1;
+                    }
+                    for (int i = 0; i < UpdateDifferences?.UpdateDifferencesDriverRoutes?.Count; i++)
+                    {
+                        UpdateDifferences.UpdateDifferencesDriverRoutes[i].Index = i + 1;
+                        UpdateDifferences.UpdateDifferencesDriverRoutes[i].UpdateSelect = new CustomerRoutesUpdate();
+                    }
+                }
+            }
+            if (query.TryGetValue(nameof(Action), out object actionValue))
+            {
+                if (actionValue is Action<IEnumerable> saveAction)
+                {
+                    _saveAction = saveAction;
                 }
             }
         }
+
+
+
 
         private UpdateDifferences updateDifferences;
         public UpdateDifferences UpdateDifferences
@@ -37,19 +60,22 @@ namespace Shared.Pages.UpdateDifference
             {
                 if (SetProperty(ref selectAllValue, value, nameof(SelectAllValue)))
                 {
-                    DriverRoutesUpdate.OnSelectedChange(value);
+                    foreach (var item in UpdateDifferences.UpdateDifferencesDriverRoutes)
+                    {
+                        DriverRoutesUpdate.SetUpdateBool(item.UpdateSelect, value);
+                    }
                 }
             }
         }
 
 
-        private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _saveRoutes;
+
+
+        private Action<IEnumerable> _saveAction;
         private readonly DataBase.Data.IAccessDataBase _db;
         private readonly ToolbarItem ToolbarItem;
-        public UpdateDifferenceVM(DataBase.Data.Save.ISaveDriverRoutesAoT saveRoutes, DataBase.Data.IAccessDataBase db)
+        public UpdateDifferenceVM(DataBase.Data.IAccessDataBase db)
         {
-            _saveRoutes = saveRoutes;
-
             _db = db;
             ToolbarItem = new ToolbarItem()
             {
@@ -63,10 +89,11 @@ namespace Shared.Pages.UpdateDifference
                 })
             };
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.SetToolbarItem(ToolbarItem);
+
         }
 
         [RelayCommand]
-        async Task Back()
+        static async Task Back()
         {
             var leave = await Shell.Current.DisplayAlert("Cofnij", "Podczas cofania wybrane rekordy nie zostaną zsynchronizowane. W prawym górnym rogu znajduje się opcja powrotu do tej strony.", "Tak", "Nie");
             if (leave)
@@ -87,37 +114,52 @@ namespace Shared.Pages.UpdateDifference
         {
             try
             {
-                var customers = DriverRoutesUpdate.OnReturnCustomerRoutes();
                 var result = await Shell.Current.DisplayAlert("Zapis", "Czy chcesz zapisać wybrane rekordy", "Tak", "Nie");
 
-                var user = Shared.Helper.UserAfterLogin.User.Id;
-                if (result)
+                if (!result)
                 {
-                    foreach (var item in customers)
-                    {
-                        //await _saveRoutes.SaveCustomerRoutes(item, user.ToByteArray());
-                        //await _saveRoutes.SaveResidentialAddress(item.ResidentialAddress, user.ToByteArray());
-                        //await _saveRoutes.SaveSelectedDayOfWeekRoutes(item.DayOfWeek, user.ToByteArray());
-                    }
-                    UpdateDifferences.UpdateDifferencesDriverRoutes?.Clear();
-                    UpdateDifferences.UpdateDifferencesInventory?.Clear();
-                    UpdateDifferences = null;
-                    if (Shell.Current.Navigation.NavigationStack.Count > 1)
-                    {
-                        await Shell.Current.GoToAsync("..");
-                    }
-                    else
-                    {
-                        await Shell.Current.GoToAsync("//MainPage");
-                    }
-                    Shared.Pages.FlyoutHeader.FlyoutHeaderVM.RemoveToolbarItem(ToolbarItem);
+                    return;
                 }
+
+                if (UpdateDifferences.UpdateDifferencesDriverRoutes is not null)
+                {
+                    var customersCount = UpdateDifferences.UpdateDifferencesDriverRoutes.Count;
+                    CustomerRoutes[] customers = new CustomerRoutes[customersCount];
+                    for (int i = 0; i < customersCount; i++)
+                    {
+                        customers[i] = DriverRoutesUpdate.ApplyUpdateBoolToCustomerRoutes(
+                            UpdateDifferences.UpdateDifferencesDriverRoutes[i].Server,
+                            UpdateDifferences.UpdateDifferencesDriverRoutes[i].Update,
+                            UpdateDifferences.UpdateDifferencesDriverRoutes[i].UpdateSelect);
+                    }
+                    if (customers is not null)
+                    {
+                        _saveAction?.Invoke(customers);
+                    }
+                }
+
+
+
+                UpdateDifferences.UpdateDifferencesDriverRoutes?.Clear();
+                UpdateDifferences.UpdateDifferencesInventory?.Clear();
+                UpdateDifferences = null;
+                if (Shell.Current.Navigation.NavigationStack.Count > 1)
+                {
+                    await Shell.Current.GoToAsync("..");
+                }
+                else
+                {
+                    await Shell.Current.GoToAsync("//MainPage");
+                }
+                Shared.Pages.FlyoutHeader.FlyoutHeaderVM.RemoveToolbarItem(ToolbarItem);
+                await Toast.Make("Zapisywanie zakończone").Show();
             }
             catch (Exception ex)
             {
                 _db.SaveLogExtension(ex);
             }
         }
+
 
     }
 }

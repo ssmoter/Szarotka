@@ -131,7 +131,7 @@ namespace ServerUnitTest.Requests
             token.Cancel();
 
             await Assert.ThrowsAsync<OperationCanceledException>(() =>
-                _driverRoutesCustomerRoutesRequests.GetCustomers(id.ToString(), [], token.Token)
+                _driverRoutesCustomerRoutesRequests.GetCustomers(id.ToString(), [],false, token.Token)
             );
         }
 

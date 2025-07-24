@@ -3,6 +3,7 @@
     x:Class="Shared.Pages.UpdateDifference.UpdateDifferenceV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Shared.CustomControls"
     xmlns:modelInventory="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
     xmlns:modelRoutes="clr-namespace:DataBase.Model.EntitiesRoutes;assembly=DataBase"
     xmlns:modelServer="clr-namespace:DataBase.Model.EntitiesServer;assembly=DataBase"
@@ -28,11 +29,41 @@
             Grid.Row="0"
             Grid.ColumnSpan="2"
             ColumnDefinitions="*,*"
-            RowDefinitions="*,*">
+            RowDefinitions="*,*,*">
             <Label
                 Grid.ColumnSpan="3"
                 HorizontalOptions="Center"
-                Text="Wybierz które wartości danych mają zostać zapisane" />
+                Text="Wybierz które wartości danych mają zostać zapisane." />
+            <Grid
+                Grid.Row="1"
+                Grid.ColumnSpan="3"
+                RowDefinitions="auto,auto">
+
+                <Label
+                    Grid.Row="0"
+                    HorizontalOptions="Center"
+                    IsVisible="{Binding UpdateDifferences.UpdateDifferencesDriverRoutes, Converter={StaticResource IsNotNullConverter}}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Ilość rekordów do poprawy " />
+                            <Span Text="{Binding UpdateDifferences.UpdateDifferencesDriverRoutes.Count}" />
+                            <Span Text="." />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Label
+                    Grid.Row="1"
+                    HorizontalOptions="Center"
+                    IsVisible="{Binding UpdateDifferences.UpdateDifferencesInventory, Converter={StaticResource IsNotNullConverter}}">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Ilość rekordów do poprawy " />
+                            <Span Text="{Binding UpdateDifferences.UpdateDifferencesInventory.Count}" />
+                            <Span Text="." />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </Grid>
 
             <Border
                 Grid.Row="2"
@@ -40,7 +71,7 @@
                 VerticalOptions="End" />
 
             <Grid
-                Grid.Row="1"
+                Grid.Row="2"
                 Grid.Column="1"
                 ColumnDefinitions="auto,*"
                 HorizontalOptions="Center">
@@ -55,7 +86,7 @@
                     VerticalOptions="Center" />
             </Grid>
             <Grid
-                Grid.Row="1"
+                Grid.Row="2"
                 Grid.Column="0"
                 ColumnDefinitions="auto,*"
                 HorizontalOptions="Center">
@@ -75,42 +106,48 @@
             <Button Command="{Binding SaveCommand}" Text="Zapisz" />
         </Grid>
 
-        <CollectionView
+
+        <Grid
             Grid.Row="1"
             Grid.Column="0"
-            Grid.ColumnSpan="2"
-            IsVisible="{Binding UpdateDifferences.UpdateDifferencesDriverRoutes, Converter={StaticResource IsNotNullConverter}}"
-            ItemsSource="{Binding UpdateDifferences.UpdateDifferencesDriverRoutes}">
+            Grid.ColumnSpan="2">
 
-            <CollectionView.ItemsLayout>
-                <LinearItemsLayout ItemSpacing="10" Orientation="Vertical" />
-            </CollectionView.ItemsLayout>
+            <controls:CollectionViewPagination IsVisible="{Binding UpdateDifferences.UpdateDifferencesDriverRoutes, Converter={StaticResource IsNotNullConverter}}" ItemsSourcePagination="{Binding UpdateDifferences.UpdateDifferencesDriverRoutes}">
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
+                <controls:CollectionViewPagination.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="10" Orientation="Vertical" />
+                </controls:CollectionViewPagination.ItemsLayout>
 
-                    <Grid RowDefinitions="*,auto">
+                <controls:CollectionViewPagination.ItemTemplate>
+                    <DataTemplate>
 
-                        <update:DriverRoutesUpdate
-                            Grid.Row="0"
-                            Margin="5"
-                            x:DataType="modelServer:UpdateDifferencesDriverRoutes"
-                            CustomerRoutesServer="{Binding Server}"
-                            CustomerRoutesUpdate="{Binding Update}" />
-                        <Border
-                            Grid.Row="1"
-                            Margin="0"
-                            Padding="0"
-                            StrokeThickness="2" />
-                    </Grid>
+                        <Grid x:DataType="modelServer:UpdateDifferencesDriverRoutes" RowDefinitions="auto,*,auto">
+
+                            <Label
+                                Grid.Row="0"
+                                HorizontalOptions="Center"
+                                Text="{Binding Index}" />
+
+                            <update:DriverRoutesUpdate
+                                Grid.Row="1"
+                                Margin="5"
+                                CustomerRoutesServer="{Binding Server}"
+                                CustomerRoutesUpdate="{Binding Update}"
+                                UpdateBool="{Binding UpdateSelect}" />
+                            <Border
+                                Grid.Row="2"
+                                Grid.ColumnSpan="2"
+                                Margin="0"
+                                Padding="0"
+                                StrokeThickness="2" />
+                        </Grid>
 
 
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
+                    </DataTemplate>
+                </controls:CollectionViewPagination.ItemTemplate>
 
-        </CollectionView>
-
-
+            </controls:CollectionViewPagination>
+        </Grid>
 
     </Grid>
 

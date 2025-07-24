@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace DriversRoutes.Data
 {
-    public class DrawIconOnMap : IDisposable, IDrawable
+    public partial class DrawIconOnMap : IDisposable, IDrawable
     {
         public int Number { get; set; }
         public Color ColorFill { get; set; } = new Color(234, 67, 53, 255);
@@ -24,6 +24,7 @@ namespace DriversRoutes.Data
             ColorFill = null;
             ColorBackground = null;
             Image?.Dispose();
+            DisposeImagePinStreams();
             GC.SuppressFinalize(this);
         }
 
@@ -173,16 +174,7 @@ namespace DriversRoutes.Data
         }
         public static ImageSource GetImagePin(int number)
         {
-            var pinSize = GetScale();
-            SkiaBitmapExportContext skiaBitmapExportContext = new(pinSize.Width, pinSize.Height, 1);
-            DrawIconOnMap drawIconOnMap = new()
-            {
-                Number = number,
-                ScaleX = pinSize.ScaleX,
-                ScaleY = pinSize.ScaleY,
-            };
-            var pin = ImageStream(skiaBitmapExportContext, drawIconOnMap);
-            return ImageSource.FromStream(() => skiaBitmapExportContext.Image.AsStream());
+            return GetImagePin(number, new Color(234, 67, 53, 255), new Color(179, 20, 18, 255));
         }
         public static ImageSource GetImagePin(int number, Color colorFill, Color colorBackground)
         {

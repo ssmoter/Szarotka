@@ -317,7 +317,7 @@ public partial class SelectedDayOfWeekRoutes : BaseEntities<Guid>
         }
     }
 
-    public SelectedDayOfWeekRoutes(SelectedDayOfWeekRoutes copy)
+    public SelectedDayOfWeekRoutes(SelectedDayOfWeekRoutes copy) : base(copy)
     {
         this.Id = copy.Id;
         this.Created = copy.Created;

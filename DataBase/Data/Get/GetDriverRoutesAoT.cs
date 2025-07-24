@@ -1,6 +1,8 @@
 ﻿using DataBase.Data.SqlQuery;
 using DataBase.Model.EntitiesRoutes;
 
+using System.Text;
+
 namespace DataBase.Data.Get
 {
     public interface IGetDriverRoutesAoT
@@ -20,7 +22,10 @@ namespace DataBase.Data.Get
 
         public async Task<IList<CustomerRoutes>> CustomerRoutes(string where, params object[] args)
         {
-            var sql = CustomerRoutesQuery.GetFullProcedureWithoutWhere() + where;
+            var sb = new StringBuilder();
+            sb.AppendLine(CustomerRoutesQuery.GetFullProcedureWithoutWhere());
+            sb.AppendLine(where);
+            var sql = sb.ToString();
             List<CustomerRoutesFromQuery> result = [];
             if (args is null)
             {
@@ -31,23 +36,23 @@ namespace DataBase.Data.Get
                 result = await _db.DataBaseAsync.QueryAsync<CustomerRoutesFromQuery>(sql, args);
             }
 
-            for (int i = 0; i < result.Count; i++)
+            foreach (CustomerRoutesFromQuery item in result)
             {
-                var dayOfWeek =
+                var dayOfWeek = !string.IsNullOrWhiteSpace(item.JsonDayOfWeek) ?
                     System.Text.Json.JsonSerializer.Deserialize(
-                        result[i].JsonDayOfWeek,
-                        DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.SelectedDayOfWeekRoutes);
-                var address =
+                        item.JsonDayOfWeek,
+                        DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.SelectedDayOfWeekRoutes) : null;
+                var address = !string.IsNullOrWhiteSpace(item.JsonAddress) ?
                     System.Text.Json.JsonSerializer.Deserialize(
-                        result[i].JsonAddress,
-                        DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.ResidentialAddress);
+                        item.JsonAddress,
+                        DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.ResidentialAddress) : null;
                 if (dayOfWeek is not null)
                 {
-                    result[i].DayOfWeek = dayOfWeek;
+                    item.DayOfWeek = dayOfWeek;
                 }
                 if (address is not null)
                 {
-                    result[i].ResidentialAddress = address;
+                    item.ResidentialAddress = address;
                 }
             }
             return [.. result.Select(x => x as CustomerRoutes)];

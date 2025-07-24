@@ -32,7 +32,7 @@ namespace DriversRoutes.Data.GoogleApi
             httpClient.DefaultRequestHeaders.Add("X-Goog-Api-Key", key);
         }
 
-        private void SetFieldMask(HttpClient httpClient, string fieldMask)
+        private static void SetFieldMask(HttpClient httpClient, string fieldMask)
         {
             httpClient.DefaultRequestHeaders.Remove("X-Goog-FieldMask");
             httpClient.DefaultRequestHeaders.Add("X-Goog-FieldMask", fieldMask);
@@ -53,8 +53,7 @@ namespace DriversRoutes.Data.GoogleApi
             SetKey(httpClient, _key);
             SetFieldMask(httpClient, fieldMask);
 
-
-            var result = await httpClient.PostAsJsonAsync(Uri, request, ComputeRoutesRequestJsonSerializerContext.Default.ComputeRoutesRequest, token);
+            using var result = await httpClient.PostAsJsonAsync(Uri, request, GoogleApiJsonSerializerContext.Default.ComputeRoutesRequest, token);
 
             var json = await result.Content.ReadAsStringAsync(token);
             if (!result.IsSuccessStatusCode)
@@ -80,7 +79,7 @@ namespace DriversRoutes.Data.GoogleApi
             SetKey(httpClient, _key);
             SetFieldMask(httpClient, fieldMask);
 
-            var result = await httpClient.PostAsJsonAsync(Uri, request, ComputeRoutesRequestJsonSerializerContext.Default.ComputeRoutesRequest, token);
+            using var result = await httpClient.PostAsJsonAsync(Uri, request, GoogleApiJsonSerializerContext.Default.ComputeRoutesRequest, token);
 
             if (!result.IsSuccessStatusCode)
             {
@@ -88,10 +87,9 @@ namespace DriversRoutes.Data.GoogleApi
                 throw new HttpRequestException(message: $"Błąd przy pobieraniu trasy{Environment.NewLine}{json}");
             }
 
-            var stream = await result.Content.ReadAsStreamAsync(token);
+            using var stream = await result.Content.ReadAsStreamAsync(token);
 
-
-            var response = await System.Text.Json.JsonSerializer.DeserializeAsync<Response>(stream, ResponseJsonSerializerContext.Default.Response, cancellationToken: token);
+            var response = await System.Text.Json.JsonSerializer.DeserializeAsync<Response>(stream, GoogleApiJsonSerializerContext.Default.Response, cancellationToken: token);
 
             return response;
         }

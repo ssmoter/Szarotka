@@ -98,14 +98,21 @@ namespace Shared.Data
             if (oldVersion < 2)
             {
                 await _db.DataBaseAsync.CreateTableAsync<LogsModel>();
-                await _db.DataBaseAsync.CreateTableAsync<Model.HelperTable>();
-                await _db.DataBaseAsync.CreateTableAsync<UpdateLog>();
 
                 progressBar += updateProgressBar;
                 oldVersion = 2;
                 updateAction?.Invoke(progressBar, oldVersion);
             }
+            if (oldVersion < 3)
+            {
+                await _db.DataBaseAsync.CreateTableAsync<LogsModel>();
+                await _db.DataBaseAsync.CreateTableAsync<Model.HelperTable>();
+                await _db.DataBaseAsync.CreateTableAsync<UpdateLog>();
 
+                progressBar += updateProgressBar;
+                oldVersion = 3;
+                updateAction?.Invoke(progressBar, oldVersion);
+            }
 
 
             updateAction?.Invoke(1, oldVersion);

@@ -6,41 +6,90 @@
     xmlns:Controls="clr-namespace:Shared.CustomControls;assembly=Shared"
     xmlns:Customer="clr-namespace:DriversRoutes.Pages.Customer.CustomerSmall"
     xmlns:CustomeroModel="clr-namespace:DataBase.Model.EntitiesRoutes;assembly=DataBase"
+    xmlns:ImgPath="clr-namespace:Shared.Helper.Img;assembly=Shared"
     xmlns:MapSmall="clr-namespace:DriversRoutes.Pages.Maps.MapSmall"
     xmlns:VM="clr-namespace:DriversRoutes.Pages.ListOfPoints"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     Title="{Binding Route.Name}"
     x:DataType="VM:ListOfPointsVM">
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
 
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+
+            <x:Array x:Key="PageSizeOptions" Type="{x:Type sys:Int32}">
+                <sys:Int32>10</sys:Int32>
+                <sys:Int32>20</sys:Int32>
+                <sys:Int32>50</sys:Int32>
+            </x:Array>
+
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+
+    <ContentPage.ToolbarItems>
+
+        <!--  IsEnabled="{Binding SaveData, Converter={StaticResource InvertedBoolConverter}}"  -->
+        <ToolbarItem
+            Command="{Binding SyncDataCommand}"
+            IsEnabled="False"
+            Order="Secondary"
+            Text="Synchronizuj" />
+        <ToolbarItem
+            Command="{Binding DownloadDataCommand}"
+            IsEnabled="{Binding SaveData, Converter={StaticResource InvertedBoolConverter}}"
+            Order="Secondary"
+            Text="Pobierz" />
+        <ToolbarItem
+            Command="{Binding SendDataCommand}"
+            IsEnabled="{Binding SaveData, Converter={StaticResource InvertedBoolConverter}}"
+            Order="Secondary"
+            Text="Wyślij" />
+
+        <ToolbarItem
+            Command="{Binding GenerateJsonFileCommand}"
+            IsEnabled="{Binding SaveData, Converter={StaticResource InvertedBoolConverter}}"
+            Order="Secondary"
+            Text="Eksportuj do pliku" />
+        <ToolbarItem
+            Command="{Binding GetFilesCommand}"
+            Order="Secondary"
+            Text="Przeglądaj Pliki" />
+
+        <ToolbarItem
+            Command="{Binding DiscardFromFileCommand}"
+            IsEnabled="{Binding SaveData}"
+            Order="Secondary"
+            Text="Cofnij" />
+        <ToolbarItem
+            Command="{Binding SaveFromFileCommand}"
+            IsEnabled="{Binding SaveData}"
+            Order="Secondary"
+            Text="Zapisz plik" />
+
+    </ContentPage.ToolbarItems>
 
 
     <Grid ColumnDefinitions="*,2*" RowDefinitions="auto,0.8*,*,1">
-        <VerticalStackLayout Grid.ColumnSpan="2">
-            <HorizontalStackLayout
-                Margin="2"
-                Padding="2"
-                HorizontalOptions="Center"
-                Spacing="5">
 
-                <HorizontalStackLayout IsVisible="{Binding RangeIsVisible}">
+        <ScrollView
+            Grid.ColumnSpan="2"
+            HorizontalOptions="Center"
+            Orientation="Horizontal">
 
-                    <Button Command="{Binding GenerateJsonFileCommand}" Text="Eksportuj" />
+            <Grid ColumnDefinitions="*" RowDefinitions="*">
 
-                    <Button Command="{Binding SelectDaysOfWeekCommand}" Text="Wybierz Zakres Dni" />
-                </HorizontalStackLayout>
+                <Button
+                    Grid.Column="0"
+                    Command="{Binding SelectDaysOfWeekCommand}"
+                    IsEnabled="{Binding SaveData, Converter={StaticResource InvertedBoolConverter}}"
+                    Text="Wybierz Zakres Dni" />
 
-                <HorizontalStackLayout IsVisible="{Binding SaveIsVisible}">
-
-                    <Button Command="{Binding DiscardFromFileCommand}" Text="Cofnij" />
-                    <Button Command="{Binding SaveFromFileCommand}" Text="Zapisz plik" />
-
-                </HorizontalStackLayout>
-
-                <Button Command="{Binding GetFilesCommand}" Text="Pliki" />
-
-            </HorizontalStackLayout>
-
-        </VerticalStackLayout>
+            </Grid>
+        </ScrollView>
 
 
         <MapSmall:MapSmallV
@@ -62,18 +111,30 @@
             IsRefreshing="{Binding CustomerListRefresh}">
 
 
-            <CollectionView
+
+            <Controls:CollectionViewPagination
                 Grid.Row="1"
                 Grid.RowSpan="2"
                 Grid.ColumnSpan="2"
-                IsEnabled="True"
-                ItemsSource="{Binding CustomerRoutes}">
+                ItemsSourcePagination="{Binding CustomerRoutes}"
+                PageSizeOptions="{StaticResource PageSizeOptions}">
 
-                <CollectionView.ItemTemplate>
+                <Controls:CollectionViewPagination.EmptyView>
+                    <Grid HorizontalOptions="Center" RowDefinitions=".2*,auto,*">
+                        <Image
+                            x:Name="OutlineSyncImage"
+                            Grid.Row="1"
+                            Source="{AppThemeBinding Light={Static ImgPath:FlyoutHeaderCustomContent.OutlineSyncBlack},
+                                                     Dark={Static ImgPath:FlyoutHeaderCustomContent.OutlineSyncWhite}}" />
+                        <Label Grid.Row="2" Text="Wczytywanie" />
+                    </Grid>
+                </Controls:CollectionViewPagination.EmptyView>
+
+                <Controls:CollectionViewPagination.ItemTemplate>
 
                     <DataTemplate>
 
-                        <StackLayout>
+                        <Grid>
 
                             <Customer:CustomerSmallV
                                 Name="{Binding Name}"
@@ -84,6 +145,7 @@
                                 DisplayButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListOfPointsVM}}, Path=DisplayPinCommand, x:DataType=VM:ListOfPointsVM}"
                                 DisplayButtonCommandParameter="{Binding .}"
                                 DisplayIsVisible="True"
+                                IsDelete="{Binding IsDelete}"
                                 Latitude="{Binding Latitude}"
                                 LocationButtonCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListOfPointsVM}}, Path=LocationOfPinCommand, x:DataType=VM:ListOfPointsVM}"
                                 LocationButtonCommandParameter="{Binding .}"
@@ -100,14 +162,13 @@
                                 RoutesButtonCommandParameter="{Binding .}"
                                 RoutesIsVisible="True" />
 
-                        </StackLayout>
-
+                        </Grid>
 
                     </DataTemplate>
 
-                </CollectionView.ItemTemplate>
+                </Controls:CollectionViewPagination.ItemTemplate>
 
-            </CollectionView>
+            </Controls:CollectionViewPagination>
 
 
 

@@ -71,6 +71,7 @@ namespace Shared.Pages.FlyoutHeader
             }
             if (view is not null)
             {
+                Shell.Current.FlyoutIsPresented = true;
                 CustomContent = view;
             }
         }

@@ -100,6 +100,17 @@ public partial class CustomerSmallV : ContentView
         get => (double?)GetValue(LatitudeProperty);
         set => SetValue(LatitudeProperty, value);
     }
+    public static readonly BindableProperty IsDeleteProperty
+        = BindableProperty.Create(nameof(IsDelete), typeof(bool), typeof(CustomerSmallV), propertyChanged: (bindable, oldValu, newValue) =>
+        {
+
+        });
+    public bool IsDelete
+    {
+        get => (bool)GetValue(IsDeleteProperty);
+        set => SetValue(IsDeleteProperty, value);
+    }
+
 
     public static readonly BindableProperty DayOfWeekProperty
     = BindableProperty.Create(nameof(DayOfWeek), typeof(SelectedDayOfWeekRoutes), typeof(CustomerSmallV), propertyChanged: (bindable, oldValu, newValue) =>

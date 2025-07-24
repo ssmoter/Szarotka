@@ -11,7 +11,7 @@ Content-Type: application/json
 {
     "Email": "user@example.com",
     "Password": "Password1!",
-    "RememberMe": 1
+    "RememberMe": 0
 }
 
 
@@ -23,14 +23,18 @@ GET {{Server_HostAddress}}/driver-routes/customer-route/7834daec-27b6-4ad1-8eda-
 Accept: application/json
 Authorization: Bearer {{token}}
 ###
-GET {{Server_HostAddress}}/driver-routes/customer-routes/baf3bb5a-59f6-5524-10d6-2d4c3c84b98b?selected_day=Monday&selected_day=4
+GET {{Server_HostAddress}}/driver-routes/customer-routes/baf3bb5a-59f6-5524-10d6-2d4c3c84b98b?selected_day=Monday&selected_day=4&isDelete=false
 Accept: application/json
 Authorization: Bearer {{token}}
 ###
 GET {{Server_HostAddress}}/driver-routes/customer-routes/baf3bb5a-59f6-5524-10d6-2d4c3c84b98b
 Accept: application/json
 Authorization: Bearer {{token}}
+###
 
+GET {{Server_HostAddress}}/driver-routes/customer-routes/?ids=7834daec-27b6-4ad1-8eda-dcfa77d118f4&ids=a5fbf13e-e931-4cfd-b847-c046978b1d1f
+Accept: application/json
+Authorization: Bearer {{token}}
 
 ###
 POST {{Server_HostAddress}}/driver-routes/update

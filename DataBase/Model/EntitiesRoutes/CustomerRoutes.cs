@@ -1,7 +1,5 @@
 ﻿using SQLite;
 
-using System.Text.Json.Serialization;
-
 namespace DataBase.Model.EntitiesRoutes;
 
 public partial class CustomerRoutes : BaseEntities<Guid>, IDisposable
@@ -148,7 +146,7 @@ public partial class CustomerRoutes : BaseEntities<Guid>, IDisposable
         ResidentialAddress ??= new();
     }
 
-    public CustomerRoutes(CustomerRoutes copy)
+    public CustomerRoutes(CustomerRoutes copy) : base(copy)
     {
         this.Id = copy.Id;
         this.Created = copy.Created;
@@ -179,3 +177,76 @@ public partial class CustomerRoutes : BaseEntities<Guid>, IDisposable
     }
 }
 
+
+public static class CustomerRoutesExtensions
+{
+    // Sorts by all enabled days in DayOfWeek, in the order of the days in the week
+    public static IEnumerable<CustomerRoutes> SortByEnabledDays(this IEnumerable<CustomerRoutes> list)
+    {
+        return list.OrderBy(x => GetFirstEnabledDayTicks(x.DayOfWeek));
+    }
+
+    // Sorts by a specific day, if enabled, otherwise puts at the end
+    public static IEnumerable<CustomerRoutes> SortByDay(this IEnumerable<CustomerRoutes> list, DayOfWeek dayOfWeek)
+    {
+        return list.OrderBy(x => IsDayEnabled(x.DayOfWeek, dayOfWeek) ? GetDayTicks(x.DayOfWeek, dayOfWeek) : long.MaxValue);
+    }
+
+    // Sorts by multiple days in order, using the first enabled day in the provided list
+    public static IEnumerable<CustomerRoutes> SortByDays(this IEnumerable<CustomerRoutes> list, params DayOfWeek[] days)
+    {
+        return list.OrderBy(x => GetFirstEnabledDayTicks(x.DayOfWeek, days));
+    }
+
+    private static bool IsDayEnabled(SelectedDayOfWeekRoutes dayOfWeek, DayOfWeek day)
+    {
+        return day switch
+        {
+            DayOfWeek.Sunday => dayOfWeek.Sunday,
+            DayOfWeek.Monday => dayOfWeek.Monday,
+            DayOfWeek.Tuesday => dayOfWeek.Tuesday,
+            DayOfWeek.Wednesday => dayOfWeek.Wednesday,
+            DayOfWeek.Thursday => dayOfWeek.Thursday,
+            DayOfWeek.Friday => dayOfWeek.Friday,
+            DayOfWeek.Saturday => dayOfWeek.Saturday,
+            _ => false
+        };
+    }
+
+    private static long GetDayTicks(SelectedDayOfWeekRoutes dayOfWeek, DayOfWeek day)
+    {
+        return day switch
+        {
+            DayOfWeek.Sunday => dayOfWeek.SundayTicks,
+            DayOfWeek.Monday => dayOfWeek.MondayTicks,
+            DayOfWeek.Tuesday => dayOfWeek.TuesdayTicks,
+            DayOfWeek.Wednesday => dayOfWeek.WednesdayTicks,
+            DayOfWeek.Thursday => dayOfWeek.ThursdayTicks,
+            DayOfWeek.Friday => dayOfWeek.FridayTicks,
+            DayOfWeek.Saturday => dayOfWeek.SaturdayTicks,
+            _ => long.MaxValue
+        };
+    }
+
+    // Returns the ticks of the first enabled day in the week (Sunday to Saturday)
+    private static long GetFirstEnabledDayTicks(SelectedDayOfWeekRoutes dayOfWeek)
+    {
+        foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
+        {
+            if (IsDayEnabled(dayOfWeek, day))
+                return GetDayTicks(dayOfWeek, day);
+        }
+        return long.MaxValue;
+    }
+
+    // Returns the ticks of the first enabled day in the provided days array
+    private static long GetFirstEnabledDayTicks(SelectedDayOfWeekRoutes dayOfWeek, DayOfWeek[] days)
+    {
+        foreach (var day in days)
+        {
+            if (IsDayEnabled(dayOfWeek, day))
+                return GetDayTicks(dayOfWeek, day);
+        }
+        return long.MaxValue;
+    }
+}

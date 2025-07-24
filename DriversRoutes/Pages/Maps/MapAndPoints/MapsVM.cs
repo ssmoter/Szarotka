@@ -26,11 +26,18 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
+        bool isLoaded = false;
+
         if (query.TryGetValue(nameof(Routes), out var routes))
         {
             if (routes is Routes _routes)
             {
                 Routes = _routes;
+                if (LastSelectedDayOfWeek is not null && Routes is not null)
+                {
+                    GetSelectedDaysAndForget(LastSelectedDayOfWeek);
+                    isLoaded = true;
+                }
             }
         }
         if (query.TryGetValue(nameof(MapsM), out var allPoints))
@@ -45,8 +52,14 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
             if (lastSelectedDayOfWeek is SelectedDayOfWeekRoutes _lastSelectedDayOfWeek)
             {
                 LastSelectedDayOfWeek = _lastSelectedDayOfWeek;
+                if (LastSelectedDayOfWeek is not null && Routes is not null && !isLoaded)
+                {
+                    GetSelectedDaysAndForget(LastSelectedDayOfWeek);
+                }
             }
         }
+
+
     }
 
     private ObservableCollection<MapsM> allPoints = [];
@@ -180,29 +193,38 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
 
     public CancellationTokenSource RoutesToken = new();
     public SelectedDayOfWeekRoutes LastSelectedDayOfWeek { get; set; }
-    public SelectedDayOfWeekRoutes LastSelectedDayOfWeekWhenNavigation { get; set; }
 
     public Routes Routes { get; set; }
-    public bool AddLocationIs { get; set; } = false;
+    private bool addLocationIs = false;
+    public bool AddLocationIs
+    {
+        get => addLocationIs;
+        set
+        {
+            if (SetProperty(ref addLocationIs, value, nameof(AddLocationIs))) { }
+        }
+    }
 
     const string _enable = "Dostępne";
     const string _block = "Zablokowane";
     private int _previousCustomerRoute = -1;
 
     public Action<MapSpan> GoToLocationAction;
-    public Action<Polyline> AddRoutesPolilineAction;
-    public Action ClearRoutesPolilineAction;
+    public Action<Polyline> AddRoutesPolylineAction;
+    public Action ClearRoutesPolylineAction;
     public Microsoft.Maui.Controls.Maps.Map GetMap { get; set; }
     private readonly IAccessDataBase _db;
     private readonly DataBase.Data.Get.IGetDriverRoutesAoT _get;
     private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _save;
     private readonly Data.GoogleApi.IRoutes _routes;
+    private readonly DataBase.Service.IUpdateLogService _update;
 
     #endregion
     public MapsVM(IAccessDataBase db,
                   Data.GoogleApi.IRoutes routes,
                   DataBase.Data.Get.IGetDriverRoutesAoT get,
-                  DataBase.Data.Save.ISaveDriverRoutesAoT save)
+                  DataBase.Data.Save.ISaveDriverRoutesAoT save,
+                  DataBase.Service.IUpdateLogService update)
     {
         _db = db;
         MapType = MapType.Street;
@@ -210,6 +232,7 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
         _routes = routes;
         _get = get;
         _save = save;
+        _update = update;
     }
 
     public void Dispose()
@@ -220,53 +243,55 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
 
     #region Method
 
+    private void UpdatePinNumber()
+    {
+        if (AllPoints is null)
+        {
+            return;
+        }
+        bool update = false;
+        int number = 0;
+        for (int i = 0; i < AllPoints.Count; i++)
+        {
+            number = i + 1;
+            if (AllPoints[i].CustomerRoutes.QueueNumber != number)
+            {
+                update = true;
+                break;
+            }
+        }
+        if (!update)
+        {
+            return;
+        }
+
+        number = 0;
+        var sorted = AllPoints.Select(x => x.CustomerRoutes).SortByDays(LastSelectedDayOfWeek.GetDayOfWeeks());
+        AllPoints.Clear();
+        foreach (var item in sorted)
+        {
+            number++;
+            item.QueueNumber = number;
+            var image = Data.DrawIconOnMap.GetImagePin(number);
+            AllPoints.Add(item.ParseAsCustomerM(image));
+#if !DEBUG
+#endif
+        }
+    }
+
     public void AutomaticUpdateLocation(Location location)
     {
         var radius = GetMap.VisibleRegion.Radius;
         GetMap.MoveToRegion(MapSpan.FromCenterAndRadius(location, radius));
     }
 
-    static string DisplaySelectedDayName(DayOfWeek day)
-    {
-        string name = $"Dzień:{Environment.NewLine}";
-
-        switch (day)
-        {
-            case DayOfWeek.Sunday:
-                name += "Niedziela";
-                break;
-            case DayOfWeek.Monday:
-                name += "Poniedziałek";
-                break;
-            case DayOfWeek.Tuesday:
-                name += "Wtorek";
-                break;
-            case DayOfWeek.Wednesday:
-                name += "Środa";
-                break;
-            case DayOfWeek.Thursday:
-                name += "Czwartek";
-                break;
-            case DayOfWeek.Friday:
-                name += "Piątek";
-                break;
-            case DayOfWeek.Saturday:
-                name += "Sobota";
-                break;
-            default:
-                name = "Nie wybrano dnia";
-                break;
-        }
-        return name;
-    }
-
     public void OnGoToLocation(MapSpan mapSpan)
     {
         GoToLocationAction?.Invoke(mapSpan);
     }
-    public void OnSetRoutesPolyline(Polyline poluline)
+    public void OnSetRoutesPolyline(Polyline polyline)
     {
-        AddRoutesPolilineAction?.Invoke(poluline);
+        AddRoutesPolylineAction?.Invoke(polyline);
     }
     public void OpenMoreDetail(Pin pin)
     {
@@ -287,7 +312,7 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
             {
                 AllPoints = await GetSelectedDays(week);
                 var first = AllPoints.FirstOrDefault();
-                if (first is not null)
+                if (first is not null && SelectedPoint is null)
                 {
                     SelectedPoint = first;
                 }
@@ -304,20 +329,16 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
         var points = new ObservableCollection<MapsM>();
         try
         {
-
-            int scaleX = (int)DeviceDisplay.Current.MainDisplayInfo.Density;
-            int scaleY = scaleX;
-
-            var width = 40 * scaleX;
-            var height = 58 * scaleY;
-
             var result = await _get.CustomerRoutes(Routes.Id, week.GetDayOfWeeks());
+            result = [.. result.SortByDays(week.GetDayOfWeeks())];
             for (int i = 0; i < result.Count; i++)
             {
+                int number = i + 1;
+                result[i].QueueNumber = number;
                 points.Add(result[i].ParseAsCustomerM());
 #if !DEBUG
-                    var image = Data.DrawIconOnMap.GetImagePin(points[i].CustomerRoutes.QueueNumber);
-                    points[i].Pin.ImageSource = image;
+                var image = Data.DrawIconOnMap.GetImagePin(points[i].CustomerRoutes.QueueNumber);
+                points[i].Pin.ImageSource = image;
 #endif
             }
             SelectedDayName = week.ToString();
@@ -375,7 +396,7 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
     {
         try
         {
-            ClearRoutesPolilineAction?.Invoke();
+            ClearRoutesPolylineAction?.Invoke();
             Data.ActionLocation.MapGeolocation.OnStopListeningLocation();
 
             var snackBar = new Snackbar()
@@ -662,7 +683,7 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
     {
         try
         {
-            var result = await MoveTimeOnCustomersV.ShowPopUp(Routes, selectDayMs, _get, _save);
+            var result = await MoveTimeOnCustomersV.ShowPopUp(Routes, selectDayMs, _get, _save, _update);
             if (result)
             {
                 GetSelectedDaysAndForget(LastSelectedDayOfWeek);
@@ -749,11 +770,40 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
     [RelayCommand]
     void ClearRoutes()
     {
-        ClearRoutesPolilineAction?.Invoke();
+        ClearRoutesPolylineAction?.Invoke();
         RouteIsVisible = false;
         Data.ActionLocation.MapGeolocation.OnStopListeningLocation();
     }
 
+
+
+    [RelayCommand]
+    static void RotateAnimation(VisualElement visualElement)
+    {
+        void StartRotation()
+        {
+            visualElement.Rotation = 0;
+            visualElement.Animate("RotateIcon", new Animation(
+                callback: d => visualElement.Rotation = d,
+                start: 0,
+                end: 360
+            ), length: 1000, easing: Easing.Linear, finished: (v, c) =>
+            {
+                if (!c) StartRotation();
+            });
+        }
+
+        var isRotate = visualElement.AnimationIsRunning("RotateIcon");
+        if (isRotate)
+        {
+            visualElement.AbortAnimation("RotateIcon");
+        }
+        else
+        {
+            StartRotation();
+        }
+
+    }
     #endregion
 
 }

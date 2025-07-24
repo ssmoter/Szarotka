@@ -11,7 +11,7 @@ Content-Type: application/json
 {
     "Email": "user@example.com",
     "Password": "Password1!",
-    "RememberMe": 1
+    "RememberMe": 0
 }
 
 
@@ -19,8 +19,14 @@ Content-Type: application/json
 
 @token = {{login.response.body.$.token}}
 
+###
+GET {{Server_HostAddress}}/update-logs/0197fab2-9a34-7ecc-b214-47e615c20400
+Accept: application/json
+Authorization: Bearer {{token}}
 
 
+
+###
 
 
 
