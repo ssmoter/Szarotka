@@ -59,23 +59,28 @@ namespace DataBase.Data.SqlQuery
         }
 
 
-        public static string GetNameAndPrice()
+        public static string GetNameAndPrice(bool isDelete = false)
         {
-            var sql = @"
-SELECT pn.*, 
+            var sql = $@"
+SELECT {nameof(ProductName)}.*, 
        COALESCE((
            SELECT json_group_array(json_object(
-               'Id', pp.Id,
-               'Price', pp.Price,
-               'CreatedTicks', pp.CreatedTicks,
-               'UpdatedTicks', pp.UpdatedTicks,
-               'UserCreatedId', pp.UserCreatedId,
-               'UserUpdatedId', pp.UserUpdatedId
+               '{nameof(ProductPrice.Id)}', {nameof(ProductPrice)}.{nameof(ProductPrice.Id)},
+               '{nameof(ProductPrice.Price)}', {nameof(ProductPrice.Price)},
+               '{nameof(ProductPrice.CreatedTicks)}', {nameof(ProductPrice)}.{nameof(ProductPrice.CreatedTicks)},
+               '{nameof(ProductPrice.UpdatedTicks)}', {nameof(ProductPrice)}.{nameof(ProductPrice.UpdatedTicks)},
+               '{nameof(ProductPrice.UserCreatedId)}', {nameof(ProductPrice)}.{nameof(ProductPrice.UserCreatedId)},
+               '{nameof(ProductPrice.UserUpdatedId)}', {nameof(ProductPrice)}.{nameof(ProductPrice.UserUpdatedId)},
+               '{nameof(ProductPrice.IsDelete)}', {nameof(ProductPrice)}.{nameof(ProductPrice.IsDelete)}
            )) 
-           FROM ProductPrice pp 
-           WHERE pp.ProductNameId = pn.Id
+           FROM {nameof(ProductPrice)}
+           WHERE {nameof(ProductPrice)}.{nameof(ProductPrice.ProductNameId)} = {nameof(ProductName)}.{nameof(ProductPrice.Id)}
        ), '[]') AS JsonPrice
-FROM ProductName pn;
+FROM {nameof(ProductName)}
+WHERE (
+{nameof(ProductName)}.{nameof(ProductName.IsDelete)} == {isDelete}
+OR {nameof(ProductName)}.{nameof(ProductName.IsDelete)} IS NULL
+);
 ";
 
             return sql;

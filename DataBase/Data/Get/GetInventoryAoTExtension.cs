@@ -13,7 +13,7 @@ namespace DataBase.Data.Get
                 throw new ArgumentNullException(nameof(id));
             }
 
-            var where = "WHERE D.Id = ?";
+            var where = $"WHERE {nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.Id)} = ?";
 
             var result = await get.Days(where, id);
 
@@ -27,10 +27,11 @@ namespace DataBase.Data.Get
                 throw new ArgumentNullException(nameof(selectedDateString));
             }
 
-            var where = @"
-WHERE D.SelectedDateString = ?
+            var where = $@"
+WHERE 
+{nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.SelectedDateString)} = ?
 AND
-D.UserCreatedId = ?";
+{nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.UserCreatedId)} = ?";
 
             var result = await get.Days(where, selectedDateString, userId);
             return result.FirstOrDefault();
@@ -46,7 +47,7 @@ D.UserCreatedId = ?";
             }
             if (to > 0)
             {
-                where.AppendLine(" D.SelectedDateTicks >= ? AND D.SelectedDateTicks <= ? ");
+                where.AppendLine($" {nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.SelectedDateTicks)} >= ? AND {nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.SelectedDateTicks)} <= ? ");
             }
             for (int i = 0; i < userIds.Count; i++)
             {
@@ -56,12 +57,19 @@ D.UserCreatedId = ?";
                     {
                         where.Append(" AND ");
                     }
-
-                    where.AppendLine(" ( D.UserCreatedId = ? ");
+                    where.AppendLine(" ( ");
+                    where.Append(nameof(Model.EntitiesInventory.Day));
+                    where.Append('.');
+                    where.Append(nameof(Model.EntitiesInventory.Day.UserCreatedId));
+                    where.Append(" = ? ");
                 }
                 if (i > 0)
                 {
-                    where.AppendLine(" OR D.UserCreatedId = ? ");
+                    where.AppendLine(" OR ");
+                    where.Append(nameof(Model.EntitiesInventory.Day));
+                    where.Append('.');
+                    where.Append(nameof(Model.EntitiesInventory.Day.UserCreatedId));
+                    where.Append(" = ? ");
                 }
             }
             if (userIds.Count > 0)

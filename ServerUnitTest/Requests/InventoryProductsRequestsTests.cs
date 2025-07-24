@@ -29,7 +29,7 @@ namespace ServerUnitTest.Requests
         {
             var product = Array.Empty<(ProductName name, IList<ProductPrice> prices)>();
 
-            _mockGet.Setup(x => x.EmptyProducts()).ReturnsAsync(product);
+            _mockGet.Setup(x => x.EmptyProducts(false)).ReturnsAsync(product);
 
             var result = await _inventoryProductsRequests.GetEmptyProducts();
 
@@ -41,11 +41,11 @@ namespace ServerUnitTest.Requests
         {
             var product = Array.Empty<(ProductName name, IList<ProductPrice> prices)>();
 
-            _mockGet.Setup(x => x.EmptyProducts()).ReturnsAsync(product);
+            _mockGet.Setup(x => x.EmptyProducts(false)).ReturnsAsync(product);
             CancellationTokenSource token = new CancellationTokenSource();
             token.Cancel();
 
-            await Assert.ThrowsAsync<OperationCanceledException>(() => _inventoryProductsRequests.GetEmptyProducts(token.Token));
+            await Assert.ThrowsAsync<OperationCanceledException>(() => _inventoryProductsRequests.GetEmptyProducts(false, token.Token));
         }
     }
 }

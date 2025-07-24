@@ -84,87 +84,92 @@ namespace DataBase.Data.SqlQuery
 
         public static string GetFullDaysProcedureWithoutWhere()
         {
-            string sql = @"
+            string sql = $@"
 
 SELECT 
-  D.SelectedDateString,
-  D.SelectedDateTicks,
-  D.TotalPriceProducts,
-  D.TotalPriceCake,
-  D.TotalPrice,
-  D.TotalPriceCorrect,
-  D.TotalPriceAfterCorrect,
-  D.TotalPriceMoney,
-  D.TotalPriceDifference,
-  D.Description,
-  D.DriverGuid,
-  D.Id,
-  D.CreatedTicks,
-  D.UpdatedTicks,
-  D.UserCreatedId,
-  D.UserUpdatedId,
+  {nameof(Day)}.{nameof(Day.SelectedDateString)},
+  {nameof(Day)}.{nameof(Day.SelectedDateTicks)},
+  {nameof(Day)}.{nameof(Day.TotalPriceProducts)},
+  {nameof(Day)}.{nameof(Day.TotalPriceCake)},
+  {nameof(Day)}.{nameof(Day.TotalPrice)},
+  {nameof(Day)}.{nameof(Day.TotalPriceCorrect)},
+  {nameof(Day)}.{nameof(Day.TotalPriceAfterCorrect)},
+  {nameof(Day)}.{nameof(Day.TotalPriceMoney)},
+  {nameof(Day)}.{nameof(Day.TotalPriceDifference)},
+  {nameof(Day)}.{nameof(Day.Description)},
+  {nameof(Day)}.{nameof(Day.DriverGuid)},
+  {nameof(Day)}.{nameof(Day.Id)},
+  {nameof(Day)}.{nameof(Day.CreatedTicks)},
+  {nameof(Day)}.{nameof(Day.UpdatedTicks)},
+  {nameof(Day)}.{nameof(Day.UserCreatedId)},
+  {nameof(Day)}.{nameof(Day.IsDelete)},
+  {nameof(Day)}.{nameof(Day.UserUpdatedId)},
   (
     SELECT json_group_array(
       json_object(
-        'Id', P.Id,
-        'PriceTotal', P.PriceTotal,
-        'PriceTotalCorrect', P.PriceTotalCorrect,
-        'PriceTotalAfterCorrect', P.PriceTotalAfterCorrect,
-        'DayId', P.DayId,
-        'ProductNameId', P.ProductNameId,
-        'ProductPriceId', P.ProductPriceId,
-        'Description', P.Description,
-        'Number', P.Number,
-        'NumberEdit', P.NumberEdit,
-        'NumberReturn', P.NumberReturn,
-        'CreatedTicks', P.CreatedTicks,
-        'UpdatedTicks', P.UpdatedTicks,
-        'UserCreatedId',P.UserCreatedId,
-        'UserUpdatedId',P.UserUpdatedId,
-        'Name', json_object(
-          'Id', PN.Id,
-          'Name', PN.Name,
-          'Description', PN.Description,
-          'Img', PN.Img,
-          'Arrangement', PN.Arrangement,
-          'CreatedTicks', PN.CreatedTicks,
-          'UpdatedTicks', PN.UpdatedTicks,
-          'UserCreatedId', PN.UserCreatedId,
-          'UserUpdatedId', PN.UserUpdatedId
+        '{nameof(Product.Id)}', {nameof(Product)}.{nameof(Product.Id)},
+        '{nameof(Product.PriceTotal)}', {nameof(Product)}.{nameof(Product.PriceTotal)},
+        '{nameof(Product.PriceTotalCorrect)}', {nameof(Product)}.{nameof(Product.PriceTotalCorrect)},
+        '{nameof(Product.PriceTotalAfterCorrect)}', {nameof(Product)}.{nameof(Product.PriceTotalAfterCorrect)},
+        '{nameof(Product.DayId)}', {nameof(Product)}.{nameof(Product.DayId)},
+        '{nameof(Product.ProductNameId)}', {nameof(Product)}.{nameof(Product.ProductNameId)},
+        '{nameof(Product.ProductPriceId)}', {nameof(Product)}.{nameof(Product.ProductPriceId)},
+        '{nameof(Product.Description)}', {nameof(Product)}.{nameof(Product.Description)},
+        '{nameof(Product.Number)}', {nameof(Product)}.{nameof(Product.Number)},
+        '{nameof(Product.NumberEdit)}', {nameof(Product)}.{nameof(Product.NumberEdit)},
+        '{nameof(Product.NumberReturn)}', {nameof(Product)}.{nameof(Product.NumberReturn)},
+        '{nameof(Product.CreatedTicks)}', {nameof(Product)}.{nameof(Product.CreatedTicks)},
+        '{nameof(Product.UpdatedTicks)}', {nameof(Product)}.{nameof(Product.UpdatedTicks)},
+        '{nameof(Product.UserCreatedId)}',{nameof(Product)}.{nameof(Product.UserCreatedId)},
+        '{nameof(Product.IsDelete)}',{nameof(Product)}.{nameof(Product.IsDelete)},
+        '{nameof(Product.UserUpdatedId)}',{nameof(Product)}.{nameof(Product.UserUpdatedId)},
+        '{nameof(Product.Name)}', json_object(
+          '{nameof(ProductName.Id)}', {nameof(ProductName)}.{nameof(ProductName.Id)},
+          '{nameof(ProductName.Name)}', {nameof(ProductName)}.{nameof(ProductName.Name)},
+          '{nameof(ProductName.Description)}', {nameof(ProductName)}.{nameof(ProductName.Description)},
+          '{nameof(ProductName.Img)}', {nameof(ProductName)}.{nameof(ProductName.Img)},
+          '{nameof(ProductName.Arrangement)}', {nameof(ProductName)}.{nameof(ProductName.Arrangement)},
+          '{nameof(ProductName.CreatedTicks)}', {nameof(ProductName)}.{nameof(ProductName.CreatedTicks)},
+          '{nameof(ProductName.UpdatedTicks)}', {nameof(ProductName)}.{nameof(ProductName.UpdatedTicks)},
+          '{nameof(ProductName.UserCreatedId)}', {nameof(ProductName)}.{nameof(ProductName.UserCreatedId)},
+          '{nameof(ProductName.IsDelete)}', {nameof(ProductName)}.{nameof(ProductName.IsDelete)},
+          '{nameof(ProductName.UserUpdatedId)}', {nameof(ProductName)}.{nameof(ProductName.UserUpdatedId)}
         ),
         'Price', json_object(
-          'Id', PP.Id,
-          'ProductNameId', PP.ProductNameId,
-          'Price', PP.Price,
-          'CreatedTicks', PP.CreatedTicks,
-          'UpdatedTicks', PP.UpdatedTicks,
-          'UserUpdatedId', PP.UserCreatedId,
-          'UserCreatedId', PP.UserUpdatedId
+          '{nameof(ProductPrice.Id)}', {nameof(ProductPrice)}.{nameof(ProductPrice.Id)},
+          '{nameof(ProductPrice.ProductNameId)}', {nameof(ProductPrice)}.{nameof(ProductPrice.ProductNameId)},
+          '{nameof(ProductPrice.Price)}', {nameof(ProductPrice)}.{nameof(ProductPrice.Price)},
+          '{nameof(ProductPrice.CreatedTicks)}', {nameof(ProductPrice)}.{nameof(ProductPrice.CreatedTicks)},
+          '{nameof(ProductPrice.UpdatedTicks)}', {nameof(ProductPrice)}.{nameof(ProductPrice.UpdatedTicks)},
+          '{nameof(ProductPrice.UserCreatedId)}', {nameof(ProductPrice)}.{nameof(ProductPrice.UserCreatedId)},
+          '{nameof(ProductPrice.IsDelete)}', {nameof(ProductPrice)}.{nameof(ProductPrice.IsDelete)},
+          '{nameof(ProductPrice.UserUpdatedId)}', {nameof(ProductPrice)}.{nameof(ProductPrice.UserUpdatedId)}
         )
       )
     )
-    FROM Product P
-    LEFT JOIN ProductName PN ON PN.Id = P.ProductNameId
-    LEFT JOIN ProductPrice PP ON PP.Id = P.ProductPriceId
-    WHERE P.DayId = D.Id
+    FROM {nameof(Product)}
+    LEFT JOIN {nameof(ProductName)} ON {nameof(ProductName)}.{nameof(ProductName.Id)} = {nameof(Product)}.{nameof(Product.ProductNameId)}
+    LEFT JOIN {nameof(ProductPrice)} ON {nameof(ProductPrice)}.{nameof(ProductPrice.Id)} = {nameof(Product)}.{nameof(Product.ProductPriceId)}
+    WHERE {nameof(Product)}.{nameof(Product.DayId)} = {nameof(Day)}.{nameof(Day.Id)}
   ) AS JsonProducts,
   (
     SELECT json_group_array(
       json_object(
-        'IsSell', C.IsSell,
-        'Price', C.Price,
-        'DayId', C.DayId,
-        'Id', C.Id,
-        'CreatedTicks', C.CreatedTicks,
-        'UpdatedTicks', C.UpdatedTicks,
-        'UserCreatedId', C.UserCreatedId,
-        'UserUpdatedId', C.UserUpdatedId
+        '{nameof(Cake.IsSell)}', {nameof(Cake)}.{nameof(Cake.IsSell)},
+        '{nameof(Cake.Price)}', {nameof(Cake)}.{nameof(Cake.Price)},
+        '{nameof(Cake.DayId)}', {nameof(Cake)}.{nameof(Cake.DayId)},
+        '{nameof(Cake.Id)}', {nameof(Cake)}.{nameof(Cake.Id)},
+        '{nameof(Cake.CreatedTicks)}', {nameof(Cake)}.{nameof(Cake.CreatedTicks)},
+        '{nameof(Cake.UpdatedTicks)}', {nameof(Cake)}.{nameof(Cake.UpdatedTicks)},
+        '{nameof(Cake.UserCreatedId)}', {nameof(Cake)}.{nameof(Cake.UserCreatedId)},
+        '{nameof(Cake.IsDelete)}', {nameof(Cake)}.{nameof(Cake.IsDelete)},
+        '{nameof(Cake.UserUpdatedId)}', {nameof(Cake)}.{nameof(Cake.UserUpdatedId)}
       )
     )
-    FROM Cake C
-    WHERE C.DayId = D.Id
+    FROM {nameof(Cake)}
+    WHERE {nameof(Cake)}.{nameof(Cake.DayId)} = {nameof(Day)}.{nameof(Day.Id)}
   ) AS JsonCakes
-FROM Day D
+FROM {nameof(Day)}
 
 ";
             return sql;

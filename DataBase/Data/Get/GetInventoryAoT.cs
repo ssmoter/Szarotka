@@ -6,7 +6,7 @@ namespace DataBase.Data.Get
     public interface IGetInventoryAoT
     {
         Task<IList<Day>> Days(string where, params object[] args);
-        Task<IList<(ProductName, IList<ProductPrice>)>> EmptyProducts();
+        Task<IList<(ProductName, IList<ProductPrice>)>> EmptyProducts(bool isDelete = false);
     }
 
     public class GetInventoryAoT(IAccessDataBase db) : IGetInventoryAoT
@@ -47,9 +47,9 @@ namespace DataBase.Data.Get
 
             return [.. result.Select(x => x as Day)];
         }
-        public async Task<IList<(ProductName, IList<ProductPrice>)>> EmptyProducts()
+        public async Task<IList<(ProductName, IList<ProductPrice>)>> EmptyProducts(bool isDelete = false)
         {
-            var sql = ProductNameQuery.GetNameAndPrice();
+            var sql = ProductNameQuery.GetNameAndPrice(isDelete);
 
             var result = await _db.DataBaseAsync.QueryAsync<ProductNameAndPrice>(sql);
 

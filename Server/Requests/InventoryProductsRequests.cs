@@ -6,7 +6,7 @@ namespace Server.Requests
 {
     public interface IInventoryProductsRequests
     {
-        Task<IResult> GetEmptyProducts(CancellationToken token = default);
+        Task<IResult> GetEmptyProducts(bool isDelete = false,CancellationToken token = default);
     }
 
     public class InventoryProductsRequests : IInventoryProductsRequests
@@ -20,13 +20,13 @@ namespace Server.Requests
         }
 
 
-        public async Task<IResult> GetEmptyProducts(CancellationToken token = default)
+        public async Task<IResult> GetEmptyProducts(bool isDelete = false,CancellationToken token = default)
         {
             try
             {
                 token.ThrowIfCancellationRequested();
 
-                IList<(ProductName, IList<ProductPrice>)> product = await _getInventoryAoT.EmptyProducts();
+                IList<(ProductName, IList<ProductPrice>)> product = await _getInventoryAoT.EmptyProducts(isDelete);
 
                 var emptyProducts = new EmptyProducts(product);
 

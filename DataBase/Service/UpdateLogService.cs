@@ -24,7 +24,20 @@ namespace DataBase.Service
 
         public async Task<UpdateLog> Insert(UpdateLog update)
         {
-            string sql = $@"INSERT INTO {nameof(UpdateLog)} 
+
+            string sqlSelect = $@"
+SELECT *
+FROM {nameof(UpdateLog)}
+WHERE {nameof(UpdateLog)}.{nameof(UpdateLog.UpdateId)} == ?
+AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - ? ) <= ?
+";
+            var time = _timeService.UtcNow();
+            var halfHour = TimeSpan.FromMinutes(30).Ticks;
+
+            var exists = await _db.DataBaseAsync.QueryAsync<UpdateLog>(sqlSelect, update.UpdateId, time.Ticks, halfHour);
+
+
+            string sqlInsert = $@"INSERT INTO {nameof(UpdateLog)} 
                 (
                     {nameof(UpdateLog.Id)},
                     {nameof(UpdateLog.UpdateEnum)}, 
@@ -35,8 +48,7 @@ namespace DataBase.Service
                     {nameof(UpdateLog.UserCreatedId)}, 
                     {nameof(UpdateLog.UserUpdatedId)},
                     {nameof(UpdateLog.JsonUpdate)},
-                    {nameof(UpdateLog.IsServer)}
-                    
+                    {nameof(UpdateLog.IsServer)}                    
                 ) 
                 VALUES 
                 (
@@ -50,10 +62,24 @@ namespace DataBase.Service
                     @{nameof(UpdateLog.UserUpdatedId)},
                     @{nameof(UpdateLog.JsonUpdate)},
                     @{nameof(UpdateLog.IsServer)}
-                )";
+                )
+            ON CONFLICT({nameof(UpdateLog.Id)}) DO UPDATE SET
+                {nameof(UpdateLog.UpdateEnum)} = @{nameof(UpdateLog.UpdateEnum)},
+                {nameof(UpdateLog.UpdateId)} = @{nameof(UpdateLog.UpdateId)},
+                {nameof(UpdateLog.UpdatedTicks)} = @{nameof(UpdateLog.UpdatedTicks)},
+                {nameof(UpdateLog.IsDelete)} = @{nameof(UpdateLog.IsDelete)},
+                {nameof(UpdateLog.UserUpdatedId)} = @{nameof(UpdateLog.UserUpdatedId)},
+                {nameof(UpdateLog.JsonUpdate)} = @{nameof(UpdateLog.JsonUpdate)};
+                {nameof(UpdateLog.IsServer)} = @{nameof(UpdateLog.IsServer)};
+";
 
-            var time = _timeService.UtcNow();
-
+            if (exists?.Count > 0)
+            {
+                update.Id = exists[0].Id;
+                update.UserCreatedId = exists[0].UserCreatedId;
+                update.CreatedTicks = exists[0].CreatedTicks;
+                update.Created = time;
+            }
             if (update.Id == Guid.Empty)
             {
                 update.Id = Guid.CreateVersion7();
@@ -61,7 +87,7 @@ namespace DataBase.Service
                 update.Updated = time;
             }
 
-            await _db.DataBaseAsync.ExecuteAsync(sql,
+            await _db.DataBaseAsync.ExecuteAsync(sqlInsert,
                 update.Id,
                 (int)update.UpdateEnum,
                 update.UpdateId,
