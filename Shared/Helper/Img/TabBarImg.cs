@@ -2,6 +2,8 @@
 {
     public static class TabBarImg
     {
+        public static string MainBlack { get => "home_24dp_black.png"; }
+        public static string MainWhite { get => "home_24dp_white.png"; }
         public static string MapBlack { get => "map_24dp_black.png"; }
         public static string InventoryBlack { get => "inventory_24dp_black.png"; }
         public static string MapWhite { get => "map_24dp_white.png"; }

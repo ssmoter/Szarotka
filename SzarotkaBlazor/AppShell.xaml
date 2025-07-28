@@ -49,7 +49,11 @@
 
 
 
-        <ShellContent Title="Home" ContentTemplate="{DataTemplate local:MainPage}" />
+        <ShellContent
+            Title="Home"
+            ContentTemplate="{DataTemplate local:MainPage}"
+            Icon="{AppThemeBinding Light={Static img:TabBarImg.MainBlack},
+                                   Dark={Static img:TabBarImg.MainWhite}}" />
 
         <ShellContent
             Title="Inwentarz"

@@ -40,9 +40,6 @@
 	  <MauiXaml Update="Pages\Options\CreateTable\CreateTableV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\Options\EditDriver\EditDriverV.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="Pages\PopupCalculator\PopupCalculatorV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

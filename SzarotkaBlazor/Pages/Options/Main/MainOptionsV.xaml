@@ -33,16 +33,15 @@
 
                     <Button
                         Command="{Binding ChangeDisplayOptionsCommand}"
-                        CommandParameter="{x:Static Enums:ListOfEnums+TypOfOptions.Main}"
+                        CommandParameter="{x:Static VM:TypOfOptions.Main}"
                         Text="Ogólne" />
-
                     <Button
                         Command="{Binding ChangeDisplayOptionsCommand}"
-                        CommandParameter="{x:Static Enums:ListOfEnums+TypOfOptions.Inventory}"
+                        CommandParameter="{x:Static VM:TypOfOptions.Inventory}"
                         Text="Inwentaryzacja" />
                     <Button
                         Command="{Binding ChangeDisplayOptionsCommand}"
-                        CommandParameter="{x:Static Enums:ListOfEnums+TypOfOptions.DriversRoutes}"
+                        CommandParameter="{x:Static VM:TypOfOptions.DriversRoutes}"
                         IsVisible="{OnPlatform Android=true,
                                                Default=false}"
                         Text="Mapy" />
@@ -89,7 +88,6 @@
                             VerticalOptions="Center" />
                     </Grid>
 
-
                     <VerticalStackLayout HorizontalOptions="Center">
                         <Border Padding="5">
                             <Border.StrokeShape>
@@ -101,6 +99,18 @@
                                 SelectedItem="{Binding IsSelectedTheme}" />
                         </Border>
                     </VerticalStackLayout>
+
+                    <Border>
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Label
+                                HorizontalTextAlignment="Center"
+                                Text="Adres serwera:"
+                                VerticalOptions="Center" />
+                            <Entry IsReadOnly="True" Text="{Binding ServerUrl}" />
+                            <Button Command="{Binding UpdateServerUrlCommand}" Text="Aktualizuj" />
+                        </VerticalStackLayout>
+                    </Border>
+
                 </VerticalStackLayout>
             </Border>
 

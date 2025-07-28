@@ -27,52 +27,6 @@
                 </Label.FormattedText>
             </Label>
 
-
-
-            <Border>
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                <VerticalStackLayout>
-                    <Label HorizontalOptions="Center" Text="Kierowcy:" />
-                    <HorizontalStackLayout HorizontalOptions="Center">
-
-                        <Button
-                            Command="{Binding CreateDriverCommand}"
-                            HorizontalOptions="Center"
-                            Text="Dodaj" />
-                        <Button
-                            Command="{Binding SelectDriverCommand}"
-                            HorizontalOptions="Center"
-                            Text="Wybierz" />
-                        <Button
-                            Command="{Binding EditDriverCommand}"
-                            HorizontalOptions="Center"
-                            Text="Edytuj" />
-                    </HorizontalStackLayout>
-                </VerticalStackLayout>
-            </Border>
-
-
-
-            <!--<HorizontalStackLayout HorizontalOptions="Center">
-
-                <Button
-                    Command="{Binding CreateTablesCommand}"
-                    HorizontalOptions="Center"
-                    Text="Wygeneruj Tabele" />
-                <Button
-                    Command="{Binding CreateNewTablesCommand}"
-                    HorizontalOptions="Center"
-                    Text="Wygeneruj brakujące Tabele" />
-            </HorizontalStackLayout>-->
-
-
-
-
-
-
-
             <Label
                 HorizontalOptions="Center"
                 Text="Stworzone tabele:"

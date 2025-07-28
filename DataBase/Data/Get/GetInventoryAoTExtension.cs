@@ -17,7 +17,7 @@ namespace DataBase.Data.Get
 
             var result = await get.Days(where, id);
 
-            return result.FirstOrDefault();
+            return result?.FirstOrDefault();
         }
         public static async Task<Day?> DaySelectedDateString(
             this IGetInventoryAoT get, string selectedDateString, Guid userId)
@@ -34,7 +34,7 @@ AND
 {nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.UserCreatedId)} = ?";
 
             var result = await get.Days(where, selectedDateString, userId);
-            return result.FirstOrDefault();
+            return result?.FirstOrDefault();
         }
 
 
@@ -94,6 +94,30 @@ AND
 
             var result = await get.Days(where.ToString(), args);
             return result;
+        }
+
+
+        public static async Task<IList<Product>> EmptyProducts(this IGetInventoryAoT get, bool isDelete = false)
+        {
+            IList<(ProductName name, IList<ProductPrice> price)> result = await get.EmptyProductsNameAndPrices(isDelete);
+
+            int count = result.Count;
+            Product[] products = new Product[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                products[i] = new();
+                products[i].Name = result[i].name;
+                products[i].ProductNameId = result[i].name.Id;
+                ProductPrice? price = result[i].price?.FirstOrDefault();
+                if (price is not null)
+                {
+                    products[i].Price = result[i].price[0];
+                    products[i].ProductPriceId = result[i].price[0].Id;
+                }
+
+            }
+            return [.. products.OrderBy(x => x.Name.Arrangement)];
         }
 
     }

@@ -22,14 +22,8 @@ namespace Inventory.Service
 
             services.AddTransient<Pages.RangeDay.PopupSelectRangeDate.PopupSelectRangeDateV>();
 
-            services.AddTransient<Pages.Options.EditDriver.EditDriverVM>();
-            services.AddTransient<Pages.Options.EditDriver.EditDriverV>();
-
             services.AddScoped<Pages.RangeDay.Graph.GraphV>();
             services.AddScoped<Pages.RangeDay.Graph.GraphVM>();
-
-            services.AddScoped<ISaveDayService, SaveDayService>();
-            services.AddScoped<ISelectDayService, SelectDayService>();
 
             services.AddSingleton<Pages.SingleDay.SingleDayV>();
 #if WINDOWS

@@ -26,7 +26,7 @@ namespace Server.Requests
             {
                 token.ThrowIfCancellationRequested();
 
-                IList<(ProductName, IList<ProductPrice>)> product = await _getInventoryAoT.EmptyProducts(isDelete);
+                IList<(ProductName, IList<ProductPrice>)> product = await _getInventoryAoT.EmptyProductsNameAndPrices(isDelete);
 
                 var emptyProducts = new EmptyProducts(product);
 

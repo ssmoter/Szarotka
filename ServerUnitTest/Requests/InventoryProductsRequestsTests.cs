@@ -29,7 +29,7 @@ namespace ServerUnitTest.Requests
         {
             var product = Array.Empty<(ProductName name, IList<ProductPrice> prices)>();
 
-            _mockGet.Setup(x => x.EmptyProducts(false)).ReturnsAsync(product);
+            _mockGet.Setup(x => x.EmptyProductsNameAndPrices(false)).ReturnsAsync(product);
 
             var result = await _inventoryProductsRequests.GetEmptyProducts();
 
@@ -41,7 +41,7 @@ namespace ServerUnitTest.Requests
         {
             var product = Array.Empty<(ProductName name, IList<ProductPrice> prices)>();
 
-            _mockGet.Setup(x => x.EmptyProducts(false)).ReturnsAsync(product);
+            _mockGet.Setup(x => x.EmptyProductsNameAndPrices(false)).ReturnsAsync(product);
             CancellationTokenSource token = new CancellationTokenSource();
             token.Cancel();
 

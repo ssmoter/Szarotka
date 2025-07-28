@@ -2,9 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
-using DataBase.Model.EntitiesInventory;
-
-using Inventory.Service;
+using DataBase.Data.Get;
 
 using Shared.Data;
 using Shared.Helper;
@@ -12,29 +10,8 @@ using Shared.Helper;
 
 namespace Inventory.Pages.Main
 {
-    public partial class MainVM : ObservableObject, IQueryAttributable
+    public partial class MainVM : ObservableObject
     {
-        public void ApplyQueryAttributes(IDictionary<string, object> query)
-        {
-            if (query.TryGetValue(nameof(DataBase.Model.EntitiesInventory.Day), out object day))
-            {
-                if (day is DataBase.Model.EntitiesInventory.Day _day)
-                {
-                    Day = _day;
-                }
-            }
-        }
-
-        private string name;
-        public string Name
-        {
-            get => name;
-            set
-            {
-                if (SetProperty(ref name, value, nameof(Name))) { }
-            }
-        }
-
         private MainM mainM;
         public MainM MainM
         {
@@ -45,56 +22,28 @@ namespace Inventory.Pages.Main
             }
         }
 
+        private readonly IAccessDataBase _db;
+        private readonly DataBase.Data.Get.IGetInventoryAoT _get;
+        private readonly DataBase.Service.ITimeService _time;
 
-        public Day Day { get; set; }
-
-        readonly IAccessDataBase _db;
-        readonly Service.ISelectDayService _selectDayService;
-
-        public MainVM(IAccessDataBase db, ISelectDayService selectDay)
+        public MainVM(IAccessDataBase db,
+                      DataBase.Data.Get.IGetInventoryAoT get,
+                      DataBase.Service.ITimeService time)
         {
             _db = db;
-            _selectDayService = selectDay;
+            _get = get;
             MainM = new MainM();
-            Name = "Wybierz kierowcę";
-            Service.DriverNameUpdateService.Update += SetName;
+            _time = time;
         }
-
-        #region Method
-
-
-        void SetName()
-        {
-            Name = Shared.Helper.UserAfterLogin.User.Name;
-        }
-
-        #endregion
-
-        #region Command
 
         [RelayCommand]
         async Task NavigationToSingleDay()
         {
             try
             {
-                if (Day is not null)
-                {
-                    Day.Products = new(Day.Products.OrderBy(x => x.Name.Arrangement));
-                }
-                if (Day is null)
-                {
-                    Day = await _selectDayService.GetDayProcedure(DateTime.Now);
-                }
-                else if (Day.Created.ToShortDateString() != DateTime.Now.ToShortDateString())
-                {
-                    Day = await _selectDayService.GetDayProcedure(DateTime.Now);
-                }
-                else if (Day.DriverGuid != new Guid(UserAfterLogin.User.Id.ToByteArray()))
-                {
-                    Day = await _selectDayService.GetDayProcedure(DateTime.Now);
-                }
+                DataBase.Model.EntitiesInventory.Day day = await GetDay(_time.UtcNow().ToShortDateString());
 
-                if (Day.Id == Guid.Empty)
+                if (day.Id == Guid.Empty)
                 {
 
                     var result = await Shell.Current.DisplayAlert("Czy chcesz utworzyć nowy wpis",
@@ -106,12 +55,8 @@ namespace Inventory.Pages.Main
                         await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
                         new Dictionary<string, object>()
                         {
-                            [nameof(DataBase.Model.EntitiesInventory.Day)] = Day,
+                            [nameof(DataBase.Model.EntitiesInventory.Day)] = day,
                         });
-                    }
-                    else
-                    {
-                        Day.Dispose();
                     }
                 }
                 else
@@ -119,7 +64,7 @@ namespace Inventory.Pages.Main
                     await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDayPreview.SingleDayPreviewPage.SingleDayPreviewPageV)}?",
                         new Dictionary<string, object>()
                         {
-                            [nameof(DataBase.Model.EntitiesInventory.Day)] = Day,
+                            [nameof(DataBase.Model.EntitiesInventory.Day)] = day,
                             [nameof(DataBase.Model.EntitiesInventory.Driver)] = UserAfterLogin.User.Name,
 
                         });
@@ -129,6 +74,20 @@ namespace Inventory.Pages.Main
             {
                 _db.SaveLogExtension(ex);
             }
+        }
+
+        private async Task<DataBase.Model.EntitiesInventory.Day> GetDay(string shortDate)
+        {
+            var userId = UserAfterLogin.User.Id;
+            DataBase.Model.EntitiesInventory.Day day = await _get.DaySelectedDateString(shortDate, userId);
+
+            if (day is null)
+            {
+                var products = await _get.EmptyProducts();
+                day.Products = new System.Collections.ObjectModel.ObservableCollection<DataBase.Model.EntitiesInventory.Product>(products);
+            }
+
+            return day;
         }
 
         [RelayCommand]
@@ -151,7 +110,7 @@ namespace Inventory.Pages.Main
                 if (string.IsNullOrWhiteSpace(MainM.DisplayDate))
                     return;
 
-                var days = await _selectDayService.GetDayProcedure(MainM.Date);
+                var days = await GetDay(MainM.Date.ToShortDateString());
 
                 if (days.Id == Guid.Empty)
                 {
@@ -183,9 +142,6 @@ namespace Inventory.Pages.Main
                 _db.SaveLogExtension(ex);
             }
         }
-
-
-        #endregion
 
     }
 }

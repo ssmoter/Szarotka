@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using DataBase.Data;
 using DataBase.Model;
 
-using Shared.Helper;
+using Shared.Data;
 
 using System.Collections.ObjectModel;
 using System.Reflection;
@@ -15,12 +15,23 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
 {
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        if (query.TryGetValue(nameof(ListOfEnums.TypOfOptions), out object? typOfOptions))
+        if (query.TryGetValue(nameof(TypOfOptions), out object? typOfOptions))
         {
-            if (typOfOptions is ListOfEnums.TypOfOptions _typOfOptions)
+            if (typOfOptions is TypOfOptions _typOfOptions)
             {
-                TypOfOptions = _typOfOptions;
+                Options = _typOfOptions;
             }
+        }
+    }
+
+
+    private string serverUrl="";
+    public string ServerUrl
+    {
+        get => _db.GetServerUrl();
+        set
+        {
+            if (SetProperty(ref serverUrl, value, nameof(ServerUrl))) { }
         }
     }
 
@@ -44,17 +55,15 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
         }
     }
 
-    ListOfEnums.TypOfOptions typOfOptions;
-    public ListOfEnums.TypOfOptions TypOfOptions
+    TypOfOptions options;
+    public TypOfOptions Options
     {
-        get => typOfOptions;
+        get => options;
         set
         {
-            if (SetProperty(ref typOfOptions, value, nameof(TypOfOptions)))
+            if (SetProperty(ref options, value, nameof(Options)))
             {
-                //OnPropertyChanged(nameof(TypOfOptions));
-
-                SelectTypOfOptions(TypOfOptions);
+                SelectTypOfOptions(Options);
             }
         }
     }
@@ -69,7 +78,7 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
             {
                 //OnPropertyChanged(nameof(IsSelectedTheme));
                 if (IsSelectedTheme is not null)
-                    ChangeThema(IsSelectedTheme);
+                    ChangeTheme(IsSelectedTheme);
             }
         }
     }
@@ -88,7 +97,7 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
     public MainOptionsVM(IAccessDataBase db)
     {
         MainOptionsM ??= new();
-        SelectTypOfOptions(ListOfEnums.TypOfOptions.Main);
+        SelectTypOfOptions(TypOfOptions.Main);
         var version = Assembly.GetExecutingAssembly()
                             .GetName().Version;
         if (version is not null)
@@ -116,7 +125,7 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
     #region Method
 
     Dictionary<string, int> _appThemes;
-    void ChangeThema(string value)
+    void ChangeTheme(string value)
     {
         var result = _appThemes[value];
 
@@ -125,25 +134,25 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
 
         Preferences.Set("Theme", result);
     }
-    private void SelectTypOfOptions(ListOfEnums.TypOfOptions options)
+    private void SelectTypOfOptions(TypOfOptions options)
     {
         switch (options)
         {
-            case ListOfEnums.TypOfOptions.Main:
+            case TypOfOptions.Main:
                 {
                     MainOptionsM.Main = true;
                     MainOptionsM.Inventory = false;
                     MainOptionsM.DriversRoutes = false;
                 }
                 break;
-            case ListOfEnums.TypOfOptions.Inventory:
+            case TypOfOptions.Inventory:
                 {
                     MainOptionsM.Main = false;
                     MainOptionsM.Inventory = true;
                     MainOptionsM.DriversRoutes = false;
                 }
                 break;
-            case ListOfEnums.TypOfOptions.DriversRoutes:
+            case TypOfOptions.DriversRoutes:
                 {
                     MainOptionsM.Main = false;
                     MainOptionsM.Inventory = false;
@@ -166,7 +175,7 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
     #region Command
 
     [RelayCommand]
-    void ChangeDisplayOptions(ListOfEnums.TypOfOptions options)
+    void ChangeDisplayOptions(TypOfOptions options)
     {
         SelectTypOfOptions(options);
     }
@@ -176,7 +185,39 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
     {
         await Shell.Current.GoToAsync(nameof(Shared.Pages.Log.LogV));
     }
-    #endregion
 
+    [RelayCommand]
+    async Task UpdateServerUrl()
+    {
+        try
+        {
+            var result = await Shell.Current.DisplayPromptAsync("Aktualizuj",
+                                                                "Podaj nowy adres serwera",
+                                                                "Zapisz",
+                                                                "Anuluj",
+                                                                placeholder: ServerUrl,
+                                                                initialValue: ServerUrl);
+
+            if (result is null)
+            {
+                return;
+            }
+
+            await Shared.Model.HelperTableExtension.SetAsync
+                (new Shared.Model.HelperTable(nameof(DataBase.Helper.Constants.ServerUrl), result), _db);
+            ServerUrl = result;
+        }
+        catch (Exception ex)
+        {
+            _db.SaveLogExtension(ex);
+        }
+    }
+    #endregion
+}
+public enum TypOfOptions
+{
+    Main,
+    Inventory,
+    DriversRoutes,
 }
 

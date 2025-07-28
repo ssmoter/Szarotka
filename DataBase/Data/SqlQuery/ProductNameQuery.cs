@@ -74,7 +74,7 @@ SELECT {nameof(ProductName)}.*,
                '{nameof(ProductPrice.IsDelete)}', {nameof(ProductPrice)}.{nameof(ProductPrice.IsDelete)}
            )) 
            FROM {nameof(ProductPrice)}
-           WHERE {nameof(ProductPrice)}.{nameof(ProductPrice.ProductNameId)} = {nameof(ProductName)}.{nameof(ProductPrice.Id)}
+           WHERE {nameof(ProductPrice)}.{nameof(ProductPrice.ProductNameId)} = {nameof(ProductName)}.{nameof(ProductName.Id)}
        ), '[]') AS JsonPrice
 FROM {nameof(ProductName)}
 WHERE (

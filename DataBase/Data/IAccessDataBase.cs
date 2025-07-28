@@ -13,8 +13,6 @@ namespace DataBase.Data
         ISQLiteAsyncConnection DataBaseAsync { get; }
 
         void Dispose();
-        string GetServerUrl();
-        Task<string> GetServerUrlAsync();
         void SaveLog(Exception ex);
         Task SaveLogAsync(Exception ex);
     }
@@ -97,16 +95,6 @@ Error {log.CreatedDateTime}{Environment.NewLine}
 Error {log.CreatedDateTime}{Environment.NewLine}
 {ex.Message}{Environment.NewLine}
 {ex.StackTrace}");
-        }
-
-
-        public string GetServerUrl()
-        {
-            return Constants.ServerUrl;
-        }
-        public async Task<string> GetServerUrlAsync()
-        {
-            return await Task.FromResult(Constants.ServerUrl);
         }
 
         private static void CreatedFolderPath()

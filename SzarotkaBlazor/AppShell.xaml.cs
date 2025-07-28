@@ -56,7 +56,7 @@ namespace SzarotkaBlazor
         {
             try
             {
-                var user = await HelperTable.Get(nameof(UserAfterLogin.User.Token), _db);
+                var user = await nameof(UserAfterLogin.User.Token).GetHelperTableAsync(_db);
                 if (user is not null)
                 {
                     try

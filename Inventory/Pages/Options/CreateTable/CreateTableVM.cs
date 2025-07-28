@@ -5,7 +5,6 @@ using DataBase.Data;
 using DataBase.Model;
 using DataBase.Model.EntitiesInventory;
 
-using Inventory.Pages.Options.EditDriver;
 
 using Shared.Data;
 
@@ -58,15 +57,12 @@ namespace Inventory.Pages.Options.CreateTable
             });
         }
 
-        #region Command
-
 
         [RelayCommand]
         async Task CreateTables()
         {
             try
             {
-
                 if (_db is null)
                 {
                     return;
@@ -137,76 +133,6 @@ namespace Inventory.Pages.Options.CreateTable
         }
 
 
-        [RelayCommand]
-        async Task CreateDriver()
-        {
-            try
-            {
-                await CreatedNewDriverMethod(_db);
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
-        }
-
-
-        [RelayCommand]
-        async Task SelectDriver()
-        {
-            await SelectDriverMethod(_db);
-
-        }
-
-
-        [RelayCommand]
-        async Task EditDriver()
-        {
-            try
-            {
-
-                if (_db is null)
-                {
-                    return;
-                }
-                if (TableMs.FirstOrDefault(x => x.RealTableName == nameof(Driver)).IsExist)
-                {
-                    var driver = await _db.DataBaseAsync.Table<Driver>().ToArrayAsync();
-                    if (driver.Length == 0)
-                    {
-                        await Shell.Current.DisplayAlert("Kierowcy", "Nie dodano żadnego kierowcy", "Ok");
-                        return;
-                    }
-
-                    var selected = await Shell.Current.DisplayActionSheet("Edytuj kierowce", "Anuluj", null, driver.Select(x => x.Name).ToArray());
-                    if (selected == "Anuluj")
-                    {
-                        return;
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(selected))
-                    {
-                        var selectedDrivers = await _db.DataBaseAsync.Table<Driver>().Where(x => x.Name == selected).ToArrayAsync();
-                        var selectedDriver = selectedDrivers.FirstOrDefault();
-                        selectedDriver.Id = new Guid(selectedDriver.Id.ToString());
-
-                        await Shell.Current.GoToAsync($"{nameof(EditDriverV)}?",
-                            new Dictionary<string, object>
-                            {
-                                [nameof(Driver)] = selectedDriver,
-                            });
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
-        }
-
-        #endregion
-
         async Task CheckTables()
         {
             for (int i = 0; i < TableMs.Count; i++)
@@ -214,82 +140,11 @@ namespace Inventory.Pages.Options.CreateTable
                 TableMs[i].IsExist = await CheckIsExist(TableMs[i].RealTableName);
             }
         }
-
-        private static async Task SelectDriverMethod(IAccessDataBase db)
-        {
-            try
-            {
-
-                if (db is null)
-                {
-                    return;
-                }
-                var tableInfo = await db.DataBaseAsync.GetTableInfoAsync(nameof(Driver));
-                bool exist = tableInfo.Count > 0;
-                if (exist)
-                {
-                    var driver = await db.DataBaseAsync.Table<Driver>().ToArrayAsync();
-
-                    if (driver.Length == 0)
-                    {
-                        await Shell.Current.DisplayAlert("Kierowcy", "Nie dodano żadnego kierowcy", "Ok");
-                        return;
-                    }
-
-                    var selected = await Shell.Current.DisplayActionSheet("Dostępni kierowcy", "Anuluj", null, driver.Select(x => x.Name).ToArray());
-                    if (selected == "Anuluj")
-                    {
-                        return;
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(selected))
-                    {
-                        var selectedDriver = driver.FirstOrDefault(x => x.Name == selected);
-
-                        await db.DataBaseAsync.InsertOrReplaceAsync(new SelectedDriver() { Id = 1, SelectedGuid = selectedDriver.Id });
-                        Service.DriverNameUpdateService.OnUpdate();
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-                db.SaveLogExtension(ex);
-            }
-        }
         async Task<bool> CheckIsExist(string table)
         {
             var tableInfo = await _db.DataBaseAsync.GetTableInfoAsync(table);
             bool exist = tableInfo.Count > 0;
             return exist;
-        }
-        private static async Task CreatedNewDriverMethod(IAccessDataBase db)
-        {
-            if (db is null)
-            {
-                return;
-            }
-            var response = await Shell.Current.DisplayPromptAsync("Dodawanie kierowcy", "Ustaw nazwę kierowcy");
-            if (!string.IsNullOrWhiteSpace(response))
-            {
-                var driver = new Driver()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = response,
-                    Created = DateTime.Now,
-                    Updated = DateTime.Now,
-                };
-                var tableInfo = await db.DataBaseAsync.GetTableInfoAsync(nameof(Driver));
-                bool exist = tableInfo.Count > 0;
-                if (exist)
-                {
-                    await db.DataBaseAsync.InsertAsync(driver);
-                    if (string.IsNullOrWhiteSpace(Inventory.Helper.SelectedDriver.Id))
-                    {
-                        await SelectDriverMethod(db);
-                    }
-                }
-            }
         }
 
 

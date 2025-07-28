@@ -6,7 +6,7 @@ namespace DataBase.Data.Get
     public interface IGetInventoryAoT
     {
         Task<IList<Day>> Days(string where, params object[] args);
-        Task<IList<(ProductName, IList<ProductPrice>)>> EmptyProducts(bool isDelete = false);
+        Task<IList<(ProductName, IList<ProductPrice>)>> EmptyProductsNameAndPrices(bool isDelete = false);
     }
 
     public class GetInventoryAoT(IAccessDataBase db) : IGetInventoryAoT
@@ -47,30 +47,30 @@ namespace DataBase.Data.Get
 
             return [.. result.Select(x => x as Day)];
         }
-        public async Task<IList<(ProductName, IList<ProductPrice>)>> EmptyProducts(bool isDelete = false)
+        public async Task<IList<(ProductName, IList<ProductPrice>)>> EmptyProductsNameAndPrices(bool isDelete = false)
         {
             var sql = ProductNameQuery.GetNameAndPrice(isDelete);
 
             var result = await _db.DataBaseAsync.QueryAsync<ProductNameAndPrice>(sql);
+            int count = result.Count;
+            (ProductName name, IList<ProductPrice> prices)[] product = new (ProductName name, IList<ProductPrice> prices)[count];
 
-            (ProductName name, IList<ProductPrice> prices)[] product = new (ProductName name, IList<ProductPrice> prices)[result.Count];
 
-
-            for (int i = 0; i < result.Count; i++)
+            for (int i = 0; i < count; i++)
             {
                 if (result[i] is null)
                 {
                     continue;
                 }
 
-                var price =
+                IList<ProductPrice>? price =
                      System.Text.Json.JsonSerializer.Deserialize(
                          result[i].JsonPrice,
-                         DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.ObservableCollectionProductPrice);
+                         DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.IListProductPrice);
 
                 if (price is not null)
                 {
-                    product[i].prices = price;
+                    product[i].prices = [.. price.OrderBy(x => x.CreatedTicks)];
                 }
                 product[i].name = result[i];
             }

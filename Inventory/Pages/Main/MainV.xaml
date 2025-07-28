@@ -6,7 +6,7 @@
     xmlns:Convert="clr-namespace:Shared.Helper.Img;assembly=Shared"
     xmlns:CustomControls="clr-namespace:Shared.CustomControls;assembly=Shared"
     xmlns:vm="clr-namespace:Inventory.Pages.Main"
-    Title="{Binding Name}"
+    Title="Inwentarz"
     x:DataType="vm:MainVM">
 
     <ContentPage.Resources>
