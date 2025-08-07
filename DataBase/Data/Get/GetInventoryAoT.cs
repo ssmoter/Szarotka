@@ -24,7 +24,6 @@ namespace DataBase.Data.Get
             {
                 result = await _db.DataBaseAsync.QueryAsync<DayFromQuery>(sql, args);
             }
-
             for (int i = 0; i < result.Count; i++)
             {
                 var products =
@@ -70,7 +69,7 @@ namespace DataBase.Data.Get
 
                 if (price is not null)
                 {
-                    product[i].prices = [.. price.OrderBy(x => x.CreatedTicks)];
+                    product[i].prices = [.. price.OrderByDescending(x => x.CreatedTicks)];
                 }
                 product[i].name = result[i];
             }

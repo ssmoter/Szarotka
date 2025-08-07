@@ -1,12 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-using DataBase.Model.EntitiesInventory;
-
 namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
 {
     public partial class PopupSelectRangeDateM : ObservableObject
     {
-        public Driver Driver { get; set; }
+        public DataBase.Model.EntitiesServer.User Driver { get; set; }
 
         private string name;
         public string Name
@@ -28,10 +26,10 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             }
         }
 
-        public PopupSelectRangeDateM(Driver driver)
+        public PopupSelectRangeDateM(DataBase.Model.EntitiesServer.User user)
         {
-            Driver = driver;
-            name = driver.Name;
+            Driver = user;
+            name = user.Name;
         }
     }
 }

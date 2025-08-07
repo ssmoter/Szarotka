@@ -16,13 +16,6 @@
 
 
     <Grid RowDefinitions="auto,*,auto">
-        <Button
-            Command="{Binding GenerateDefaultProductsCommand}"
-            HorizontalOptions="Center"
-            IsVisible="{Binding IsGenerateDefaultEnable}"
-            Text="Dodaj podstawowe"
-            VerticalOptions="Center" />
-
 
         <CollectionView
             x:Name="ListOfProductCV"
@@ -89,7 +82,7 @@
                                         DropCompletedCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDropCompletedCommand, x:DataType=VM:ListProductVM}" />
                                     <DropGestureRecognizer DropCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDropCommand, x:DataType=VM:ListProductVM}" DropCommandParameter="{Binding .}" />-->
 
-                                    <DragGestureRecognizer DragStarting="DragGestureRecognizer_DragStarting" DropCompleted="DragGestureRecognizer_DropCompleted" />
+                                    <DragGestureRecognizer DragStarting="DragGestureRecognizer_DragStarting" />
                                     <DropGestureRecognizer Drop="DropGestureRecognizer_Drop" />
 
                                 </Grid.GestureRecognizers>

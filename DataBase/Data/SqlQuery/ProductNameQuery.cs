@@ -77,11 +77,13 @@ SELECT {nameof(ProductName)}.*,
            WHERE {nameof(ProductPrice)}.{nameof(ProductPrice.ProductNameId)} = {nameof(ProductName)}.{nameof(ProductName.Id)}
        ), '[]') AS JsonPrice
 FROM {nameof(ProductName)}
-WHERE (
+
+{(!isDelete ? 
+$@"WHERE (
 {nameof(ProductName)}.{nameof(ProductName.IsDelete)} == {isDelete}
 OR {nameof(ProductName)}.{nameof(ProductName.IsDelete)} IS NULL
-);
-";
+)" : "")}
+;";
 
             return sql;
         }

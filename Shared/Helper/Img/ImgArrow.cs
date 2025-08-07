@@ -31,6 +31,8 @@
         public static string OutlineFilterListWhite { get => "outline_filter_list_white_24dp.png"; }
         public static string OutlineSortBlack { get => "outline_sort_black_24dp.png"; }
         public static string OutlineSortWhite { get => "outline_sort_white_24dp.png"; }
+        public static string InfoBlack { get => "info_24dp_black.png"; }
+        public static string InfoWhite { get => "info_24dp_white.png"; }
     }
 
     public static class FlyoutHeaderCustomContent

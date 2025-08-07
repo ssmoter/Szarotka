@@ -16,13 +16,6 @@ namespace Inventory.Pages.SingleDayPreview.SingleDayPreviewPage
                     Day = _day;
                 }
             }
-            if (query.TryGetValue(nameof(Driver), out object driver))
-            {
-                if (driver is string _driver)
-                {
-                    Driver = _driver;
-                }
-            }
         }
 
         private Day day;
@@ -33,19 +26,6 @@ namespace Inventory.Pages.SingleDayPreview.SingleDayPreviewPage
             {
                 if (SetProperty(ref day, value, nameof(Day)))
                 {
-                    //OnPropertyChanged(nameof(Day));
-                }
-            }
-        }
-        private string driver;
-        public string Driver
-        {
-            get => driver;
-            set
-            {
-                if (SetProperty(ref driver, value, nameof(Driver)))
-                {
-                    //OnPropertyChanged(nameof(Driver));
                 }
             }
         }

@@ -85,6 +85,7 @@ namespace Shared.Pages.FlyoutHeader
         {
             try
             {
+                await Task.Delay(TimeSpan.FromSeconds(2));
                 await FadeOutElement(view);
                 CustomContent = null;
             }

@@ -42,7 +42,7 @@ namespace DataBaseUnitTest.DataGet
                     Cakes = [.. GetExampleCakes(id, rnd.Next(0, 5))]
                 };
 
-                day.UpdateTotalPrice();
+                day.CalculatePrice();
                 days.Add(day);
 
                 db.DataBase.Insert(day);

@@ -60,9 +60,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="CustomControls\NameOrIdUser.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="CustomControls\StringImage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

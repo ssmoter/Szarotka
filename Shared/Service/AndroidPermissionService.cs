@@ -113,5 +113,17 @@
 
             return true;
         }
+
+
+
+
+        public static bool InternetCheck()
+        {
+            bool isConnected = Connectivity.Current.NetworkAccess == NetworkAccess.Internet;
+            if (isConnected)
+                return false;
+
+            throw new Exception("Brak dostępu do internetu, żądanie zostało anulowane");
+        }
     }
 }

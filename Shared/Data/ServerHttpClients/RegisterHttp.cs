@@ -28,6 +28,8 @@ namespace Shared.Data.ServerHttpClients
 
         public async Task<bool> PostNewAccount(RegisterUser user)
         {
+            Shared.Service.AndroidPermissionService.InternetCheck();
+
             ArgumentNullException.ThrowIfNull(user);
 
             var request = JsonSerializer.Serialize(user, SzarotkaJsonSerializerContext.Default.RegisterUser);
@@ -54,6 +56,8 @@ namespace Shared.Data.ServerHttpClients
 
         public async Task<User> ConfirmEmail(string code)
         {
+            Shared.Service.AndroidPermissionService.InternetCheck();
+
             ArgumentNullException.ThrowIfNull(code);
 
             var ulr = _url + "/user" + "/confirm-email/" + code;

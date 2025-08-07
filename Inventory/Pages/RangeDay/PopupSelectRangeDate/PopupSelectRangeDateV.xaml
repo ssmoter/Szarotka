@@ -44,18 +44,6 @@
                 ItemsSource="{Binding RangeMonth}"
                 SelectedItem="{Binding IsSelectedDateMonth}" />
 
-
-            <HorizontalStackLayout HorizontalOptions="Center">
-                <Label
-                    HorizontalOptions="Center"
-                    Text="Wczytaj więcej danych "
-                    VerticalOptions="Center" />
-                <CheckBox
-                    HorizontalOptions="Center"
-                    IsChecked="{Binding MoreData}"
-                    VerticalOptions="Center" />
-            </HorizontalStackLayout>
-
             <Border Padding="5" HorizontalOptions="Center">
 
                 <VerticalStackLayout HorizontalOptions="Center">
@@ -101,7 +89,7 @@
 
                 <Button
                     Grid.Column="0"
-                    Command="{Binding CancelAndReturCommand}"
+                    Command="{Binding CancelAndReturnCommand}"
                     Text="Anuluj" />
 
                 <Button

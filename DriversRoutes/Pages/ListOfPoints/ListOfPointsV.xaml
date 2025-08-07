@@ -120,14 +120,7 @@
                 PageSizeOptions="{StaticResource PageSizeOptions}">
 
                 <Controls:CollectionViewPagination.EmptyView>
-                    <Grid HorizontalOptions="Center" RowDefinitions=".2*,auto,*">
-                        <Image
-                            x:Name="OutlineSyncImage"
-                            Grid.Row="1"
-                            Source="{AppThemeBinding Light={Static ImgPath:FlyoutHeaderCustomContent.OutlineSyncBlack},
-                                                     Dark={Static ImgPath:FlyoutHeaderCustomContent.OutlineSyncWhite}}" />
-                        <Label Grid.Row="2" Text="Wczytywanie" />
-                    </Grid>
+                    <Controls:LoadingGif />
                 </Controls:CollectionViewPagination.EmptyView>
 
                 <Controls:CollectionViewPagination.ItemTemplate>

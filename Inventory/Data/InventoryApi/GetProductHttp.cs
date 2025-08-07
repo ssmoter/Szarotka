@@ -1,0 +1,52 @@
+﻿using DataBase.Data;
+using DataBase.Model.EntitiesInventory;
+using DataBase.Model.JsonContext;
+
+using Shared.CustomControls.FromCode;
+using Shared.Data;
+using Shared.Data.ServerHttpClients;
+using Shared.Helper;
+
+using System.Text.Json;
+
+namespace Inventory.Data.InventoryApi
+{
+    public partial class GetProductHttp
+    {
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IAccessDataBase _db;
+        private readonly string _url;
+
+        public GetProductHttp(IHttpClientFactory httpClientFactory, IAccessDataBase db)
+        {
+            _httpClientFactory = httpClientFactory;
+            _db = db;
+            _url = db.GetServerUrl();
+        }
+
+        public async Task<EmptyProducts> GetProducts(UpdateProgressBar progressContent, CancellationToken token = default)
+        {
+            Shared.Service.AndroidPermissionService.InternetCheck();
+            string url = $"{_url}/inventory/empty-products";
+            using var httpClient = _httpClientFactory.CreateClient();
+
+            httpClient.SetAuthorization();
+
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent.Grid);
+
+            var response = await httpClient.DownloadAsync(url
+                , progress => UpdateProgressBar.UpdateProgress(progressContent, progress)
+                , token);
+
+            response.HttpResponseMessage.EnsureSuccessStatusCode();
+
+            var result = JsonSerializer.Deserialize(response.content, SzarotkaJsonSerializerContext.Default.EmptyProducts);
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+            return result;
+        }
+
+
+
+
+    }
+}

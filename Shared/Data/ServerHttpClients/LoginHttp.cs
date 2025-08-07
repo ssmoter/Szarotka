@@ -30,6 +30,8 @@ namespace Shared.Data.ServerHttpClients
 
         public async Task<User> In(LoginUser login, CancellationToken token = default)
         {
+            Shared.Service.AndroidPermissionService.InternetCheck();
+
             string url = _url + "/user/login";
 
             ArgumentNullException.ThrowIfNull(login);
@@ -59,6 +61,8 @@ namespace Shared.Data.ServerHttpClients
         }
         public async Task<User> GetPublicUser(Guid id, CancellationToken token = default)
         {
+            Shared.Service.AndroidPermissionService.InternetCheck();
+
             string url = _url + $"/user/{id}";
             using var httpClient = _httpClientFactory.CreateClient();
 

@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using DataBase.Model.EntitiesInventory;
-
 using Inventory.Model;
 
 using System.Collections.ObjectModel;
@@ -19,7 +17,6 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             {
                 if (SetProperty(ref fromDate, value, nameof(FromDate)))
                 {
-                    //OnPropertyChanged(nameof(FromDate));
                     from = FromDate.Ticks;
                 }
             }
@@ -32,7 +29,6 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             {
                 if (SetProperty(ref toDate, value, nameof(ToDate)))
                 {
-                    //OnPropertyChanged(nameof(ToDate));
                     to = ToDate.AddHours(23).Ticks;
                 }
             }
@@ -56,15 +52,6 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
                 if (SetProperty(ref rangeMonth, value, nameof(RangeMonth))) { }
             }
         }
-        private bool moreData;
-        public bool MoreData
-        {
-            get => moreData;
-            set
-            {
-                if (SetProperty(ref moreData, value, nameof(MoreData))) { }
-            }
-        }
 
         string isSelectedDateFast;
         public string IsSelectedDateFast
@@ -74,7 +61,6 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             {
                 if (SetProperty(ref isSelectedDateFast, value, nameof(IsSelectedDateFast)))
                 {
-                    //OnPropertyChanged(nameof(IsSelectedDateFast));
                     if (!string.IsNullOrWhiteSpace(IsSelectedDateFast))
                     {
                         SelectedDate(IsSelectedDateFast);
@@ -92,7 +78,6 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             {
                 if (SetProperty(ref isSelectedDateMonth, value, nameof(IsSelectedDateMonth)))
                 {
-                    //OnPropertyChanged(nameof(IsSelectedDateMonth));
                     if (!string.IsNullOrWhiteSpace(IsSelectedDateMonth))
                     {
                         SelectedDate(IsSelectedDateMonth);
@@ -122,7 +107,18 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             return Close?.Invoke(result, token);
         }
 
-        public PopupSelectRangeDateVM(Driver[] drivers)
+        public PopupSelectRangeDateVM()
+        {
+            Init();
+        }
+        public PopupSelectRangeDateVM(PopupDateModel lastResult)
+        {
+            Init();
+            FromDate = new DateTime(lastResult.From);
+            ToDate = new DateTime(lastResult.To);
+        }
+
+        private void Init()
         {
             RangeFast ??=
             [
@@ -153,15 +149,13 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
 
             SelectRangeDateMs ??= [];
 
-            for (int i = 0; i < drivers.Length; i++)
+            var users = Shared.Pages.UserDisplay.PopupUser.UserDisplayVPopup.Users.Select(x => x.Value);
+
+            foreach (var item in users)
             {
-                SelectRangeDateMs.Add(new PopupSelectRangeDateM(drivers[i]));
+                SelectRangeDateMs.Add(new PopupSelectRangeDateM(item));
             }
-
         }
-
-
-        #region Method
 
         void SelectedDate(string range)
         {
@@ -306,11 +300,6 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
         }
 
 
-
-        #endregion
-
-
-        #region Command
         [RelayCommand]
         async Task SaveAndReturn()
         {
@@ -327,7 +316,7 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
                     }
                 }
 
-                await OnClose(new PopupDateModel(from, to, MoreData, guids));
+                await OnClose(new PopupDateModel(from, to, guids));
             }
             catch (Exception)
             {
@@ -335,7 +324,7 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             finally { Dispose(); }
         }
         [RelayCommand]
-        async Task CancelAndRetur()
+        async Task CancelAndReturn()
         {
             try
             {
@@ -350,8 +339,6 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             }
         }
 
-
-        #endregion
         public void Dispose()
         {
             this.RangeFast?.Clear();

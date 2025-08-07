@@ -21,7 +21,7 @@ namespace Shared.CustomControls
                         view._mainGrid.IsVisible = true;
                         if (view._length <= 0 || view._length < int.Parse(view._pickerPagination.Items[0]))
                         {
-                            view._mainGrid.IsVisible = false;
+                            //view._mainGrid.IsVisible = false;
                         }
                     }
                 }
@@ -49,6 +49,9 @@ namespace Shared.CustomControls
             get => (int[])GetValue(PageSizeOptionsProperty);
             set => SetValue(PageSizeOptionsProperty, value);
         }
+
+
+
 
 
         private Command SetPageCommandUp => new(() =>
@@ -90,14 +93,19 @@ namespace Shared.CustomControls
 
             _current.ReturnCommand = SetPageCommand;
 
-            _mainGrid = CreatedPagination();
 
-            this.FooterTemplate = new DataTemplate(() =>
-            {
-                return _mainGrid;
-            });
         }
 
+        protected override void OnParentSet()
+        {
+            base.OnParentSet();
+            _mainGrid = CreatedPagination();
+            this.Footer = _mainGrid;
+           // this.FooterTemplate = new DataTemplate(() =>
+           // {
+           //     return _mainGrid;
+           // });
+        }
 
 
         public void Dispose()
@@ -120,7 +128,7 @@ namespace Shared.CustomControls
             SelectedIndex = 0
         };
 
-        private readonly Grid _mainGrid;
+        private Grid _mainGrid = [];
 
         private readonly Label _currentSize = new();
 
@@ -153,9 +161,9 @@ namespace Shared.CustomControls
                 _next.IsEnabled = false;
             }
 
-            _previous.Text = (page - 1).ToString();
+            _previous.Text = $"{(page - 1)}<";
             _current.Text = page.ToString();
-            _next.Text = (page + 1).ToString();
+            _next.Text = $">{(page + 1)}";
             _currentSize.Text = $"{skip}-{(skip + pagination < _length ? skip + pagination : _length)} z {_length}";
 
 
@@ -189,6 +197,33 @@ namespace Shared.CustomControls
                 HorizontalOptions = new LayoutOptions(LayoutAlignment.Center, false),
                 ColumnSpacing = 10,
             };
+
+            var layout = this.ItemsLayout;
+
+            if (layout is LinearItemsLayout linearLayout)
+            {
+                Console.WriteLine($"Linear Layout: {linearLayout.Orientation}");
+                switch (linearLayout.Orientation)
+                {
+                    case ItemsLayoutOrientation.Vertical:
+                        LinearItemsLayoutHorizontalGrid(grid);
+                        break;
+                    case ItemsLayoutOrientation.Horizontal:
+                        LinearItemsLayoutVerticalGrid(grid);
+                        break;
+                }
+            }
+            else if (layout is GridItemsLayout gridLayout)
+            {
+                Console.WriteLine($"Grid layout: {gridLayout.Orientation}, Span: {gridLayout.Span}");
+            }
+
+
+            return grid;
+        }
+
+        private void LinearItemsLayoutHorizontalGrid(Grid grid)
+        {
             grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
             grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
 
@@ -205,8 +240,27 @@ namespace Shared.CustomControls
             grid.Add(_next, 3, 1);
 
             LoadCurrent(_currentPagination, _currentPage);
+        }
+        private void LinearItemsLayoutVerticalGrid(Grid grid)
+        {
+            grid.VerticalOptions = new LayoutOptions(LayoutAlignment.Center, false);
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
 
-            return grid;
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+
+            _currentSize.HorizontalOptions = new LayoutOptions(LayoutAlignment.Center, false);
+
+            grid.AddWithSpan(_currentSize, 0, 0, 1, 2);
+            grid.Add(_previous, 0, 1);
+            grid.Add(_next, 1, 1);
+            grid.AddWithSpan(_current, 2, 0, 1, 2);
+            grid.AddWithSpan(_pickerPagination, 3, 0, 1, 2);
+
+            LoadCurrent(_currentPagination, _currentPage);
         }
         protected override void OnHandlerChanged()
         {

@@ -29,6 +29,8 @@ namespace Shared.Data.ServerHttpClients
 
         public async Task<User> EditUser(User user)
         {
+            Shared.Service.AndroidPermissionService.InternetCheck();
+
             string url = _url + $"/user/edit";
             using var httpClient = _httpClientFactory.CreateClient();
 

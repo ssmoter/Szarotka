@@ -24,7 +24,7 @@ Product.UpdatedTicks
 ,
 	(SELECT json_object(
 	'Id',Id
-	,'Name',Name
+	,'DayExpanded',DayExpanded
 	,'Description',Description
 	,'Img',Img
 	,'Arrangement',Arrangement

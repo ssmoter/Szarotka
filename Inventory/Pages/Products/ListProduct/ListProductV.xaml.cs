@@ -56,16 +56,6 @@ public partial class ListProductV : ContentPage
         vm.DragCommand.Execute(product);
     }
 
-    private void DragGestureRecognizer_DropCompleted(object sender, DropCompletedEventArgs e)
-    {
-        if (sender is not DragGestureRecognizer drag) { return; }
-
-        if (drag.Parent is not Grid grid) { return; }
-
-        if (grid.BindingContext is not ListProductM product) { return; }
-
-        vm.DropCompletedCommand.Execute(product);
-    }
 
     private void DropGestureRecognizer_Drop(object sender, DropEventArgs e)
     {

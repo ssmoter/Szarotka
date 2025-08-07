@@ -15,32 +15,17 @@ public partial class SingleDayPreviewPopUpV : Popup
         {
             if (value is not null)
             {
+                OnPropertyChanging(nameof(Day));
                 _day = value;
                 OnPropertyChanged(nameof(Day));
-                OnPropertyChanging(nameof(Day));
             }
         }
     }
-    private string _driver;
-    public string Driver
-    {
-        get => _driver;
-        set
-        {
-            if (value is not null)
-            {
-                _driver = value;
-                OnPropertyChanged(nameof(Driver));
-                OnPropertyChanging(nameof(Driver));
-            }
-        }
-    }
-    public SingleDayPreviewPopUpV(Day day, string driver)
+    public SingleDayPreviewPopUpV(Day day)
     {
         InitializeComponent();
         this.CanBeDismissedByTappingOutsideOfPopup = false;
         Day = day;
-        Driver = driver;
     }
 
     private async void Button_Clicked_Close(object sender, EventArgs e)

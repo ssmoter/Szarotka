@@ -5,6 +5,7 @@ using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 
 using Shared.Data;
+using Shared.Helper;
 
 using System.Collections.ObjectModel;
 
@@ -93,9 +94,9 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
         }
 
 
-
-        readonly IAccessDataBase _db;
-        public AddEditProductVM(IAccessDataBase db)
+        private readonly DataBase.Data.Save.ISaveInventoryAoT _save;
+        private readonly IAccessDataBase _db;
+        public AddEditProductVM(IAccessDataBase db, DataBase.Data.Save.ISaveInventoryAoT save)
         {
             AddEdit = new AddEditProductM();
             if (Product is null)
@@ -133,12 +134,10 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             AddEdit.IsVisibleBread = true;
 
             _db = db;
+            _save = save;
         }
 
         private static readonly string[] extensionsValues = ["jpg", "png", "gif"];
-
-        #region Method
-
         static PickOptions FileTyp()
         {
             var pOptions = new PickOptions();
@@ -153,22 +152,12 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             return pOptions;
         }
 
-        public async Task GetPrices(Guid id)
-        {
-            var price = await _db.DataBaseAsync.Table<ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(x => x.CreatedTicks).ToArrayAsync();
-            Product.Prices.Clear();
-            Product.Prices = new(price);
-        }
-        #endregion
 
-        #region Command
         [RelayCommand]
         async Task Back()
         {
             try
             {
-                Product.Prices.Clear();
-
                 await Shell.Current.GoToAsync("..");
             }
             catch (Exception ex)
@@ -182,24 +171,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
         {
             try
             {
-                var productName = new ProductName()
-                {
-                    Id = new Guid(Product.Name.Id.ToByteArray()),
-                    Name = Product.Name.Name,
-                    Description = Product.Name.Description,
-                    Img = Product.Name.Img,
-                    Updated = DateTime.Now,
-                    IsVisible = Product.Name.IsVisible,
-                    Arrangement = Product.Name.Arrangement,
-                };
-                await _db.DataBaseAsync.UpdateAsync(productName);
-
-                var count = await _db.DataBaseAsync.Table<ProductPrice>().CountAsync(x => x.ProductNameId == productName.Id);
-
-                for (int i = 0; i < (Product.Prices.Count - count); i++)
-                {
-                    await _db.DataBaseAsync.InsertAsync(Product.Prices[i]);
-                }
+                await SaveProduct();
 
                 await Shell.Current.DisplayAlert("Aktualizacja", $"Produkt {Product.Name.Name} został zaktualizowany", "Ok");
             }
@@ -209,39 +181,26 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             }
         }
 
+        private async Task SaveProduct()
+        {
+            var userId = UserAfterLogin.User.Id.ToByteArray();
+            await _save.SaveProductName(Product.Name, userId);
+
+            foreach (var item in Product.Prices)
+            {
+                if (item.Id == Guid.Empty)
+                {
+                    await _save.SaveProductPrice(item, userId);
+                }
+            }
+        }
 
         [RelayCommand]
         async Task InsertProduct()
         {
             try
             {
-                var productName = new ProductName()
-                {
-                    Id = Shared.Data.InventoryTables.GetGuidSed(),
-                    Name = Product.Name.Name,
-                    Description = Product.Name.Description,
-                    Img = Product.Name.Img,
-                    Updated = DateTime.Now,
-                    Created = DateTime.Now,
-                };
-                if (string.IsNullOrWhiteSpace(productName.Img))
-                {
-                    productName.Img = Shared.Helper.Img.ImgPath.Logo;
-                }
-                productName.Arrangement = _db.DataBase.Table<ProductName>().Count() + 1;
-
-
-                await _db.DataBaseAsync.InsertAsync(productName);
-
-                if (Product.Prices is not null)
-                    for (int i = 0; i < Product.Prices.Count; i++)
-                    {
-                        Product.Prices[i].ProductNameId = new Guid(productName.Id.ToByteArray());
-                        await _db.DataBaseAsync.InsertAllAsync(Product.Prices);
-                    }
-
-                Product.Name = productName;
-
+                await SaveProduct();
                 await Shell.Current.DisplayAlert("Dodany", $"Produkt {Product.Name.Name} został dodany", "Ok");
             }
             catch (Exception ex)
@@ -279,9 +238,6 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                 {
                     ProductPrice newPrice = new()
                     {
-                        Id = Shared.Data.InventoryTables.GetGuidSed(),
-                        Created = DateTime.Now,
-                        Updated = DateTime.Now,
                         PriceDecimal = price,
                         ProductNameId = Product.Name.Id
                     };
@@ -365,8 +321,6 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
 
 
     }
-
-    #endregion
 
 
 }

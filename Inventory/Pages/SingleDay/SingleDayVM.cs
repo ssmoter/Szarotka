@@ -1,15 +1,14 @@
 ﻿using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
+using DataBase.Data.Get;
 using DataBase.Data.Save;
 using DataBase.Model.EntitiesInventory;
 
-using Inventory.Service;
-
 using Shared.Data;
+using Shared.Helper;
 
 namespace Inventory.Pages.SingleDay
 {
@@ -38,9 +37,7 @@ namespace Inventory.Pages.SingleDay
             set
             {
                 if (SetProperty(ref day, value, nameof(Day)))
-                {
-                    //OnPropertyChanged(nameof(Day));
-                }
+                { }
             }
         }
 
@@ -51,9 +48,7 @@ namespace Inventory.Pages.SingleDay
             set
             {
                 if (SetProperty(ref singleDayM, value, nameof(SingleDayM)))
-                {
-                    //OnPropertyChanged(nameof(SingleDayM));
-                }
+                { }
             }
         }
         static PeriodicTimer lastFastValuePeriodicTimer = new(TimeSpan.FromSeconds(1));
@@ -61,24 +56,20 @@ namespace Inventory.Pages.SingleDay
         static int lastFastValueClearTimerValue = 0;
 
         const char signPlus = '+';
-        //const char signMinus = '-';
         private readonly IAccessDataBase _db;
-        private readonly ISaveDayService _saveDay;
-        private readonly ISelectDayService _selectDay;
         private readonly ISaveInventoryAoT _saveInventoryAoT;
+        private readonly IGetInventoryAoT _get;
 
         public SingleDayVM(IAccessDataBase db,
-            ISaveDayService saveDay,
-            ISelectDayService selectDay,
-            ISaveInventoryAoT saveInventoryAoT)
+            ISaveInventoryAoT saveInventoryAoT,
+            IGetInventoryAoT get)
         {
             _db = db;
-            _saveDay = saveDay;
             Day ??= new();
             SingleDayM ??= new();
-            _selectDay = selectDay;
             ResetLastFastValue();
             _saveInventoryAoT = saveInventoryAoT;
+            _get = get;
         }
 
 
@@ -138,7 +129,7 @@ namespace Inventory.Pages.SingleDay
                     }
 
                     isPropertyChanged = true;
-                    Day.UpdateTotalPrice();
+                    Day.CalculatePrice();
                     await _saveInventoryAoT.SaveDay(day, userId);
                     isPropertyChanged = false;
                 }
@@ -150,7 +141,7 @@ namespace Inventory.Pages.SingleDay
                     }
                     isPropertyChanged = true;
                     product.CalculatePrice();
-                    Day.UpdateTotalPrice();
+                    Day.CalculatePrice();
                     if (product.DayId == Guid.Empty)
                     {
                         product.DayId = Day.Id;
@@ -163,7 +154,7 @@ namespace Inventory.Pages.SingleDay
                 {
                     if (e.PropertyName == nameof(Cake.IsSell))
                     {
-                        Day.UpdateTotalPrice();
+                        Day.CalculatePrice();
                         if (cake.DayId == Guid.Empty)
                         {
                             cake.DayId = Day.Id;
@@ -222,11 +213,6 @@ namespace Inventory.Pages.SingleDay
                 ToastMakeFastChange(product, value, "zwrot", snackBar);
             }
         }
-        static SnackbarOptions snackBarOptions = new SnackbarOptions()
-        {
-            CornerRadius = new CornerRadius(50),
-            ActionButtonTextColor = Colors.Transparent,
-        };
         private static void ToastMakeFastChange(Product product, int value, string message, IView snackBar = null)
         {
             if (Math.Sign(lastFastValue.value) != Math.Sign(value))
@@ -314,7 +300,6 @@ namespace Inventory.Pages.SingleDay
         [RelayCommand]
         async Task SaveDay()
         {
-            //await _saveDay.SaveDayAsync(Day);
             var userId = Shared.Helper.UserAfterLogin.User.Id.ToByteArray();
             await _saveInventoryAoT.SaveDay(Day, userId);
             var dayId = Day.Id.ToByteArray();
@@ -334,7 +319,7 @@ namespace Inventory.Pages.SingleDay
                 taskCakes[i] = _saveInventoryAoT.SaveCake(day.Cakes[i], userId);
             }
             await Task.WhenAll(taskCakes);
-            Day.UpdateTotalPrice();
+            Day.CalculatePrice();
             await _saveInventoryAoT.SaveDay(Day, userId);
         }
 
@@ -366,16 +351,13 @@ namespace Inventory.Pages.SingleDay
                         PriceDecimal = value,
                         DayId = Day.Id,
                         Index = Day.Cakes.Count + 1,
-                        Created = DateTime.Now,
-                        Updated = DateTime.Now,
                         IsSell = true
                     };
                     cake.PropertyChanged += SingleDayVM_PropertyChanged;
                     Day.Cakes.Add(cake);
-                    Day.Cakes.LastOrDefault().IsSell = true;
-                    Day.UpdateTotalPrice();
+                    Day.CalculatePrice();
                     await CommunityToolkit.Maui.Alerts.Toast.Make($"Dodano ciasto z ceną {value}", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
-                    await _saveInventoryAoT.SaveCake(cake, Day.Id.ToByteArray());
+                    await _saveInventoryAoT.SaveCake(cake, UserAfterLogin.User.Id.ToByteArray());
                 }
             }
             catch (Exception ex)
@@ -399,58 +381,8 @@ namespace Inventory.Pages.SingleDay
                 }
                 Day.Cakes.Remove(cake);
                 cake.IsDelete = true;
-                Day.UpdateTotalPrice();
-                _saveInventoryAoT.SaveCake(cake, Day.Id.ToByteArray());
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
-        }
-        [RelayCommand]
-        async Task Back()
-        {
-            try
-            {
-                string yes = "Tak";
-                string no = "Nie";
-                string cancel = "Anuluj";
-
-                var result = await Shell.Current.DisplayActionSheet("Czy zapisać przy cofaniu", cancel, null, yes, no);
-
-                if (result == yes)
-                {
-                    await SaveDay();
-                    await BackWithoutSave();
-                }
-                else if (result == cancel)
-                {
-                    return;
-                }
-                else if (result == no)
-                {
-                    await BackWithoutSave();
-                }
-                else
-                {
-                    return;
-                }
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
-        }
-        [RelayCommand]
-        async Task BackWithoutSave()
-        {
-            try
-            {
-                await Shell.Current.GoToAsync("..?",
-                        new Dictionary<string, object>()
-                        {
-                            [nameof(Day)] = Day
-                        });
+                Day.CalculatePrice();
+                _saveInventoryAoT.SaveCake(cake, UserAfterLogin.User.Id.ToByteArray());
             }
             catch (Exception ex)
             {
@@ -487,7 +419,7 @@ namespace Inventory.Pages.SingleDay
                         needToSort = true;
                     }
                 }
-                Day.UpdateTotalPrice();
+                Day.CalculatePrice();
 
                 if (needToSort)
                 {
@@ -511,13 +443,15 @@ namespace Inventory.Pages.SingleDay
         {
             try
             {
-                var oldPrice = await _db.DataBaseAsync.Table<ProductPrice>().Where(x => x.ProductNameId == product.ProductNameId).ToArrayAsync();
-                var priceArray = oldPrice.Select(x => x.PriceDecimal).Select(x => x.ToString()).ToList();
-                priceArray.Add("Nowa");
+                IList<(ProductName Name, IList<ProductPrice> Prices)> allProducts = await _get.EmptyProductsNameAndPrices();
+                var (Name, Prices) = allProducts.FirstOrDefault(x => x.Name.Id == product.Id);
+
+                string[] priceArray = [.. Prices.Select(x => x.PriceDecimal.ToString()), "Nowa"];
+
 
                 var result = await Shell.Current.DisplayActionSheet("Zmiana ceny",
                                                                     "Anuluj",
-                                                                    null, [.. priceArray]);
+                                                                    null, priceArray);
                 if (result == "Anuluj")
                 {
                     return;
@@ -526,9 +460,8 @@ namespace Inventory.Pages.SingleDay
                 {
                     var listProduct = new Pages.Products.ListProduct.ListProductM()
                     {
-                        Name = product.Name,
-                        Prices = new System.Collections.ObjectModel.ObservableCollection<ProductPrice>(
-                            await _db.DataBaseAsync.Table<ProductPrice>().Where(x => x.ProductNameId == product.ProductNameId).ToArrayAsync())
+                        Name = Name,
+                        Prices = [.. Prices],
                     };
                     listProduct.SetActualPrice();
 
@@ -542,10 +475,12 @@ namespace Inventory.Pages.SingleDay
 
                 if (decimal.TryParse(result, out decimal selectedPrice))
                 {
-                    var price = oldPrice.FirstOrDefault(x => x.PriceDecimal == selectedPrice);
+                    ProductPrice price = Prices.OrderByDescending(x => x.CreatedTicks).FirstOrDefault(x => x.PriceDecimal == selectedPrice);
                     if (price is not null)
                     {
+                        product.ProductPriceId = price.Id;
                         product.Price = price;
+                        await Toast.Make($"Cena {product.Name.Name} została zmieniona na {price.PriceDecimal}", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
                     }
                 }
                 RefreshListOfProduct();
@@ -583,14 +518,17 @@ namespace Inventory.Pages.SingleDay
         {
             try
             {
-                var allProducts = await _db.DataBaseAsync.Table<ProductName>().OrderBy(x => x.Arrangement).ToArrayAsync();
-                var names = Day.Products.Select(x => x.Name);
-                var a = allProducts.Except(names);
-                var products = a.Select(x => x.Name).ToList();
-                //var products = allProducts.Where(x => Day.Products.All(z => z.ProductNameId != x.Id)).Select(x => x.Name).ToList();
-                products.Add("Dodaj nowy");
+                IList<(ProductName Name, IList<ProductPrice> Prices)> allProducts = await _get.EmptyProductsNameAndPrices();
 
-                var result = await Shell.Current.DisplayActionSheet("Dodaj produkt z list", "Anuluj", null, [.. products]);
+                var exceptNames = Day.Products.Select(x => x.Name);
+                var selectedProducts = allProducts.Select(x => x.Name).Except(exceptNames);
+
+                string[] products = [.. selectedProducts.Select(x => x.Name), "Dodaj nowy"];
+
+                var result = await Shell.Current.DisplayActionSheet("Dodaj produkt z list",
+                                                                    "Anuluj",
+                                                                    null,
+                                                                    products);
 
                 if (result == " Anuluj")
                     return;
@@ -605,27 +543,30 @@ namespace Inventory.Pages.SingleDay
                     return;
                 }
 
-                var selectedProduct = allProducts.FirstOrDefault(x => x.Name == result);
+                (ProductName Name, IList<ProductPrice> Prices)? selectedProduct = allProducts.FirstOrDefault(x => x.Name.Name == result);
 
                 if (selectedProduct is not null)
                 {
-                    var newProduct = await _db.DataBaseAsync.Table<Product>().FirstOrDefaultAsync(x => x.DayId == Day.Id && x.ProductNameId == selectedProduct.Id);
-                    newProduct ??= new Product();
+                    var lastUpdateDay = await _get.Day(Day.Id);
 
-                    newProduct.Name = selectedProduct;
-                    if (newProduct.ProductPriceId != Guid.Empty)
+                    var lastSavedProduct = lastUpdateDay.Products.FirstOrDefault(x=>x.Name.Id == selectedProduct.Value.Name.Id);
+
+                    if (lastSavedProduct is not null)
                     {
-                        newProduct.Price = await _db.DataBaseAsync.Table<ProductPrice>().FirstOrDefaultAsync(x => x.Id == newProduct.ProductPriceId);
+                        lastSavedProduct.IsDelete = false;
+                        Day.Products.Add(lastSavedProduct);
+                        RefreshListOfProduct();
+                        return;
                     }
-                    else
+                    var price = selectedProduct.Value.Prices.OrderByDescending(x => x.CreatedTicks).FirstOrDefault();
+                    Product product = new()
                     {
-                        newProduct.Price = await _db.DataBaseAsync.Table<ProductPrice>().FirstOrDefaultAsync(x => x.ProductNameId == selectedProduct.Id);
-                        newProduct.ProductPriceId = newProduct.Price.Id;
-                    }
-
-                    newProduct.ProductNameId = newProduct.Name.Id;
-
-                    Day.Products.Add(newProduct);
+                        Name = selectedProduct.Value.Name,
+                        ProductNameId = selectedProduct.Value.Name.Id,
+                        Price = price,
+                        ProductPriceId = price.Id,
+                    };
+                    Day.Products.Add(product);
                     RefreshListOfProduct();
                 }
             }

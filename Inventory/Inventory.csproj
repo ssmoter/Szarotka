@@ -64,9 +64,6 @@
 	  <MauiXaml Update="Pages\RangeDay\RangeDayV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Pages\RangeDay\RangeDayVWindows.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
 	  <MauiXaml Update="Pages\SingleDayPreview\SingleDayPreviewPage\SingleDayPreviewPageV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -82,6 +79,10 @@
 	  <MauiXaml Update="Pages\SingleDay\SingleDayVWindows.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Data\File\" />
 	</ItemGroup>
 
 </Project>

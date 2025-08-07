@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
 using DataBase.Data.Get;
+using DataBase.Model.EntitiesInventory;
 
 using Shared.Data;
 using Shared.Helper;
@@ -41,34 +42,14 @@ namespace Inventory.Pages.Main
         {
             try
             {
-                DataBase.Model.EntitiesInventory.Day day = await GetDay(_time.UtcNow().ToShortDateString());
-
+                var day = await GetDay(_time.UtcNow().ToString("dd.MM.yyyy"));
                 if (day.Id == Guid.Empty)
                 {
-
-                    var result = await Shell.Current.DisplayAlert("Czy chcesz utworzyć nowy wpis",
-                        "Wraz z utworzeniem nowego dnia dane są automatycznie zapisywane",
-                        "Utwórz", "Anuluj");
-
-                    if (result)
-                    {
-                        await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
-                        new Dictionary<string, object>()
-                        {
-                            [nameof(DataBase.Model.EntitiesInventory.Day)] = day,
-                        });
-                    }
+                    day.SelectedDate = _time.UtcNow();
                 }
-                else
-                {
-                    await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDayPreview.SingleDayPreviewPage.SingleDayPreviewPageV)}?",
-                        new Dictionary<string, object>()
-                        {
-                            [nameof(DataBase.Model.EntitiesInventory.Day)] = day,
-                            [nameof(DataBase.Model.EntitiesInventory.Driver)] = UserAfterLogin.User.Name,
 
-                        });
-                }
+
+                await GoToDay(day);
             }
             catch (Exception ex)
             {
@@ -76,19 +57,6 @@ namespace Inventory.Pages.Main
             }
         }
 
-        private async Task<DataBase.Model.EntitiesInventory.Day> GetDay(string shortDate)
-        {
-            var userId = UserAfterLogin.User.Id;
-            DataBase.Model.EntitiesInventory.Day day = await _get.DaySelectedDateString(shortDate, userId);
-
-            if (day is null)
-            {
-                var products = await _get.EmptyProducts();
-                day.Products = new System.Collections.ObjectModel.ObservableCollection<DataBase.Model.EntitiesInventory.Product>(products);
-            }
-
-            return day;
-        }
 
         [RelayCommand]
         async Task NavigationToRange()
@@ -109,33 +77,12 @@ namespace Inventory.Pages.Main
             {
                 if (string.IsNullOrWhiteSpace(MainM.DisplayDate))
                     return;
-
-                var days = await GetDay(MainM.Date.ToShortDateString());
-
-                if (days.Id == Guid.Empty)
+                var day = await GetDay(MainM.Date.ToString("dd.MM.yyyy"));
+                if (day.Id == Guid.Empty)
                 {
-                    var result = await Shell.Current.DisplayAlert("Czy chcesz utworzyć nowy wpis",
-                                "Wraz z utworzeniem nowego dnia dane są automatycznie zapisywane",
-                                "Utwórz", "Anuluj");
-
-                    if (result)
-                    {
-                        await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
-                        new Dictionary<string, object>()
-                        {
-                            [nameof(DataBase.Model.EntitiesInventory.Day)] = days,
-                        });
-                    }
+                    day.SelectedDate = new DateTime(MainM.Date.Year, MainM.Date.Month, MainM.Date.Day, 12, 0, 0);
                 }
-                else
-                {
-                    await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDayPreview.SingleDayPreviewPage.SingleDayPreviewPageV)}?",
-                        new Dictionary<string, object>()
-                        {
-                            [nameof(DataBase.Model.EntitiesInventory.Day)] = days,
-                            [nameof(DataBase.Model.EntitiesInventory.Driver)] = Helper.SelectedDriver.Name,
-                        });
-                }
+                await GoToDay(day);
             }
             catch (Exception ex)
             {
@@ -143,5 +90,45 @@ namespace Inventory.Pages.Main
             }
         }
 
+        private async Task GoToDay(Day days)
+        {
+            if (days.Id == Guid.Empty)
+            {
+                var result = await Shell.Current.DisplayAlert("Czy chcesz utworzyć nowy wpis",
+                            "Wraz z utworzeniem nowego dnia dane są automatycznie zapisywane",
+                            "Utwórz", "Anuluj");
+
+                if (result)
+                {
+                    await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDay.SingleDayV)}?",
+                    new Dictionary<string, object>()
+                    {
+                        [nameof(DataBase.Model.EntitiesInventory.Day)] = days,
+                    });
+                }
+            }
+            else
+            {
+                await Shell.Current.GoToAsync($"{nameof(Inventory.Pages.SingleDayPreview.SingleDayPreviewPage.SingleDayPreviewPageV)}?",
+                    new Dictionary<string, object>()
+                    {
+                        [nameof(DataBase.Model.EntitiesInventory.Day)] = days,
+                    });
+            }
+        }
+        private async Task<DataBase.Model.EntitiesInventory.Day> GetDay(string shortDate)
+        {
+            var userId = UserAfterLogin.User.Id;
+            DataBase.Model.EntitiesInventory.Day day = await _get.DaySelectedDateString(shortDate, userId);
+
+            if (day is null)
+            {
+                day = new();
+                var products = await _get.EmptyProducts();
+                day.Products = new System.Collections.ObjectModel.ObservableCollection<DataBase.Model.EntitiesInventory.Product>(products);
+            }
+
+            return day;
+        }
     }
 }

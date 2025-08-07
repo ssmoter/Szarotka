@@ -139,22 +139,9 @@ namespace Inventory.Pages.SingleDayPreview.SingleDayPreviewSmall
     {
         public CakeIsExpanded()
         { }
-        public CakeIsExpanded(Cake cake)
+        public CakeIsExpanded(Cake cake) : base(cake)
         {
-            Created = cake.Created;
-            CreatedTicks = cake.CreatedTicks;
-            DayId = cake.DayId;
-            Id = cake.Id;
-            Index = cake.Index;
-            IsDelete = cake.IsDelete;
-            IsSell = cake.IsSell;
             IsExpanded = false;
-            Price = cake.Price;
-            PriceDecimal = cake.PriceDecimal;
-            Updated = cake.Updated;
-            UpdatedTicks = cake.UpdatedTicks;
-            UserCreatedId = cake.UserCreatedId;
-            UserUpdatedId = cake.UserCreatedId;
         }
 
         private bool isExpanded;

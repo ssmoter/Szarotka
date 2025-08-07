@@ -29,6 +29,8 @@ namespace Shared.Data.ServerHttpClients
 
         public async Task<IList<UpdateLog>> GetLogs(Guid logId, UpdateProgressBar progressContent, CancellationToken token = default)
         {
+            Shared.Service.AndroidPermissionService.InternetCheck();
+
             string url = $"{_url}/update-logs/{logId}";
             using var httpClient = _httpClientFactory.CreateClient();
 

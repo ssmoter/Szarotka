@@ -2,10 +2,12 @@
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
-
+using DataBase.Data.Get;
+using DataBase.Data.Save;
 using DataBase.Model.EntitiesInventory;
 
 using Shared.Data;
+using Shared.Helper;
 
 using System.Collections.ObjectModel;
 
@@ -33,90 +35,40 @@ namespace Inventory.Pages.Products.ListProduct
             }
         }
 
-        private bool isGenerateDefaultEnable;
-        public bool IsGenerateDefaultEnable
-        {
-            get => isGenerateDefaultEnable;
-            set
-            {
-                if (SetProperty(ref isGenerateDefaultEnable, value, nameof(IsGenerateDefaultEnable))) { }
-            }
-        }
-
-        readonly Random random = new(2137);
-        readonly IAccessDataBase _db;
+        private readonly IAccessDataBase _db;
+        private readonly IGetInventoryAoT _get;
+        private readonly ISaveInventoryAoT _save;
 
         public Action<int, int, ScrollToPosition, bool> ScrollTo;
-        public ListProductVM(IAccessDataBase db)
+        public ListProductVM(IAccessDataBase db, IGetInventoryAoT get, ISaveInventoryAoT save)
         {
             ProductMs = [];
             this._db = db;
+            _get = get;
+            _save = save;
         }
-        #region Method
-
-        #region Async
-
-
         public async Task SelectAllProductsAsync()
         {
             try
             {
                 ProductMs.Clear();
-                var names = await _db.DataBaseAsync.Table<ProductName>().OrderBy(x => x.Arrangement).ToArrayAsync();
 
-                for (int i = 0; i < names.Length; i++)
+                IList<(ProductName Name, IList<ProductPrice> Prices)> product = await _get.EmptyProductsNameAndPrices();
+
+                for (int i = 0; i < product.Count; i++)
                 {
                     ProductMs.Add(new ListProductM()
                     {
-                        Name = names[i],
+                        Name = product[i].Name,
+                        Prices = [.. product[i].Prices]
                     });
-                    ProductMs[i].Prices = new(await SelectPricesAsync(names[i].Id));
                     ProductMs[i].SetActualPrice();
                 }
-                IsGenerateDefaultEnable = ProductMs.Count <= 0;
             }
             catch (Exception ex)
             {
                 _db.SaveLogExtension(ex);
             }
-        }
-        async Task<ProductPrice[]> SelectPricesAsync(Guid id)
-        {
-            var price = await _db.DataBaseAsync.Table<ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(z => z.CreatedTicks).ToArrayAsync();
-            return price;
-        }
-
-        #endregion
-
-        #region Sync
-
-        public void SelectAllProducts()
-        {
-            try
-            {
-                ProductMs.Clear();
-                var names = _db.DataBase.Table<ProductName>().OrderBy(x => x.Arrangement).ToArray();
-
-                for (int i = 0; i < names.Length; i++)
-                {
-                    ProductMs.Add(new ListProductM()
-                    {
-                        Name = names[i],
-                    });
-                    ProductMs[i].Prices = new(SelectPrices(names[i].Id));
-                    ProductMs[i].SetActualPrice();
-                }
-                IsGenerateDefaultEnable = ProductMs.Count <= 0;
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
-        }
-        ProductPrice[] SelectPrices(Guid id)
-        {
-            var price = _db.DataBase.Table<ProductPrice>().Where(x => x.ProductNameId == id).OrderByDescending(z => z.CreatedTicks).ToArray();
-            return price;
         }
         void OnScrollTo(int index, int groupIndex = -1, ScrollToPosition position = ScrollToPosition.MakeVisible, bool animate = true)
         {
@@ -136,18 +88,10 @@ namespace Inventory.Pages.Products.ListProduct
             {
                 int arrangement = i + 1;
                 ProductMs[i].Name.Arrangement = arrangement;
-
-                var entities = ProductMs[i].Name;
-                entities.Updated = DateTime.Now;
-                await _db.DataBaseAsync.UpdateAsync(entities);
+                await _save.SaveProductName(ProductMs[i].Name, UserAfterLogin.User.Id.ToByteArray());
             }
         }
 
-        #endregion
-
-        #endregion
-
-        #region Commend
 
         [RelayCommand]
         async Task DeleteProduct(ListProductM value)
@@ -218,29 +162,6 @@ namespace Inventory.Pages.Products.ListProduct
 
         }
 
-        [RelayCommand]
-        async Task GenerateDefaultProducts()
-        {
-            try
-            {
-                var products = Shared.Data.InventoryTables.DefaultProducts;
-                for (int i = 0; i < products.Length; i++)
-                {
-                    products[i].Name.Arrangement = i;
-                    var id = _db.DataBase.Insert(products[i].Name);
-                    var name = products[i].Name.Name;
-                    products[i].Name = _db.DataBase.Table<ProductName>().FirstOrDefault(x => x.Name == name);
-                    products[i].Price.ProductNameId = products[i].Name.Id;
-                    _db.DataBase.Insert(products[i].Price);
-                }
-                await SelectAllProductsAsync();
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
-        }
-
 
         [RelayCommand]
         async Task SetUp(ListProductM value)
@@ -300,26 +221,6 @@ namespace Inventory.Pages.Products.ListProduct
         }
 
         [RelayCommand]
-        void OnDropCompleted()
-        {
-            try
-            {
-                if (DragAndDropProduct is null)
-                    return;
-
-                if (ProductMs.Count != _db.DataBase.Table<ProductName>().Count())
-                {
-                    ProductMs.Clear();
-                    SelectAllProducts();
-                }
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
-        }
-
-        [RelayCommand]
         async Task OnDrop(ListProductM value)
         {
             try
@@ -338,8 +239,6 @@ namespace Inventory.Pages.Products.ListProduct
                 _db.SaveLogExtension(ex);
             }
         }
-        #endregion
-
 
     }
 }

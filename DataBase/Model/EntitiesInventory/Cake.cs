@@ -16,11 +16,8 @@ public partial class Cake : BaseEntities<Guid>
         {
             if (SetProperty(ref dayId, value, nameof(DayId)))
             {
-                //OnPropertyChanged(nameof(DayId));
             }
         }
-
-
     }
 
     private bool isSell;
@@ -32,7 +29,6 @@ public partial class Cake : BaseEntities<Guid>
         {
             if (SetProperty(ref isSell, value, nameof(IsSell)))
             {
-                //OnPropertyChanged(nameof(IsSell));               
             }
         }
     }
@@ -46,7 +42,6 @@ public partial class Cake : BaseEntities<Guid>
         {
             if (SetProperty(ref index, value, nameof(Index)))
             {
-                //OnPropertyChanged(nameof(index));
             }
         }
     }
@@ -60,7 +55,6 @@ public partial class Cake : BaseEntities<Guid>
         {
             if (SetProperty(ref price, value, nameof(Price)))
             {
-                //OnPropertyChanged(nameof(Price));
                 OnPropertyChanged(nameof(PriceDecimal));
             }
         }
@@ -77,15 +71,22 @@ public partial class Cake : BaseEntities<Guid>
         {
             if (SetProperty(ref price, (int)(value * 100), nameof(PriceDecimal)))
             {
-                //OnPropertyChanged(nameof(Price));
                 OnPropertyChanged(nameof(PriceDecimal));
 
             }
         }
     }
 
-
-
+    public Cake()
+    { }
+    public Cake(Cake copy) : base(copy)
+    {
+        DayId = copy.DayId;
+        IsSell = copy.IsSell;
+        Index = copy.Index;
+        Price = copy.Price;
+        PriceDecimal = copy.PriceDecimal;
+    }
 
 }
 

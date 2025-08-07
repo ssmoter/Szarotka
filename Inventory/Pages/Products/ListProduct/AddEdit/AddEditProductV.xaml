@@ -289,10 +289,7 @@
                 MaximumWidthRequest="200"
                 String64Base="{Binding Product.Name.Img}">
                 <CustomControls:StringImage.GestureRecognizers>
-                    <TapGestureRecognizer
-                        Command="{Binding SwipeViewGestureCommand}"
-                        CommandParameter="0"
-                        Tapped="TapGestureRecognizer_Tapped" />
+                    <TapGestureRecognizer Command="{Binding SwipeViewGestureCommand}" CommandParameter="0" />
                 </CustomControls:StringImage.GestureRecognizers>
             </CustomControls:StringImage>
 

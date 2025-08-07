@@ -328,7 +328,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         }
     }
 
-    public void UpdateTotalPrice()
+    public void CalculatePrice()
     {
         if (Products is not null)
             TotalPriceProductsDecimal = Products.Where(x => !x.IsDelete).Sum(z => z.PriceTotalAfterCorrectDecimal);
@@ -347,7 +347,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         Products ??= [];
         Cakes ??= [];
     }
-    public Day(Day day)
+    public Day(Day day) : base(day)
     {
         this.Products = day.Products;
         this.Cakes = day.Cakes;

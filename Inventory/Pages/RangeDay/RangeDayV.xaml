@@ -9,262 +9,561 @@
     xmlns:VMD="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
     xmlns:graph="clr-namespace:Inventory.Pages.RangeDay.Graph"
     xmlns:img="clr-namespace:Shared.Helper.Img;assembly=Shared"
+    xmlns:rangeControls="clr-namespace:Inventory.Pages.RangeDay.Controls"
+    xmlns:system="clr-namespace:System;assembly=netstandard"
     xmlns:table="clr-namespace:Inventory.Pages.RangeDay.Table"
-    x:DataType="VM:RangeDayVM"
-    Shell.NavBarIsVisible="False">
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Name="RangeDayPage"
+    x:DataType="VM:RangeDayVM">
+
 
     <ContentPage.Resources>
         <Convert:TranslateDayOfWeek x:Key="ANGToPL" />
+        <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        <rangeControls:CalculationsTranslateConverter x:Key="CalculationsTranslateConverter" />
     </ContentPage.Resources>
 
-    <Shell.BackButtonBehavior>
-        <BackButtonBehavior Command="{Binding BackCommand}" IsVisible="False" />
-    </Shell.BackButtonBehavior>
 
-    <!--<ContentPage.ToolbarItems>
+
+    <ContentPage.ToolbarItems>
         <ToolbarItem
-            x:DataType="VM:RangeDayVM"
-            Command="{Binding GenerateCSVFileCommand}"
-            IsEnabled="False"
-            Text="CSV" />
-        <ToolbarItem
-            x:DataType="VM:RangeDayVM"
             Command="{Binding GenerateJsonFileCommand}"
-            Text="JSON" />
-    </ContentPage.ToolbarItems>-->
+            Order="Secondary"
+            Text="Json" />
+        <ToolbarItem
+            Command="{Binding SaveAnotherDriverDataCommand}"
+            IsEnabled="{Binding OptionsM.EnableSave}"
+            Order="Secondary"
+            Text="Zapisz wczytany plik" />
+
+    </ContentPage.ToolbarItems>
 
 
-    <Grid RowDefinitions="auto,*,0.001">
-        <Grid>
-            <HorizontalStackLayout>
-                <Grid>
-                    <ImageButton
-                        Command="{Binding BackCommand}"
-                        Rotation="90"
-                        Source="{AppThemeBinding Light={Static img:ImgArrow.ArrowDownwardBlack},
-                                                 Dark={Static img:ImgArrow.ArrowDownwardWhite}}" />
-                </Grid>
-                <VerticalStackLayout>
-                    <Label FontSize="Title" Text="Zakres" />
-                    <Button
-                        Margin="-10"
-                        BackgroundColor="Transparent"
-                        Command="{Binding GenerateJsonFileCommand}"
-                        HorizontalOptions="Start"
-                        Text="JSON"
-                        TextColor="{AppThemeBinding Light={StaticResource Black},
-                                                    Dark={StaticResource White}}" />
-                </VerticalStackLayout>
+    <Grid
+        ColumnDefinitions="*,3*"
+        HorizontalOptions="Fill"
+        RowDefinitions="auto,*">
 
-            </HorizontalStackLayout>
-            <HorizontalStackLayout HorizontalOptions="Center">
-                <Button
-                    Command="{Binding SelectMoreDateCommand}"
-                    HorizontalOptions="Center"
-                    Text="Zakres dat"
-                    VerticalOptions="Center" />
+        <ActivityIndicator
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            HorizontalOptions="Center"
+            IsRunning="{Binding OptionsM.IsRefreshing}"
+            IsVisible="{Binding OptionsM.IsRefreshing}"
+            VerticalOptions="Start" />
 
-                <Button
-                    Command="{Binding SaveAnotherDriverDataCommand}"
-                    IsVisible="{Binding EnableSave}"
-                    Text="Zapisz wczytany plik" />
-            </HorizontalStackLayout>
-            <VerticalStackLayout HorizontalOptions="End">
-                <RadioButton
-                    Margin="0,-8,0,-11"
-                    Content="Lista"
-                    IsChecked="{Binding ListIsVisible}" />
-                <RadioButton
-                    Margin="0,-11,0,-11"
-                    Content="Wykres"
-                    IsChecked="{Binding GraphIsVisible}" />
-                <RadioButton
-                    Margin="0,-11,0,-11"
-                    Content="Tabela"
-                    IsChecked="{Binding TableIsVisible}" />
-            </VerticalStackLayout>
-        </Grid>
 
-        <Grid Grid.Row="1" IsVisible="{Binding GraphIsVisible}">
-            <!--<BlazorWebView x:Name="blazorWebViewGraph" HostPage="wwwroot/index.html">
-                <BlazorWebView.RootComponents>
-                    <RootComponent ComponentType="{x:Type graph:Graph}" Selector="#app" />
-                </BlazorWebView.RootComponents>
-            </BlazorWebView>-->
-            <graph:GraphV RangeDayMs="{Binding RangeDays}" />
-        </Grid>
 
         <Grid
-            x:Name="TableGrid"
-            Grid.Row="1"
-            IsVisible="{Binding TableIsVisible}">
-
-            <BlazorWebView x:Name="blazorWebViewTable" HostPage="wwwroot/index.html">
-                <BlazorWebView.RootComponents>
-                    <RootComponent ComponentType="{x:Type table:RangeTable}" Selector="#app" />
-                </BlazorWebView.RootComponents>
-            </BlazorWebView>
-
+            Grid.Row="0"
+            Grid.ColumnSpan="2"
+            ColumnDefinitions="*,*"
+            HorizontalOptions="Center">
+            <Button
+                Grid.Column="0"
+                Command="{Binding SelectMoreDateCommand}"
+                HorizontalOptions="Center"
+                Text="Zakres dat"
+                VerticalOptions="Center" />
+            <Button
+                Grid.Column="1"
+                Command="{Binding SortTableChangeVisibilityCommand}"
+                Text="Sortuj" />
         </Grid>
 
-        <Grid
-            Grid.Row="1"
-            IsVisible="{Binding ListIsVisible}"
-            RowDefinitions="auto,*">
+        <toolkit:DockLayout
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            Grid.ColumnSpan="1"
+            toolkit:DockLayout.DockPosition="Right"
+            HorizontalOptions="End"
+            IsVisible="{Binding OptionsM.SortTableIsVisible}"
+            ZIndex="1010">
 
             <Border
                 Margin="2"
-                Padding="5"
-                MaximumHeightRequest="100">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                <CollectionView ItemsSource="{Binding Sum}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="VM:RangeDayM">
+                Padding="2"
+                Background="{AppThemeBinding Light={StaticResource White},
+                                             Dark={StaticResource OffBlack}}">
 
-                            <VerticalStackLayout>
+                <Grid ColumnSpacing="5" RowSpacing="5">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                                <Label>
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="Suma utargu kierowcy: " />
-                                            <Span Text="{Binding Driver.Name}" />
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
+                    <Grid Grid.Row="0">
+                        <Button Command="{Binding SortTableChangeVisibilityCommand}" Text="Schowaj" />
+                    </Grid>
 
-                                <Label>
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="Zapłacono = " />
-                                            <Span Text="{Binding Day.TotalPriceMoneyDecimal}" />
-                                            <Span Text=" zł" />
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
+                    <Grid Grid.Row="1" ColumnDefinitions="*,*">
 
-                                <Label>
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="Utarg = " />
-                                            <Span Text="{Binding Day.TotalPriceAfterCorrectDecimal}" />
-                                            <Span Text=" zł" />
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
+                        <Grid
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            ColumnDefinitions="*,auto">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Label
+                                Grid.ColumnSpan="2"
+                                FontSize="Medium"
+                                HorizontalOptions="Center"
+                                LineBreakMode="WordWrap"
+                                Text="Wyświetl konkretne dni:"
+                                TextDecorations="Underline" />
+
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Text="Poniedziałek" />
+                            <Label
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Text="Wtorek" />
+                            <Label
+                                Grid.Row="3"
+                                Grid.Column="0"
+                                Text="środa" />
+                            <Label
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                Text="Czwartek" />
+                            <Label
+                                Grid.Row="5"
+                                Grid.Column="0"
+                                Text="Piątek" />
+                            <Label
+                                Grid.Row="6"
+                                Grid.Column="0"
+                                Text="Sobota" />
+                            <Label
+                                Grid.Row="7"
+                                Grid.Column="0"
+                                Text="Niedziela" />
+
+                            <Border Grid.Row="1" Grid.ColumnSpan="2" />
+                            <Border Grid.Row="2" Grid.ColumnSpan="2" />
+                            <Border Grid.Row="3" Grid.ColumnSpan="2" />
+                            <Border Grid.Row="4" Grid.ColumnSpan="2" />
+                            <Border Grid.Row="5" Grid.ColumnSpan="2" />
+                            <Border Grid.Row="6" Grid.ColumnSpan="2" />
+                            <Border Grid.Row="7" Grid.ColumnSpan="2" />
+
+                            <CheckBox
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                IsChecked="{Binding FilterTyp.Monday}" />
+                            <CheckBox
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                IsChecked="{Binding FilterTyp.Tuesday}" />
+                            <CheckBox
+                                Grid.Row="3"
+                                Grid.Column="2"
+                                IsChecked="{Binding FilterTyp.Wednesday}" />
+                            <CheckBox
+                                Grid.Row="4"
+                                Grid.Column="2"
+                                IsChecked="{Binding FilterTyp.Thursday}" />
+                            <CheckBox
+                                Grid.Row="5"
+                                Grid.Column="2"
+                                IsChecked="{Binding FilterTyp.Friday}" />
+                            <CheckBox
+                                Grid.Row="6"
+                                Grid.Column="2"
+                                IsChecked="{Binding FilterTyp.Saturday}" />
+                            <CheckBox
+                                Grid.Row="7"
+                                Grid.Column="2"
+                                IsChecked="{Binding FilterTyp.Sunday}" />
 
 
-                                <Label>
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span Text="Różnica = " />
-                                            <Span Text="{Binding Day.TotalPriceDifferenceDecimal}" />
-                                            <Span Text=" zł" />
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
+                        </Grid>
 
-                                <Border />
+                        <Grid
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            RowDefinitions="auto,*">
+                            <Label
+                                FontSize="Medium"
+                                HorizontalOptions="Center"
+                                Text="Przeliczone:"
+                                TextDecorations="Underline" />
+                            <Border VerticalOptions="End" />
 
-                            </VerticalStackLayout>
+                            <ScrollView Grid.Row="1">
+                                <Grid RadioButtonGroup.GroupName="CalculationBy" RadioButtonGroup.SelectedValue="{Binding FilterTyp.CalculationBy}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Border Grid.Row="0" VerticalOptions="End" />
+                                    <Border Grid.Row="1" VerticalOptions="End" />
+                                    <Border Grid.Row="2" VerticalOptions="End" />
+                                    <Border Grid.Row="3" VerticalOptions="End" />
+                                    <Border Grid.Row="4" VerticalOptions="End" />
+                                    <Border Grid.Row="5" VerticalOptions="End" />
+                                    <Border Grid.Row="6" VerticalOptions="End" />
+                                    <Border Grid.Row="7" VerticalOptions="End" />
+                                    <Border Grid.Row="8" VerticalOptions="End" />
+                                    <Border Grid.Row="9" VerticalOptions="End" />
+                                    <Border Grid.Row="10" VerticalOptions="End" />
+                                    <Border Grid.Row="11" VerticalOptions="End" />
+                                    <Border Grid.Row="12" VerticalOptions="End" />
+                                    <Border Grid.Row="13" VerticalOptions="End" />
+                                    <Border Grid.Row="14" VerticalOptions="End" />
+                                    <Border Grid.Row="15" VerticalOptions="End" />
 
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </Border>
+                                    <RadioButton
+                                        Grid.Row="0"
+                                        x:DataType="VM:CalculationTyp"
+                                        Content="{Binding Source={x:Static VM:CalculationTyp.None}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        GroupName="CalculationBy"
+                                        Value="{x:Static VM:CalculationTyp.None}" />
+                                    <RadioButton
+                                        Grid.Row="1"
+                                        x:DataType="VM:CalculationTyp"
+                                        Content="{Binding Source={x:Static VM:CalculationTyp.SumWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        GroupName="CalculationBy"
+                                        Value="{x:Static VM:CalculationTyp.SumWeek}" />
+                                    <RadioButton
+                                        Grid.Row="2"
+                                        x:DataType="VM:CalculationTyp"
+                                        Content="{Binding Source={x:Static VM:CalculationTyp.SumMonth}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        GroupName="CalculationBy"
+                                        Value="{x:Static VM:CalculationTyp.SumMonth}" />
+                                    <RadioButton
+                                        Grid.Row="3"
+                                        x:DataType="VM:CalculationTyp"
+                                        Content="{Binding Source={x:Static VM:CalculationTyp.SumYear}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        GroupName="CalculationBy"
+                                        Value="{x:Static VM:CalculationTyp.SumYear}" />
+                                    <RadioButton
+                                        Grid.Row="4"
+                                        x:DataType="VM:CalculationTyp"
+                                        Content="{Binding Source={x:Static VM:CalculationTyp.SumDayOfWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        GroupName="CalculationBy"
+                                        Value="{x:Static VM:CalculationTyp.SumDayOfWeek}" />
+                                    <RadioButton
+                                        Grid.Row="5"
+                                        x:DataType="VM:CalculationTyp"
+                                        Content="{Binding Source={x:Static VM:CalculationTyp.SumAll}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        GroupName="CalculationBy"
+                                        Value="{x:Static VM:CalculationTyp.SumAll}" />
+                                    <RadioButton
+                                        Grid.Row="6"
+                                        x:DataType="VM:CalculationTyp"
+                                        Content="{Binding Source={x:Static VM:CalculationTyp.AverageWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        GroupName="CalculationBy"
+                                        Value="{x:Static VM:CalculationTyp.AverageWeek}" />
+                                    <RadioButton
+                                        Grid.Row="7"
+                                        x:DataType="VM:CalculationTyp"
+                                        Content="{Binding Source={x:Static VM:CalculationTyp.AverageMonth}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        GroupName="CalculationBy"
+                                        Value="{x:Static VM:CalculationTyp.AverageMonth}" />
+                                    <RadioButton
+                                        Grid.Row="8"
+                                        x:DataType="VM:CalculationTyp"
+                                        Content="{Binding Source={x:Static VM:CalculationTyp.AverageYear}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        GroupName="CalculationBy"
+                                        Value="{x:Static VM:CalculationTyp.AverageYear}" />
+                                    <RadioButton
+                                        Grid.Row="9"
+                                        x:DataType="VM:CalculationTyp"
+                                        Content="{Binding Source={x:Static VM:CalculationTyp.AverageDayOfWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        GroupName="CalculationBy"
+                                        Value="{x:Static VM:CalculationTyp.AverageDayOfWeek}" />
+                                    <RadioButton
+                                        Grid.Row="10"
+                                        x:DataType="VM:CalculationTyp"
+                                        Content="{Binding Source={x:Static VM:CalculationTyp.AverageAll}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        GroupName="CalculationBy"
+                                        Value="{x:Static VM:CalculationTyp.AverageAll}" />
+                                    <RadioButton
+                                        Grid.Row="11"
+                                        x:DataType="VM:CalculationTyp"
+                                        Content="{Binding Source={x:Static VM:CalculationTyp.MedianWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        GroupName="CalculationBy"
+                                        Value="{x:Static VM:CalculationTyp.MedianWeek}" />
+                                    <RadioButton
+                                        Grid.Row="12"
+                                        x:DataType="VM:CalculationTyp"
+                                        Content="{Binding Source={x:Static VM:CalculationTyp.MedianMonth}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        GroupName="CalculationBy"
+                                        Value="{x:Static VM:CalculationTyp.MedianMonth}" />
+                                    <RadioButton
+                                        Grid.Row="13"
+                                        x:DataType="VM:CalculationTyp"
+                                        Content="{Binding Source={x:Static VM:CalculationTyp.MedianYear}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        GroupName="CalculationBy"
+                                        Value="{x:Static VM:CalculationTyp.MedianYear}" />
+                                    <RadioButton
+                                        Grid.Row="14"
+                                        x:DataType="VM:CalculationTyp"
+                                        Content="{Binding Source={x:Static VM:CalculationTyp.MedianDayOfWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        GroupName="CalculationBy"
+                                        Value="{x:Static VM:CalculationTyp.MedianDayOfWeek}" />
+                                    <RadioButton
+                                        Grid.Row="15"
+                                        x:DataType="VM:CalculationTyp"
+                                        Content="{Binding Source={x:Static VM:CalculationTyp.MedianAll}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        GroupName="CalculationBy"
+                                        Value="{x:Static VM:CalculationTyp.MedianAll}" />
 
-            <Border Grid.Row="1" Padding="3">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10" />
-                </Border.StrokeShape>
-                <Grid RowDefinitions="*">
+                                </Grid>
+                            </ScrollView>
 
-                    <Controls:CollectionViewPagination Grid.Row="0" ItemsSource="{Binding RangeDays}">
+                        </Grid>
+                    </Grid>
 
-                        <Controls:CollectionViewPagination.HeaderTemplate>
-                            <DataTemplate>
-                                <Border Padding="5,5,5,0">
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="10,10,0,0" />
-                                    </Border.StrokeShape>
-                                    <Grid ColumnDefinitions="*,*,*,*,*">
+                    <Grid
+                        Grid.Row="2"
+                        ColumnDefinitions="*,*"
+                        RowDefinitions="auto,*">
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            FontSize="Medium"
+                            HorizontalOptions="Center"
+                            Text="Wyświelt:"
+                            TextDecorations="Underline" />
+                        <Border
+                            Grid.Row="0"
+                            Grid.ColumnSpan="2"
+                            VerticalOptions="End" />
+                        <CollectionView
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            ItemsSource="{Binding DefaultsHeaderNames}">
+
+                            <CollectionView.Header>
+                                <Grid>
+                                    <Label
+                                        FontSize="Body"
+                                        HorizontalTextAlignment="Center"
+                                        Text="Nazwa:" />
+                                    <Border VerticalOptions="End" />
+                                </Grid>
+                            </CollectionView.Header>
+
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid
+                                        Padding="2"
+                                        x:DataType="x:String"
+                                        ColumnDefinitions="*,auto">
+
+                                        <Label LineBreakMode="WordWrap" Text="{Binding .}" />
+                                        <Border Grid.ColumnSpan="2" VerticalOptions="End" />
+                                        <Image Grid.Column="1" Source="{AppThemeBinding Light={x:Static img:ImgAddMinus.PlusBlack}, Dark={x:Static img:ImgAddMinus.PlusWhite}}" />
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type VM:RangeDayVM}}, Path=SetSortedNameCommand, x:DataType=VM:RangeDayVM}"
+                                                CommandParameter="{Binding .}"
+                                                NumberOfTapsRequired="1" />
+                                        </Grid.GestureRecognizers>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                        <CollectionView
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            ItemsSource="{Binding DefaultsHeaderKeys}">
+                            <CollectionView.Header>
+                                <Grid>
+                                    <Label
+                                        FontSize="Body"
+                                        HorizontalTextAlignment="Center"
+                                        Text="Atrybut:" />
+                                    <Border VerticalOptions="End" />
+                                </Grid>
+                            </CollectionView.Header>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid
+                                        Padding="2"
+                                        x:DataType="x:String"
+                                        ColumnDefinitions="*,auto">
 
                                         <Label
                                             Grid.Column="0"
-                                            HorizontalOptions="Center"
-                                            Text="Data" />
-                                        <Label
+                                            LineBreakMode="WordWrap"
+                                            Text="{Binding .}" />
+                                        <Border Grid.ColumnSpan="2" VerticalOptions="End" />
+                                        <Image Grid.Column="1" Source="{AppThemeBinding Light={x:Static img:ImgAddMinus.PlusBlack}, Dark={x:Static img:ImgAddMinus.PlusWhite}}" />
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type VM:RangeDayVM}}, Path=SetSortedKeyCommand, x:DataType=VM:RangeDayVM}"
+                                                CommandParameter="{Binding .}"
+                                                NumberOfTapsRequired="1" />
+                                        </Grid.GestureRecognizers>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                    </Grid>
+
+                    <Grid
+                        Grid.Row="3"
+                        ColumnDefinitions="*,*,auto"
+                        HorizontalOptions="Center">
+
+                        <Entry
+                            Grid.Column="0"
+                            IsReadOnly="True"
+                            Placeholder="Nazwa"
+                            Text="{Binding FilterTyp.SelectedName}" />
+                        <Entry
+                            Grid.Column="1"
+                            IsReadOnly="True"
+                            Placeholder="atrybut"
+                            Text="{Binding FilterTyp.SelectedKey}" />
+
+                        <Button
+                            Grid.Column="2"
+                            Command="{Binding AddNewHeaderCommand}"
+                            Text="Dodaj" />
+                    </Grid>
+
+                    <Grid Grid.Row="4" RowDefinitions="auto,*">
+                        <Label
+                            FontSize="Medium"
+                            HorizontalOptions="Center"
+                            Text="Wybrane nagłowki:"
+                            TextDecorations="Underline" />
+                        <Border VerticalOptions="End" />
+
+                        <CollectionView Grid.Row="1" ItemsSource="{Binding SortedHeaders}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid x:DataType="x:String" ColumnDefinitions="*,auto">
+                                        <Label Text="{Binding .}" VerticalOptions="Center" />
+                                        <Border Grid.ColumnSpan="2" VerticalOptions="End" />
+                                        <ImageButton
                                             Grid.Column="1"
-                                            HorizontalOptions="Center"
-                                            Text="Kierowca" />
-                                        <Label
-                                            Grid.Column="2"
-                                            HorizontalOptions="Center"
-                                            Text="Zapłacono" />
-                                        <Label
-                                            Grid.Column="3"
-                                            HorizontalOptions="Center"
-                                            Text="Utarg" />
-                                        <Label
-                                            Grid.Column="4"
-                                            HorizontalOptions="Center"
-                                            Text="Różnica" />
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type VM:RangeDayVM}}, Path=RemoveSelectedHeaderCommand, x:DataType=VM:RangeDayVM}"
+                                            CommandParameter="{Binding .}"
+                                            Source="{AppThemeBinding Light={x:Static img:ImgMapsSymbols.CloseBlack},
+                                                                     Dark={x:Static img:ImgMapsSymbols.CloseWhite}}" />
 
                                     </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </Controls:CollectionViewPagination.HeaderTemplate>
-
-                        <Controls:CollectionViewPagination.ItemTemplate>
-                            <DataTemplate>
-                                <SwipeView>
-                                    <SwipeView.RightItems>
-                                        <SwipeItems>
-                                            <SwipeItem Invoked="SwipeItem_Invoked_OpenDay" Text="Wczytaj dzień" />
-                                        </SwipeItems>
-                                    </SwipeView.RightItems>
-                                    <Border>
-                                        <Border.StrokeShape>
-                                            <RoundRectangle CornerRadius="0,0,10,10" />
-                                        </Border.StrokeShape>
-                                        <Grid
-                                            Padding="5,5,5,0"
-                                            x:DataType="VM:RangeDayM"
-                                            ColumnDefinitions="*,*,*,*,*">
-
-                                            <VerticalStackLayout Grid.Column="0">
-                                                <Label Text="{Binding Path=Day.SelectedDate.DayOfWeek, Converter={StaticResource ANGToPL}}" VerticalOptions="Center" />
-                                                <Label Text="{Binding Day.SelectedDateString}" VerticalOptions="Center" />
-                                            </VerticalStackLayout>
-                                            <Label
-                                                Grid.Column="1"
-                                                Text="{Binding Driver.Name}"
-                                                VerticalOptions="Center" />
-                                            <HorizontalStackLayout Grid.Column="2" VerticalOptions="Center">
-                                                <Label Text="{Binding Day.TotalPriceMoneyDecimal}" />
-                                                <Label Text="zł" />
-                                            </HorizontalStackLayout>
-                                            <HorizontalStackLayout Grid.Column="3" VerticalOptions="Center">
-                                                <Label Text="{Binding Day.TotalPriceAfterCorrectDecimal}" />
-                                                <Label Text="zł" />
-                                            </HorizontalStackLayout>
-                                            <HorizontalStackLayout Grid.Column="4" VerticalOptions="Center">
-                                                <Label Text="{Binding Day.TotalPriceDifferenceDecimal}" />
-                                                <Label Text="zł" />
-                                            </HorizontalStackLayout>
-                                        </Grid>
-                                    </Border>
-                                </SwipeView>
-                            </DataTemplate>
-                        </Controls:CollectionViewPagination.ItemTemplate>
-
-                    </Controls:CollectionViewPagination>
-
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </Grid>
                 </Grid>
             </Border>
+
+
+        </toolkit:DockLayout>
+
+        <Grid
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            ColumnDefinitions="auto,*">
+
+            <rangeControls:HeaderFromList
+                Grid.Row="0"
+                HeaderCommand="{Binding OrderByCommand}"
+                Headers="{Binding SortedHeadersHide}"
+                MaximumWidthRequest="100" />
+
+            <Controls:CollectionViewPagination
+                Grid.Column="2"
+                x:DataType="VM:RangeDayVM"
+                ItemsSourcePagination="{Binding SortedDays}"
+                SelectionMode="None">
+
+                <Controls:CollectionViewPagination.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="10" Orientation="Horizontal" />
+                </Controls:CollectionViewPagination.ItemsLayout>
+
+                <Controls:CollectionViewPagination.EmptyView>
+                    <Controls:LoadingGif HorizontalOptions="Center" />
+                </Controls:CollectionViewPagination.EmptyView>
+
+                <Controls:CollectionViewPagination.ItemTemplate>
+                    <DataTemplate>
+
+                        <Grid x:DataType="VM:DayExpanded" HorizontalOptions="Start">
+
+
+                            <SwipeView IsVisible="{OnPlatform WinUI=False, Default=True}">
+                                <SwipeView.TopItems>
+                                    <SwipeItems>
+                                        <SwipeItem
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type VM:RangeDayVM}}, Path=OpenDetailPageCommand, x:DataType=VM:RangeDayVM}"
+                                            CommandParameter="{Binding Day}"
+                                            IconImageSource="{AppThemeBinding Light={x:Static img:ImgFilter.InfoBlack},
+                                                                              Dark={x:Static img:ImgFilter.InfoWhite}}"
+                                            Text="Szczegóły" />
+                                    </SwipeItems>
+                                </SwipeView.TopItems>
+
+
+                                <rangeControls:ContentFromList DayExpanded="{Binding .}" />
+
+                            </SwipeView>
+
+                            <Grid IsVisible="{OnPlatform WinUI=True, Default=False}">
+
+                                <rangeControls:ContentFromList DayExpanded="{Binding .}">
+                                    <FlyoutBase.ContextFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem
+                                                BindingContext="{Binding .}"
+                                                Command="{Binding Source={x:Reference RangeDayPage}, Path=BindingContext.OpenDetailPageCommand, x:DataType=VM:RangeDayV}"
+                                                CommandParameter="{Binding Day, x:DataType=VM:DayExpanded}"
+                                                Text="Szczegóły" />
+                                        </MenuFlyout>
+                                    </FlyoutBase.ContextFlyout>
+                                </rangeControls:ContentFromList>
+                            </Grid>
+
+                        </Grid>
+
+                    </DataTemplate>
+                </Controls:CollectionViewPagination.ItemTemplate>
+
+            </Controls:CollectionViewPagination>
+
         </Grid>
 
     </Grid>
+
 
 </ContentPage>

@@ -1,3 +1,6 @@
+
+using static MudBlazor.Icons.Custom;
+
 namespace Inventory.Pages.RangeDay;
 
 public partial class RangeDayV : ContentPage
@@ -9,9 +12,14 @@ public partial class RangeDayV : ContentPage
         this._vm = vm;
         BindingContext = vm;
     }
-    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
+
+        if (BindingContext is RangeDayVM vm)
+        {
+            await vm.SetDefaultsHeaders();
+        }
     }
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)

@@ -3,6 +3,7 @@
     x:Class="SzarotkaBlazor.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:RangeDay="clr-namespace:Inventory.Pages.RangeDay.Controls;assembly=Inventory"
     xmlns:controls="clr-namespace:Shared.CustomControls;assembly=Shared"
     xmlns:controlsMaps="clr-namespace:DriversRoutes.Pages.Maps.Controls;assembly=DriversRoutes"
     xmlns:img="clr-namespace:Shared.Helper.Img;assembly=Shared"
@@ -25,7 +26,6 @@
                     HeightRequest="100"
                     HorizontalOptions="Center"
                     Source="logo2.png" />
-
 
                 <Button
                     Clicked="Inventory_Clicked"

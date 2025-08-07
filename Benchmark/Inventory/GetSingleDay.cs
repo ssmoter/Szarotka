@@ -3,11 +3,6 @@
 using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 
-using Inventory.Data;
-using Inventory.Service;
-
-using SelectedDriver = Inventory.Helper.SelectedDriver;
-
 namespace Benchmark.Inventory
 {
     [Config(typeof(AntiVirusFriendlyConfig))]
@@ -15,28 +10,14 @@ namespace Benchmark.Inventory
     public class GetSingleDay
     {
         private readonly IAccessDataBase _db;
-        private readonly ISelectDayService _selectDay;
 
         private readonly Guid _id = new Guid("98e3e70f-8ae9-4ff9-b045-a62a4444578c");
         private readonly DateTime _dateTime = new DateTime(638472044271180544);
         public GetSingleDay()
         {
             _db = new AccessDataBase();
-            _selectDay = new SelectDayService(_db);
         }
 
-        [Benchmark]
-        public async Task<Day> GetDayProcedureDateTime()
-        {
-            var result = await _selectDay.GetDayProcedure(_id);
-            return result;
-        }
-        [Benchmark]
-        public async Task<Day> GetDayProcedureGuid()
-        {
-            var result = await _selectDay.GetDayProcedure(_dateTime);
-            return result;
-        }
         [Benchmark]
         public async Task<Day> GetDayWhenAllGuid()
         {

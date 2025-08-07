@@ -11,13 +11,8 @@ public partial class AddEditProductV : ContentPage
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
-        var vm = BindingContext as AddEditProductVM;
-        if (vm != null)
+        if (BindingContext is AddEditProductVM vm)
         {
-            Task.Run(async () =>
-            {
-                await vm.GetPrices(vm.Product.Name.Id);
-            });
             if (vm.Product.Name.Id != Guid.Empty)
             {
                 vm.AddEdit.AddP = false;
@@ -30,11 +25,6 @@ public partial class AddEditProductV : ContentPage
                 vm.AddEdit.UpdateP = false;
             }
         }
-    }
-
-    private void TapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
-    {
-        //gImg.MaximumHeightRequest = (bImg.Bounds.Height - 10) - ((vslImg.Bounds.Height + 15) );
     }
 
     private void BImg_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

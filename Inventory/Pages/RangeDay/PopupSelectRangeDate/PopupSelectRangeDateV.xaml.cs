@@ -1,20 +1,27 @@
 using CommunityToolkit.Maui.Views;
 
-using DataBase.Model.EntitiesInventory;
+using Inventory.Model;
 
 namespace Inventory.Pages.RangeDay.PopupSelectRangeDate;
 
 public partial class PopupSelectRangeDateV : Popup, IDisposable
 {
-    public PopupSelectRangeDateV(Driver[] drivers)
+    public PopupSelectRangeDateV()
     {
         InitializeComponent();
-        var vm = new PopupSelectRangeDateVM(drivers);
+        var vm = new PopupSelectRangeDateVM();
         vm.Close += CloseAsync;
 
         BindingContext = vm;
     }
+    public PopupSelectRangeDateV(PopupDateModel lastResult)
+    {
+        InitializeComponent();
+        var vm = new PopupSelectRangeDateVM(lastResult);
+        vm.Close += CloseAsync;
 
+        BindingContext = vm;
+    }
     public void Dispose()
     {
         if (BindingContext is PopupSelectRangeDateVM vm)

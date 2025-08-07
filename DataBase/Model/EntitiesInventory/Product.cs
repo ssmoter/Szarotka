@@ -235,7 +235,7 @@ public partial class Product : BaseEntities<Guid>
         Name ??= new();
         Price ??= new();
     }
-    public Product(Product product)
+    public Product(Product product):base(product)
     {
         this.Id = product.Id;
         this.Created = product.Created;

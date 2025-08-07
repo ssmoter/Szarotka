@@ -3,11 +3,16 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
+using DataBase.Data.Get;
 using DataBase.Model.EntitiesInventory;
+using DataBase.Model.JsonContext;
 
-using Inventory.Data.File;
+using Inventory.Helper.Calculations;
 using Inventory.Model;
-using Inventory.Service;
+
+using Microsoft.Maui.Platform;
+
+using MudBlazor;
 
 using Shared.Data;
 using Shared.Data.File;
@@ -18,7 +23,7 @@ using System.Collections.ObjectModel;
 
 namespace Inventory.Pages.RangeDay;
 
-public partial class RangeDayVM : ObservableObject, IQueryAttributable
+public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposable
 {
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
@@ -31,74 +36,90 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
         }
     }
 
-
-    private ObservableCollection<RangeDayM> rangeDays;
-    public ObservableCollection<RangeDayM> RangeDays
+    private IList<Day> allDays = [];
+    public IList<Day> AllDays
     {
-        get => rangeDays;
+        get => allDays;
         set
         {
-            if (SetProperty(ref rangeDays, value, nameof(RangeDays))) { }
+            if (SetProperty(ref allDays, value, nameof(AllDays))) { }
         }
     }
 
-    private ObservableCollection<RangeDayM> sum = [];
-    public ObservableCollection<RangeDayM> Sum
+    private ObservableCollection<DayExpanded> sortedDays;
+    public ObservableCollection<DayExpanded> SortedDays
     {
-        get => sum;
+        get => sortedDays;
         set
         {
-            if (SetProperty(ref sum, value, nameof(Sum))) { }
+            if (SetProperty(ref sortedDays, value, nameof(SortedDays))) { }
         }
     }
-    public IList<RangeDayM> SumDayOfWeek { get; set; } = [];
-    public IList<RangeDayM> AveragesDayOfWeek { get; set; } = [];
-    public IList<RangeDayM> SumPerOfWeek { get; set; } = [];
-    public IList<RangeDayM> AveragesPerOfWeek { get; set; } = [];
-    public IList<RangeDayM> SumPerOfMonth { get; set; } = [];
-    public IList<RangeDayM> AveragesPerOfMonth { get; set; } = [];
-    public IList<Product> ProductsAll { get; set; }
-    IList<Driver> UniqueDriver = [];
-
-    readonly Driver[] _allDrivers;
-
-    private bool enableSave;
-    public bool EnableSave
+    private ObservableCollection<string> sortedHeaders;
+    public ObservableCollection<string> SortedHeaders
     {
-        get => enableSave;
+        get => sortedHeaders;
         set
         {
-            if (SetProperty(ref enableSave, value, nameof(EnableSave))) { }
+            if (SetProperty(ref sortedHeaders, value, nameof(SortedHeaders))) { }
+        }
+    }
+    private ObservableCollection<string> sortedHeadersHide;
+    public ObservableCollection<string> SortedHeadersHide
+    {
+        get => sortedHeadersHide;
+        set
+        {
+            if (SetProperty(ref sortedHeadersHide, value, nameof(SortedHeadersHide))) { }
         }
     }
 
-    private bool listIsVisible = true;
-    public bool ListIsVisible
+    private ObservableCollection<string> defaultsHeaderNames;
+    public ObservableCollection<string> DefaultsHeaderNames
     {
-        get => listIsVisible;
+        get => defaultsHeaderNames;
         set
         {
-            if (SetProperty(ref listIsVisible, value, nameof(ListIsVisible))) { }
+            if (SetProperty(ref defaultsHeaderNames, value, nameof(DefaultsHeaderNames))) { }
         }
     }
-    private bool graphIsVisible;
-    public bool GraphIsVisible
+    private ObservableCollection<string> defaultsHeaderKeys;
+    public ObservableCollection<string> DefaultsHeaderKeys
     {
-        get => graphIsVisible;
+        get => defaultsHeaderKeys;
         set
         {
-            if (SetProperty(ref graphIsVisible, value, nameof(GraphIsVisible))) { }
+            if (SetProperty(ref defaultsHeaderKeys, value, nameof(DefaultsHeaderKeys))) { }
         }
     }
-    private bool tableIsVisible;
-    public bool TableIsVisible
+
+
+    private readonly string[] _defaultsHeaders =
+    [
+        "*","Data","Kierowca","Zapłacono","Utarg suma","Różnica"
+    ];
+    private RangeDayM optionsM;
+    public RangeDayM OptionsM
     {
-        get => tableIsVisible;
+        get => optionsM;
         set
         {
-            if (SetProperty(ref tableIsVisible, value, nameof(TableIsVisible))) { }
+            if (SetProperty(ref optionsM, value, nameof(OptionsM))) { }
         }
     }
+    private FilterTyp filterTyp;
+    public FilterTyp FilterTyp
+    {
+        get => filterTyp;
+        set
+        {
+            if (SetProperty(ref filterTyp, value, nameof(FilterTyp)))
+            {
+
+            }
+        }
+    }
+
 
     string filesPath;
     public string FilesPath
@@ -111,94 +132,63 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
                 var extension = Path.GetExtension(filesPath);
                 if (extension == FileHelper.jsonTyp)
                 {
-                    RangeDays = [..JsonFile.GetFileJson<RangeDayM[]>(filesPath, RangeDayMJsonSerializerContext.Default.RangeDayMArray)];
-                    Calculate(RangeDays);
+                    AllDays = [.. JsonFile.GetFileJson<Day[]>(filesPath, SzarotkaJsonSerializerContext.Default.DayArray)];
                 }
-                if (extension == FileHelper.csvTyp)
-                {
-                    RangeDays = [..CSVFile.GetFileCSV(filesPath)];
-                    Calculate(RangeDays);
-                }
-
-                EnableSave = true;
+                OptionsM.EnableSave = true;
             }
         }
     }
 
 
-    PopupDateModel PopupDate = new(DateTime.Today.Ticks, DateTime.Today.AddDays(1).Ticks, false, []);
-    readonly IAccessDataBase _db;
-    readonly ISelectDayService _selectDayService;
-    readonly ISaveDayService _dayService;
-    public RangeDayVM(IAccessDataBase db, ISelectDayService selectDay, ISaveDayService dayService)
+    private PopupDateModel PopupDate = null;
+    private readonly IAccessDataBase _db;
+    private readonly IGetInventoryAoT _get;
+    public RangeDayVM(IAccessDataBase db, IGetInventoryAoT get)
     {
-        sum = [];
         _db = db;
-        _selectDayService = selectDay;
-
-
-        var driver = _db.DataBase.Table<Driver>().ToArray();
-        _allDrivers = driver;
-
-        EnableSave = false;
-        _dayService = dayService;
+        _get = get;
+        OptionsM ??= new();
+        FilterTyp ??= new();
+        OptionsM.EnableSave = false;
+        DefaultsHeaderNames ??= [];
+        DefaultsHeaderKeys ??= [];
+        SortedHeaders ??= [];
+        SortedHeadersHide ??= [.. _defaultsHeaders];
+        FilterTyp.PropertyChanged += FilterTyp_PropertyChanged;
     }
-
-    public RangeDayVM(Driver[] allDrivers)
+    private bool _isScheduledFilterTyp = false;
+    private bool _isScheduledOrderBy = false;
+    private async void FilterTyp_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        _allDrivers = allDrivers;
-    }
+        if (_isScheduledFilterTyp)
+            return;
+        if (e.PropertyName == nameof(FilterTyp.OrderBy))
+            return;
 
-    #region Method
-
-
-    async Task<RangeDayM[]> SelectDays(long from, long to, Guid[] selectedDriverName, bool moreData)
-    {
-        var (drivers, days) = await _selectDayService.GetDaysAndDrivers(from, to, selectedDriverName, moreData);
-
-        var range = new RangeDayM[days.Length];
-
-        for (int i = 0; i < range.Length; i++)
+        _isScheduledFilterTyp = true;
+        OptionsM.IsRefreshing = true;
+        try
         {
-            range[i] = new()
-            {
-                Day = days[i],
-                Driver = drivers[i]
-            };
+            await Task.Delay(FilterTyp.TimerDelay);
+            FilterDaysMethod(FilterTyp);
         }
-
-        return range;
-    }
-
-    public void Calculate(IList<RangeDayM> value)
-    {
-        if (value is not null)
+        catch (Exception ex)
         {
-            Helper.RangeCalculations.GetUniqueDriver(value);
-            UniqueDriver = Helper.RangeCalculations.UniqueDriver;
-
-            Sum = [..Helper.RangeCalculations.SumTotalOfRangeCalculateAverages(value)];
-            if (Sum.Count > 0)
-            {
-                ProductsAll = Sum.MaxBy(x => x.Day.Products.Count).Day.Products;
-            }
-
-            SumDayOfWeek = Helper.RangeCalculations.SumDayOfWeek(value);
-            AveragesDayOfWeek = Helper.RangeCalculations.AveragesDayOfWeek(value);
-
-            SumPerOfWeek = Helper.RangeCalculations.SumPerOfWeek(value);
-            AveragesPerOfWeek = Helper.RangeCalculations.AveragesPerOfWeek(value);
-
-
-            SumPerOfMonth = Helper.RangeCalculations.SumPerOfMonth(value);
-            AveragesPerOfMonth = Helper.RangeCalculations.AveragesPerOfMonth(value);
-
+            _db.SaveLogExtension(ex);
         }
-
-        Table.RangeTable.OnSetRangeDayMs(RangeDays, Sum, SumDayOfWeek, AveragesDayOfWeek, SumPerOfWeek, AveragesPerOfWeek, SumPerOfMonth, AveragesPerOfMonth, ProductsAll, UniqueDriver);
-        Graph.Graph.OnSetRangeDayMs(RangeDays, Sum, SumDayOfWeek, AveragesDayOfWeek, SumPerOfWeek, AveragesPerOfWeek, SumPerOfMonth, AveragesPerOfMonth, ProductsAll, UniqueDriver);
-
+        finally
+        {
+            _isScheduledFilterTyp = false;
+            OptionsM.IsRefreshing = false;
+        }
     }
+
+
+    public void Dispose()
+    {
+        FilterTyp.PropertyChanged -= FilterTyp_PropertyChanged;
+    }
+
 
     async static Task<string> SelectImportExport(string type)
     {
@@ -212,29 +202,54 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
         return result;
     }
 
-    string CreateFileName()
+    internal async Task SetDefaultsHeaders()
     {
-        if (RangeDays.Count == 1)
+        var productNames = await _get.EmptyProductsNameAndPrices(isDelete: true);
+
+        DefaultsHeaderNames.Clear();
+        DefaultsHeaderKeys.Clear();
+        DefaultsHeaderKeys.Add("Ilość");
+        DefaultsHeaderKeys.Add("Edycja");
+        DefaultsHeaderKeys.Add("Zwrot");
+        DefaultsHeaderKeys.Add("Sprzedane");
+        DefaultsHeaderKeys.Add("Po korekcie");
+        DefaultsHeaderKeys.Add("Korekta");
+        DefaultsHeaderKeys.Add("Utarg");
+        DefaultsHeaderKeys.Add("Zapłacono");
+        DefaultsHeaderKeys.Add("Utarg produkty");
+        DefaultsHeaderKeys.Add("Utarg ciasto");
+        DefaultsHeaderKeys.Add("Utarg suma");
+        DefaultsHeaderKeys.Add("Różnica");
+
+        DefaultsHeaderNames.Add("");
+        foreach (var item in productNames)
         {
-            return string.Join('_', "Szarotka", RangeDays[0].Day.Created.ToString("dd.MM.yyyy"));
+            DefaultsHeaderNames.Add(item.Item1.Name);
         }
-        var from = RangeDays.FirstOrDefault().Day.Created.ToString("dd.MM.yyyy");
-        var to = RangeDays.LastOrDefault().Day.Created.ToString("dd.MM.yyyy");
+    }
+
+
+    private static string CreateFileName(IList<Day> days)
+    {
+        if (days.Count == 1)
+        {
+            return string.Join('_', "Szarotka", days[0].Created.ToString("dd.MM.yyyy"));
+        }
+        var from = days[0].Created.ToString("dd.MM.yyyy");
+        var to = days[^1].Created.ToString("dd.MM.yyyy");
         return string.Join('_', "Szarotka", from, to);
     }
 
-    #endregion
-
-    #region Command
-
     [RelayCommand]
-    async Task OpenDetailPage(RangeDayM rangeDay)
+    async Task OpenDetailPage(Day day)
     {
         try
         {
-            rangeDay.Day = await _selectDayService.GetDayProcedure(rangeDay.Day.Id);
-
-            var popup = new SingleDayPreview.SingleDayPreviewPopUp.SingleDayPreviewPopUpV(rangeDay.Day, rangeDay.Driver.Name);
+            if (day is null)
+            {
+                return;
+            }
+            var popup = new SingleDayPreview.SingleDayPreviewPopUp.SingleDayPreviewPopUpV(day);
 
             await Shell.Current.ShowPopupAsync(popup);
         }
@@ -271,20 +286,14 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
                 var response = await FilePicker.PickAsync(ExistingFilesVM.FileTypJson());
                 if (response == null)
                     return;
-                var file = JsonFile.GetFileJson<RangeDayM[]>(response.FullPath, RangeDayMJsonSerializerContext.Default.RangeDayMArray);
-                RangeDays = [..file];
-                Calculate(RangeDays);
-                EnableSave = true;
+                var file = JsonFile.GetFileJson<Day[]>(response.FullPath, SzarotkaJsonSerializerContext.Default.DayArray);
+                AllDays = [.. file];
+                OptionsM.EnableSave = true;
             }
             if (result == "Eksport")
             {
-                for (int i = 0; i < RangeDays.Count; i++)
-                {
-                    if (RangeDays[i].Day.Products.Count <= 0)
-                        RangeDays[i].Day = await _selectDayService.GetDayProcedure(RangeDays[i].Day.Id);
-                }
-                var name = CreateFileName();
-                var response = await JsonFile.SaveFileJson(RangeDays, RangeDayMJsonSerializerContext.Default.RangeDayMArray, name);
+                var name = CreateFileName(AllDays);
+                var response = await JsonFile.SaveFileJson(AllDays, SzarotkaJsonSerializerContext.Default.DayArray, name);
                 await Share.Default.RequestAsync(new ShareFileRequest
                 {
                     Title = name,
@@ -311,79 +320,11 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
     }
 
     [RelayCommand]
-    async Task GenerateCSVFile()
-    {
-        try
-        {
-#if ANDROID
-                if (!await AndroidPermissionService.CheckAllPermissionsAboutStorage())
-                {
-                    return;
-                }
-#endif
-            var result = await SelectImportExport("CSV");
-
-            if (string.IsNullOrWhiteSpace(result))
-            {
-                return;
-            }
-            if (result == "Anuluj")
-            {
-                return;
-            }
-            if (result == "Import")
-            {
-                var response = await FilePicker.PickAsync(ExistingFilesVM.FileTypCSV());
-                if (response == null)
-                    return;
-                var file = CSVFile.GetFileCSV(response.FullPath);
-                RangeDays = [.. file];
-                Calculate(RangeDays);
-                EnableSave = true;
-            }
-            if (result == "Eksport")
-            {
-                for (int i = 0; i < RangeDays.Count; i++)
-                {
-                    if (RangeDays[i].Day.Products.Count <= 0)
-                        RangeDays[i].Day = await _selectDayService.GetDayProcedure(RangeDays[i].Day.Id);
-                }
-                var name = CreateFileName();
-                var response = CSVFile.SaveFileCSV(RangeDays, name);
-                await Share.Default.RequestAsync(new ShareFileRequest
-                {
-                    Title = name,
-                    File = new ShareFile(response)
-                });
-            }
-            if (result == "Pliki")
-            {
-                var files = FileHelper.GetFilesPaths(FileHelper.CsvFolder);
-                await Shell.Current.GoToAsync($"{nameof(ExistingFilesV)}?GetTyp={FileHelper.CsvFolder}",
-                    new Dictionary<string, object>
-                    {
-                        [nameof(ExistingFilesM)] = ExistingFilesVM.GetExistingFiles(files)
-                        ,
-                        ["ReturnPage"] = nameof(RangeDayV)
-                    }); ;
-            }
-
-        }
-        catch (Exception ex)
-        {
-            _db.SaveLogExtension(ex);
-        }
-    }
-
-    [RelayCommand]
     async Task SaveAnotherDriverData()
     {
         try
         {
-            for (int i = 0; i < RangeDays.Count; i++)
-            {
-                await Task.Delay(1);
-            }
+            await Task.Delay(1);
             throw new NotImplementedException();
         }
         catch (Exception ex)
@@ -397,17 +338,25 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
     {
         try
         {
-            var popup = new PopupSelectRangeDate.PopupSelectRangeDateV(_allDrivers);
+            PopupSelectRangeDate.PopupSelectRangeDateV popup;
+            if (PopupDate is not null)
+            {
+                popup = new PopupSelectRangeDate.PopupSelectRangeDateV();
+            }
+            else
+            {
+                popup = new PopupSelectRangeDate.PopupSelectRangeDateV(PopupDate);
+            }
             var result = await Shell.Current.ShowPopupAsync(popup);
 
             if (result is PopupDateModel model)
             {
                 PopupDate = model;
-                RangeDays = [.. await SelectDays(PopupDate.From, PopupDate.To, PopupDate.DriverId, PopupDate.MoreData)];
-                // RangeDays = await SelectDays(0, DateTime.Today.Ticks, [], true);
+                var list = await _get.Days(model.From, model.To, model.DriverId);
+                AllDays = [.. list.OrderByDescending(x => x.SelectedDateTicks)];
+                OptionsM.EnableSave = false;
 
-                Calculate(RangeDays);
-                EnableSave = false;
+                FilterDaysMethod(FilterTyp);
             }
         }
         catch (Exception ex)
@@ -416,6 +365,263 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
         }
     }
 
+    private void FilterDaysMethod(FilterTyp filterTyp)
+    {
+        if (AllDays is null || AllDays?.Count <= 0)
+        {
+            return;
+        }
+
+        var key = filterTyp.SelectedKey;
+        var name = filterTyp.SelectedName;
+
+        if (filterTyp.CalculationBy != CalculationTyp.None)
+        {
+            if (!SortedHeadersHide.Contains("Zakres"))
+            {
+                SortedHeadersHide.Add("Zakres");
+            }
+        }
+        else
+        {
+            SortedHeadersHide.Remove("Zakres");
+        }
+
+        var selected =
+                AllDays.Where(z => filterTyp.GetSelectedDays().Contains(z.SelectedDate.DayOfWeek))
+                .Select((x, index) =>
+                {
+                    decimal? selectedProduct = GetValueFromName(x, key, name);
+
+                    return new DayExpanded(
+                        day: x,
+                        index: index + 1,
+                        selectedValue: selectedProduct.ToString(),
+                        selectedHeaders: MergeArrays(_defaultsHeaders, SortedHeaders)
+                    );
+                });
+
+        var calculation = GetCalculationTyp(selected, filterTyp.CalculationBy);
+
+        SortedDays = [.. calculation];
+    }
+    static IEnumerable<string> MergeArrays(string[] a, ObservableCollection<string> b)
+    {
+        foreach (var item in a)
+            yield return item;
+
+        foreach (var item in b)
+            yield return item;
+    }
+    private string lastOrderByKey = "";
+    private string lastOrderByName = "";
+
+    [RelayCommand]
+    async Task OrderBy(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return;
+        }
+        if (SortedDays is null || SortedDays.Count == 0)
+        {
+            return;
+        }
+
+        GetKeyAndNameFromHeader(value, out string key, out string name);
+
+        if (lastOrderByKey != key || lastOrderByName != name)
+        {
+            _isScheduledOrderBy = false;
+            FilterTyp.OrderBy = FilterTyp.OrderTyp.None;
+        }
+
+        lastOrderByKey = key;
+        lastOrderByName = name;
+        if (_isScheduledOrderBy)
+            return;
+
+        _isScheduledOrderBy = true;
+        OptionsM.IsRefreshing = true;
+
+        try
+        {
+            await Task.Delay(FilterTyp.TimerDelay);
+
+            if (FilterTyp.OrderBy == FilterTyp.OrderTyp.Desc)
+            {
+                FilterTyp.OrderBy = FilterTyp.OrderTyp.Asc;
+            }
+            else if (FilterTyp.OrderBy == FilterTyp.OrderTyp.Asc)
+            {
+                FilterTyp.OrderBy = FilterTyp.OrderTyp.Desc;
+            }
+            else
+            {
+                FilterTyp.OrderBy = FilterTyp.OrderTyp.Asc;
+            }
+
+            SortedDays = FilterTyp.OrderBy switch
+            {
+                FilterTyp.OrderTyp.None => [.. SortedDays.OrderBy(x => x.Index)],
+                FilterTyp.OrderTyp.Desc => [.. GetSortedDESC(SortedDays, name, key)],
+                FilterTyp.OrderTyp.Asc => [.. GetSortedASC(SortedDays, name, key)],
+                _ => [.. SortedDays.OrderBy(x => x.Index)]
+            };
+        }
+        catch (Exception ex)
+        {
+            _db.SaveLogExtension(ex);
+        }
+        finally
+        {
+            _isScheduledOrderBy = false;
+            OptionsM.IsRefreshing = false;
+        }
+    }
+
+    public static void GetKeyAndNameFromHeader(string value, out string key, out string name)
+    {
+        var split = value.Split(';');
+        key = split.Length > 1 ? split[1] : split[0];
+        name = split.Length > 1 ? split[0] : "";
+    }
+
+    private static IEnumerable<DayExpanded> GetSortedASC(IEnumerable<DayExpanded> source, string name, string key)
+    {
+        var translateKey = Controls.ContentFromList.TranslateHeader(key);
+
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            var sortedDay = translateKey switch
+            {
+                nameof(Day.TotalPriceAfterCorrectDecimal) => source.OrderBy(x => x.Day.TotalPriceAfterCorrectDecimal),
+                nameof(Day.TotalPriceCakeDecimal) => source.OrderBy(x => x.Day.TotalPriceCakeDecimal),
+                nameof(Day.TotalPriceCorrectDecimal) => source.OrderBy(x => x.Day.TotalPriceCorrectDecimal),
+                nameof(Day.TotalPriceDecimal) => source.OrderBy(x => x.Day.TotalPriceDecimal),
+                nameof(Day.TotalPriceDifferenceDecimal) => source.OrderBy(x => x.Day.TotalPriceDifferenceDecimal),
+                nameof(Day.TotalPriceMoneyDecimal) => source.OrderBy(x => x.Day.TotalPriceMoneyDecimal),
+                nameof(Day.TotalPriceProductsDecimal) => source.OrderBy(x => x.Day.TotalPriceProductsDecimal),
+                nameof(Day.SelectedDate) => source.OrderBy(x => x.Day.SelectedDate),
+                "*" => source.OrderBy(x => x.Index),
+                _ => source,
+            };
+            return sortedDay;
+        }
+
+
+        var sortedProduct = translateKey switch
+        {
+            nameof(Product.Number) => source.OrderBy(x => x.Day.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).Number),
+            nameof(Product.NumberEdit) => source.OrderBy(x => x.Day.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).NumberEdit),
+            nameof(Product.NumberReturn) => source.OrderBy(x => x.Day.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).NumberReturn),
+            nameof(Product.PriceTotalAfterCorrectDecimal) => source.OrderBy(x => x.Day.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).PriceTotalAfterCorrectDecimal),
+            nameof(Product.PriceTotalCorrectDecimal) => source.OrderBy(x => x.Day.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).PriceTotalCorrectDecimal),
+            nameof(Product.PriceTotalDecimal) => source.OrderBy(x => x.Day.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).PriceTotalDecimal),
+            "Sell" => source.OrderBy(x => SellReturn(x.Day.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)))),
+            _ => source,
+        };
+        return sortedProduct;
+    }
+    private static IEnumerable<DayExpanded> GetSortedDESC(IEnumerable<DayExpanded> source, string name, string key)
+    {
+        var translateKey = Controls.ContentFromList.TranslateHeader(key);
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            var sortedDay = translateKey switch
+            {
+                nameof(Day.TotalPriceAfterCorrectDecimal) => source.OrderByDescending(x => x.Day.TotalPriceAfterCorrectDecimal),
+                nameof(Day.TotalPriceCakeDecimal) => source.OrderByDescending(x => x.Day.TotalPriceCakeDecimal),
+                nameof(Day.TotalPriceCorrectDecimal) => source.OrderByDescending(x => x.Day.TotalPriceCorrectDecimal),
+                nameof(Day.TotalPriceDecimal) => source.OrderByDescending(x => x.Day.TotalPriceDecimal),
+                nameof(Day.TotalPriceDifferenceDecimal) => source.OrderByDescending(x => x.Day.TotalPriceDifferenceDecimal),
+                nameof(Day.TotalPriceMoneyDecimal) => source.OrderByDescending(x => x.Day.TotalPriceMoneyDecimal),
+                nameof(Day.TotalPriceProductsDecimal) => source.OrderByDescending(x => x.Day.TotalPriceProductsDecimal),
+                nameof(Day.SelectedDate) => source.OrderByDescending(x => x.Day.SelectedDate),
+                "*" => source.OrderByDescending(x => x.Index),
+                _ => source,
+            };
+            return sortedDay;
+        }
+
+
+        var sortedProduct = translateKey switch
+        {
+            nameof(Product.Number) => source.OrderByDescending(x => x.Day.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).Number),
+            nameof(Product.NumberEdit) => source.OrderByDescending(x => x.Day.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).NumberEdit),
+            nameof(Product.NumberReturn) => source.OrderByDescending(x => x.Day.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).NumberReturn),
+            nameof(Product.PriceTotalAfterCorrectDecimal) => source.OrderByDescending(x => x.Day.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).PriceTotalAfterCorrectDecimal),
+            nameof(Product.PriceTotalCorrectDecimal) => source.OrderByDescending(x => x.Day.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).PriceTotalCorrectDecimal),
+            nameof(Product.PriceTotalDecimal) => source.OrderByDescending(x => x.Day.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).PriceTotalDecimal),
+            "Sell" => source.OrderByDescending(x => SellReturn(x.Day.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)))),
+            _ => source,
+        };
+        return sortedProduct;
+    }
+    private static IEnumerable<DayExpanded> GetCalculationTyp(IEnumerable<DayExpanded> source, CalculationTyp calculation)
+    {
+        return calculation switch
+        {
+            CalculationTyp.None => source,
+            CalculationTyp.SumWeek => DayRangeCalculationSum.Week(source),
+            CalculationTyp.SumMonth => DayRangeCalculationSum.Month(source),
+            CalculationTyp.SumYear => DayRangeCalculationSum.Year(source),
+            CalculationTyp.SumDayOfWeek => DayRangeCalculationSum.DayOfWeek(source),
+            CalculationTyp.SumAll => DayRangeCalculationSum.All(source),
+            CalculationTyp.AverageWeek => DayRangeCalculationAverage.Week(source),
+            CalculationTyp.AverageMonth => DayRangeCalculationAverage.Month(source),
+            CalculationTyp.AverageYear => DayRangeCalculationAverage.Year(source),
+            CalculationTyp.AverageDayOfWeek => DayRangeCalculationAverage.DayOfWeek(source),
+            CalculationTyp.AverageAll => DayRangeCalculationAverage.All(source),
+            CalculationTyp.MedianWeek => DayRangeCalculationMedian.Week(source),
+            CalculationTyp.MedianMonth => DayRangeCalculationMedian.Month(source),
+            CalculationTyp.MedianYear => DayRangeCalculationMedian.Year(source),
+            CalculationTyp.MedianDayOfWeek => DayRangeCalculationMedian.DayOfWeek(source),
+            CalculationTyp.MedianAll => DayRangeCalculationMedian.All(source),
+            _ => source,
+        };
+    }
+
+    public static decimal? GetValueFromName(Day x, string key, string name)
+    {
+        decimal? result = 0;
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            result = key switch
+            {
+                nameof(Day.TotalPriceAfterCorrectDecimal) => x.TotalPriceAfterCorrectDecimal,
+                nameof(Day.TotalPriceCakeDecimal) => x.TotalPriceCakeDecimal,
+                nameof(Day.TotalPriceCorrectDecimal) => x.TotalPriceCorrectDecimal,
+                nameof(Day.TotalPriceDecimal) => x.TotalPriceDecimal,
+                nameof(Day.TotalPriceDifferenceDecimal) => x.TotalPriceDifferenceDecimal,
+                nameof(Day.TotalPriceMoneyDecimal) => x.TotalPriceMoneyDecimal,
+                nameof(Day.TotalPriceProductsDecimal) => x.TotalPriceProductsDecimal,
+                nameof(Day.SelectedDate) => x.SelectedDateTicks,
+                _ => null,
+            };
+            return result;
+        }
+
+        result = key switch
+        {
+            nameof(Product.Number) => x.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).Number,
+            nameof(Product.NumberEdit) => x.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).NumberEdit,
+            nameof(Product.NumberReturn) => x.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).NumberReturn,
+            nameof(Product.PriceTotalAfterCorrectDecimal) => x.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).PriceTotalAfterCorrectDecimal,
+            nameof(Product.PriceTotalCorrectDecimal) => x.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).PriceTotalCorrectDecimal,
+            nameof(Product.PriceTotalDecimal) => x.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).PriceTotalDecimal,
+            "Sell" => SellReturn(x.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))),
+            _ => null,
+        };
+
+        return result;
+
+
+    }
+    private static decimal SellReturn(Product product)
+    {
+        return product.Number + product.NumberEdit - product.NumberReturn;
+    }
     [RelayCommand]
     static async Task Back()
     {
@@ -423,24 +629,48 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable
     }
 
     [RelayCommand]
-    async Task GoToGraph()
+    void SortTableChangeVisibility()
     {
-        try
-        {
-            await Shell.Current.GoToAsync($"{nameof(Graph.GraphV)}?",
-                new Dictionary<string, object>()
-                {
-                    [nameof(RangeDayM)] = RangeDays
-                });
-        }
-        catch (Exception ex)
-        {
-            _db.SaveLogExtension(ex);
-        }
+        OptionsM.SortTableIsVisible = !OptionsM.SortTableIsVisible;
     }
 
-    #endregion
+    [RelayCommand]
+    void SetSortedName(string name)
+    {
+        this.FilterTyp.SelectedName = name;
+    }
+    [RelayCommand]
+    void SetSortedKey(string key)
+    {
+        this.FilterTyp.SelectedKey = key;
+    }
+    [RelayCommand]
+    void AddNewHeader()
+    {
+        var head = string.Join(';', FilterTyp.SelectedName, FilterTyp.SelectedKey);
+        SortedHeaders.Add(head);
+        SortedHeadersHide.Add(head);
+        FilterTyp.SelectedName = "";
+        FilterTyp.SelectedKey = "";
+    }
+    [RelayCommand]
+    void RemoveSelectedHeader(string value)
+    {
+        SortedHeaders.Remove(value);
+        SortedHeadersHide.Remove(value);
+    }
 
+    [RelayCommand]
+    async Task Send()
+    {
+        await Task.Delay(1);
+    }
+    [RelayCommand]
+    async Task Download()
+    {
+        await Task.Delay(1);
+
+    }
 
 }
 

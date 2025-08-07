@@ -23,16 +23,15 @@ namespace Inventory.Service
             services.AddTransient<Pages.RangeDay.PopupSelectRangeDate.PopupSelectRangeDateV>();
 
             services.AddScoped<Pages.RangeDay.Graph.GraphV>();
-            services.AddScoped<Pages.RangeDay.Graph.GraphVM>();
+            //services.AddScoped<Pages.RangeDay.Graph.GraphVM>();
 
             services.AddSingleton<Pages.SingleDay.SingleDayV>();
 #if WINDOWS
             services.AddScoped<Pages.Products.ListProduct.ListProductVWindows>();
-            services.AddScoped<Pages.RangeDay.RangeDayVWindows>();
 #else
-            services.AddScoped<Pages.RangeDay.RangeDayV>();
             services.AddScoped<Pages.Products.ListProduct.ListProductV>();
 #endif
+            services.AddScoped<Pages.RangeDay.RangeDayV>();
             services.AddScoped<Pages.SingleDayPreview.SingleDayPreviewPage.SingleDayPreviewPageVM>();
             services.AddScoped<Pages.SingleDayPreview.SingleDayPreviewPage.SingleDayPreviewPageV>();
 
