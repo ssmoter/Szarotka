@@ -5,18 +5,23 @@ using CommunityToolkit.Mvvm.Input;
 using DataBase.Data;
 using DataBase.Data.Get;
 using DataBase.Model.EntitiesRoutes;
+using DataBase.Model.EntitiesServer;
+using DataBase.Model.JsonContext;
 using DataBase.Service;
 
 using DriversRoutes.Helper;
 
 using Shared.Data;
 using Shared.Helper;
+using Shared.Pages.UpdateDifference;
+
+using System.Collections;
+using System.Net;
 
 namespace DriversRoutes.Pages.Customer.AddCustomer
 {
     public partial class AddCustomerVM : ObservableObject, IQueryAttributable
     {
-        #region Variable
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
@@ -143,15 +148,17 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         private readonly Data.GoogleApi.IAddressFromCoordinates _IAddressFromCoordinates;
         private readonly IAccessDataBase _db;
         private readonly DataBase.Service.IUpdateLogService _update;
+        private readonly Data.RouteApi.ISendCustomersHttp _sendHttp;
         internal ResidentialAddress[] _address { get; set; } = [];
         internal CustomerRoutes originCustomer { get; set; }
-        #endregion
+
 
         public AddCustomerVM(IAccessDataBase db,
                              Data.GoogleApi.IAddressFromCoordinates IAddressFromCoordinates,
                              DataBase.Data.Save.ISaveDriverRoutesAoT save,
                              DataBase.Data.Get.IGetDriverRoutesAoT get,
-                             DataBase.Service.IUpdateLogService update)
+                             DataBase.Service.IUpdateLogService update,
+                             Data.RouteApi.ISendCustomersHttp sendHttp)
         {
             AddCustomer ??= new();
             Customer ??= new();
@@ -161,6 +168,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             _save = save;
             _get = get;
             _update = update;
+            _sendHttp = sendHttp;
         }
 
 
@@ -222,8 +230,60 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             }
         }
 
+        private async Task Send(CancellationToken token = default)
+        {
+            var response = await _sendHttp.SendCustomerRoute(Customer, token: token);
+            var json = await response.Content.ReadAsStringAsync(token);
 
-        #region Command
+            if (response.IsSuccessStatusCode)
+            {
+                return;
+            }
+            else if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                var server = System.Text.Json.JsonSerializer.Deserialize(json, SzarotkaJsonSerializerContext.Default.CustomerRoutes);
+                var difference = new UpdateDifference()
+                {
+                    Update = customer,
+                    Server = server,
+                };
+
+                IList<UpdateDifference> differences = [difference];
+
+                var navigationParameter = new Dictionary<string, object>
+                     {
+                        { nameof(UpdateDifference), differences },
+                        {nameof(Action),(Action<IEnumerable>)(async (customer)
+                        =>
+                            {
+                                CustomerRoutes cr = null;
+                                foreach (CustomerRoutes item in customer)
+                                    {
+                                        cr = item;
+
+                                        await _save.SaveCustomerRoutes(item, item.UserUpdatedId.ToByteArray(), true);
+                                        await _save.SaveResidentialAddress(item.ResidentialAddress, item.ResidentialAddress.UserUpdatedId.ToByteArray(), true);
+                                        await _save.SaveSelectedDayOfWeekRoutes(item.DayOfWeek, item.DayOfWeek.UserUpdatedId.ToByteArray(), true);
+                                        _ = await _update.Insert(new DataBase.Model.UpdateLog()
+                                        {
+                                            IsServer = false,
+                                        }, item);
+                                    }
+
+                                await _sendHttp.SendCustomerRoute(cr,forceUpdate:true);
+
+                                 Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+                            })
+                        }
+                    };
+                await Shell.Current.GoToAsync(nameof(UpdateDifferenceV), navigationParameter);
+                return;
+            }
+            else
+            {
+                response.EnsureSuccessStatusCode();
+            }
+        }
 
         [RelayCommand]
         async Task SaveAndExit()
@@ -250,11 +310,17 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
                     IsServer = false,
                 }, Customer);
 
+                await Send();
+
                 await Shell.Current.GoToAsync($"..?", new Dictionary<string, object>()
                 {
                     [nameof(CustomerRoutes)] = Customer,
                     [nameof(Routes)] = RouteId
                 });
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Conflict)
+            {
+                //HttpStatusCode.Conflict został obłużony wyżej jako zwrot danych do poprawy przy edycji
             }
             catch (Exception ex)
             {
@@ -558,7 +624,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
                 AddCustomer.MapIsVisible = false;
             }
         }
-        #endregion
+
 
     }
 }

@@ -26,14 +26,15 @@ namespace Inventory.Service
             //services.AddScoped<Pages.RangeDay.Graph.GraphVM>();
 
             services.AddSingleton<Pages.SingleDay.SingleDayV>();
-#if WINDOWS
-            services.AddScoped<Pages.Products.ListProduct.ListProductVWindows>();
-#else
+
             services.AddScoped<Pages.Products.ListProduct.ListProductV>();
-#endif
             services.AddScoped<Pages.RangeDay.RangeDayV>();
             services.AddScoped<Pages.SingleDayPreview.SingleDayPreviewPage.SingleDayPreviewPageVM>();
             services.AddScoped<Pages.SingleDayPreview.SingleDayPreviewPage.SingleDayPreviewPageV>();
+            services.AddScoped<Data.InventoryApi.IGetProductHttp, Data.InventoryApi.GetProductHttp>();
+            services.AddScoped<Data.InventoryApi.ISendProductHttp, Data.InventoryApi.SendProductHttp>();
+            services.AddScoped<Data.InventoryApi.ISendDayHttp, Data.InventoryApi.SendDayHttp>();
+            services.AddScoped<Data.InventoryApi.IGetDayHttp, Data.InventoryApi.GetDayHttp>();
 
             return services;
         }

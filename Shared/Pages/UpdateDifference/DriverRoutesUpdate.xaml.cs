@@ -46,6 +46,11 @@ BindableProperty.Create(
     defaultBindingMode: BindingMode.TwoWay,
     propertyChanged: (bindable, oldValue, newValue) =>
     {
+        if (newValue is null)
+        {
+            var view = bindable as DriverRoutesUpdate;
+            view.UpdateBool = new CustomerRoutesUpdate();
+        }
     });
 
     public CustomerRoutesUpdate UpdateBool
@@ -90,7 +95,7 @@ BindableProperty.Create(
     {
         CustomerRoutesServer ??= new();
         CustomerRoutesUpdate ??= new();
-        UpdateBool ??= new();
+        UpdateBool = new();
         UpdateBool.PropertyChanged += UpdateBool_PropertyChanged;
         InitializeComponent();
     }
@@ -105,7 +110,7 @@ BindableProperty.Create(
         UpdateBool.PropertyChanged -= UpdateBool_PropertyChanged;
     }
 
-    public static CustomerRoutes ApplyUpdateBoolToCustomerRoutes(CustomerRoutes server,
+    public static CustomerRoutes ApplyUpdateBoolTo(CustomerRoutes server,
                                                           CustomerRoutes update,
                                                           object updateSelected)
     {
@@ -141,7 +146,7 @@ BindableProperty.Create(
         };
         return target;
     }
-    public static void SetUpdateBool(object updateSelected, bool? setAll = null)
+    public static void SetUpdateBool(CustomerRoutesUpdate updateSelected, bool? setAll = null)
     {
         var updateBool = updateSelected as CustomerRoutesUpdate;
         ArgumentNullException.ThrowIfNull(updateBool);
@@ -174,6 +179,7 @@ BindableProperty.Create(
             updateBool.BoolUpdate = false;
         }
     }
+
     private void SetUpdateBool()
     {
         if (UpdateBool.BoolRoutesId ||

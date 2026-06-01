@@ -88,20 +88,17 @@ public partial class ResidentialAddress : BaseEntities<Guid>, IDisposable
     public ResidentialAddress()
     { }
 
-    public ResidentialAddress(ResidentialAddress copy):base(copy)
+    public ResidentialAddress(ResidentialAddress copy) : base(copy)
     {
-        this.CustomerId = copy.CustomerId;
-        this.Name = copy.Name;
-        this.Street = copy.Street;
-        this.HouseNumber = copy.HouseNumber;
-        this.ApartmentNumber = copy.ApartmentNumber;
-        this.PostalCode = copy.PostalCode;
-        this.City = copy.City;
-        this.Country = copy.Country;
-        this.Updated = copy.Updated;
-        this.Surname = copy.Surname;
-        this.Id = copy.Id;
-        this.Created = copy.Created;
+        ApartmentNumber = copy.ApartmentNumber;
+        City = copy.City;
+        Country = copy.Country;
+        CustomerId = copy.CustomerId;
+        HouseNumber = copy.HouseNumber;
+        Name = copy.Name;
+        PostalCode = copy.PostalCode;
+        Street = copy.Street;
+        Surname = copy.Surname;
     }
 
     public override string ToString()

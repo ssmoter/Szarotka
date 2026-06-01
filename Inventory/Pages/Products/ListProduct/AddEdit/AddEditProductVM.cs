@@ -1,13 +1,20 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
+using DataBase.Model.EntitiesServer;
+using DataBase.Model.JsonContext;
+using DataBase.Service;
 
 using Shared.Data;
 using Shared.Helper;
+using Shared.Pages.UpdateDifference;
 
+using System.Collections;
 using System.Collections.ObjectModel;
+using System.Net;
 
 using static Inventory.Pages.Products.ListProduct.AddEdit.AddEditProductM;
 
@@ -95,8 +102,13 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
 
 
         private readonly DataBase.Data.Save.ISaveInventoryAoT _save;
+        private readonly Data.InventoryApi.ISendProductHttp _sendHttp;
+        private readonly DataBase.Service.IUpdateLogService _updateLog;
         private readonly IAccessDataBase _db;
-        public AddEditProductVM(IAccessDataBase db, DataBase.Data.Save.ISaveInventoryAoT save)
+        public AddEditProductVM(IAccessDataBase db,
+                                DataBase.Data.Save.ISaveInventoryAoT save,
+                                Data.InventoryApi.ISendProductHttp sendHttp,
+                                DataBase.Service.IUpdateLogService updateLog)
         {
             AddEdit = new AddEditProductM();
             if (Product is null)
@@ -135,6 +147,8 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
 
             _db = db;
             _save = save;
+            _sendHttp = sendHttp;
+            _updateLog = updateLog;
         }
 
         private static readonly string[] extensionsValues = ["jpg", "png", "gif"];
@@ -169,29 +183,97 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
         [RelayCommand]
         async Task UpdateProduct()
         {
-            try
-            {
-                await SaveProduct();
+            await SaveProduct();
 
-                await Shell.Current.DisplayAlert("Aktualizacja", $"Produkt {Product.Name.Name} został zaktualizowany", "Ok");
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
+            await Shell.Current.DisplayAlert("Aktualizacja", $"Produkt {Product.Name.Name} został zaktualizowany", "Ok");
         }
 
         private async Task SaveProduct()
         {
-            var userId = UserAfterLogin.User.Id.ToByteArray();
-            await _save.SaveProductName(Product.Name, userId);
-
-            foreach (var item in Product.Prices)
+            string json = "";
+            try
             {
-                if (item.Id == Guid.Empty)
+                var userId = UserAfterLogin.User.Id.ToByteArray();
+                await _save.SaveProductName(Product.Name, userId);
+                await _updateLog.Insert(new(), Product.Name);
+
+                foreach (ProductPrice item in Product.Prices)
                 {
-                    await _save.SaveProductPrice(item, userId);
+                    if (item.Id == Guid.Empty)
+                    {
+                        await _save.SaveProductPrice(item, userId);
+                        await _updateLog.Insert(new(), item);
+                    }
                 }
+
+                await Toast.Make("Zapisano").Show();
+
+                var response = await _sendHttp.SendProduct(
+                    new EmptyProduct()
+                    {
+                        Name = Product.Name,
+                        Prices = product.Prices,
+                    });
+
+                var result = response.httpMessage;
+
+                json = response.content;
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var update = System.Text.Json.JsonSerializer.Deserialize(json, SzarotkaJsonSerializerContext.Default.UpdateLog);
+                    await _updateLog.Insert(update);
+                }
+                else if (result.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    var differenceName = System.Text.Json.JsonSerializer.Deserialize(json, SzarotkaJsonSerializerContext.Default.ProductName);
+
+                    UpdateDifference[] updateDifference = [
+                        new UpdateDifference()
+                        {
+                        Server = differenceName,
+                        Update = Product.Name
+                    }];
+
+                    await Toast.Make("Popraw różnice").Show();
+                    var navigationParameter = new Dictionary<string, object>
+                     {
+                        { nameof(UpdateDifference), updateDifference },
+                        {nameof(Action),(Action<IEnumerable>)(async (returnAfterDifference)
+                        =>
+                            {
+                                foreach (ProductName item in returnAfterDifference)
+                                    {
+                                        await _save.SaveProductName(item, item.UserUpdatedId.ToByteArray(), true);
+                                        _ = await _updateLog.Insert(new DataBase.Model.UpdateLog()
+                                        {
+                                            IsServer = false,
+                                        }, item);
+                                    }
+                                await _sendHttp.SendProduct(
+                                            new EmptyProduct()
+                                            {
+                                              Name =  (ProductName)returnAfterDifference
+                                            });
+                                 Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+                            })
+                        }
+                 };
+                    await Shell.Current.GoToAsync(nameof(UpdateDifferenceV), navigationParameter);
+
+                }
+                else
+                {
+                    result.EnsureSuccessStatusCode();
+                }
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Conflict)
+            {
+                //HttpStatusCode.Conflict został obłużony wyżej jako zwrot danych do poprawy przy edycji
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLogExtension(ex);
             }
         }
 
@@ -202,10 +284,6 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             {
                 await SaveProduct();
                 await Shell.Current.DisplayAlert("Dodany", $"Produkt {Product.Name.Name} został dodany", "Ok");
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
             }
             finally
             {

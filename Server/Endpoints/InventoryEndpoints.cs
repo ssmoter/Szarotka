@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DataBase.Model.EntitiesInventory;
+
+using Microsoft.AspNetCore.Mvc;
 
 using Server.Requests;
 
@@ -10,11 +12,23 @@ namespace Server.Endpoints
         {
             var map = app.MapGroup("/inventory");
 
-            map.MapGet("empty-products", async (IInventoryProductsRequests iInventoryProducts, bool isDelete = false, CancellationToken token = default) =>
+            map.MapGet("products/empty", async (IInventoryProductsRequests iInventoryProducts, bool isDelete = false, CancellationToken token = default) =>
             {
                 var products = await iInventoryProducts.GetEmptyProducts(isDelete, token);
                 return products;
             });
+            map.MapPost("product/update", async ([FromBody] EmptyProduct product, IInventoryProductsRequests iInventoryProducts, bool forceUpdate = false, CancellationToken token = default) =>
+            {
+                IResult? result = await iInventoryProducts.Update(product, forceUpdate, token);
+                return result;
+            });
+            map.MapPost("products/update", async ([FromBody] EmptyProducts products, IInventoryProductsRequests iInventoryProducts, bool forceUpdate = false, CancellationToken token = default) =>
+            {
+                IResult? result = await iInventoryProducts.Updates(products, forceUpdate, token);
+                return result;
+            });
+
+
 
             map.MapGet("day/{id}", async (string id, IInventoryDayRequests iInventoryDayRequests, CancellationToken token = default) =>
             {
@@ -31,6 +45,18 @@ namespace Server.Endpoints
                 var day = await iInventoryDayRequests.GetDays(from, to, userId, token);
                 return day;
             }).RequireAuthorization();
+
+
+            map.MapPost("day/update", async (Day day, IInventoryDayRequests iInventoryDayRequests, bool forceUpdate = false, CancellationToken token = default) =>
+            {
+                var result = await iInventoryDayRequests.SaveDay(day, forceUpdate, token);
+                return result;
+            });
+            map.MapPost("days/update", async (Day[] days, IInventoryDayRequests iInventoryDayRequests, bool forceUpdate = false, CancellationToken token = default) =>
+            {
+                var result = await iInventoryDayRequests.SaveDays(days, forceUpdate, token);
+                return result;
+            });
 
 
         }

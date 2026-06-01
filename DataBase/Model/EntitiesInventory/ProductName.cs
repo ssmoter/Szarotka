@@ -76,6 +76,19 @@ public partial class ProductName : BaseEntities<Guid>, IEquatable<ProductName>
 
         return Id == other.Id && Name == other.Name;
     }
+
+    public ProductName()
+    {
+        
+    }
+    public ProductName(ProductName copy):base(copy)
+    {
+        this.Arrangement = copy.Arrangement;
+        this.Name = copy.Name;
+        this.Img = copy.Img;
+        this.IsVisible = copy.IsVisible;
+        this.Description = copy.Description;
+    }
 }
 
 
@@ -89,7 +102,9 @@ public partial class EmptyProducts
     public IList<EmptyProduct> Products { get; set; } = [];
 
     public EmptyProducts()
-    { }
+    {
+        Products ??= [];
+    }
     public EmptyProducts(IList<(ProductName Name, IList<ProductPrice> Prices)> emptyProducts)
     {
         int count = emptyProducts.Count;
@@ -105,5 +120,20 @@ public partial class EmptyProducts
         }
 
     }
-
+    public EmptyProducts(IList<ProductName> name)
+    {
+        var length = name.Count;
+        Products = new EmptyProduct[length];
+        for (int i = 0; i < length; i++)
+        {
+            Products[i] = new()
+            {
+                Name = name[i]
+            };
+        }
+    }
+    public EmptyProducts(IEnumerable<EmptyProduct> products)
+    {
+        Products = [.. products];
+    }
 }

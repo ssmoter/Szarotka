@@ -12,21 +12,27 @@
         public async Task InvokeAsync(HttpContext context)
         {
             var originalBody = context.Response.Body;
+            var memoryStream = new MemoryStream(); // NIE używaj `using`
 
-            using var memoryStream = new MemoryStream();
             context.Response.Body = memoryStream;
 
-            await _next(context);
-
-            // Tylko jeśli odpowiedź nie została już zakończona
-            if (!context.Response.HasStarted)
+            try
             {
-                context.Response.ContentLength = memoryStream.Length;
-            }
+                await _next(context);
 
-            memoryStream.Seek(0, SeekOrigin.Begin);
-            await memoryStream.CopyToAsync(originalBody);
-            context.Response.Body = originalBody;
+                if (!context.Response.HasStarted)
+                {
+                    context.Response.ContentLength = memoryStream.Length;
+                }
+
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                await memoryStream.CopyToAsync(originalBody);
+            }
+            finally
+            {
+                context.Response.Body = originalBody;
+                memoryStream.Dispose(); // ręczne zamknięcie po zakończeniu
+            }
         }
     }
 

@@ -1,12 +1,18 @@
 ﻿using DataBase.Data.SqlQuery;
 using DataBase.Model.EntitiesInventory;
 
+using System.Text.Json.Serialization;
+
 namespace DataBase.Data.Get
 {
     public interface IGetInventoryAoT
     {
         Task<IList<Day>> Days(string where, params object[] args);
         Task<IList<(ProductName, IList<ProductPrice>)>> EmptyProductsNameAndPrices(bool isDelete = false);
+
+        Task<ProductName?> GetProductName(Guid id);
+        Task<ProductPrice?> GetProductPrice(Guid id);
+        Task<IList<ProductPrice>> GetProductPrices(Guid nameId);
     }
 
     public class GetInventoryAoT(IAccessDataBase db) : IGetInventoryAoT
@@ -44,7 +50,7 @@ namespace DataBase.Data.Get
                 }
             }
 
-            return [.. result.Select(x => x as Day)];
+            return [.. result.Select(x => new Day(x))];
         }
         public async Task<IList<(ProductName, IList<ProductPrice>)>> EmptyProductsNameAndPrices(bool isDelete = false)
         {
@@ -75,15 +81,39 @@ namespace DataBase.Data.Get
             }
             return product;
         }
+        public async Task<ProductName?> GetProductName(Guid id)
+        {
+            string sql = $"SELECT * FROM {nameof(ProductName)} WHERE {nameof(ProductName)}.{nameof(ProductName.Id)} == ?";
+
+            var result = await _db.DataBaseAsync.QueryAsync<ProductName>(sql, id);
+            return result?.FirstOrDefault();
+        }
+        public async Task<IList<ProductPrice>> GetProductPrices(Guid nameId)
+        {
+            string sql = $"SELECT * FROM {nameof(ProductPrice)} WHERE {nameof(ProductPrice)}.{nameof(ProductPrice.ProductNameId)} == ?";
+
+            var result = await _db.DataBaseAsync.QueryAsync<ProductPrice>(sql, nameId);
+            return result;
+        }
+        public async Task<ProductPrice?> GetProductPrice(Guid id)
+        {
+            string sql = $"SELECT * FROM {nameof(ProductPrice)} WHERE {nameof(ProductPrice)}.{nameof(ProductPrice.Id)} == ?";
+
+            var result = await _db.DataBaseAsync.QueryAsync<ProductPrice>(sql, id);
+            return result?.FirstOrDefault();
+        }
 
 
         private partial class ProductNameAndPrice : ProductName
         {
+            [JsonIgnore]
             public string JsonPrice { get; set; } = "";
         }
         private partial class DayFromQuery : Day
         {
+            [JsonIgnore]
             public string JsonProducts { get; set; } = "";
+            [JsonIgnore]
             public string JsonCakes { get; set; } = "";
         }
     }

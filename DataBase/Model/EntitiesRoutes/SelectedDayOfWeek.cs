@@ -319,25 +319,32 @@ public partial class SelectedDayOfWeekRoutes : BaseEntities<Guid>
 
     public SelectedDayOfWeekRoutes(SelectedDayOfWeekRoutes copy) : base(copy)
     {
-        this.Id = copy.Id;
-        this.Created = copy.Created;
-        this.Updated = copy.Updated;
-        this.Sunday = copy.Sunday;
-        this.SundayTimeSpan = copy.SundayTimeSpan;
-        this.Monday = copy.Monday;
-        this.MondayTimeSpan = copy.MondayTimeSpan;
-        this.Tuesday = copy.Tuesday;
-        this.TuesdayTimeSpan = copy.TuesdayTimeSpan;
-        this.Wednesday = copy.Wednesday;
-        this.WednesdayTimeSpan = copy.WednesdayTimeSpan;
-        this.Thursday = copy.Thursday;
-        this.ThursdayTimeSpan = copy.ThursdayTimeSpan;
-        this.Friday = copy.Friday;
-        this.FridayTimeSpan = copy.FridayTimeSpan;
-        this.Saturday = copy.Saturday;
-        this.SaturdayTimeSpan = copy.SaturdayTimeSpan;
-        this.Optional = copy.Optional;
 
+        WednesdayTimeSpan = copy.WednesdayTimeSpan;
+        WednesdayTicks = copy.WednesdayTicks;
+        Wednesday = copy.Wednesday;
+        TuesdayTimeSpan = copy.TuesdayTimeSpan;
+        TuesdayTicks = copy.TuesdayTicks;
+        Tuesday = copy.Tuesday;
+        ThursdayTimeSpan = copy.ThursdayTimeSpan;
+        ThursdayTicks = copy.ThursdayTicks;
+        SundayTimeSpan = copy.SundayTimeSpan;
+        Friday = copy.Friday;
+        CustomerId = copy.CustomerId;
+        FridayTicks = copy.FridayTicks;
+        FridayTimeSpan = copy.FridayTimeSpan;
+        Monday = copy.Monday;
+        MondayTicks = copy.MondayTicks;
+        MondayTimeSpan = copy.MondayTimeSpan;
+        Optional = copy.Optional;
+        Saturday = copy.Saturday;
+        SaturdayTicks = copy.SaturdayTicks;
+        SaturdayTimeSpan = copy.SaturdayTimeSpan;
+        SetAll = copy.SetAll;
+        SetAllTimeSpan = copy.SetAllTimeSpan;
+        Sunday = copy.Sunday;
+        SundayTicks = copy.SundayTicks;
+        Thursday = copy.Thursday;
     }
     public override string ToString()
     {

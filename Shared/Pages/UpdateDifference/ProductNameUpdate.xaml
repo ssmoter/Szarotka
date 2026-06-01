@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="Shared.Pages.UpdateDifference.ProductNameUpdate"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Shared.CustomControls"
+    xmlns:convert="clr-namespace:Shared.Converters"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:user="clr-namespace:Shared.Pages.UserDisplay.Small"
+    xmlns:vm="clr-namespace:Shared.Pages.UpdateDifference"
+    x:Name="this">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+
+
+    <Grid
+        BindingContext="{x:Reference this}"
+        ColumnDefinitions="auto,*,10,auto,*"
+        RowSpacing="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border
+            Grid.RowSpan="20"
+            Grid.Column="2"
+            HorizontalOptions="Center"
+            VerticalOptions="Fill" />
+
+        <controls:BorderColorsFromBool
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            IsVisible="False"
+            SelectedColor="{Binding UpdateBool.BoolUpdate, x:DataType=vm:ProductNameUpdate, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:BorderColorsFromBool
+            Grid.Row="0"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            IsVisible="False"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolUpdate, x:DataType=vm:ProductNameUpdate}" />
+
+        <CheckBox
+            Grid.Row="0"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolUpdate, x:DataType=vm:ProductNameUpdate, Converter={StaticResource InvertedBoolConverter}}"
+            IsEnabled="False"
+            VerticalOptions="Center" />
+        <CheckBox
+            Grid.Row="0"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolUpdate, x:DataType=vm:ProductNameUpdate}"
+            IsEnabled="False"
+            VerticalOptions="Center" />
+        <Grid
+            Grid.Row="0"
+            Grid.Column="1"
+            RowDefinitions="*,*,*,*,*">
+            <controls:NameOrIdUser UserId="{Binding PNameServer.UserCreatedId, x:DataType=vm:ProductNameUpdate}" />
+            <controls:LabelAndTitle
+                Title="Utworzono"
+                Grid.Row="1"
+                Content="{Binding PNameServer.Created, x:DataType=vm:ProductNameUpdate}" />
+            <controls:NameOrIdUser Grid.Row="2" UserId="{Binding PNameServer.UserUpdatedId, x:DataType=vm:ProductNameUpdate}" />
+            <controls:LabelAndTitle
+                Title="Edytowano"
+                Grid.Row="3"
+                Content="{Binding PNameServer.Updated, x:DataType=vm:ProductNameUpdate}" />
+            <controls:LabelAndTitle Title="Usuniety" Grid.Row="4">
+                <controls:LabelAndTitle.Content>
+                    <CheckBox IsChecked="{Binding PNameServer.IsDelete, x:DataType=vm:ProductNameUpdate}" IsEnabled="False" />
+                </controls:LabelAndTitle.Content>
+            </controls:LabelAndTitle>
+        </Grid>
+        <Grid
+            Grid.Row="0"
+            Grid.Column="4"
+            RowDefinitions="*,*,*,*,*">
+            <controls:NameOrIdUser UserId="{Binding PNameUpdate.UserCreatedId, x:DataType=vm:ProductNameUpdate}" />
+            <controls:LabelAndTitle
+                Title="Utworzono"
+                Grid.Row="1"
+                Content="{Binding PNameUpdate.Created, x:DataType=vm:ProductNameUpdate}" />
+            <controls:NameOrIdUser Grid.Row="2" UserId="{Binding PNameUpdate.UserUpdatedId, x:DataType=vm:ProductNameUpdate}" />
+            <controls:LabelAndTitle
+                Title="Edytowano"
+                Grid.Row="3"
+                Content="{Binding PNameUpdate.Updated, x:DataType=vm:ProductNameUpdate}" />
+            <controls:LabelAndTitle Title="Usuniety" Grid.Row="4">
+                <controls:LabelAndTitle.Content>
+                    <CheckBox IsChecked="{Binding PNameUpdate.IsDelete, x:DataType=vm:ProductNameUpdate}" IsEnabled="False" />
+                </controls:LabelAndTitle.Content>
+            </controls:LabelAndTitle>
+
+        </Grid>
+        <Border
+            Grid.Row="0"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+
+        <controls:BorderColorsFromBool
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            SelectedColor="{Binding UpdateBool.BoolName, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:ProductNameUpdate}" />
+        <controls:BorderColorsFromBool
+            Grid.Row="1"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolName, x:DataType=vm:ProductNameUpdate}" />
+
+        <CheckBox
+            Grid.Row="1"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolName, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:ProductNameUpdate}" />
+        <controls:LabelAndTitle
+            Title="Nazwa"
+            Grid.Row="1"
+            Grid.Column="1"
+            Content="{Binding PNameServer.Name, x:DataType=vm:ProductNameUpdate}"
+            VerticalOptions="Center" />
+        <CheckBox
+            Grid.Row="1"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolName, x:DataType=vm:ProductNameUpdate}" />
+        <controls:LabelAndTitle
+            Title="Nazwa"
+            Grid.Row="1"
+            Grid.Column="4"
+            Content="{Binding PNameUpdate.Name, x:DataType=vm:ProductNameUpdate}"
+            VerticalOptions="Center" />
+        <Border
+            Grid.Row="1"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+
+        <controls:BorderColorsFromBool
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolDescription, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:ProductNameUpdate}" />
+        <controls:BorderColorsFromBool
+            Grid.Row="2"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolDescription, x:DataType=vm:ProductNameUpdate}" />
+        <CheckBox
+            Grid.Row="2"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolDescription, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:ProductNameUpdate}" />
+        <controls:LabelAndTitle
+            Title="Opis"
+            Grid.Row="2"
+            Grid.Column="1"
+            Content="{Binding PNameServer.Description, x:DataType=vm:ProductNameUpdate}"
+            VerticalOptions="Center" />
+        <CheckBox
+            Grid.Row="2"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolDescription, x:DataType=vm:ProductNameUpdate}" />
+        <controls:LabelAndTitle
+            Title="Opis"
+            Grid.Row="2"
+            Grid.Column="4"
+            Content="{Binding PNameUpdate.Description, x:DataType=vm:ProductNameUpdate}"
+            VerticalOptions="Center" />
+        <Border
+            Grid.Row="2"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+
+
+
+        <controls:BorderColorsFromBool
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolArrangement, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:ProductNameUpdate}" />
+        <controls:BorderColorsFromBool
+            Grid.Row="3"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolArrangement, x:DataType=vm:ProductNameUpdate}" />
+        <CheckBox
+            Grid.Row="3"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolArrangement, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:ProductNameUpdate}" />
+        <controls:LabelAndTitle
+            Title="Index"
+            Grid.Row="3"
+            Grid.Column="1"
+            Content="{Binding PNameServer.Arrangement, x:DataType=vm:ProductNameUpdate}"
+            VerticalOptions="Center" />
+        <CheckBox
+            Grid.Row="3"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolArrangement, x:DataType=vm:ProductNameUpdate}" />
+        <controls:LabelAndTitle
+            Title="Index"
+            Grid.Row="3"
+            Grid.Column="4"
+            Content="{Binding PNameUpdate.Arrangement, x:DataType=vm:ProductNameUpdate}"
+            VerticalOptions="Center" />
+        <Border
+            Grid.Row="3"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+
+
+
+
+        <controls:BorderColorsFromBool
+            Grid.Row="4"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolImg, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:ProductNameUpdate}" />
+        <controls:BorderColorsFromBool
+            Grid.Row="4"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolImg, x:DataType=vm:ProductNameUpdate}" />
+        <CheckBox
+            Grid.Row="4"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolImg, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:ProductNameUpdate}" />
+        <controls:LabelAndTitle
+            Title="Obraz"
+            Grid.Row="4"
+            Grid.Column="1"
+            VerticalOptions="Center">
+            <controls:LabelAndTitle.Content>
+                <controls:StringImage String64Base="{Binding PNameServer.Img, x:DataType=vm:ProductNameUpdate}" />
+            </controls:LabelAndTitle.Content>
+        </controls:LabelAndTitle>
+        <CheckBox
+            Grid.Row="4"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolImg, x:DataType=vm:ProductNameUpdate}" />
+        <controls:LabelAndTitle
+            Title="Obraz"
+            Grid.Row="4"
+            Grid.Column="4"
+            VerticalOptions="Center">
+            <controls:LabelAndTitle.Content>
+                <controls:StringImage String64Base="{Binding PNameUpdate.Img, x:DataType=vm:ProductNameUpdate}" />
+            </controls:LabelAndTitle.Content>
+        </controls:LabelAndTitle>
+        <Border
+            Grid.Row="4"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+
+
+        <controls:BorderColorsFromBool
+            Grid.Row="5"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolIsVisible, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:ProductNameUpdate}" />
+        <controls:BorderColorsFromBool
+            Grid.Row="5"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolIsVisible, x:DataType=vm:ProductNameUpdate}" />
+        <CheckBox
+            Grid.Row="5"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolIsVisible, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:ProductNameUpdate}" />
+        <controls:LabelAndTitle
+            Title="Czy wyświetlać"
+            Grid.Row="5"
+            Grid.Column="1"
+            VerticalOptions="Center">
+            <controls:LabelAndTitle.Content>
+                <CheckBox
+                    HorizontalOptions="Start"
+                    IsChecked="{Binding PNameServer.IsVisible, x:DataType=vm:ProductNameUpdate}"
+                    IsEnabled="False" />
+            </controls:LabelAndTitle.Content>
+        </controls:LabelAndTitle>
+        <CheckBox
+            Grid.Row="5"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolIsVisible, x:DataType=vm:ProductNameUpdate}" />
+        <controls:LabelAndTitle
+            Title="Czy wyświetlać"
+            Grid.Row="5"
+            Grid.Column="4"
+            VerticalOptions="Center">
+            <controls:LabelAndTitle.Content>
+                <CheckBox IsChecked="{Binding PNameUpdate.IsVisible, x:DataType=vm:ProductNameUpdate}" IsEnabled="False" />
+            </controls:LabelAndTitle.Content>
+        </controls:LabelAndTitle>
+        <Border
+            Grid.Row="5"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+
+
+
+
+
+
+    </Grid>
+
+</ContentView>

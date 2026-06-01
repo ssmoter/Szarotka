@@ -87,8 +87,8 @@ public partial class DayExpanded : ObservableObject
         }
     }
 
-    private string? selectedValue;
-    public string? SelectedValue
+    private string selectedValue = "";
+    public string SelectedValue
     {
         get => selectedValue;
         set
@@ -105,7 +105,7 @@ public partial class DayExpanded : ObservableObject
             if (SetProperty(ref selectedHeaders, value, nameof(SelectedHeaders))) { }
         }
     }
-    public DayExpanded(Day day, int index, string? selectedValue, IEnumerable<string> selectedHeaders)
+    public DayExpanded(Day day, int index, string selectedValue, IEnumerable<string> selectedHeaders)
     {
         this.Day = day;
         this.Index = index;

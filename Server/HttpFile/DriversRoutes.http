@@ -106,14 +106,14 @@ Content-Type: application/json
   "created": "2024-04-16T10:26:40.9869332+02:00",
   "updated": "2024-04-16T10:26:40.9870343+02:00",
   "createdTicks": 638488528009869332,
-  "updatedTicks": 638488528009870344,
+  "updatedTicks": 638488528009870343,
   "isDelete": false,
   "userCreatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8",
   "userUpdatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8"
 }
 
 ###
-POST {{Server_HostAddress}}/driver-routes/updates?forceUpdate=true
+POST {{Server_HostAddress}}/driver-routes/updates?forceUpdate=false
 Authorization: Bearer {{token}}
 Content-Type: application/json 
 
@@ -183,7 +183,7 @@ Content-Type: application/json
     "created": "2024-04-16T10:26:40.9869332+02:00",
     "updated": "2024-04-16T10:26:40.9870343+02:00",
     "createdTicks": 638488528009869332,
-    "updatedTicks": 638488528009870343,
+    "updatedTicks": 638488528009870347,
     "isDelete": false,
     "userCreatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8",
     "userUpdatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8"
@@ -253,7 +253,7 @@ Content-Type: application/json
     "created": "2024-04-16T10:43:27.5609409+02:00",
     "updated": "2024-04-16T10:43:27.5610312+02:00",
     "createdTicks": 638488538075609409,
-    "updatedTicks": 638488538075610312,
+    "updatedTicks": 638488538075610310,
     "isDelete": false,
     "userCreatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8",
     "userUpdatedId": "ae86aaeb-1080-4ae2-9226-62cf3a042ca8"

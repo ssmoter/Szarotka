@@ -125,7 +125,9 @@ namespace Inventory.Pages.Main
             {
                 day = new();
                 var products = await _get.EmptyProducts();
-                day.Products = new System.Collections.ObjectModel.ObservableCollection<DataBase.Model.EntitiesInventory.Product>(products);
+                var productsSorted = products.Where(x => x.Name.IsVisible && !x.Name.IsDelete).OrderBy(x => x.Name.Arrangement);
+
+                day.Products = new System.Collections.ObjectModel.ObservableCollection<DataBase.Model.EntitiesInventory.Product>(productsSorted);
             }
 
             return day;

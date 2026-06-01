@@ -15,8 +15,8 @@ namespace DriversRoutes.Data.RouteApi
 {
     public interface IGetCustomersHttp
     {
-        Task<ObservableCollection<CustomerRoutes>> GetCustomerRoutes(Guid routeId, SelectedDayOfWeekRoutes day, UpdateProgressBar progress, CancellationToken token = default);
-        Task<ObservableCollection<CustomerRoutes>> GetCustomerRoutes(Guid[] ids, UpdateProgressBar progressContent, CancellationToken token = default);
+        Task<ObservableCollection<CustomerRoutes>> GetCustomerRoutes(Guid routeId, SelectedDayOfWeekRoutes day, UpdateProgressBar progressContent = null, CancellationToken token = default);
+        Task<ObservableCollection<CustomerRoutes>> GetCustomerRoutes(Guid[] ids, UpdateProgressBar progressContent = null, CancellationToken token = default);
     }
 
     public class GetCustomersHttp : IGetCustomersHttp
@@ -32,7 +32,7 @@ namespace DriversRoutes.Data.RouteApi
         }
 
 
-        public async Task<ObservableCollection<CustomerRoutes>> GetCustomerRoutes(Guid[] ids, UpdateProgressBar progressContent, CancellationToken token = default)
+        public async Task<ObservableCollection<CustomerRoutes>> GetCustomerRoutes(Guid[] ids, UpdateProgressBar progressContent = null, CancellationToken token = default)
         {
             StringBuilder url = new();
 
@@ -50,7 +50,7 @@ namespace DriversRoutes.Data.RouteApi
             using var httpClient = _httpClientFactory.CreateClient();
 
             httpClient.SetAuthorization();
-            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent.Grid);
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent?.Grid);
 
             var response = await httpClient.DownloadAsync(url.ToString()
                 , (double progress) => UpdateProgressBar.UpdateProgress(progressContent, progress)
@@ -84,7 +84,7 @@ namespace DriversRoutes.Data.RouteApi
                 }
                 url += $"selected_day={days[i]}";
             }
-            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent.Grid);
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent?.Grid);
 
             var response = await httpClient.DownloadAsync(url
                 , (double progress) => UpdateProgressBar.UpdateProgress(progressContent, progress)

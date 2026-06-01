@@ -11,7 +11,12 @@ using System.Text.Json;
 
 namespace Inventory.Data.InventoryApi
 {
-    public partial class GetProductHttp
+    public interface IGetProductHttp
+    {
+        Task<EmptyProducts> GetProducts(UpdateProgressBar progressContent = null, CancellationToken token = default);
+    }
+
+    public partial class GetProductHttp : IGetProductHttp
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IAccessDataBase _db;
@@ -24,15 +29,15 @@ namespace Inventory.Data.InventoryApi
             _url = db.GetServerUrl();
         }
 
-        public async Task<EmptyProducts> GetProducts(UpdateProgressBar progressContent, CancellationToken token = default)
+        public async Task<EmptyProducts> GetProducts(UpdateProgressBar progressContent = null, CancellationToken token = default)
         {
             Shared.Service.AndroidPermissionService.InternetCheck();
-            string url = $"{_url}/inventory/empty-products";
+            string url = $"{_url}/inventory/products/empty";
             using var httpClient = _httpClientFactory.CreateClient();
 
             httpClient.SetAuthorization();
 
-            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent.Grid);
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent?.Grid);
 
             var response = await httpClient.DownloadAsync(url
                 , progress => UpdateProgressBar.UpdateProgress(progressContent, progress)

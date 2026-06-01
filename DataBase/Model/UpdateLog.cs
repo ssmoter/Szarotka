@@ -37,6 +37,19 @@
 
         public bool? IsServer { get; set; } = null;
 
+        public UpdateLog()
+        {
+
+        }
+        public UpdateLog(UpdateLog copy) : base(copy)
+        {
+            UpdateEnum = copy.UpdateEnum;
+            UpdateId = copy.UpdateId;
+            JsonUpdate = copy.JsonUpdate;
+            IsServer = copy.IsServer;
+        }
+
+
     }
     public enum UpdateEnum
     {
@@ -49,6 +62,11 @@
         SelectedDayOfWeek,
 
 
+        Day = 200,
+        Cake,
+        Product,
+        ProductName,
+        ProductPrice,
 
     }
 }

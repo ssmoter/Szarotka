@@ -1,132 +1,54 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-using DataBase.Model.EntitiesInventory;
-using DataBase.Model.EntitiesRoutes;
-
 using System.Text.Json.Serialization;
 
-namespace DataBase.Model.EntitiesServer
+namespace DataBase.Model.EntitiesServer;
+
+public partial class UpdateDifference : ObservableObject
 {
-    public class UpdateDifferences : ObservableObject
+    private IDifference? server;
+    public IDifference? Server
     {
-        private IList<UpdateDifferencesDriverRoutes>? updateDifferencesDriverRoutes;
-        public IList<UpdateDifferencesDriverRoutes>? UpdateDifferencesDriverRoutes
+        get => server;
+        set
         {
-            get => updateDifferencesDriverRoutes;
-            set
+            if (SetProperty(ref server, value, nameof(Server)))
             {
-                if (SetProperty(ref updateDifferencesDriverRoutes, value, nameof(UpdateDifferencesDriverRoutes)))
-                {
-                }
             }
         }
-
-        private IList<UpdateDifferencesInventory>? updateDifferencesInventory;
-        public IList<UpdateDifferencesInventory>? UpdateDifferencesInventory
+    }
+    private IDifference? update;
+    public IDifference? Update
+    {
+        get => update;
+        set
         {
-            get => updateDifferencesInventory;
-            set
+            if (SetProperty(ref update, value, nameof(Update)))
             {
-                if (SetProperty(ref updateDifferencesInventory, value, nameof(UpdateDifferencesInventory)))
-                {
-                }
             }
         }
     }
 
-
-    public class UpdateDifferencesDriverRoutes : ObservableObject
+    private int index;
+    [JsonIgnore]
+    public int Index
     {
-        private CustomerRoutes server = new();
-        public CustomerRoutes Server
+        get => index;
+        set
         {
-            get => server;
-            set
+            if (SetProperty(ref index, value, nameof(Index)))
             {
-                if (SetProperty(ref server, value, nameof(Server)))
-                {
-                }
-            }
-        }
-        private CustomerRoutes update = new();
-        public CustomerRoutes Update
-        {
-            get => update;
-            set
-            {
-                if (SetProperty(ref update, value, nameof(Update)))
-                {
-                }
-            }
-        }
-
-        private int index;
-        public int Index
-        {
-            get => index;
-            set
-            {
-                if (SetProperty(ref index, value, nameof(Index)))
-                {
-                }
-            }
-        }
-        private object? updateSelect = null;
-        [JsonIgnore]
-        public object? UpdateSelect
-        {
-            get => updateSelect;
-            set
-            {
-                if (SetProperty(ref updateSelect, value, nameof(UpdateSelect))) { }
             }
         }
     }
-    public class UpdateDifferencesInventory : ObservableObject
+    private object? updateSelect = null;
+    [JsonIgnore]
+    public object? UpdateSelect
     {
-        private Day server = new();
-        public Day Server
+        get => updateSelect;
+        set
         {
-            get => server;
-            set
-            {
-                if (SetProperty(ref server, value, nameof(Server)))
-                {
-                }
-            }
-        }
-        private Day update = new();
-        public Day Update
-        {
-            get => update;
-            set
-            {
-                if (SetProperty(ref update, value, nameof(Update)))
-                {
-                }
-            }
-        }
-        private int index;
-        public int Index
-        {
-            get => index;
-            set
-            {
-                if (SetProperty(ref index, value, nameof(Index)))
-                {
-                }
-            }
-        }
-
-        private object? updateSelect = null;
-        [JsonIgnore]
-        public object? UpdateSelect
-        {
-            get => updateSelect;
-            set
-            {
-                if (SetProperty(ref updateSelect, value, nameof(UpdateSelect))) { }
-            }
+            if (SetProperty(ref updateSelect, value, nameof(UpdateSelect))) { }
         }
     }
 }

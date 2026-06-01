@@ -235,29 +235,25 @@ public partial class Product : BaseEntities<Guid>
         Name ??= new();
         Price ??= new();
     }
-    public Product(Product product):base(product)
+    public Product(Product copy) : base(copy)
     {
-        this.Id = product.Id;
-        this.Created = product.Created;
-        this.Updated = product.Updated;
 
-        this.DayId = product.DayId;
-        this.ProductNameId = product.ProductNameId;
-        this.ProductPriceId = product.ProductPriceId;
-        this.Description = product.Description;
-
-        this.Name = product.Name;
-        this.Price = product.Price;
-
-        this.PriceTotalDecimal = product.PriceTotalDecimal;
-        this.PriceTotalCorrectDecimal = product.PriceTotalCorrectDecimal;
-        this.PriceTotalAfterCorrectDecimal = product.PriceTotalAfterCorrectDecimal;
-
-        this.Number = product.Number;
-        this.NumberEdit = product.NumberEdit;
-        this.NumberReturn = product.NumberReturn;
-
-        this.IsDelete = product.IsDelete;
+        Name = copy.Name;
+        ProductNameId = copy.ProductNameId;
+        Price = copy.Price;
+        DayId = copy.DayId;
+        Description = copy.Description;
+        IsExpanded = copy.IsExpanded;
+        NumberEdit = copy.NumberEdit;
+        NumberReturn = copy.NumberReturn;
+        Number = copy.Number;
+        PriceTotal = copy.PriceTotal;
+        PriceTotalAfterCorrect = copy.PriceTotalAfterCorrect;
+        PriceTotalAfterCorrectDecimal = copy.PriceTotalAfterCorrectDecimal;
+        PriceTotalCorrect = copy.PriceTotalCorrect;
+        PriceTotalCorrectDecimal = copy.PriceTotalCorrectDecimal;
+        PriceTotalDecimal = copy.PriceTotalDecimal;
+        ProductPriceId = copy.ProductPriceId;
 
     }
     public void CalculatePrice()

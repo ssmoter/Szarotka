@@ -16,6 +16,84 @@
         <ResourceDictionary>
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
             <toolkit:IsNotNullConverter x:Key="IsNotNullConverter" />
+
+            <DataTemplate x:Key="Customer" x:DataType="modelServer:UpdateDifference">
+
+                <Grid RowDefinitions="auto,*,auto">
+                    <Label
+                        Grid.Row="0"
+                        HorizontalOptions="Center"
+                        Text="{Binding Index}" />
+
+                    <update:DriverRoutesUpdate
+                        Grid.Row="1"
+                        Margin="5"
+                        CustomerRoutesServer="{Binding Server}"
+                        CustomerRoutesUpdate="{Binding Update}"
+                        UpdateBool="{Binding UpdateSelect}" />
+                    <Border
+                        Grid.Row="2"
+                        Grid.ColumnSpan="2"
+                        Margin="0"
+                        Padding="0"
+                        StrokeThickness="2" />
+                </Grid>
+
+            </DataTemplate>
+
+            <DataTemplate x:Key="Empty" x:DataType="modelServer:UpdateDifference">
+
+                <Grid RowDefinitions="auto,*,auto">
+                    <Label
+                        Grid.Row="0"
+                        HorizontalOptions="Center"
+                        Text="{Binding Index}" />
+
+                    <Label
+                        Grid.Row="1"
+                        Margin="5"
+                        Text="Brak szablonu" />
+                    <Border
+                        Grid.Row="2"
+                        Grid.ColumnSpan="2"
+                        Margin="0"
+                        Padding="0"
+                        StrokeThickness="2" />
+                </Grid>
+
+            </DataTemplate>
+
+            <DataTemplate x:Key="ProductName" x:DataType="modelServer:UpdateDifference">
+
+                <Grid RowDefinitions="auto,*,auto">
+                    <Label
+                        Grid.Row="0"
+                        HorizontalOptions="Center"
+                        Text="{Binding Index}" />
+
+                    <update:ProductNameUpdate
+                        Grid.Row="1"
+                        Margin="5"
+                        PNameServer="{Binding Server}"
+                        PNameUpdate="{Binding Update}"
+                        UpdateBool="{Binding UpdateSelect}" />
+                    <Border
+                        Grid.Row="2"
+                        Grid.ColumnSpan="2"
+                        Margin="0"
+                        Padding="0"
+                        StrokeThickness="2" />
+                </Grid>
+
+            </DataTemplate>
+
+
+            <update:DifferenceDataTemplateSelector
+                x:Key="DifferenceDataTemplateSelector"
+                Customer="{StaticResource Customer}"
+                Empty="{StaticResource Empty}"
+                PName="{StaticResource ProductName}" />
+
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -34,36 +112,22 @@
                 Grid.ColumnSpan="3"
                 HorizontalOptions="Center"
                 Text="Wybierz które wartości danych mają zostać zapisane." />
-            <Grid
-                Grid.Row="1"
-                Grid.ColumnSpan="3"
-                RowDefinitions="auto,auto">
 
-                <Label
-                    Grid.Row="0"
-                    HorizontalOptions="Center"
-                    IsVisible="{Binding UpdateDifferences.UpdateDifferencesDriverRoutes, Converter={StaticResource IsNotNullConverter}}">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <Span Text="Ilość rekordów do poprawy " />
-                            <Span Text="{Binding UpdateDifferences.UpdateDifferencesDriverRoutes.Count}" />
-                            <Span Text="." />
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-                <Label
-                    Grid.Row="1"
-                    HorizontalOptions="Center"
-                    IsVisible="{Binding UpdateDifferences.UpdateDifferencesInventory, Converter={StaticResource IsNotNullConverter}}">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <Span Text="Ilość rekordów do poprawy " />
-                            <Span Text="{Binding UpdateDifferences.UpdateDifferencesInventory.Count}" />
-                            <Span Text="." />
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
-            </Grid>
+
+            <Label
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                HorizontalOptions="Center"
+                IsVisible="{Binding UpdateDifferences, Converter={StaticResource IsNotNullConverter}}">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Ilość rekordów do poprawy " />
+                        <Span Text="{Binding UpdateDifferences.Count}" />
+                        <Span Text="." />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
 
             <Border
                 Grid.Row="2"
@@ -112,39 +176,14 @@
             Grid.Column="0"
             Grid.ColumnSpan="2">
 
-            <controls:CollectionViewPagination IsVisible="{Binding UpdateDifferences.UpdateDifferencesDriverRoutes, Converter={StaticResource IsNotNullConverter}}" ItemsSourcePagination="{Binding UpdateDifferences.UpdateDifferencesDriverRoutes}">
+            <controls:CollectionViewPagination
+                IsVisible="{Binding UpdateDifferences, Converter={StaticResource IsNotNullConverter}}"
+                ItemTemplate="{StaticResource DifferenceDataTemplateSelector}"
+                ItemsSourcePagination="{Binding UpdateDifferences}">
 
                 <controls:CollectionViewPagination.ItemsLayout>
                     <LinearItemsLayout ItemSpacing="10" Orientation="Vertical" />
                 </controls:CollectionViewPagination.ItemsLayout>
-
-                <controls:CollectionViewPagination.ItemTemplate>
-                    <DataTemplate>
-
-                        <Grid x:DataType="modelServer:UpdateDifferencesDriverRoutes" RowDefinitions="auto,*,auto">
-
-                            <Label
-                                Grid.Row="0"
-                                HorizontalOptions="Center"
-                                Text="{Binding Index}" />
-
-                            <update:DriverRoutesUpdate
-                                Grid.Row="1"
-                                Margin="5"
-                                CustomerRoutesServer="{Binding Server}"
-                                CustomerRoutesUpdate="{Binding Update}"
-                                UpdateBool="{Binding UpdateSelect}" />
-                            <Border
-                                Grid.Row="2"
-                                Grid.ColumnSpan="2"
-                                Margin="0"
-                                Padding="0"
-                                StrokeThickness="2" />
-                        </Grid>
-
-
-                    </DataTemplate>
-                </controls:CollectionViewPagination.ItemTemplate>
 
             </controls:CollectionViewPagination>
         </Grid>

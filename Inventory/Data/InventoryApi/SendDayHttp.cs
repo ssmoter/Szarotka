@@ -1,13 +1,74 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DataBase.Data;
+using DataBase.Model.EntitiesInventory;
+
+using Shared.CustomControls.FromCode;
+using Shared.Data;
+using Shared.Data.ServerHttpClients;
+using Shared.Helper;
+
+using System.Text.Json;
 
 namespace Inventory.Data.InventoryApi
 {
-    public partial class SendDayHttp
+    public interface ISendDayHttp
     {
+        Task<HttpResponseMessage> SendDay(Day day, bool forceUpdate = false, UpdateProgressBar progressBar = null, CancellationToken token = default);
+        Task<HttpResponseMessage> SendDays(IList<Day> days, bool forceUpdate = false, UpdateProgressBar progressBar = null, CancellationToken token = default);
+    }
+
+    public partial class SendDayHttp(IAccessDataBase db, IHttpClientFactory httpClient) : ISendDayHttp
+    {
+        private readonly IHttpClientFactory _httpClientFactory = httpClient;
+        private readonly IAccessDataBase _db = db;
+        private readonly string _url = db.GetServerUrl();
+
+
+        public async Task<HttpResponseMessage> SendDay(Day day, bool forceUpdate = false, UpdateProgressBar progressBar = null, CancellationToken token = default)
+        {
+            string url = $"{_url}/inventory/day/update{(forceUpdate ? "?forceUpdate=true" : "")}";
+            using var httpClient = _httpClientFactory.CreateClient();
+
+            httpClient.SetAuthorization();
+
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressBar?.Grid);
+
+            var json = JsonSerializer.Serialize(day, DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.Day);
+
+            var response = await httpClient.PostWithProgressAsync(url, json,
+                (progress) => { UpdateProgressBar.UpdateProgress(progressBar, progress); }
+                , token);
+
+            if (!response.IsSuccessStatusCode && response.StatusCode != System.Net.HttpStatusCode.Conflict)
+            {
+                var responseJson = await response.Content.ReadAsStringAsync(token);
+                _db.SaveLog(new Exception(responseJson));
+            }
+            return response;
+
+        }
+        public async Task<HttpResponseMessage> SendDays(IList<Day> days, bool forceUpdate = false, UpdateProgressBar progressBar = null, CancellationToken token = default)
+        {
+            string url = $"{_url}/inventory/days/update{(forceUpdate ? "?forceUpdate=true" : "")}";
+            using var httpClient = _httpClientFactory.CreateClient();
+
+            httpClient.SetAuthorization();
+
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressBar?.Grid);
+
+            var json = JsonSerializer.Serialize(days, DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.DayArray);
+
+            var response = await httpClient.PostWithProgressAsync(url, json,
+                (progress) => { UpdateProgressBar.UpdateProgress(progressBar, progress); }
+                , token);
+
+            if (!response.IsSuccessStatusCode && response.StatusCode != System.Net.HttpStatusCode.Conflict)
+            {
+                var responseJson = await response.Content.ReadAsStringAsync(token);
+                _db.SaveLog(new Exception(responseJson));
+            }
+            return response;
+
+        }
 
     }
 }

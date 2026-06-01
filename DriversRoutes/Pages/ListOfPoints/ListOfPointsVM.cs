@@ -183,7 +183,6 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
         _updateLogsHttp = updateLogsHttp;
     }
 
-    #region Method
 
     public async void GetPointsFireAndForget(Routes routes, SelectedDayOfWeekRoutes week)
     {
@@ -296,18 +295,12 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
                 updateJson, SzarotkaJsonSerializerContext.Default.UpdateLog);
 
             await _update.Insert(update);
-            if (onConflict)
-            {
-                await Toast.Make("Wysyłanie Zakończone bez komplikacji").Show();
-            }
+            await Toast.Make("Wysyłanie Zakończone bez komplikacji").Show();
         }
 
         return resultMessage;
     }
 
-    #endregion
-
-    #region Command
 
     [RelayCommand]
     void LocationOfPin(CustomerRoutes point)
@@ -545,58 +538,6 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
 
         try
         {
-            var lastUpdateFromServer = await _update.SelectFirstFromDriversRoutes(isServer: true);
-            var localUpdate = await _update.Select(lastUpdateFromServer.Id);
-            var localUpdateCustomers = await _get.CustomerRoutes([.. localUpdate.Select(x => new Guid(x.UpdateId))]);
-
-            using var progressGetUpdateLog = UpdateProgressBar.CreatedUpdateProgressBar
-                 ("Anuluj"
-                 , "Pobieranie listy które elementy synchronizować"
-                 , UpdateProgressBar.GetSyncImage()
-                 , true
-                 , async () =>
-                 {
-                     sourceToken.Cancel();
-                     await Toast.Make("Anulowano pobieranie listy punktów").Show();
-                     Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
-                 });
-
-            var logs = await _updateLogsHttp.GetLogs(lastUpdateFromServer.Id
-                , progressGetUpdateLog, sourceToken.Token);
-
-            using var progressGetCustomers = UpdateProgressBar.CreatedUpdateProgressBar
-                 ("Anuluj"
-                 , "Pobieranie listy które klientów"
-                 , UpdateProgressBar.GetSyncImage()
-                 , true
-                 , async () =>
-                 {
-                     sourceToken.Cancel();
-                     await Toast.Make("Anulowano pobieranie listy punktów").Show();
-                     Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
-                 });
-
-            var downloadCustomer = await _getHttp.GetCustomerRoutes(
-                [.. logs.Select(x => x.Id)]
-                , progressGetCustomers, sourceToken.Token);
-
-            using var progressSendCustomers = UpdateProgressBar.CreatedUpdateProgressBar
-                ("Anuluj"
-                , "Wysyłanie listy klientów"
-                , UpdateProgressBar.GetSyncImage()
-                , true
-                , async () =>
-                {
-                    sourceToken.Cancel();
-                    await Toast.Make("Anulowano wysyłanie listy punktów").Show();
-                    Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
-                });
-
-            var sendCustomer = await _sendHttp.SendCustomerRoutes(localUpdateCustomers,
-                                                                  progressSendCustomers,
-                                                                  false,
-                                                                  sourceToken.Token);
-
 
 
         }
@@ -646,13 +587,13 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
                     , download);
 
                 var exists = System.Text.Json.JsonSerializer.Deserialize(
-                    differenceJson, SzarotkaJsonSerializerContext.Default.UpdateDifferences);
+                    differenceJson, SzarotkaJsonSerializerContext.Default.UpdateDifferenceArray);
 
-                if (exists.UpdateDifferencesDriverRoutes.Count > 0)
+                if (exists.Length > 0)
                 {
                     var navigationParameter = new Dictionary<string, object>
                      {
-                        { nameof(UpdateDifferences), exists },
+                        { nameof(UpdateDifference), exists },
                         {nameof(Action),(Action<IEnumerable>)(async (customer)
                         =>
                             {
@@ -663,7 +604,7 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
                                         await _save.SaveSelectedDayOfWeekRoutes(item.DayOfWeek, item.DayOfWeek.UserUpdatedId.ToByteArray(), true);
                                         _ = await _update.Insert(new DataBase.Model.UpdateLog()
                                         {
-                                            IsServer = false,
+                                            IsServer = true,
                                         }, item);
                                     }
                                  await SendData((IList<CustomerRoutes>)customer, forceUpdate:true, sourceToken:null);
@@ -689,7 +630,7 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
         {
             Shell.Current.FlyoutIsPresented = false;
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
-            sourceToken.Dispose();
+            sourceToken?.Dispose();
         }
     }
 
@@ -720,15 +661,11 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
             await Toast.Make("Pobieranie zakończone").Show();
             await Toast.Make("Rozpoczęto zapisywanie").Show();
 
-
-            UpdateDifferences exists = new()
-            {
-                UpdateDifferencesDriverRoutes = []
-            };
+            IList<UpdateDifference> exists = [];
 
             foreach (CustomerRoutes customer in result)
             {
-                (bool canUpdate, CustomerRoutes isExist) = await RoutesDifferences.Check(_get, customer, false);
+                (bool canUpdate, CustomerRoutes isExist) = await ModelsDifferences.Check(_get, customer, false);
                 if (canUpdate)
                 {
                     await _save.SaveCustomerRoutes(customer, customer.UserUpdatedId.ToByteArray(), true);
@@ -743,7 +680,7 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
                 }
                 if (!canUpdate)
                 {
-                    exists.UpdateDifferencesDriverRoutes.Add(new()
+                    exists.Add(new UpdateDifference()
                     {
                         Update = isExist!,
                         Server = customer
@@ -751,18 +688,39 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
                 }
             }
             await Toast.Make("Zapisywanie zakończone").Show();
-            if (exists.UpdateDifferencesDriverRoutes.Count > 0)
+            if (exists.Count > 0)
             {
                 await Toast.Make("Popraw różnice").Show();
                 var navigationParameter = new Dictionary<string, object>
+                     {
+                        { nameof(UpdateDifference), exists },
+                        {nameof(Action),(Action<IEnumerable>)(async (customer)
+                        =>
+                            {
+                                foreach (CustomerRoutes item in customer)
+                                    {
+                                        await _save.SaveCustomerRoutes(item, item.UserUpdatedId.ToByteArray(), true);
+                                        await _save.SaveResidentialAddress(item.ResidentialAddress, item.ResidentialAddress.UserUpdatedId.ToByteArray(), true);
+                                        await _save.SaveSelectedDayOfWeekRoutes(item.DayOfWeek, item.DayOfWeek.UserUpdatedId.ToByteArray(), true);
+                                        _ = await _update.Insert(new DataBase.Model.UpdateLog()
                                         {
-                                            { nameof(UpdateDifferences), exists }
-                                        };
+                                            IsServer = true,
+                                        }, item);
+                                    }
+                                 await SendData((IList<CustomerRoutes>)customer, forceUpdate:true, sourceToken:null);
+                                 Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+                            })
+                        }
+                    };
 
                 await Shell.Current.GoToAsync(nameof(UpdateDifferenceV), navigationParameter);
             }
             Shell.Current.FlyoutIsPresented = false;
-            GetPointsFireAndForget(Route, lastSelectedDayOfWeekRoutes);
+            GetPointsFireAndForget(Route, lastSelectedDayOfWeekRoutes);            
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Conflict)
+        {
+            //HttpStatusCode.Conflict został obłużony wyżej jako zwrot danych do poprawy przy edycji
         }
         catch (Exception ex)
         {
@@ -771,12 +729,11 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
         finally
         {
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
-            sourceToken.Dispose();
+            sourceToken?.Dispose();
         }
     }
 
 
-    #endregion
 
 }
 

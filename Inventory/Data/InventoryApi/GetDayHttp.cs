@@ -1,26 +1,95 @@
 ﻿using DataBase.Data;
+using DataBase.Model.EntitiesInventory;
+using DataBase.Model.JsonContext;
 
+using Shared.CustomControls.FromCode;
 using Shared.Data;
+using Shared.Data.ServerHttpClients;
+using Shared.Helper;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace Inventory.Data.InventoryApi
 {
-    public partial class GetDayHttp
+    public interface IGetDayHttp
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IAccessDataBase _db;
-        private readonly string _url;
+        Task<Day> GetDay(Guid id, UpdateProgressBar progressContent = null, CancellationToken token = default);
+        Task<Day> GetDay(string selectedDateString, Guid userId, UpdateProgressBar progressContent = null, CancellationToken token = default);
+        Task<IList<Day>> GetDays(long from, long to, Guid[] userId, UpdateProgressBar progressContent = null, CancellationToken token = default);
+    }
 
-        public GetDayHttp(IHttpClientFactory httpClientFactory, IAccessDataBase db)
+    public partial class GetDayHttp(IHttpClientFactory httpClientFactory, IAccessDataBase db) : IGetDayHttp
+    {
+        private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+        private readonly IAccessDataBase _db = db;
+        private readonly string _url = db.GetServerUrl();
+
+        public async Task<Day> GetDay(Guid id, UpdateProgressBar progressContent = null, CancellationToken token = default)
         {
-            _httpClientFactory = httpClientFactory;
-            _db = db;
-            _url = db.GetServerUrl();
+            Shared.Service.AndroidPermissionService.InternetCheck();
+            string url = $"{_url}/inventory/day/{id}";
+            using var httpClient = _httpClientFactory.CreateClient();
+
+            httpClient.SetAuthorization();
+
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent?.Grid);
+
+            var response = await httpClient.DownloadAsync(url
+                , progress => UpdateProgressBar.UpdateProgress(progressContent, progress)
+                , token);
+
+            response.HttpResponseMessage.EnsureSuccessStatusCode();
+
+            var result = JsonSerializer.Deserialize(response.content, SzarotkaJsonSerializerContext.Default.Day);
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+            return result;
+        }
+        public async Task<Day> GetDay(string selectedDateString, Guid userId, UpdateProgressBar progressContent = null, CancellationToken token = default)
+        {
+            Shared.Service.AndroidPermissionService.InternetCheck();
+            string url = $"{_url}/inventory/day?selectedDateString={selectedDateString}&userIds={userId}";
+            using var httpClient = _httpClientFactory.CreateClient();
+
+            httpClient.SetAuthorization();
+
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent?.Grid);
+
+            var response = await httpClient.DownloadAsync(url
+                , progress => UpdateProgressBar.UpdateProgress(progressContent, progress)
+                , token);
+
+            response.HttpResponseMessage.EnsureSuccessStatusCode();
+
+            var result = JsonSerializer.Deserialize(response.content, SzarotkaJsonSerializerContext.Default.Day);
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+            return result;
+        }
+
+        public async Task<IList<Day>> GetDays(long from, long to, Guid[] userIds, UpdateProgressBar progressContent = null, CancellationToken token = default)
+        {
+            Shared.Service.AndroidPermissionService.InternetCheck();
+            string url = $"{_url}/inventory/days?from={from}&to={to}";
+
+            foreach (Guid id in userIds)
+            {
+                url += $"&userId={id}";
+            }
+
+            using var httpClient = _httpClientFactory.CreateClient();
+
+            httpClient.SetAuthorization();
+
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent?.Grid);
+
+            var response = await httpClient.DownloadAsync(url
+                , progress => UpdateProgressBar.UpdateProgress(progressContent, progress)
+                , token);
+
+            response.HttpResponseMessage.EnsureSuccessStatusCode();
+
+            var result = JsonSerializer.Deserialize(response.content, SzarotkaJsonSerializerContext.Default.DayArray);
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+            return result;
         }
 
 

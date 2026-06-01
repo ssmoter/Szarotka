@@ -18,15 +18,148 @@
             <toolkit:MultiMathExpressionConverter x:Key="MultiMathExpressionConverter" />
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
 
+            <DataTemplate x:Key="Andorid">
+                <Border Margin="2">
+
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+
+                    <SwipeView>
+                        <SwipeView.RightItems>
+                            <SwipeItems>
+                                <SwipeItem
+                                    BackgroundColor="red"
+                                    Invoked="SwipeItem_Invoked_DeleteCake"
+                                    Text="Usuń" />
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+
+                        <Grid
+                            x:Name="CVGCakes"
+                            Padding="5,0,5,0"
+                            x:DataType="Product:Cake"
+                            ColumnDefinitions="30,*,auto"
+                            ColumnSpacing="0">
+                            <Label
+                                Grid.Column="0"
+                                Text="{Binding Index}"
+                                VerticalOptions="Center" />
+
+                            <Label Grid.Column="1" VerticalOptions="Center">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Cena = " />
+                                        <Span Text="{Binding PriceDecimal}" />
+                                        <Span Text=" zł" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+                            <HorizontalStackLayout Grid.Column="2">
+                                <Label Text="Czy sprzedane" VerticalOptions="Center" />
+                                <CheckBox IsChecked="{Binding IsSell}" VerticalOptions="Center">
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroupList>
+                                            <VisualStateGroup Name="CommonStates">
+                                                <VisualState Name="Normal">
+                                                    <VisualState.Setters>
+                                                        <Setter Property="Color" Value="Red" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState Name="IsChecked">
+                                                    <VisualState.Setters>
+                                                        <Setter Property="Color" Value="Green" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateGroupList>
+                                    </VisualStateManager.VisualStateGroups>
+                                </CheckBox>
+                            </HorizontalStackLayout>
+
+                        </Grid>
+
+                    </SwipeView>
+                </Border>
+
+            </DataTemplate>
+            <DataTemplate x:Key="WinUI">
+                <Border Margin="2">
+
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+
+                    <Grid
+                        x:Name="CVGCakes"
+                        Padding="5,0,5,0"
+                        x:DataType="Product:Cake"
+                        ColumnDefinitions="30,*,auto,auto"
+                        ColumnSpacing="0">
+                        <Label
+                            Grid.Column="0"
+                            Text="{Binding Index}"
+                            VerticalOptions="Center" />
+
+                        <Label Grid.Column="1" VerticalOptions="Center">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Cena = " />
+                                    <Span Text="{Binding PriceDecimal}" />
+                                    <Span Text=" zł" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <HorizontalStackLayout Grid.Column="2">
+                            <Label Text="Czy sprzedane" VerticalOptions="Center" />
+                            <CheckBox IsChecked="{Binding IsSell}" VerticalOptions="Center">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroupList>
+                                        <VisualStateGroup Name="CommonStates">
+                                            <VisualState Name="Normal">
+                                                <VisualState.Setters>
+                                                    <Setter Property="Color" Value="Red" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState Name="IsChecked">
+                                                <VisualState.Setters>
+                                                    <Setter Property="Color" Value="Green" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateGroupList>
+                                </VisualStateManager.VisualStateGroups>
+                            </CheckBox>
+                        </HorizontalStackLayout>
+                        <Button
+                            Grid.Column="3"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type VM:SingleDayVM}}, Path=DeleteCakeCommand, x:DataType=VM:SingleDayVM}"
+                            CommandParameter="{Binding .}"
+                            Text="Usuń" />
+                    </Grid>
+                </Border>
+
+            </DataTemplate>
         </ResourceDictionary>
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
             x:DataType="VM:SingleDayVM"
+            Command="{Binding CancelSendDayCommand}"
+            IsEnabled="{Binding SingleDayM.IsModelSend}"
+            Order="Primary"
+            Text="Anuluj wysyłanie" />
+        <ToolbarItem
+            x:DataType="VM:SingleDayVM"
             Command="{Binding SaveDayCommand}"
             Order="Secondary"
             Text="Wymuś zapis" />
+
+
+
     </ContentPage.ToolbarItems>
 
 
@@ -571,7 +704,6 @@
                     <CollectionView.Footer>
                         <HorizontalStackLayout HorizontalOptions="Center">
                             <ImageButton Clicked="Button_Clicked_AddProduct" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
-                            <ImageButton Clicked="Button_Clicked_AddProduct" Source="{AppThemeBinding Light={Static ImgPath:ImgAddMinus.PlusBlack}, Dark={Static ImgPath:ImgAddMinus.PlusWhite}}" />
                         </HorizontalStackLayout>
                     </CollectionView.Footer>
                 </CollectionView>
@@ -635,84 +767,10 @@
                         </toolkit:Expander>
 
                     </Grid>
-                    <CollectionView Grid.Row="1" ItemsSource="{Binding Day.Cakes}">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="Product:Cake">
-                                <Border Margin="2">
-
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="10" />
-                                    </Border.StrokeShape>
-                                    <SwipeView>
-                                        <!--<SwipeView.LeftItems>
-                                            <SwipeItems>
-                                                <SwipeItem
-                                                    BackgroundColor="red"
-                                                    Invoked="SwipeItem_Invoked_DeleteCake"
-                                                    Text="Usuń" />
-
-                                            </SwipeItems>
-                                        </SwipeView.LeftItems>-->
-                                        <SwipeView.RightItems>
-                                            <SwipeItems>
-                                                <SwipeItem
-                                                    BackgroundColor="red"
-                                                    Invoked="SwipeItem_Invoked_DeleteCake"
-                                                    Text="Usuń" />
-
-                                            </SwipeItems>
-                                        </SwipeView.RightItems>
-
-                                        <Grid
-                                            x:Name="CVGCakes"
-                                            Padding="5,0,5,0"
-                                            ColumnDefinitions="30,*,auto"
-                                            ColumnSpacing="0">
-                                            <Label
-                                                Grid.Column="0"
-                                                Text="{Binding Index}"
-                                                VerticalOptions="Center" />
-
-                                            <Label Grid.Column="1" VerticalOptions="Center">
-                                                <Label.FormattedText>
-                                                    <FormattedString>
-                                                        <Span Text="Cena = " />
-                                                        <Span Text="{Binding PriceDecimal}" />
-                                                        <Span Text=" zł" />
-                                                    </FormattedString>
-                                                </Label.FormattedText>
-                                            </Label>
-
-                                            <HorizontalStackLayout Grid.Column="2">
-                                                <Label Text="Czy sprzedane" VerticalOptions="Center" />
-                                                <CheckBox IsChecked="{Binding IsSell}" VerticalOptions="Center">
-                                                    <VisualStateManager.VisualStateGroups>
-                                                        <VisualStateGroupList>
-                                                            <VisualStateGroup Name="CommonStates">
-                                                                <VisualState Name="Normal">
-                                                                    <VisualState.Setters>
-                                                                        <Setter Property="Color" Value="Red" />
-                                                                    </VisualState.Setters>
-                                                                </VisualState>
-                                                                <VisualState Name="IsChecked">
-                                                                    <VisualState.Setters>
-                                                                        <Setter Property="Color" Value="Green" />
-                                                                    </VisualState.Setters>
-                                                                </VisualState>
-                                                            </VisualStateGroup>
-                                                        </VisualStateGroupList>
-                                                    </VisualStateManager.VisualStateGroups>
-                                                </CheckBox>
-                                            </HorizontalStackLayout>
-
-                                        </Grid>
-
-                                    </SwipeView>
-                                </Border>
-
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                    <CollectionView
+                        x:Name="CollectionViewCakes"
+                        Grid.Row="1"
+                        ItemsSource="{Binding Day.Cakes}" />
                 </Grid>
             </Border>
 

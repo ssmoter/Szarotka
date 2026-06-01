@@ -1,11 +1,16 @@
-﻿using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
+using DataBase.Data.CheckUpdateDifferences;
 using DataBase.Data.Get;
+using DataBase.Data.Save;
 using DataBase.Model.EntitiesInventory;
+using DataBase.Model.EntitiesServer;
 using DataBase.Model.JsonContext;
+using DataBase.Service;
 
 using Inventory.Helper.Calculations;
 using Inventory.Model;
@@ -14,12 +19,17 @@ using Microsoft.Maui.Platform;
 
 using MudBlazor;
 
+using Shared.CustomControls.FromCode;
 using Shared.Data;
 using Shared.Data.File;
+using Shared.Data.ServerHttpClients;
 using Shared.Pages.ExistingFiles;
+using Shared.Pages.UpdateDifference;
 using Shared.Service;
 
+using System.Collections;
 using System.Collections.ObjectModel;
+using System.Net;
 
 namespace Inventory.Pages.RangeDay;
 
@@ -143,7 +153,18 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
     private PopupDateModel PopupDate = null;
     private readonly IAccessDataBase _db;
     private readonly IGetInventoryAoT _get;
-    public RangeDayVM(IAccessDataBase db, IGetInventoryAoT get)
+    private readonly ISaveInventoryAoT _save;
+    private readonly Data.InventoryApi.IGetDayHttp _getDayHttp;
+    private readonly Data.InventoryApi.ISendDayHttp _sendDayHttp;
+    private readonly Shared.Data.ServerHttpClients.IUpdateLogsHttp _updateLogsHttp;
+    private readonly DataBase.Service.IUpdateLogService _updateLogService;
+    public RangeDayVM(IAccessDataBase db,
+                      IGetInventoryAoT get,
+                      Data.InventoryApi.IGetDayHttp getDayHttp,
+                      Data.InventoryApi.ISendDayHttp sendDayHttp,
+                      Shared.Data.ServerHttpClients.IUpdateLogsHttp updateLogsHttp,
+                      DataBase.Service.IUpdateLogService updateLogService,
+                      ISaveInventoryAoT save)
     {
         _db = db;
         _get = get;
@@ -155,6 +176,11 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
         SortedHeaders ??= [];
         SortedHeadersHide ??= [.. _defaultsHeaders];
         FilterTyp.PropertyChanged += FilterTyp_PropertyChanged;
+        _getDayHttp = getDayHttp;
+        this._sendDayHttp = sendDayHttp;
+        _updateLogsHttp = updateLogsHttp;
+        _updateLogService = updateLogService;
+        _save = save;
     }
     private bool _isScheduledFilterTyp = false;
     private bool _isScheduledOrderBy = false;
@@ -339,7 +365,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
         try
         {
             PopupSelectRangeDate.PopupSelectRangeDateV popup;
-            if (PopupDate is not null)
+            if (PopupDate is null)
             {
                 popup = new PopupSelectRangeDate.PopupSelectRangeDateV();
             }
@@ -660,16 +686,246 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
         SortedHeadersHide.Remove(value);
     }
 
+
+
+    private async Task<HttpResponseMessage> SendData(IList<Day> days, bool forceUpdate = false, CancellationTokenSource sourceToken = default)
+    {
+        await Toast.Make("Wysyłanie listy").Show();
+
+        bool onConflict = sourceToken is not null;
+
+        using var progress = UpdateProgressBar.CreatedUpdateProgressBar(
+                        title: "Wysyłanie"
+                        , description: onConflict ? "Anuluj wysyłanie" : ""
+                        , icon: UpdateProgressBar.GetSyncImage()
+                        , rotateIcon: true
+                        , action:
+                        onConflict ?
+                        async () =>
+                        {
+                            sourceToken?.Cancel();
+                            await Toast.Make("Anulowano wysyłani listy").Show();
+                            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+
+                        }
+        : null);
+
+        HttpResponseMessage resultMessage;
+        if (sourceToken is not null)
+        {
+            resultMessage = await _sendDayHttp.SendDays(days
+                 , progressBar: progress, forceUpdate: forceUpdate, token: sourceToken.Token);
+        }
+        else
+        {
+            resultMessage = await _sendDayHttp.SendDays(days
+                , progressBar: progress, forceUpdate: forceUpdate);
+        }
+
+        if (resultMessage.StatusCode == System.Net.HttpStatusCode.Created)
+        {
+            var updateJson = await resultMessage.Content.ReadAsStringAsync();
+            var update = System.Text.Json.JsonSerializer.Deserialize(
+                updateJson, SzarotkaJsonSerializerContext.Default.UpdateLog);
+
+            await _updateLogService.Insert(update);
+
+            await Toast.Make("Wysyłanie Zakończone bez komplikacji").Show();
+        }
+
+        return resultMessage;
+    }
+
+    private async Task SaveAll(IEnumerable days, bool isServer = false)
+    {
+        foreach (Day day in days)
+        {
+            await SaveDay(day, isServer);
+        }
+    }
+    private async Task SaveDay(Day day, bool isServer = false)
+    {
+        _db.DataBaseAsync.RunInTransactionAsync(async () =>
+        {
+            await _save.SaveDay(day, day.UserUpdatedId.ToByteArray(), isServer);
+        });
+
+        foreach (Product product in day.Products)
+        {
+            await _save.SaveProduct(product, day.UserUpdatedId.ToByteArray(), isServer);
+        }
+        foreach (Cake cake in day.Cakes)
+        {
+            await _save.SaveCake(cake, day.UserUpdatedId.ToByteArray(), isServer);
+        }
+        _ = await _updateLogService.Insert(new DataBase.Model.UpdateLog()
+        {
+            IsServer = isServer,
+        }, day);
+    }
+
     [RelayCommand]
     async Task Send()
     {
-        await Task.Delay(1);
+        using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        try
+        {
+            var allDays = await _get.Days(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks, []);
+
+
+            var result = await SendData(allDays, false, cancellationTokenSource);
+
+            if (result.StatusCode == HttpStatusCode.Conflict)
+            {
+                await Toast.Make("Wysyłanie Zakończone. Pobierane są różnice do poprawy").Show();
+
+                using var progressDifference = UpdateProgressBar.CreatedUpdateProgressBar(
+                        title: "Pobieranie różnic"
+                        , description: "Brak możliwości anulowania"
+                        , icon: UpdateProgressBar.GetSyncImage()
+                        , rotateIcon: true
+                        , action: null);
+
+                Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressDifference.Grid);
+
+                using var download = await result.Content.ReadAsStreamAsync();
+                var differenceJson = await HttpClientExtension.CheckProgress(
+                    (progress) => UpdateProgressBar.UpdateProgress(progressDifference, progress)
+                    , result.Content.Headers.ContentLength ?? 1
+                    , download);
+
+                UpdateDifference[] exists = System.Text.Json.JsonSerializer.Deserialize(
+                    differenceJson, SzarotkaJsonSerializerContext.Default.UpdateDifferenceArray);
+
+                if (exists.Length > 0)
+                {
+                    var navigationParameter = new Dictionary<string, object>
+                     {
+                        { nameof(UpdateDifference), exists },
+                        {nameof(Action),(Action<IEnumerable>)(async (names)
+                        =>
+                            {
+                                 await SaveAll(names,true);
+                                 await SendData((IList<Day>)names, forceUpdate:true, sourceToken:null);
+                                 Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+                            })
+                        }
+                    };
+                    await Shell.Current.GoToAsync(nameof(UpdateDifferenceV), navigationParameter);
+                }
+            }
+
+            result.EnsureSuccessStatusCode();
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Conflict)
+        {
+            //HttpStatusCode.Conflict został obłużony wyżej jako zwrot danych do poprawy przy edycji
+        }
+        catch (Exception ex)
+        {
+            _db.SaveLogExtension(ex);
+        }
+        finally
+        {
+            Shell.Current.FlyoutIsPresented = false;
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+            cancellationTokenSource?.Dispose();
+        }
     }
     [RelayCommand]
     async Task Download()
     {
-        await Task.Delay(1);
+        using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        try
+        {
+            using var progress = UpdateProgressBar.CreatedUpdateProgressBar(
+                title: "Anuluj"
+                , description: "Pobieranie listy punktów"
+                , icon: UpdateProgressBar.GetSyncImage()
+                , rotateIcon: true
+                , action: async () =>
+                {
+                    cancellationTokenSource?.Cancel();
+                    await Toast.Make("Anulowano pobieranie listy punktów").Show();
+                    Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+                });
+            var result = await _getDayHttp.GetDays(from: DateTime.MinValue.Ticks, to: DateTime.MaxValue.Ticks, []
+                  , progress, cancellationTokenSource.Token);
 
+            await Toast.Make("Pobieranie zakończone").Show();
+            await Toast.Make("Rozpoczęto zapisywanie").Show();
+
+            IList<UpdateDifference> exists = [];
+
+            using var progressBar
+                = UpdateProgressBar.CreatedUpdateProgressBar(title: "Zapisywanie",
+                                                              icon: UpdateProgressBar.GetSyncImage(),
+                                                              rotateIcon: true);
+            Shell.Current.FlyoutIsPresented = true;
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressBar.Grid);
+
+            int progressInt = 0;
+            int count = result.Count;
+
+            foreach (Day day in result)
+            {
+                if (!Shared.Pages.FlyoutHeader.FlyoutHeaderVM.IsCustomContentExist())
+                {
+                    Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressBar.Grid);
+                }
+
+                (bool canUpdate, Day isExist) = await ModelsDifferences.Check(_get, day, false);
+                if (canUpdate)
+                {
+                    await SaveDay(day, true);
+                }
+                if (!canUpdate)
+                {
+                    exists.Add(new UpdateDifference()
+                    {
+                        Update = isExist!,
+                        Server = day
+                    });
+                }
+                progressInt++;
+                UpdateProgressBar.UpdateProgress(progressBar, (double)(progressInt / (double)count));
+            }
+            await Toast.Make("Zapisywanie zakończone").Show();
+            if (exists.Count > 0)
+            {
+                await Toast.Make("Popraw różnice").Show();
+                var navigationParameter = new Dictionary<string, object>
+                     {
+                        { nameof(UpdateDifference), exists },
+                        {nameof(Action),(Action<IEnumerable>)(async (days)
+                        =>
+                            {
+                                 await SaveAll(days);
+                                 await SendData((IList<Day>)days, forceUpdate:true, sourceToken:null);
+                                 Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+                            })
+                        }
+                    };
+
+                await Shell.Current.GoToAsync(nameof(UpdateDifferenceV), navigationParameter);
+            }
+            Shell.Current.FlyoutIsPresented = false;
+
+        }
+        catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Conflict)
+        {
+            //HttpStatusCode.Conflict został obłużony wyżej jako zwrot danych do poprawy przy edycji
+        }
+        catch (Exception ex)
+        {
+            _db.SaveLogExtension(ex);
+        }
+        finally
+        {
+            Shell.Current.FlyoutIsPresented = false;
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+            cancellationTokenSource?.Dispose();
+        }
     }
 
 }

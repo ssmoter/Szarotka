@@ -46,6 +46,7 @@ namespace Shared.CustomControls.FromCode
             {
                 void StartRotation()
                 {
+                    bar?._image?.CancelAnimations();
                     bar._image.Rotation = 0;
                     bar._image.Animate("RotateIcon", new Animation(
                         callback: d => bar._image.Rotation = d,

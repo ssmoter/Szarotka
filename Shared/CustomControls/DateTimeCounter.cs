@@ -1,6 +1,6 @@
 ﻿namespace Shared.CustomControls
 {
-    public partial class DateTimeCounter : Label, IDisposable
+    public partial class DateTimeCounter : Label
     {
         public static readonly BindableProperty DateTimeFromProperty
     = BindableProperty.Create(nameof(DateTimeFrom),
@@ -9,7 +9,6 @@
         defaultBindingMode: BindingMode.TwoWay,
         propertyChanged: (bindable, oldValue, newValue) =>
         {
-
         });
 
         public DateTime DateTimeFrom
@@ -20,26 +19,49 @@
 
 
         private static DateTime Date => DateTime.Now;
-        private readonly Timer _timer;
+        private PeriodicTimer _timer;
+        private CancellationTokenSource _cts;
 
         public DateTimeCounter()
         {
-            var period = TimeSpan.FromSeconds(5);
-            _timer = new Timer(TimerCallBack, null, TimeSpan.Zero, period);
         }
 
-        private void TimerCallBack(object state)
+        protected override void OnHandlerChanged()
         {
-            if (DateTimeFrom == DateTime.MinValue)
+            base.OnHandlerChanged();
+
+            // Upewnij się, że nie uruchamiasz wielu timerów
+            _cts?.Cancel();
+            _cts = new CancellationTokenSource();
+
+            _timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+            _ = StartTimerAsync(_cts.Token);
+        }
+
+        private async Task StartTimerAsync(CancellationToken token)
+        {
+            try
             {
-                return;
+                {
+                    while (await _timer.WaitForNextTickAsync(token))
+                    {
+                        if (DateTimeFrom == DateTime.MinValue)
+                        {
+                            continue;
+                        }
+
+                        Dispatcher.Dispatch(() =>
+                        {
+                            var period = Date - DateTimeFrom;
+                            var _text = CalculateTime(period);
+                            this.Text = _text;
+                        });
+                    }
+                }
             }
-            Dispatcher.Dispatch(() =>
+            catch (OperationCanceledException)
             {
-                var period = Date - DateTimeFrom;
-                var _text = CalculateTime(period);
-                this.Text = _text;
-            });
+            }
         }
 
         private string CalculateTime(TimeSpan time)
@@ -66,14 +88,6 @@
             }
 
             return $"{(int)time.TotalSeconds} sekund temu";
-        }
-
-        public void Dispose()
-        {
-            if (_timer is not null)
-            {
-                _timer.Dispose();
-            }
         }
     }
 }

@@ -47,6 +47,16 @@ public partial class ProductPrice : BaseEntities<Guid>
             }
         }
     }
+    public ProductPrice()
+    {
+
+    }
+    public ProductPrice(ProductPrice copy) : base(copy)
+    {
+        Price = copy.Price;
+        PriceDecimal = copy.PriceDecimal;
+        ProductNameId = copy.ProductNameId;
+    }
 }
 
 public partial class ProductPrices : BaseEntities<int>

@@ -102,6 +102,9 @@
 	  <MauiXaml Update="Pages\UpdateDifference\DriverRoutesUpdate.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\UpdateDifference\ProductNameUpdate.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\UpdateDifference\UpdateDifferenceV.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

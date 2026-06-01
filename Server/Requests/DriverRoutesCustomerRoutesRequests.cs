@@ -144,7 +144,7 @@ namespace Server.Requests
 
                 token.ThrowIfCancellationRequested();
 
-                (bool canUpdate, CustomerRoutes? isExist) = await RoutesDifferences.Check(_get, customer, forceUpdate);
+                (bool canUpdate, CustomerRoutes? isExist) = await ModelsDifferences.Check(_get, customer, forceUpdate);
 
                 if (canUpdate)
                 {
@@ -178,14 +178,12 @@ namespace Server.Requests
             try
             {
                 token.ThrowIfCancellationRequested();
-                UpdateDifferences exists = new()
-                {
-                    UpdateDifferencesDriverRoutes = []
-                };
+                IList<UpdateDifference> exists = [];
+
                 UpdateLog? firstLog = null;
                 foreach (CustomerRoutes customer in customers)
                 {
-                    (bool canUpdate, CustomerRoutes? isExist) = await RoutesDifferences.Check(_get, customer, forceUpdate);
+                    (bool canUpdate, CustomerRoutes? isExist) = await ModelsDifferences.Check(_get, customer, forceUpdate);
 
                     if (canUpdate)
                     {
@@ -202,14 +200,14 @@ namespace Server.Requests
                     }
                     if (!canUpdate)
                     {
-                        exists.UpdateDifferencesDriverRoutes.Add(new()
+                        exists.Add(new UpdateDifference()
                         {
                             Update = customer,
                             Server = isExist!
                         });
                     }
                 }
-                if (exists.UpdateDifferencesDriverRoutes.Count == 0)
+                if (exists.Count == 0)
                 {
                     return Results.Created(firstLog?.Id.ToString(), firstLog);
                 }

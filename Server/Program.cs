@@ -79,8 +79,9 @@ var todosApi = app.MapGroup("/todos");
 todosApi.MapGet("/", () => sampleTodos);
 todosApi.MapGet("/{id}", (int id) =>
     sampleTodos.FirstOrDefault(a => a.Id == id) is { } todo
-        ? Results.Ok(todo)
-        //? throw new Server.Model.ErrorException("error", "message")
+        //? Results.Ok(todo)
+        //? throw new DataBase.Model.EntitiesServer.ErrorException("error", "message")
+        ? throw new ArgumentNullException("test")
         : Results.NotFound());
 
 app.Run();

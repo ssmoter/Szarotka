@@ -13,8 +13,11 @@ namespace DataBase.Model.JsonContext;
 [JsonSerializable(typeof(List<UpdateLog>))]
 [JsonSerializable(typeof(IEnumerable<UpdateLog>))]
 
-[JsonSerializable(typeof(UpdateDifferences))]
-[JsonSerializable(typeof(UpdateDifferencesDriverRoutes))]
+[JsonSerializable(typeof(UpdateDifference))]
+[JsonSerializable(typeof(UpdateDifference[]))]
+[JsonSerializable(typeof(IList<UpdateDifference>))]
+[JsonSerializable(typeof(List<UpdateDifference>))]
+[JsonSerializable(typeof(IEnumerable<UpdateDifference>))]
 
 
 [JsonSerializable(typeof(User))]

@@ -7,12 +7,249 @@
     xmlns:ImgPath="clr-namespace:Shared.Helper.Img;assembly=Shared"
     xmlns:MVVM="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
     xmlns:VM="clr-namespace:Inventory.Pages.Products.ListProduct"
+    xmlns:system="clr-namespace:System;assembly=netstandard"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     Title="Lista produktów"
     x:DataType="VM:ListProductVM">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding AddProductCommand}" Text="Dodaj" />
+        <ToolbarItem
+            Command="{Binding DownloadCommand}"
+            IsEnabled="False"
+            Order="Secondary"
+            Text="Pobierz (zalecane)" />
+        <ToolbarItem
+            Command="{Binding DownloadCommand}"
+            Order="Secondary"
+            Text="Pobierz (niezalecane)" />
+        <ToolbarItem
+            Command="{Binding SendCommand}"
+            Order="Secondary"
+            Text="Wyslij (niezalecane)" />
     </ContentPage.ToolbarItems>
+
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+
+
+            <DataTemplate x:Key="Android">
+
+                <CustomControls:BorderColorsFromBool
+                    Margin="2"
+                    Padding="5"
+                    x:DataType="VM:ListProductM"
+                    BackgroundColorFirst="Transparent"
+                    BackgroundColorSecond="Red"
+                    IsAnimation="False"
+                    IsEnabled="{Binding Name.IsDelete, Converter={x:StaticResource InvertedBoolConverter}}"
+                    IsGradient="True"
+                    SelectedColor="{Binding Name.IsVisible}">
+                    <CustomControls:BorderColorsFromBool.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </CustomControls:BorderColorsFromBool.StrokeShape>
+
+                    <SwipeView>
+
+                        <SwipeView.LeftItems>
+                            <SwipeItems SwipeBehaviorOnInvoked="RemainOpen">
+
+                                <SwipeItemView VerticalOptions="Fill">
+
+                                    <Grid RowDefinitions="*,*" VerticalOptions="Center">
+
+                                        <ImageButton
+                                            Grid.Row="0"
+                                            Clicked="ImageButton_Clicked_SetDown"
+                                            Source="{AppThemeBinding Light={Static ImgPath:ImgArrow.ArrowUpwardBlack},
+                                                                     Dark={Static ImgPath:ImgArrow.ArrowUpwardWhite}}"
+                                            VerticalOptions="Center" />
+
+                                        <ImageButton
+                                            Grid.Row="1"
+                                            Clicked="ImageButton_Clicked_SetUp"
+                                            Source="{AppThemeBinding Light={Static ImgPath:ImgArrow.ArrowDownwardBlack},
+                                                                     Dark={Static ImgPath:ImgArrow.ArrowDownwardWhite}}"
+                                            VerticalOptions="Center" />
+
+                                    </Grid>
+
+                                </SwipeItemView>
+
+                            </SwipeItems>
+                        </SwipeView.LeftItems>
+
+                        <SwipeView.RightItems>
+                            <SwipeItems SwipeBehaviorOnInvoked="Close">
+                                <SwipeItem
+                                    BackgroundColor="Green"
+                                    Invoked="SwipeItem_Invoked"
+                                    Text="Edytuj" />
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+
+                        <Grid ColumnDefinitions="*,*,*" RowDefinitions="*,*,*">
+                            <Grid.GestureRecognizers>
+                                <DragGestureRecognizer DragStarting="DragGestureRecognizer_DragStarting" />
+                                <DropGestureRecognizer Drop="DropGestureRecognizer_Drop" />
+
+                            </Grid.GestureRecognizers>
+
+                            <CustomControls:StringImage
+                                Grid.Row="0"
+                                Grid.RowSpan="4"
+                                Grid.Column="0"
+                                x:DataType="VM:ListProductM"
+                                String64Base="{Binding Name.Img}" />
+
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Text="{Binding Name.Name}" />
+
+                            <Label
+                                Grid.Row="1"
+                                Grid.RowSpan="2"
+                                Grid.Column="1"
+                                Text="{Binding Name.Description}" />
+
+
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                HorizontalTextAlignment="Center"
+                                VerticalTextAlignment="Center">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Aktualna cena: " />
+                                        <Span Text="{x:Static system:Environment.NewLine}" />
+                                        <Span Text="{Binding ActualPrice}" />
+                                        <Span Text="zł" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                HorizontalTextAlignment="Center"
+                                VerticalTextAlignment="Center">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="Dodana: " />
+                                        <Span Text="{x:Static system:Environment.NewLine}" />
+                                        <Span Text="{Binding ActualCreated}" />
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+
+
+                            <HorizontalStackLayout Grid.Row="2" Grid.Column="2">
+                                <Label Text="Czy widoczny:" VerticalTextAlignment="Center" />
+                                <CheckBox HorizontalOptions="End" IsChecked="{Binding Name.IsVisible}" />
+                            </HorizontalStackLayout>
+
+                        </Grid>
+
+                    </SwipeView>
+
+                </CustomControls:BorderColorsFromBool>
+
+            </DataTemplate>
+
+            <DataTemplate x:Key="WinUI">
+
+                <CustomControls:BorderColorsFromBool
+                    Margin="2"
+                    Padding="5"
+                    x:DataType="VM:ListProductM"
+                    BackgroundColorFirst="Transparent"
+                    BackgroundColorSecond="Red"
+                    IsAnimation="False"
+                    IsEnabled="{Binding Name.IsDelete, Converter={x:StaticResource InvertedBoolConverter}}"
+                    IsGradient="True"
+                    SelectedColor="{Binding Name.IsVisible}">
+                    <CustomControls:BorderColorsFromBool.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </CustomControls:BorderColorsFromBool.StrokeShape>
+
+                    <Grid ColumnDefinitions="*,*,*" RowDefinitions="*,*,*">
+                        <Grid.GestureRecognizers>
+                            <DragGestureRecognizer DragStarting="DragGestureRecognizer_DragStarting" />
+                            <DropGestureRecognizer Drop="DropGestureRecognizer_Drop" />
+
+                        </Grid.GestureRecognizers>
+
+                        <CustomControls:StringImage
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            Grid.Column="0"
+                            x:DataType="VM:ListProductM"
+                            String64Base="{Binding Name.Img}" />
+                        <Button
+                            Grid.Row="3"
+                            Grid.Column="0"
+                            x:DataType="VM:ListProductM"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=EditProductCommand, x:DataType=VM:ListProductVM}"
+                            CommandParameter="{Binding .}"
+                            Text="Szczegóły" />
+
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Text="{Binding Name.Name}" />
+
+                        <Label
+                            Grid.Row="1"
+                            Grid.RowSpan="2"
+                            Grid.Column="1"
+                            Text="{Binding Name.Description}" />
+
+
+                        <Label
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            HorizontalTextAlignment="Center"
+                            VerticalTextAlignment="Center">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Aktualna cena: " />
+                                    <Span Text="{x:Static system:Environment.NewLine}" />
+                                    <Span Text="{Binding ActualPrice}" />
+                                    <Span Text="zł" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Label
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            HorizontalTextAlignment="Center"
+                            VerticalTextAlignment="Center">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Dodana: " />
+                                    <Span Text="{x:Static system:Environment.NewLine}" />
+                                    <Span Text="{Binding ActualCreated}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+
+                        <HorizontalStackLayout Grid.Row="2" Grid.Column="2">
+                            <Label Text="Czy widoczny:" VerticalTextAlignment="Center" />
+                            <CheckBox HorizontalOptions="End" IsChecked="{Binding Name.IsVisible}" />
+                        </HorizontalStackLayout>
+
+                    </Grid>
+
+                </CustomControls:BorderColorsFromBool>
+
+            </DataTemplate>
+
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
 
     <Grid RowDefinitions="auto,*,auto">
@@ -20,122 +257,9 @@
         <CollectionView
             x:Name="ListOfProductCV"
             Grid.Row="1"
+            x:DataType="VM:ListProductVM"
             ItemsSource="{Binding ProductMs}"
-            SelectionMode="Single">
-
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-
-                    <Border Margin="2" Padding="5">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="10" />
-                        </Border.StrokeShape>
-
-
-                        <SwipeView>
-
-                            <SwipeView.LeftItems>
-                                <SwipeItems SwipeBehaviorOnInvoked="RemainOpen">
-
-                                    <SwipeItemView VerticalOptions="Fill">
-                                        <Grid RowDefinitions="*,*" VerticalOptions="Center">
-
-                                            <ImageButton
-                                                Grid.Row="0"
-                                                Clicked="ImageButton_Clicked_SetDown"
-                                                Source="{AppThemeBinding Light={Static ImgPath:ImgArrow.ArrowUpwardBlack},
-                                                                         Dark={Static ImgPath:ImgArrow.ArrowUpwardWhite}}"
-                                                VerticalOptions="Center" />
-
-                                            <ImageButton
-                                                Grid.Row="1"
-                                                Clicked="ImageButton_Clicked_SetUp"
-                                                Source="{AppThemeBinding Light={Static ImgPath:ImgArrow.ArrowDownwardBlack},
-                                                                         Dark={Static ImgPath:ImgArrow.ArrowDownwardWhite}}"
-                                                VerticalOptions="Center" />
-
-                                        </Grid>
-                                    </SwipeItemView>
-
-                                </SwipeItems>
-                            </SwipeView.LeftItems>
-
-                            <SwipeView.RightItems>
-                                <SwipeItems SwipeBehaviorOnInvoked="Close">
-                                    <SwipeItem
-                                        BackgroundColor="Green"
-                                        Invoked="SwipeItem_Invoked"
-                                        Text="Edytuj" />
-                                </SwipeItems>
-                            </SwipeView.RightItems>
-
-
-                            <Grid
-                                x:DataType="VM:ListProductM"
-                                ColumnDefinitions="*,*,*"
-                                RowDefinitions="*,*,*">
-                                <Grid.GestureRecognizers>
-
-                                    <!--<DragGestureRecognizer
-                                        DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDragCommand, x:DataType=VM:ListProductVM}"
-                                        DragStartingCommandParameter="{Binding .}"
-                                        DropCompletedCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDropCompletedCommand, x:DataType=VM:ListProductVM}" />
-                                    <DropGestureRecognizer DropCommand="{Binding Source={RelativeSource AncestorType={x:Type VM:ListProductVM}}, Path=OnDropCommand, x:DataType=VM:ListProductVM}" DropCommandParameter="{Binding .}" />-->
-
-                                    <DragGestureRecognizer DragStarting="DragGestureRecognizer_DragStarting" />
-                                    <DropGestureRecognizer Drop="DropGestureRecognizer_Drop" />
-
-                                </Grid.GestureRecognizers>
-
-                                <CustomControls:StringImage
-                                    Grid.Row="0"
-                                    Grid.RowSpan="4"
-                                    Grid.Column="0"
-                                    x:DataType="VM:ListProductM"
-                                    String64Base="{Binding Name.Img}" />
-
-                                <Label
-                                    Grid.Row="0"
-                                    Grid.Column="1"
-                                    Text="{Binding Name.Name}" />
-
-                                <Label
-                                    Grid.Row="1"
-                                    Grid.RowSpan="2"
-                                    Grid.Column="1"
-                                    Text="{Binding Name.Description}" />
-
-
-                                <VerticalStackLayout
-                                    Grid.Row="0"
-                                    Grid.RowSpan="4"
-                                    Grid.Column="2">
-                                    <Label Text="Aktualna cena: " />
-                                    <HorizontalStackLayout>
-                                        <Label Text="{Binding ActualPrice}" />
-                                        <Label Text="zł" />
-                                    </HorizontalStackLayout>
-
-                                    <Label Text="Dodana: " />
-                                    <Label Text="{Binding ActualCreated}" />
-                                </VerticalStackLayout>
-
-                            </Grid>
-
-                        </SwipeView>
-
-
-
-
-
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
-
-
-
+            SelectionMode="None" />
 
     </Grid>
 </ContentPage>

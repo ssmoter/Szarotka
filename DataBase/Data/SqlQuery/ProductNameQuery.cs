@@ -65,8 +65,9 @@ namespace DataBase.Data.SqlQuery
 SELECT {nameof(ProductName)}.*, 
        COALESCE((
            SELECT json_group_array(json_object(
-               '{nameof(ProductPrice.Id)}', {nameof(ProductPrice)}.{nameof(ProductPrice.Id)},
+               '{nameof(ProductPrice.ProductNameId)}', {nameof(ProductPrice)}.{nameof(ProductPrice.ProductNameId)},
                '{nameof(ProductPrice.Price)}', {nameof(ProductPrice.Price)},
+               '{nameof(ProductPrice.Id)}', {nameof(ProductPrice)}.{nameof(ProductPrice.Id)},
                '{nameof(ProductPrice.CreatedTicks)}', {nameof(ProductPrice)}.{nameof(ProductPrice.CreatedTicks)},
                '{nameof(ProductPrice.UpdatedTicks)}', {nameof(ProductPrice)}.{nameof(ProductPrice.UpdatedTicks)},
                '{nameof(ProductPrice.UserCreatedId)}', {nameof(ProductPrice)}.{nameof(ProductPrice.UserCreatedId)},

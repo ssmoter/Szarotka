@@ -63,5 +63,15 @@ namespace Inventory.Pages.SingleDay
                 if (SetProperty(ref cakeAllIsVisible, value, nameof(CakeAllIsVisible))) { }
             }
         }
+
+        private bool isModelSend;
+        public bool IsModelSend
+        {
+            get => isModelSend;
+            set
+            {
+                if (SetProperty(ref isModelSend, value, nameof(IsModelSend))) { }
+            }
+        }
     }
 }

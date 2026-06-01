@@ -75,12 +75,21 @@ namespace Shared.Pages.FlyoutHeader
                 CustomContent = view;
             }
         }
+        private static Func<bool> funcCustomContentExist;
         private static Action<IView> actionCustomContent;
         public static void OnCustomContent(IView view = null)
         {
             actionCustomContent?.Invoke(view);
         }
-
+        /// <summary>
+        /// Sprawdza czy została dodana jakaś zawartość.
+        /// Zwraca false jeżeli content jest null.
+        /// </summary>
+        /// <returns>Zwraca false jeżeli content jest null</returns>
+        public static bool IsCustomContentExist()
+        {
+            return (bool)funcCustomContentExist?.Invoke();
+        }
         private async void FadeOutElementThrowAndForget(IView view)
         {
             try
@@ -104,11 +113,20 @@ namespace Shared.Pages.FlyoutHeader
                 );
             }
         }
+        private bool isCustomContentExist()
+        {
+            if (CustomContent is null)
+            {
+                return false;
+            }
+            return true;
+        }
         public FlyoutHeaderVM()
         {
             UserAfterLogin.OnLogin += UserAfterLogin_OnLogin;
 
             actionCustomContent += _onCustomContent;
+            funcCustomContentExist += isCustomContentExist;
 
             ActionToolbarItemSet += _OnSetToolbarItem;
             ActionToolbarItemRemove += _RemoveSetToolbarItem;
@@ -143,6 +161,7 @@ namespace Shared.Pages.FlyoutHeader
             actionCustomContent -= _onCustomContent;
             ActionToolbarItemSet -= _OnSetToolbarItem;
             ActionToolbarItemRemove -= _RemoveSetToolbarItem;
+            funcCustomContentExist -= isCustomContentExist;
 
         }
     }

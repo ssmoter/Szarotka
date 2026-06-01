@@ -12,6 +12,10 @@ public partial class SingleDayV : ContentPage
         InitializeComponent();
         _vm = vm;
         BindingContext = vm;
+        if (DeviceInfo.Platform == DevicePlatform.Android)
+            this.CollectionViewCakes.ItemTemplate = (DataTemplate)Resources["Android"];
+        else if (DeviceInfo.Platform == DevicePlatform.WinUI)
+            this.CollectionViewCakes.ItemTemplate = (DataTemplate)Resources["WinUI"];
     }
 
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
@@ -105,7 +109,6 @@ public partial class SingleDayV : ContentPage
         _vm.AddProductCommand.Execute(null);
     }
 
-    #region Product SwipeView RightItems 
 
     private async void Button_Clicked_FastMinusProductNumber(object sender, EventArgs e)
     {
@@ -163,7 +166,6 @@ public partial class SingleDayV : ContentPage
         //_vm.FastAddProductReturnCommand.Execute(product);
     }
 
-    #region left
 
     private async void Button_Clicked_ChangeProductPrice(object sender, EventArgs e)
     {
@@ -182,8 +184,8 @@ public partial class SingleDayV : ContentPage
         _vm.DeleteSelectedProductCommand.Execute(product);
     }
 
-    #endregion
-    #endregion
+
+
 
 
     private void SwipeItem_Invoked_DeleteCake(object sender, EventArgs e)

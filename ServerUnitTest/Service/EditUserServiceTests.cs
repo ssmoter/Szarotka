@@ -94,7 +94,7 @@ namespace ServerUnitTest.Service
         }
 
         [Fact]
-        public async Task UpdatePhoneNumber_ShouldUpdateUserhoneNumber()
+        public async Task UpdatePhoneNumber_ShouldUpdateUserPhoneNumber()
         {
             // Arrange
             var user = new User { PhoneNumber = "1234567890" };

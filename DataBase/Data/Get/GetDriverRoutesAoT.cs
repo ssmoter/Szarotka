@@ -2,6 +2,7 @@
 using DataBase.Model.EntitiesRoutes;
 
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace DataBase.Data.Get
 {
@@ -55,7 +56,7 @@ namespace DataBase.Data.Get
                     item.ResidentialAddress = address;
                 }
             }
-            return [.. result.Select(x => x as CustomerRoutes)];
+            return [.. result.Select(x=>new CustomerRoutes(x))];
         }
         public async Task<IList<Routes>> Routes()
         {
@@ -70,7 +71,9 @@ namespace DataBase.Data.Get
 
         class CustomerRoutesFromQuery : CustomerRoutes
         {
+            [JsonIgnore]
             public string JsonDayOfWeek { get; set; } = "";
+            [JsonIgnore]
             public string JsonAddress { get; set; } = "";
 
         }

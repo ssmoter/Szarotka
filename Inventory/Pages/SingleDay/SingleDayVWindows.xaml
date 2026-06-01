@@ -10,21 +10,6 @@
     x:DataType="VM:SingleDayVM">
 
 
-    <Shell.BackButtonBehavior>
-        <BackButtonBehavior Command="{Binding BackCommand}" />
-    </Shell.BackButtonBehavior>
-
-    <ContentPage.ToolbarItems>
-        <ToolbarItem
-            x:DataType="VM:SingleDayVM"
-            Command="{Binding SaveDayCommand}"
-            Text="Zapisz" />
-        <ToolbarItem
-            x:DataType="VM:SingleDayVM"
-            Command="{Binding BackWithoutSaveCommand}"
-            Text="Anuluj" />
-    </ContentPage.ToolbarItems>
-
     <Grid RowDefinitions="auto,auto,*">
 
         <Border Grid.Row="0" Margin="5">

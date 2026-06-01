@@ -347,23 +347,30 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         Products ??= [];
         Cakes ??= [];
     }
-    public Day(Day day) : base(day)
+    public Day(Day copy) : base(copy)
     {
-        this.Products = day.Products;
-        this.Cakes = day.Cakes;
 
-        this.Id = day.Id;
-        this.driverGuid = day.DriverGuid;
-        this.Created = day.Created;
-        this.Updated = day.Updated;
-        this.description = day.Description;
-        this.SelectedDateTicks = day.SelectedDateTicks;
-        this.TotalPriceProductsDecimal = day.TotalPriceProductsDecimal;
-        this.TotalPriceDecimal = day.TotalPriceDecimal;
-        this.TotalPriceCorrectDecimal = day.TotalPriceCorrectDecimal;
-        this.TotalPriceMoneyDecimal = day.TotalPriceMoneyDecimal;
-        this.TotalPriceDifferenceDecimal = day.TotalPriceDifferenceDecimal;
-        this.IsDelete = day.IsDelete;
+        Cakes = copy.Cakes;
+        DriverGuid = copy.DriverGuid;
+        Products = copy.Products;
+        Description = copy.Description;
+        SelectedDate = copy.SelectedDate;
+        SelectedDateString = copy.SelectedDateString;
+        SelectedDateTicks = copy.SelectedDateTicks;
+        TotalPrice = copy.TotalPrice;
+        TotalPriceAfterCorrect = copy.TotalPriceAfterCorrect;
+        TotalPriceAfterCorrectDecimal = copy.TotalPriceAfterCorrectDecimal;
+        TotalPriceCake = copy.TotalPriceCake;
+        TotalPriceCakeDecimal = copy.TotalPriceCakeDecimal;
+        TotalPriceCorrect = copy.TotalPriceCorrect;
+        TotalPriceCorrectDecimal = copy.TotalPriceCorrectDecimal;
+        TotalPriceDifference = copy.TotalPriceDifference;
+        TotalPriceDecimal = copy.TotalPriceDecimal;
+        TotalPriceDifferenceDecimal = copy.TotalPriceDifferenceDecimal;
+        TotalPriceMoneyDecimal = copy.TotalPriceMoneyDecimal;
+        TotalPriceProducts = copy.TotalPriceProducts;
+        TotalPriceProductsDecimal = copy.TotalPriceProductsDecimal;
+        TotalPriceMoney = copy.TotalPriceMoney;
     }
     public void Dispose()
     {

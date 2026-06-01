@@ -1,8 +1,6 @@
-﻿using DataBase.Model.EntitiesServer;
-
-namespace Shared.Pages.UpdateDifference
+﻿namespace Shared.Pages.UpdateDifference
 {
-    public partial class UpdateDifferenceM : UpdateDifferences
+    public partial class UpdateDifferenceM
     {
 
 

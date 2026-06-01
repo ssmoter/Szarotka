@@ -148,20 +148,15 @@ public partial class CustomerRoutes : BaseEntities<Guid>, IDisposable
 
     public CustomerRoutes(CustomerRoutes copy) : base(copy)
     {
-        this.Id = copy.Id;
-        this.Created = copy.Created;
-        this.Updated = copy.Updated;
-
-        this.Name = copy.Name;
-        this.RoutesId = copy.routesId;
-        this.Description = copy.Description;
-        this.PhoneNumber = copy.PhoneNumber;
-        this.Latitude = copy.Latitude;
-        this.Longitude = copy.Longitude;
-        this.QueueNumber = copy.QueueNumber;
-
-        this.DayOfWeek = new SelectedDayOfWeekRoutes(copy.DayOfWeek);
-        this.ResidentialAddress = new ResidentialAddress(copy.residentialAddress);
+        Name = copy.Name;
+        DayOfWeek = copy.DayOfWeek;
+        Description = copy.Description;
+        Latitude = copy.Latitude;
+        Longitude = copy.Longitude;
+        PhoneNumber = copy.PhoneNumber;
+        QueueNumber = copy.QueueNumber;
+        ResidentialAddress = copy.residentialAddress;
+        RoutesId = copy.routesId;
     }
 
     public void Dispose()

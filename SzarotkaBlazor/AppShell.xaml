@@ -40,11 +40,7 @@
 
 
 
-    <FlyoutItem
-        FlyoutDisplayOptions="AsMultipleItems"
-        IsVisible="{Binding IsLogin}"
-        Shell.TabBarIsVisible="{OnPlatform Android=true,
-                                           Default=false}">
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems" IsVisible="{Binding IsLogin}">
 
 
 
@@ -59,9 +55,7 @@
             Title="Inwentarz"
             ContentTemplate="{DataTemplate inventory:MainV}"
             Icon="{AppThemeBinding Light={Static img:TabBarImg.InventoryBlack},
-                                   Dark={Static img:TabBarImg.InventoryWhite}}"
-            Shell.TabBarIsVisible="{OnPlatform Android=true,
-                                               Default=false}" />
+                                   Dark={Static img:TabBarImg.InventoryWhite}}" />
 
         <ShellContent
             Title="Mapy"
@@ -70,17 +64,13 @@
             Icon="{AppThemeBinding Light={Static img:TabBarImg.MapBlack},
                                    Dark={Static img:TabBarImg.MapWhite}}"
             IsVisible="{OnPlatform Android=true,
-                                   Default=false}"
-            Shell.TabBarIsVisible="{OnPlatform Android=true,
-                                               Default=false}" />
+                                   Default=false}" />
 
         <ShellContent
             Title="Opcje"
             ContentTemplate="{DataTemplate options:MainOptionsV}"
             Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
-                                   Dark={Static img:TabBarImg.OptionWhite}}"
-            Shell.TabBarIsVisible="{OnPlatform Android=true,
-                                               Default=false}" />
+                                   Dark={Static img:TabBarImg.OptionWhite}}" />
 
 
     </FlyoutItem>
@@ -91,25 +81,19 @@
             Title="Zaloguj się"
             ContentTemplate="{DataTemplate login:LogInV}"
             Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
-                                   Dark={Static img:TabBarImg.OptionWhite}}"
-            Shell.TabBarIsVisible="{OnPlatform Android=true,
-                                               Default=false}" />
+                                   Dark={Static img:TabBarImg.OptionWhite}}" />
 
         <ShellContent
             Title="Rejestracja"
             ContentTemplate="{DataTemplate register:RegisterV}"
             Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
-                                   Dark={Static img:TabBarImg.OptionWhite}}"
-            Shell.TabBarIsVisible="{OnPlatform Android=true,
-                                               Default=false}" />
+                                   Dark={Static img:TabBarImg.OptionWhite}}" />
 
         <ShellContent
             Title="Potwierdź email"
             ContentTemplate="{DataTemplate emailConfirm:ConfirmEmailV}"
             Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
-                                   Dark={Static img:TabBarImg.OptionWhite}}"
-            Shell.TabBarIsVisible="{OnPlatform Android=true,
-                                               Default=false}" />
+                                   Dark={Static img:TabBarImg.OptionWhite}}" />
     </FlyoutItem>
 
 </Shell>

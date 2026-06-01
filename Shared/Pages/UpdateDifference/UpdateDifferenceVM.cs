@@ -2,8 +2,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
+using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesRoutes;
-using DataBase.Model.EntitiesServer;
 
 using Shared.Data;
 
@@ -15,20 +15,12 @@ namespace Shared.Pages.UpdateDifference
     {
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            if (query.TryGetValue(nameof(UpdateDifferences), out object value))
+            if (query.TryGetValue(nameof(UpdateDifference), out object value))
             {
-                if (value is UpdateDifferences update)
+                if (value is IList<DataBase.Model.EntitiesServer.UpdateDifference> update)
                 {
                     UpdateDifferences = update;
-                    for (int i = 0; i < UpdateDifferences?.UpdateDifferencesInventory?.Count; i++)
-                    {
-                        UpdateDifferences.UpdateDifferencesInventory[i].Index = i + 1;
-                    }
-                    for (int i = 0; i < UpdateDifferences?.UpdateDifferencesDriverRoutes?.Count; i++)
-                    {
-                        UpdateDifferences.UpdateDifferencesDriverRoutes[i].Index = i + 1;
-                        UpdateDifferences.UpdateDifferencesDriverRoutes[i].UpdateSelect = new CustomerRoutesUpdate();
-                    }
+                    SetUpdateSelect();
                 }
             }
             if (query.TryGetValue(nameof(Action), out object actionValue))
@@ -43,8 +35,8 @@ namespace Shared.Pages.UpdateDifference
 
 
 
-        private UpdateDifferences updateDifferences;
-        public UpdateDifferences UpdateDifferences
+        private IList<DataBase.Model.EntitiesServer.UpdateDifference> updateDifferences;
+        public IList<DataBase.Model.EntitiesServer.UpdateDifference> UpdateDifferences
         {
             get => updateDifferences;
             set
@@ -60,9 +52,16 @@ namespace Shared.Pages.UpdateDifference
             {
                 if (SetProperty(ref selectAllValue, value, nameof(SelectAllValue)))
                 {
-                    foreach (var item in UpdateDifferences.UpdateDifferencesDriverRoutes)
+                    foreach (DataBase.Model.EntitiesServer.UpdateDifference item in UpdateDifferences)
                     {
-                        DriverRoutesUpdate.SetUpdateBool(item.UpdateSelect, value);
+                        if (item.UpdateSelect is CustomerRoutesUpdate routes)
+                        {
+                            DriverRoutesUpdate.SetUpdateBool(routes, value);
+                        }
+                        if (item.UpdateSelect is BoolPNameUpdate name)
+                        {
+                            ProductNameUpdate.SetUpdateBool(name, value);
+                        }
                     }
                 }
             }
@@ -92,6 +91,26 @@ namespace Shared.Pages.UpdateDifference
 
         }
 
+        private void SetUpdateSelect()
+        {
+            int n = 1;
+            foreach (var item in UpdateDifferences)
+            {
+                item.Index = n;
+                if (item.Server is CustomerRoutes)
+                {
+                    item.UpdateSelect = new CustomerRoutesUpdate();
+                }
+                if (item.Server is ProductName)
+                {
+                    item.UpdateSelect = new BoolPNameUpdate();
+                }
+
+                n++;
+            }
+        }
+
+
         [RelayCommand]
         static async Task Back()
         {
@@ -120,28 +139,9 @@ namespace Shared.Pages.UpdateDifference
                 {
                     return;
                 }
+                InvokeAsCustomerRoutes();
+                InvokeAsProductName();
 
-                if (UpdateDifferences.UpdateDifferencesDriverRoutes is not null)
-                {
-                    var customersCount = UpdateDifferences.UpdateDifferencesDriverRoutes.Count;
-                    CustomerRoutes[] customers = new CustomerRoutes[customersCount];
-                    for (int i = 0; i < customersCount; i++)
-                    {
-                        customers[i] = DriverRoutesUpdate.ApplyUpdateBoolToCustomerRoutes(
-                            UpdateDifferences.UpdateDifferencesDriverRoutes[i].Server,
-                            UpdateDifferences.UpdateDifferencesDriverRoutes[i].Update,
-                            UpdateDifferences.UpdateDifferencesDriverRoutes[i].UpdateSelect);
-                    }
-                    if (customers is not null)
-                    {
-                        _saveAction?.Invoke(customers);
-                    }
-                }
-
-
-
-                UpdateDifferences.UpdateDifferencesDriverRoutes?.Clear();
-                UpdateDifferences.UpdateDifferencesInventory?.Clear();
                 UpdateDifferences = null;
                 if (Shell.Current.Navigation.NavigationStack.Count > 1)
                 {
@@ -160,6 +160,42 @@ namespace Shared.Pages.UpdateDifference
             }
         }
 
+        private void InvokeAsCustomerRoutes()
+        {
+            if (UpdateDifferences?.FirstOrDefault().Server is CustomerRoutes)
+            {
+                IList<CustomerRoutes> entities = [];
+                foreach (DataBase.Model.EntitiesServer.UpdateDifference item in UpdateDifferences)
+                {
+                    entities.Add(DriverRoutesUpdate.ApplyUpdateBoolTo(
+                             (CustomerRoutes)item.Server,
+                             (CustomerRoutes)item.Update,
+                             item.UpdateSelect));
+                }
+                if (entities is not null)
+                {
+                    _saveAction?.Invoke(entities);
+                }
+            }
+        }
+        private void InvokeAsProductName()
+        {
+            if (UpdateDifferences?.FirstOrDefault().Server is ProductName)
+            {
+                IList<ProductName> entities = [];
+                foreach (DataBase.Model.EntitiesServer.UpdateDifference item in UpdateDifferences)
+                {
+                    entities.Add(ProductNameUpdate.ApplyUpdateBoolTo(
+                             (ProductName)item.Server,
+                             (ProductName)item.Update,
+                             item.UpdateSelect));
+                }
+                if (entities is not null)
+                {
+                    _saveAction?.Invoke(entities);
+                }
+            }
+        }
 
     }
 }

@@ -3,8 +3,6 @@ using DataBase.Service;
 
 using SQLite;
 
-#if DEBUG
-#endif
 namespace DataBase.Data
 {
     public interface IAccessDataBase

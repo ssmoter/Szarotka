@@ -1,5 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model;
+using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesRoutes;
 
 namespace DataBase.Service
@@ -201,6 +202,31 @@ AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - ? ) <= ?
             return result;
         }
 
+
+
+
+        public static async Task<UpdateLog> Insert(this IUpdateLogService service, UpdateLog update, ProductName name)
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(name, Model.JsonContext.SzarotkaJsonSerializerContext.Default.ProductName);
+            update ??= new UpdateLog();
+            update.JsonUpdate = json;
+            update.UserCreatedId = name.UserUpdatedId;
+            update.UserUpdatedId = name.UserUpdatedId;
+            update.UpdateEnum = UpdateEnum.ProductName;
+            update.UpdateId = name.Id.ToString();
+            return await service.Insert(update);
+        }
+        public static async Task<UpdateLog> Insert(this IUpdateLogService service, UpdateLog update, ProductPrice price)
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(price, Model.JsonContext.SzarotkaJsonSerializerContext.Default.ProductPrice);
+            update ??= new UpdateLog();
+            update.JsonUpdate = json;
+            update.UserCreatedId = price.UserUpdatedId;
+            update.UserUpdatedId = price.UserUpdatedId;
+            update.UpdateEnum = UpdateEnum.ProductPrice;
+            update.UpdateId = price.Id.ToString();
+            return await service.Insert(update);
+        }
         public static async Task<UpdateLog> Insert(this IUpdateLogService service, UpdateLog update, CustomerRoutes customer)
         {
             var json = System.Text.Json.JsonSerializer.Serialize(customer, Model.JsonContext.SzarotkaJsonSerializerContext.Default.CustomerRoutes);
@@ -210,6 +236,17 @@ AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - ? ) <= ?
             update.UserUpdatedId = customer.UserUpdatedId;
             update.UpdateEnum = UpdateEnum.CustomerRoutes;
             update.UpdateId = customer.Id.ToString();
+            return await service.Insert(update);
+        }
+        public static async Task<UpdateLog> Insert(this IUpdateLogService service, UpdateLog update, Day day)
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(day, Model.JsonContext.SzarotkaJsonSerializerContext.Default.Day);
+            update ??= new UpdateLog();
+            update.JsonUpdate = json;
+            update.UserCreatedId = day.UserUpdatedId;
+            update.UserUpdatedId = day.UserUpdatedId;
+            update.UpdateEnum = UpdateEnum.CustomerRoutes;
+            update.UpdateId = day.Id.ToString();
             return await service.Insert(update);
         }
     }

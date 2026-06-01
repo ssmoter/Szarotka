@@ -104,22 +104,16 @@ public partial class User : BaseEntities<Guid>
 
     public User()
     { }
-    public User(User copy)
+    public User(User copy) : base(copy)
     {
-        this.Id = new Guid(copy.Id.ToByteArray());
-        this.CreatedTicks = copy.CreatedTicks;
-        this.UpdatedTicks = copy.UpdatedTicks;
-        this.UserCreatedId = new Guid(copy.UserCreatedId.ToByteArray());
-        this.UserUpdatedId = new Guid(copy.UserUpdatedId.ToByteArray());
-        this.IsDelete = copy.IsDelete;
-        this.Name = copy.Name;
-        this.Email = copy.Email;
-        this.Description = copy.Description;
-        this.PhoneNumber = copy.PhoneNumber;
-        this.RememberMe = copy.RememberMe;
-        this.UserType = copy.UserType;
-        this.IsEmailConfirm = copy.IsEmailConfirm;
-        this.Token = copy.Token;
+        Description = copy.Description;
+        Email = copy.Email;
+        IsEmailConfirm = copy.IsEmailConfirm;
+        Name = copy.Name;
+        PhoneNumber = copy.PhoneNumber;
+        RememberMe = copy.RememberMe;
+        Token = copy.Token;
+        UserType = copy.UserType;
     }
 }
 

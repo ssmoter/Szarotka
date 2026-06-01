@@ -6,9 +6,14 @@ using DataBase.Data;
 using DataBase.Data.Get;
 using DataBase.Data.Save;
 using DataBase.Model.EntitiesInventory;
+using DataBase.Model.EntitiesServer;
+using DataBase.Model.JsonContext;
 
 using Shared.Data;
 using Shared.Helper;
+using Shared.Pages.UpdateDifference;
+
+using System.Collections;
 
 namespace Inventory.Pages.SingleDay
 {
@@ -59,10 +64,14 @@ namespace Inventory.Pages.SingleDay
         private readonly IAccessDataBase _db;
         private readonly ISaveInventoryAoT _saveInventoryAoT;
         private readonly IGetInventoryAoT _get;
+        private readonly Data.InventoryApi.ISendDayHttp _sendHttp;
+        private readonly DataBase.Service.IUpdateLogService _updateLogService;
 
         public SingleDayVM(IAccessDataBase db,
             ISaveInventoryAoT saveInventoryAoT,
-            IGetInventoryAoT get)
+            IGetInventoryAoT get,
+            Data.InventoryApi.ISendDayHttp sendHttp,
+            DataBase.Service.IUpdateLogService updateLogService)
         {
             _db = db;
             Day ??= new();
@@ -70,6 +79,8 @@ namespace Inventory.Pages.SingleDay
             ResetLastFastValue();
             _saveInventoryAoT = saveInventoryAoT;
             _get = get;
+            _sendHttp = sendHttp;
+            _updateLogService = updateLogService;
         }
 
 
@@ -80,11 +91,23 @@ namespace Inventory.Pages.SingleDay
         }
 
 
-        #region Method
 
         private async void AddPropertyChangedEvent()
         {
+            if (Day.Id == Guid.Empty)
+            {
+                var userId = UserAfterLogin.User.Id.ToByteArray();
+                await _saveInventoryAoT.SaveDay(day, userId);
+                var dayId = Day.Id;
+                foreach (var product in Day.Products)
+                {
+                    product.DayId = dayId;
+                }
+            }
+
             Day.PropertyChanged += SingleDayVM_PropertyChanged;
+            Day.PropertyChanged += DayHttpUpdate_PropertyChanged;
+
             for (int i = 0; i < Day.Products.Count; i++)
             {
                 Day.Products[i].PropertyChanged += SingleDayVM_PropertyChanged;
@@ -93,14 +116,12 @@ namespace Inventory.Pages.SingleDay
             {
                 Day.Cakes[i].PropertyChanged += SingleDayVM_PropertyChanged;
             }
-            if (Day.Id == Guid.Empty)
-            {
-                await SaveDay();
-            }
         }
         public void RemovePropertyChangedEvent()
         {
             Day.PropertyChanged -= SingleDayVM_PropertyChanged;
+            Day.PropertyChanged -= DayHttpUpdate_PropertyChanged;
+
             for (int i = 0; i < Day.Products.Count; i++)
             {
                 Day.Products[i].PropertyChanged -= SingleDayVM_PropertyChanged;
@@ -115,12 +136,12 @@ namespace Inventory.Pages.SingleDay
         {
             try
             {
-                var userId = Shared.Helper.UserAfterLogin.User.Id.ToByteArray();
 
                 if (e.PropertyName == nameof(Product.IsExpanded))
                 {
                     return;
                 }
+                var userId = Shared.Helper.UserAfterLogin.User.Id.ToByteArray();
                 if (sender is Day day)
                 {
                     if (isPropertyChanged)
@@ -163,6 +184,7 @@ namespace Inventory.Pages.SingleDay
                         await _saveInventoryAoT.SaveDay(Day, userId);
                     }
                 }
+
             }
             catch (Exception ex)
             {
@@ -170,6 +192,91 @@ namespace Inventory.Pages.SingleDay
                 _db.SaveLogExtension(ex);
             }
         }
+
+        private CancellationTokenSource _sendHttpCancellationToken;
+        private async void DayHttpUpdate_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (SingleDayM.IsModelSend)
+            {
+                return;
+            }
+            if (_sendHttpCancellationToken is null || _sendHttpCancellationToken.IsCancellationRequested)
+            {
+                _sendHttpCancellationToken?.Dispose();
+                _sendHttpCancellationToken = new CancellationTokenSource();
+            }
+            try
+            {
+                SingleDayM.IsModelSend = true;
+#if DEBUG
+                await Task.Delay(TimeSpan.FromSeconds(15), _sendHttpCancellationToken.Token);
+#else
+                 await Task.Delay(TimeSpan.FromMinutes(15), _sendHttpCancellationToken.Token);
+#endif
+                var products = Day.Products.Where(x => x.Id != Guid.Empty);
+                Day sendDay = new(Day)
+                {
+                    Products = [.. products]
+                };
+                if (sendDay.Id == Guid.Empty)
+                {
+                    //guid jest dodawany tylko przy zapisie 
+                    //jeżeli go nie ma dane nie zotały zapisane więc nie można ich wysłać
+                    return;
+                }
+
+                var message = await _sendHttp.SendDay(sendDay, token: _sendHttpCancellationToken.Token);
+
+                var json = await message.Content.ReadAsStringAsync();
+                if (message.IsSuccessStatusCode)
+                {
+                    var log = System.Text.Json.JsonSerializer.Deserialize(json, SzarotkaJsonSerializerContext.Default.UpdateLog);
+                    await _updateLogService.Insert(log);
+                    await Toast.Make("Wysłano").Show();
+                }
+                else if (message.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    await Toast.Make("Wystąpił konflikt").Show();
+                    var existsDay = System.Text.Json.JsonSerializer.Deserialize(json, SzarotkaJsonSerializerContext.Default.Day);
+                    IList<UpdateDifference> exists = [new() { Server = existsDay, Update = sendDay }];
+                    var navigationParameter = new Dictionary<string, object>
+                     {
+                        { nameof(UpdateDifference), exists },
+                        {nameof(Action),(Action<IEnumerable>)(async (names)
+                        =>
+                            {
+                                foreach (Day item in names)
+                                    {
+                                         var updateMessage = await _sendHttp.SendDay(item,forceUpdate:true);
+                                         var logForced = System.Text.Json.JsonSerializer.Deserialize(await updateMessage.Content.ReadAsStringAsync(), SzarotkaJsonSerializerContext.Default.UpdateLog);
+                                         await _updateLogService.Insert(logForced);
+                                         RemovePropertyChangedEvent();
+                                         Day = item;
+                                         AddPropertyChangedEvent();
+                                    }
+                            })
+                        }
+                    };
+                    await Shell.Current.GoToAsync(nameof(UpdateDifferenceV), navigationParameter);
+                }
+                else
+                {
+                    message.EnsureSuccessStatusCode();
+                }
+            }
+            catch (TaskCanceledException)
+            {
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLogExtension(ex);
+            }
+            finally
+            {
+                SingleDayM.IsModelSend = false;
+            }
+        }
+
         public async Task ShowCurrentDay()
         {
             await CommunityToolkit.Maui.Alerts.Toast.Make($"Wczytano dzień {Day.SelectedDate.ToShortDateString()}", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
@@ -244,9 +351,7 @@ namespace Inventory.Pages.SingleDay
 #endif
         }
 
-        #endregion
 
-        #region Command
 
 
 
@@ -444,7 +549,7 @@ namespace Inventory.Pages.SingleDay
             try
             {
                 IList<(ProductName Name, IList<ProductPrice> Prices)> allProducts = await _get.EmptyProductsNameAndPrices();
-                var (Name, Prices) = allProducts.FirstOrDefault(x => x.Name.Id == product.Id);
+                var (Name, Prices) = allProducts.FirstOrDefault(x => x.Name.Id == product.Name.Id);
 
                 string[] priceArray = [.. Prices.Select(x => x.PriceDecimal.ToString()), "Nowa"];
 
@@ -452,6 +557,10 @@ namespace Inventory.Pages.SingleDay
                 var result = await Shell.Current.DisplayActionSheet("Zmiana ceny",
                                                                     "Anuluj",
                                                                     null, priceArray);
+                if (result is null)
+                {
+                    return;
+                }
                 if (result == "Anuluj")
                 {
                     return;
@@ -529,8 +638,9 @@ namespace Inventory.Pages.SingleDay
                                                                     "Anuluj",
                                                                     null,
                                                                     products);
-
-                if (result == " Anuluj")
+                if (result is null)
+                    return;
+                if (result == "Anuluj")
                     return;
 
                 if (result == "Dodaj nowy")
@@ -549,7 +659,7 @@ namespace Inventory.Pages.SingleDay
                 {
                     var lastUpdateDay = await _get.Day(Day.Id);
 
-                    var lastSavedProduct = lastUpdateDay.Products.FirstOrDefault(x=>x.Name.Id == selectedProduct.Value.Name.Id);
+                    var lastSavedProduct = lastUpdateDay.Products.FirstOrDefault(x => x.Name.Id == selectedProduct.Value.Name.Id);
 
                     if (lastSavedProduct is not null)
                     {
@@ -641,8 +751,12 @@ namespace Inventory.Pages.SingleDay
         }
 
 
-
-        #endregion
+        [RelayCommand]
+        void CancelSendDay()
+        {
+            _sendHttpCancellationToken?.Cancel();
+            SingleDayM.IsModelSend = false;
+        }
 
     }
 }
