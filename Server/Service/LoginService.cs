@@ -15,18 +15,11 @@ namespace Server.Service
         Task<IResult> LogOut(LoginUser user);
     }
 
-    public class LoginService : ILoginService
+    public class LoginService(IAccessDataBase db, ITimeService timeService, IUserValidation userValidation) : ILoginService
     {
-        private readonly IAccessDataBase _db;
-        private readonly ITimeService _timeService;
-        private readonly IUserValidation _userValidation;
-
-        public LoginService(IAccessDataBase db, ITimeService timeService, IUserValidation userValidation)
-        {
-            _db = db;
-            _timeService = timeService;
-            _userValidation = userValidation;
-        }
+        private readonly IAccessDataBase _db = db;
+        private readonly ITimeService _timeService = timeService;
+        private readonly IUserValidation _userValidation = userValidation;
 
         public async Task<User> LogIn(LoginUser user)
         {

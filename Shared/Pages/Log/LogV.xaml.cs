@@ -25,22 +25,18 @@ public partial class LogV : ContentPage
 
     private void SwipeItem_Invoked_MoreDate(object sender, EventArgs e)
     {
-        var item = sender as SwipeItem;
-        if (item is null) { return; }
+        if (sender is not SwipeItem item) { return; }
 
-        var product = item.BindingContext as LogM;
-        if (product == null) { return; }
+        if (item.BindingContext is not LogM product) { return; }
 
         _vm.OpenSelectedLogCommand.Execute(product);
     }
 
     private void SwipeItem_Invoked_Delete(object sender, EventArgs e)
     {
-        var item = sender as SwipeItem;
-        if (item is null) { return; }
+        if (sender is not SwipeItem item) { return; }
 
-        var product = item.BindingContext as LogM;
-        if (product == null) { return; }
+        if (item.BindingContext is not LogM product) { return; }
 
         _vm.DeleteLogCommand.Execute(product);
     }

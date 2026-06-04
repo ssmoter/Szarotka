@@ -3,8 +3,6 @@ using CommunityToolkit.Maui.Views;
 using DataBase.Data;
 using DataBase.Model.EntitiesServer;
 
-using Microsoft.Maui.Platform;
-
 using Shared.Data;
 using Shared.Data.ServerHttpClients;
 
@@ -138,5 +136,6 @@ public partial class UserDisplayVPopup : Popup, IDisposable
     {
         _tokenSource?.Dispose();
         _db?.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

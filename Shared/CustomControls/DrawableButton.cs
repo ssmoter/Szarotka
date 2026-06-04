@@ -33,14 +33,15 @@ namespace Shared.CustomControls
         }
 
 
-        TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer();
+        TapGestureRecognizer tapGestureRecognizer = new ();
 
         public async Task<bool> BounceOnPressAsync()
         {
-            await this.ScaleTo(1.2, 100, Easing.BounceIn);
+            await this.ScaleToAsync(1.2, 100, Easing.BounceIn);
 
-            return await this.ScaleTo(1.0, 100, Easing.BounceOut);
+            return await this.ScaleToAsync(1.0, 100, Easing.BounceOut);
         }
 
     }
 }
+

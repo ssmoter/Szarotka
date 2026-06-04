@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui.Extensions;
+using CommunityToolkit.Maui.Views;
 
 using DataBase.Model.EntitiesServer;
 
@@ -100,7 +101,10 @@ public partial class NameOrIdUser : Label, IDisposable
         await item.BounceOnPressAsync();
 
         var popup = new Shared.Pages.UserDisplay.PopupUser.UserDisplayVPopup(UserId);
-        await Shell.Current.ShowPopupAsync(popup);
+        if (Application.Current?.Windows != null && Application.Current.Windows.Count > 0)
+        {
+            await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
+        }
 
         NameOrIdUser._ActionUser?.Invoke();
     }

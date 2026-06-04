@@ -5,16 +5,10 @@ using System.Text.Json.Serialization;
 namespace DataBase.Model.EntitiesServer
 {
     [Serializable]
-    public class ErrorException : Exception
+    public class ErrorException(string? error, string message) : Exception(message)
     {
-        public string Error { get; }
-        public override string Message { get; }
-
-        public ErrorException(string? error, string message) : base(message)
-        {
-            Error = error is not null ? error : "";
-            Message = message;
-        }
+        public string Error { get; } = error is not null ? error : "";
+        public override string Message { get; } = message;
     }
 
     public interface IValidationException

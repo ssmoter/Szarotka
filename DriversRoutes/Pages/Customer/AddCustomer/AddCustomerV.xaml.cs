@@ -15,9 +15,9 @@ public partial class AddCustomerV : ContentPage
         base.OnNavigatedTo(args);
         if (BindingContext is AddCustomerVM vm)
         {
-            vm.originCustomer?.Dispose();
-            vm.originCustomer = new DataBase.Model.EntitiesRoutes.CustomerRoutes(vm.Customer);
-            vm._address = [];
+            vm.OriginCustomer?.Dispose();
+            vm.OriginCustomer = new DataBase.Model.EntitiesRoutes.CustomerRoutes(vm.Customer);
+            vm.Address = [];
             vm.GetHelperDayOfWeek();
         }
     }

@@ -64,7 +64,7 @@ public partial class DisplayCustomerVM : ObservableObject, IQueryAttributable
             if (point is null)
                 return;
 
-            var result = await Shell.Current.DisplayAlert("Czy usunąć", $"Czy na pewno chcesz usunąć {point.QueueNumber}:{point.Name}", "Tak", "Anuluj");
+            var result = await Shell.Current.DisplayAlertAsync("Czy usunąć", $"Czy na pewno chcesz usunąć {point.QueueNumber}:{point.Name}", "Tak", "Anuluj");
 
             if (!result)
                 return;
@@ -72,7 +72,7 @@ public partial class DisplayCustomerVM : ObservableObject, IQueryAttributable
 
             await Update(true);
 
-            result = await Shell.Current.DisplayAlert("Usunięto", "Obiekt został usunięty. Czy chcesz przywrócić", "Przywróć", "Nie");
+            result = await Shell.Current.DisplayAlertAsync("Usunięto", "Obiekt został usunięty. Czy chcesz przywrócić", "Przywróć", "Nie");
 
             if (!result)
                 await Shell.Current.GoToAsync("..");
@@ -147,4 +147,5 @@ public partial class DisplayCustomerVM : ObservableObject, IQueryAttributable
 
 
 }
+
 

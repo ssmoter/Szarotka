@@ -36,22 +36,18 @@ public partial class ExistingFilesV : ContentPage
 
     private void SwipeItem_Invoked_SelectedImport(object sender, EventArgs e)
     {
-        var item = sender as SwipeItem;
-        if (item is null) { return; }
+        if (sender is not SwipeItem item) { return; }
 
-        var product = item.BindingContext as ExistingFilesM;
-        if (product == null) { return; }
+        if (item.BindingContext is not ExistingFilesM product) { return; }
 
         _vm.SelectedImportCommand.Execute(product);
     }
 
     private void SwipeItem_Invoked_SelectedExport(object sender, EventArgs e)
     {
-        var item = sender as SwipeItem;
-        if (item is null) { return; }
+        if (sender is not SwipeItem item) { return; }
 
-        var product = item.BindingContext as ExistingFilesM;
-        if (product == null) { return; }
+        if (item.BindingContext is not ExistingFilesM product) { return; }
 
         _vm.SelectedExportCommand.Execute(product);
     }

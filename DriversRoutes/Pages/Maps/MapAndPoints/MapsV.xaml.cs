@@ -72,7 +72,7 @@ public partial class MapsV : ContentPage, IDisposable
             }
             if (vm.Routes is null)
             {
-                await Shell.Current.DisplayAlert("Brak trasy", "Zapisywanie jest dostępne tylko po wybraniu trasy konkretnego kierowcy", "Ok");
+                await Shell.Current.DisplayAlertAsync("Brak trasy", "Zapisywanie jest dostępne tylko po wybraniu trasy konkretnego kierowcy", "Ok");
                 return;
             }
 
@@ -130,5 +130,6 @@ public partial class MapsV : ContentPage, IDisposable
     }
 
 }
+
 
 

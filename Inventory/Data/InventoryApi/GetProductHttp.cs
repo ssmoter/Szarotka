@@ -16,18 +16,11 @@ namespace Inventory.Data.InventoryApi
         Task<EmptyProducts> GetProducts(UpdateProgressBar progressContent = null, CancellationToken token = default);
     }
 
-    public partial class GetProductHttp : IGetProductHttp
+    public partial class GetProductHttp(IHttpClientFactory httpClientFactory, IAccessDataBase db) : IGetProductHttp
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IAccessDataBase _db;
-        private readonly string _url;
-
-        public GetProductHttp(IHttpClientFactory httpClientFactory, IAccessDataBase db)
-        {
-            _httpClientFactory = httpClientFactory;
-            _db = db;
-            _url = db.GetServerUrl();
-        }
+        private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+        private readonly IAccessDataBase _db = db;
+        private readonly string _url = db.GetServerUrl();
 
         public async Task<EmptyProducts> GetProducts(UpdateProgressBar progressContent = null, CancellationToken token = default)
         {

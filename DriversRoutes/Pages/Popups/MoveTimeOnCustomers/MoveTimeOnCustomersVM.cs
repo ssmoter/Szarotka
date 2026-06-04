@@ -85,7 +85,7 @@ namespace DriversRoutes.Pages.Popups.MoveTimeOnCustomers
         {
             if (!Helper.HelperDayOfWeek.IfAnyIsTrue(SelectDayMs))
             {
-                await Shell.Current.DisplayAlert("Nie wybrana dnia tygodnia", "Aby zapisać zmiany zaznacz dzień tygonia", "Ok");
+                await Shell.Current.DisplayAlertAsync("Nie wybrana dnia tygodnia", "Aby zapisać zmiany zaznacz dzień tygonia", "Ok");
                 return;
             }
 
@@ -98,7 +98,7 @@ namespace DriversRoutes.Pages.Popups.MoveTimeOnCustomers
                 hours = befor;
             }
 
-            if (!await Shell.Current.DisplayAlert("Zmiany", $"Przesunąć czas punktów w dniu {dayOfWeek.TranslateSelectedDay()} {hours} {SelectedTime.Hours}:{SelectedTime.Minutes} {Sign}{AddTime.TotalMinutes} minut", "Tak", "Nie"))
+            if (!await Shell.Current.DisplayAlertAsync("Zmiany", $"Przesunąć czas punktów w dniu {dayOfWeek.TranslateSelectedDay()} {hours} {SelectedTime.Hours}:{SelectedTime.Minutes} {Sign}{AddTime.TotalMinutes} minut", "Tak", "Nie"))
             {
                 return;
             }
@@ -143,3 +143,4 @@ namespace DriversRoutes.Pages.Popups.MoveTimeOnCustomers
         #endregion
     }
 }
+

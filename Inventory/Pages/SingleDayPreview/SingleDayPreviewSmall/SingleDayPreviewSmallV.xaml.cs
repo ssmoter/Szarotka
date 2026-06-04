@@ -1,4 +1,5 @@
 using CommunityToolkit.Maui.Core.Platform;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 
 using DataBase.Model.EntitiesInventory;
@@ -154,7 +155,10 @@ public partial class SingleDayPreviewSmallV : ContentView, IDisposable
 
         var userId = Day.DriverGuid;
         var popup = new Shared.Pages.UserDisplay.PopupUser.UserDisplayVPopup(userId);
-        await Shell.Current.ShowPopupAsync(popup);
+        if (Application.Current?.Windows[0].Page != null)
+        {
+            await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
+        }
     }
 
     private Product lastProductHideElseExpanded = new();

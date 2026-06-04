@@ -22,18 +22,11 @@ namespace Server.Service
         Task<User> AuthenticateAsync(string token);
     }
 
-    public class AuthenticationService : IAuthenticationService
+    public class AuthenticationService(JSONWebTokensSettings jSONWebTokensSettings, IAccessDataBase db) : IAuthenticationService
     {
-        private readonly JSONWebTokensSettings _jwtSettings;
-        private readonly IAccessDataBase _db;
-        private readonly JwtSecurityTokenHandler _handler;
-        public AuthenticationService(JSONWebTokensSettings jSONWebTokensSettings, IAccessDataBase db)
-        {
-            _jwtSettings = jSONWebTokensSettings;
-            _db = db;
-            _handler = new JwtSecurityTokenHandler();
-        }
-
+        private readonly JSONWebTokensSettings _jwtSettings = jSONWebTokensSettings;
+        private readonly IAccessDataBase _db = db;
+        private readonly JwtSecurityTokenHandler _handler = new ();
 
         public async Task<User> AuthenticateAsync(User request)
         {

@@ -1,3 +1,4 @@
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 
 namespace Inventory.Pages.RangeDay.Graph.GraphOptions;
@@ -8,7 +9,7 @@ public partial class GraphOptionsV : Popup, IDisposable
     {
         InitializeComponent();
         var vm = new GraphOptionsVM(productNames);
-        vm.Close += CloseAsync;
+        vm.Close += OnVmClose;
         BindingContext = vm;
 
         mainGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
@@ -34,8 +35,14 @@ public partial class GraphOptionsV : Popup, IDisposable
     {
         if (BindingContext is GraphOptionsVM vm)
         {
-            vm.Close -= CloseAsync;
+            vm.Close -= OnVmClose;
         }
         GC.SuppressFinalize(this);
+    }
+
+    private Task OnVmClose(object result, CancellationToken token)
+    {
+        return Shell.Current.ClosePopupAsync(result, token);
+        //return CloseAsync(result);
     }
 }

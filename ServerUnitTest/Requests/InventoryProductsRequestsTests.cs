@@ -46,7 +46,7 @@ namespace ServerUnitTest.Requests
             var product = Array.Empty<(ProductName name, IList<ProductPrice> prices)>();
 
             _mockGet.Setup(x => x.EmptyProductsNameAndPrices(false)).ReturnsAsync(product);
-            CancellationTokenSource token = new CancellationTokenSource();
+            CancellationTokenSource token = new();
             token.Cancel();
 
             await Assert.ThrowsAsync<OperationCanceledException>(() => _inventoryProductsRequests.GetEmptyProducts(false, token.Token));

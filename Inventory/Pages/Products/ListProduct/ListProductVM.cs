@@ -175,7 +175,7 @@ namespace Inventory.Pages.Products.ListProduct
         {
             try
             {
-                bool result = await Shell.Current.DisplayAlert(value.Name.Name, "Czy na pewno chcesz usunąć?", "Tak", "Nie");
+                bool result = await Shell.Current.DisplayAlertAsync(value.Name.Name, "Czy na pewno chcesz usunąć?", "Tak", "Nie");
                 if (result)
                 {
                     try
@@ -186,12 +186,12 @@ namespace Inventory.Pages.Products.ListProduct
                             await _db.DataBaseAsync.DeleteAsync(value.Prices[i]);
                         }
                         ProductMs.Remove(value);
-                        await Shell.Current.DisplayAlert(value.Name.Name, "Obiekt został usunięty", "Ok");
+                        await Shell.Current.DisplayAlertAsync(value.Name.Name, "Obiekt został usunięty", "Ok");
                     }
                     catch (Exception ex)
                     {
                         await _db.SaveLogAsyncExtension(ex);
-                        await Shell.Current.DisplayAlert("Error", ex.Message, "Ok");
+                        await Shell.Current.DisplayAlertAsync("Error", ex.Message, "Ok");
                     }
                 }
             }
@@ -544,3 +544,4 @@ namespace Inventory.Pages.Products.ListProduct
 
     }
 }
+

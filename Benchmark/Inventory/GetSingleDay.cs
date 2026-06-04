@@ -11,8 +11,8 @@ namespace Benchmark.Inventory
     {
         private readonly IAccessDataBase _db;
 
-        private readonly Guid _id = new Guid("98e3e70f-8ae9-4ff9-b045-a62a4444578c");
-        private readonly DateTime _dateTime = new DateTime(638472044271180544);
+        private readonly Guid _id = new("98e3e70f-8ae9-4ff9-b045-a62a4444578c");
+        private readonly DateTime _dateTime = new(638472044271180544);
         public GetSingleDay()
         {
             _db = new AccessDataBase();

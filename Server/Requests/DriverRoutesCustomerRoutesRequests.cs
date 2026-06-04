@@ -18,20 +18,12 @@ namespace Server.Requests
         Task<IResult> UpdateCustomers(IList<CustomerRoutes> customers, bool forceUpdate, CancellationToken token = default);
     }
 
-    public class DriverRoutesCustomerRoutesRequests : IDriverRoutesCustomerRoutesRequests
+    public class DriverRoutesCustomerRoutesRequests(IAccessDataBase db, IGetDriverRoutesAoT get, ISaveDriverRoutesAoT save, IUpdateLogService updateLogService) : IDriverRoutesCustomerRoutesRequests
     {
-        private readonly IAccessDataBase _db;
-        private readonly IGetDriverRoutesAoT _get;
-        private readonly ISaveDriverRoutesAoT _save;
-        private readonly IUpdateLogService _updateLogService;
-
-        public DriverRoutesCustomerRoutesRequests(IAccessDataBase db, IGetDriverRoutesAoT get, ISaveDriverRoutesAoT save, IUpdateLogService updateLogService)
-        {
-            _get = get;
-            _db = db;
-            _save = save;
-            _updateLogService = updateLogService;
-        }
+        private readonly IAccessDataBase _db = db;
+        private readonly IGetDriverRoutesAoT _get = get;
+        private readonly ISaveDriverRoutesAoT _save = save;
+        private readonly IUpdateLogService _updateLogService = updateLogService;
 
         public async Task<IResult> GetCustomer(string id, CancellationToken token = default)
         {

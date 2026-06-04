@@ -19,7 +19,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses
         }
 
         public Func<object, CancellationToken, Task> Close;
-        public Task OnClose(object result = null, CancellationToken token = default(CancellationToken))
+        public Task OnClose(object result = null, CancellationToken token = default)
         {
             return Close?.Invoke(result, token);
         }

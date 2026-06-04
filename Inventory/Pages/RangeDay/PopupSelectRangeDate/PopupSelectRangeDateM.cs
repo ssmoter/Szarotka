@@ -2,11 +2,11 @@
 
 namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
 {
-    public partial class PopupSelectRangeDateM : ObservableObject
+    public partial class PopupSelectRangeDateM(DataBase.Model.EntitiesServer.User user) : ObservableObject
     {
-        public DataBase.Model.EntitiesServer.User Driver { get; set; }
+        public DataBase.Model.EntitiesServer.User Driver { get; set; } = user;
 
-        private string name;
+        private string name = user.Name;
         public string Name
         {
             get => name;
@@ -24,12 +24,6 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             {
                 if (SetProperty(ref isChecked, value, nameof(IsChecked))) { }
             }
-        }
-
-        public PopupSelectRangeDateM(DataBase.Model.EntitiesServer.User user)
-        {
-            Driver = user;
-            name = user.Name;
         }
     }
 }

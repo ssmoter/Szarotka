@@ -15,30 +15,19 @@ namespace Server.Requests
     }
 
 
-    public class RegisterUserRequests : IRegisterUserRequests
-    {
-        private readonly IAccessDataBase _db;
-        private readonly IRegisterUserService _registerService;
-        private readonly IUserValidation _userValidation;
-        private readonly IEmailService _emailService;
-        private readonly IEmailConfirmService _emailConfirmService;
-        private readonly ITimeService _time;
-
-
-        public RegisterUserRequests(IAccessDataBase db
+    public class RegisterUserRequests(IAccessDataBase db
                                     , IRegisterUserService register
                                     , IUserValidation userValidation
                                     , IEmailService emailService
                                     , IEmailConfirmService emailConfirmService
-                                    , ITimeService time)
-        {
-            _db = db;
-            _registerService = register;
-            _userValidation = userValidation;
-            _emailService = emailService;
-            _emailConfirmService = emailConfirmService;
-            _time = time;
-        }
+                                    , ITimeService time) : IRegisterUserRequests
+    {
+        private readonly IAccessDataBase _db = db;
+        private readonly IRegisterUserService _registerService = register;
+        private readonly IUserValidation _userValidation = userValidation;
+        private readonly IEmailService _emailService = emailService;
+        private readonly IEmailConfirmService _emailConfirmService = emailConfirmService;
+        private readonly ITimeService _time = time;
 
         public async Task<IResult> InsertUser(RegisterUser registerUser, CancellationToken token = default)
         {

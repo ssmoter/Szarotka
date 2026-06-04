@@ -123,5 +123,6 @@ public partial class ResidentialAddress : BaseEntities<Guid>, IDisposable
         PostalCode = "";
         City = "";
         Country = "";
+        GC.SuppressFinalize(this);
     }
 }

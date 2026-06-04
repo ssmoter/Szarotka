@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui.Extensions;
+using CommunityToolkit.Maui.Views;
 
 using DataBase.Data.Get;
 using DataBase.Data.Save;
@@ -14,7 +15,9 @@ public partial class MoveTimeOnCustomersV : Popup, IDisposable
     {
         InitializeComponent();
         var vm = new MoveTimeOnCustomersVM(selectDayMs);
-        vm.Close += CloseAsync;
+        //vm.Close += Closed;
+        vm.Close = async (result, token) => await Shell.Current.ClosePopupAsync(result, token);
+
 
         BindingContext = vm;
     }
@@ -23,7 +26,8 @@ public partial class MoveTimeOnCustomersV : Popup, IDisposable
     {
         if (BindingContext is MoveTimeOnCustomersVM vm)
         {
-            vm.Close -= CloseAsync;
+            //vm.Close -= CloseAsync;
+            vm.Close = null;
         }
         GC.SuppressFinalize(this);
     }
@@ -74,7 +78,11 @@ public partial class MoveTimeOnCustomersV : Popup, IDisposable
     {
         var popup = new MoveTimeOnCustomersV(selectDayMs);
 
-        var result = await Shell.Current.ShowPopupAsync(popup);
+        var result = default(object);
+        if (Application.Current?.Windows[0].Page != null)
+        {
+            result = await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
+        }
 
         if (result is null)
         {

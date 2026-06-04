@@ -14,18 +14,11 @@ namespace Shared.Data.ServerHttpClients
         Task<IList<UpdateLog>> GetLogs(Guid logId, UpdateProgressBar progressContent, CancellationToken token = default);
     }
 
-    public partial class UpdateLogsHttp : IUpdateLogsHttp
+    public partial class UpdateLogsHttp(IAccessDataBase db, IHttpClientFactory httpClient) : IUpdateLogsHttp
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IAccessDataBase _db;
-        private readonly string _url;
-        public UpdateLogsHttp(IAccessDataBase db, IHttpClientFactory httpClient)
-        {
-            _db = db;
-            _url = db.GetServerUrl();
-            _httpClientFactory = httpClient;
-        }
-
+        private readonly IHttpClientFactory _httpClientFactory = httpClient;
+        private readonly IAccessDataBase _db = db;
+        private readonly string _url = db.GetServerUrl();
 
         public async Task<IList<UpdateLog>> GetLogs(Guid logId, UpdateProgressBar progressContent, CancellationToken token = default)
         {

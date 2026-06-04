@@ -188,8 +188,7 @@ namespace ServerUnitTest.Requests
             // Arrange
             var customers = new List<CustomerRoutes>
             {
-                new CustomerRoutes
-                {
+                new() {
                     Id = Guid.CreateVersion7(),
                     Name = "Customer 1",
                     Description = "Desc 1",
@@ -198,8 +197,7 @@ namespace ServerUnitTest.Requests
                     Longitude = 1.0,
                     Latitude = 2.0
                 },
-                new CustomerRoutes
-                {
+                new() {
                     Id = Guid.CreateVersion7(),
                     Name = "Customer 2",
                     Description = "Desc 2",

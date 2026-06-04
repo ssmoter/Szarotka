@@ -17,7 +17,7 @@ namespace Shared.Data.ServerHttpClients
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IAccessDataBase _db;
-        private string _url;
+        private readonly string _url;
 
         public RegisterHttp(IHttpClientFactory httpClient, IAccessDataBase db)
         {

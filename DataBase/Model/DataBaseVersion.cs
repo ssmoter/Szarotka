@@ -19,7 +19,7 @@ namespace DataBase.Model
         long lastBackup = DateTime.Today.Ticks;
         public DataBaseVersion()
         {
-            DataBase = 2;
+            DataBase = 3;
             Inventory = 3;
             DriversRoutes = 2;
         }

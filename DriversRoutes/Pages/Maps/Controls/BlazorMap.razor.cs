@@ -24,6 +24,7 @@ namespace DriversRoutes.Pages.Maps.Controls
 
             Shared.Helper.MudBlazorTheme.ActionThemeChanged = null;
             RemoveListener("dragstart");
+            GC.SuppressFinalize(this);
         }
 
         public BlazorMap()
@@ -96,7 +97,7 @@ namespace DriversRoutes.Pages.Maps.Controls
         }
 
 
-        System.Globalization.NumberFormatInfo dot = new System.Globalization.NumberFormatInfo()
+        System.Globalization.NumberFormatInfo dot = new()
         {
             NumberDecimalSeparator = ".",
         };

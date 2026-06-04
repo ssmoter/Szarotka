@@ -14,18 +14,11 @@ namespace Shared.Data.ServerHttpClients
         Task<User> EditUser(User user);
     }
 
-    public class EditUserHttp : IEditUserHttp
+    public class EditUserHttp(IAccessDataBase db, IHttpClientFactory httpClient) : IEditUserHttp
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IAccessDataBase _db;
-        private readonly string _url;
-        public EditUserHttp(IAccessDataBase db, IHttpClientFactory httpClient)
-        {
-            _db = db;
-            _url = db.GetServerUrl();
-            _httpClientFactory = httpClient;
-        }
-
+        private readonly IHttpClientFactory _httpClientFactory = httpClient;
+        private readonly IAccessDataBase _db = db;
+        private readonly string _url = db.GetServerUrl();
 
         public async Task<User> EditUser(User user)
         {

@@ -4,7 +4,7 @@ namespace DataBaseUnitTest.DataSave
 {
     public class SaveDayInventoryAoTTests
     {
-        string _path = "";
+        readonly string _path = "";
 
         public SaveDayInventoryAoTTests()
         {

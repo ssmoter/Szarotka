@@ -14,7 +14,9 @@ using System.Collections.ObjectModel;
 
 namespace DriversRoutes.Pages.Main
 {
-    public partial class MainVDriversRoutesVM : ObservableObject
+    public partial class MainVDriversRoutesVM(IAccessDataBase db,
+                                DataBase.Data.Get.IGetDriverRoutesAoT get,
+                                DataBase.Data.Save.ISaveDriverRoutesAoT save) : ObservableObject
     {
         private ObservableCollection<Routes> routes;
         public ObservableCollection<Routes> Routes
@@ -26,19 +28,9 @@ namespace DriversRoutes.Pages.Main
             }
         }
 
-        private readonly IAccessDataBase _db;
-        private readonly DataBase.Data.Get.IGetDriverRoutesAoT _get;
-        private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _save;
-
-        public MainVDriversRoutesVM(IAccessDataBase db,
-                                    DataBase.Data.Get.IGetDriverRoutesAoT get,
-                                    DataBase.Data.Save.ISaveDriverRoutesAoT save)
-        {
-            _db = db;
-            _get = get;
-            _save = save;
-        }
-
+        private readonly IAccessDataBase _db = db;
+        private readonly DataBase.Data.Get.IGetDriverRoutesAoT _get = get;
+        private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _save = save;
 
         public async Task<ObservableCollection<Routes>> GetRoutes()
         {

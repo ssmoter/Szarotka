@@ -1,3 +1,4 @@
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 
 using DataBase.Model.EntitiesServer;
@@ -45,6 +46,9 @@ public partial class UserDisplaySmallV : ContentView
 
         var userId = User.Id;
         var popup = new Shared.Pages.UserDisplay.PopupUser.UserDisplayVPopup(userId);
-        await Shell.Current.ShowPopupAsync(popup);
+        if (Application.Current?.Windows[0].Page != null)
+        {
+            await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
+        }
     }
 }

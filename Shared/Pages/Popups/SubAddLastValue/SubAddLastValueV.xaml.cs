@@ -1,3 +1,4 @@
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 
 namespace Shared.Pages.Popups.SubAddLastValue;
@@ -10,8 +11,14 @@ public partial class SubAddLastValueV : Popup
         var vm = new SubAddLastValueVM();
         vm.SubAddLastValueM.OldValue = oldValue;
         vm.SubAddLastValueM.Title = title;
-        vm.Close += CloseAsync;
+        vm.Close += OnVmClose;
         BindingContext = vm;
+    }
+
+    private Task OnVmClose(object result, CancellationToken token)
+    {
+        return Shell.Current.ClosePopupAsync(result, token);
+        //return CloseAsync(result);
     }
 
 

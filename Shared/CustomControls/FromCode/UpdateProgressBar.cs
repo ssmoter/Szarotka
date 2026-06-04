@@ -79,7 +79,7 @@ namespace Shared.CustomControls.FromCode
             });
 
 
-            bar._title.FontSize = bar._title.FontSize * 2;
+            bar._title.FontSize *= 2;
             bar._title.Style = (Style)Application.Current.Resources["LabelPointerOver"];
 
             bar.Grid.AddRowDefinition(new RowDefinition(new GridLength(1, GridUnitType.Star)));
@@ -149,6 +149,7 @@ namespace Shared.CustomControls.FromCode
         {
             Grid.SizeChanged -= SizeChange;
             Action = null;
+            GC.SuppressFinalize(this);
         }
     }
 }

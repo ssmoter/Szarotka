@@ -12,16 +12,10 @@ namespace DataBase.Service
         Task<UpdateLog> SelectFirst(bool isServer, params UpdateEnum[] updateEnum);
     }
 
-    public class UpdateLogService : IUpdateLogService
+    public class UpdateLogService(IAccessDataBase db, ITimeService timeService) : IUpdateLogService
     {
-        private readonly IAccessDataBase _db;
-        private readonly ITimeService _timeService;
-
-        public UpdateLogService(IAccessDataBase db, ITimeService timeService)
-        {
-            _db = db;
-            _timeService = timeService;
-        }
+        private readonly IAccessDataBase _db = db;
+        private readonly ITimeService _timeService = timeService;
 
         public async Task<UpdateLog> Insert(UpdateLog update)
         {

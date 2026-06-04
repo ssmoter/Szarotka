@@ -4,7 +4,7 @@
     {
         public static async Task<bool> CheckRead()
         {
-            var status = PermissionStatus.Unknown;
+            PermissionStatus status = PermissionStatus.Unknown;
 
             status = await Permissions.CheckStatusAsync<Permissions.StorageRead>();
 
@@ -14,7 +14,7 @@
 
             if (Permissions.ShouldShowRationale<Permissions.StorageRead>())
             {
-                await Shell.Current.DisplayAlert("Pozwolenie", "Pozwolenie na odczytywanie danych z dystku jest wymagane", "Ok");
+                await Shell.Current.DisplayAlertAsync("Pozwolenie", "Pozwolenie na odczytywanie danych z dystku jest wymagane", "Ok");
             }
 
             status = await Permissions.RequestAsync<Permissions.StorageRead>();
@@ -35,7 +35,7 @@
 
             if (Permissions.ShouldShowRationale<Permissions.StorageWrite>())
             {
-                await Shell.Current.DisplayAlert("Pozwolenie", "Pozwolenie na zapis danych z dystku jest wymagane", "Ok");
+                await Shell.Current.DisplayAlertAsync("Pozwolenie", "Pozwolenie na zapis danych z dystku jest wymagane", "Ok");
             }
 
             status = await Permissions.RequestAsync<Permissions.StorageWrite>();
@@ -55,7 +55,7 @@
 
             if (Permissions.ShouldShowRationale<Permissions.Media>())
             {
-                await Shell.Current.DisplayAlert("Pozwolenie", "Pozwolenie na odczyt danych z galerii jest wymagane", "Ok");
+                await Shell.Current.DisplayAlertAsync("Pozwolenie", "Pozwolenie na odczyt danych z galerii jest wymagane", "Ok");
             }
 
             status = await Permissions.RequestAsync<Permissions.Media>();
@@ -76,7 +76,7 @@
 
             if (Permissions.ShouldShowRationale<Permissions.LocationWhenInUse>())
             {
-                await Shell.Current.DisplayAlert("Pozwolenie", "Pozwolenie na sprawdzenie lokalizacji jest wymagane", "Ok");
+                await Shell.Current.DisplayAlertAsync("Pozwolenie", "Pozwolenie na sprawdzenie lokalizacji jest wymagane", "Ok");
             }
 
             status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
@@ -89,10 +89,13 @@
 
         public static async Task<bool> CheckAllPermissionsAboutStorage()
         {
-
+            if (OperatingSystem.IsWindows())
+            {
+                return true;
+            }
             if (!await CheckMedia())
             {
-                await Shell.Current.DisplayAlert("Pozwolenie", "Dane pozwolenie jest wymagane", "Ok");
+                await Shell.Current.DisplayAlertAsync("Pozwolenie", "Dane pozwolenie jest wymagane", "Ok");
                 return false;
             }
 
@@ -100,13 +103,13 @@
             {
                 if (!await CheckWrite())
                 {
-                    await Shell.Current.DisplayAlert("Pozwolenie", "Dane pozwolenie jest wymagane", "Ok");
+                    await Shell.Current.DisplayAlertAsync("Pozwolenie", "Dane pozwolenie jest wymagane", "Ok");
                     return false;
                 }
 
                 if (!await CheckRead())
                 {
-                    await Shell.Current.DisplayAlert("Pozwolenie", "Dane pozwolenie jest wymagane", "Ok");
+                    await Shell.Current.DisplayAlertAsync("Pozwolenie", "Dane pozwolenie jest wymagane", "Ok");
                     return false;
                 }
             }
@@ -119,6 +122,10 @@
 
         public static bool InternetCheck()
         {
+            if (OperatingSystem.IsWindows())
+            {
+                return true;
+            }
             bool isConnected = Connectivity.Current.NetworkAccess == NetworkAccess.Internet;
             if (isConnected)
                 return false;
@@ -127,3 +134,4 @@
         }
     }
 }
+

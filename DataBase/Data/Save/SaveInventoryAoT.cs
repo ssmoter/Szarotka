@@ -299,23 +299,32 @@ namespace DataBase.Data.Save
                            out DateTime lastUpdate,
                            out byte[] userUpdateId,
                            out string sql);
-                _ = _db.DataBase.Execute(sql,
-                                         product.Id,
-                                         product.DayId,
-                                         product.ProductNameId,
-                                         product.ProductPriceId,
-                                         product.Description,
-                                         product.PriceTotal,
-                                         product.PriceTotalCorrect,
-                                         product.PriceTotalAfterCorrect,
-                                         product.Number,
-                                         product.NumberEdit,
-                                         product.NumberReturn,
-                                         product.CreatedTicks,
-                                         product.UpdatedTicks,
-                                         product.IsDelete,
-                                         product.UserCreatedId,
-                                         product.UserUpdatedId);
+                try
+                {
+                    _ = _db.DataBase.Execute(sql,
+                                             product.Id,
+                                             product.DayId,
+                                             product.ProductNameId,
+                                             product.ProductPriceId,
+                                             product.Description,
+                                             product.PriceTotal,
+                                             product.PriceTotalCorrect,
+                                             product.PriceTotalAfterCorrect,
+                                             product.Number,
+                                             product.NumberEdit,
+                                             product.NumberReturn,
+                                             product.CreatedTicks,
+                                             product.UpdatedTicks,
+                                             product.IsDelete,
+                                             product.UserCreatedId,
+                                             product.UserUpdatedId);
+                }
+                catch (Exception)
+                {
+                    product.Updated = lastUpdate;
+                    product.UserUpdatedId = new Guid(userUpdateId);
+                    throw;
+                }
             }
         }
         public async Task SaveProductsTransaction(IList<Product> products, byte[] driverId, bool isServer = false)
@@ -411,16 +420,26 @@ namespace DataBase.Data.Save
                         out DateTime lastUpdate,
                         out byte[] userUpdateId,
                         out string sql);
-                _ = _db.DataBase.Execute(sql,
-                                        cake.Id,
-                                        cake.DayId,
-                                        cake.IsSell,
-                                        cake.Price,
-                                        cake.CreatedTicks,
-                                        cake.UpdatedTicks,
-                                        cake.IsDelete,
-                                        cake.UserCreatedId,
-                                        cake.UserUpdatedId);
+
+                try
+                {
+                    _ = _db.DataBase.Execute(sql,
+                                            cake.Id,
+                                            cake.DayId,
+                                            cake.IsSell,
+                                            cake.Price,
+                                            cake.CreatedTicks,
+                                            cake.UpdatedTicks,
+                                            cake.IsDelete,
+                                            cake.UserCreatedId,
+                                            cake.UserUpdatedId);
+                }
+                catch (Exception)
+                {
+                    cake.Updated = lastUpdate;
+                    cake.UserUpdatedId = new Guid(userUpdateId);
+                    throw;
+                }
             }
 
         }
@@ -520,18 +539,27 @@ namespace DataBase.Data.Save
                               out DateTime lastUpdate,
                               out byte[] userUpdateId,
                               out string sql);
-                _ = _db.DataBase.Execute(sql,
-                                        productName.Id,
-                                        productName.Arrangement,
-                                        productName.Name,
-                                        productName.Description,
-                                        productName.Img,
-                                        productName.IsVisible,
-                                        productName.CreatedTicks,
-                                        productName.UpdatedTicks,
-                                        productName.UserCreatedId,
-                                        productName.UserUpdatedId,
-                                        productName.IsDelete);
+                try
+                {
+                    _ = _db.DataBase.Execute(sql,
+                                            productName.Id,
+                                            productName.Arrangement,
+                                            productName.Name,
+                                            productName.Description,
+                                            productName.Img,
+                                            productName.IsVisible,
+                                            productName.CreatedTicks,
+                                            productName.UpdatedTicks,
+                                            productName.UserCreatedId,
+                                            productName.UserUpdatedId,
+                                            productName.IsDelete);
+                }
+                catch (Exception)
+                {
+                    productName.Updated = lastUpdate;
+                    productName.UserUpdatedId = new Guid(userUpdateId);
+                    throw;
+                }
             }
 
         }
@@ -624,15 +652,24 @@ namespace DataBase.Data.Save
                               out DateTime lastUpdate,
                               out byte[] userUpdateId,
                               out string sql);
-                _ = _db.DataBase.Execute(sql,
-                                        productPrice.Id,
-                                        productPrice.Price,
-                                        productPrice.CreatedTicks,
-                                        productPrice.UpdatedTicks,
-                                        productPrice.UserCreatedId,
-                                        productPrice.UserUpdatedId,
-                                        productPrice.ProductNameId,
-                                        productPrice.IsDelete);
+                try
+                {
+                    _ = _db.DataBase.Execute(sql,
+                                            productPrice.Id,
+                                            productPrice.Price,
+                                            productPrice.CreatedTicks,
+                                            productPrice.UpdatedTicks,
+                                            productPrice.UserCreatedId,
+                                            productPrice.UserUpdatedId,
+                                            productPrice.ProductNameId,
+                                            productPrice.IsDelete);
+                }
+                catch (Exception)
+                {
+                    productPrice.Updated = lastUpdate;
+                    productPrice.UserUpdatedId = new Guid(userUpdateId);
+                    throw;
+                }
             }
 
         }

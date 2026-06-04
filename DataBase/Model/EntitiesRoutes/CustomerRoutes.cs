@@ -169,6 +169,7 @@ public partial class CustomerRoutes : BaseEntities<Guid>, IDisposable
         PhoneNumber = string.Empty;
         Longitude = 0;
         Latitude = 0;
+        GC.SuppressFinalize(this);
     }
 }
 
@@ -226,7 +227,7 @@ public static class CustomerRoutesExtensions
     // Returns the ticks of the first enabled day in the week (Sunday to Saturday)
     private static long GetFirstEnabledDayTicks(SelectedDayOfWeekRoutes dayOfWeek)
     {
-        foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
+        foreach (DayOfWeek day in Enum.GetValues<DayOfWeek>())
         {
             if (IsDayEnabled(dayOfWeek, day))
                 return GetDayTicks(dayOfWeek, day);

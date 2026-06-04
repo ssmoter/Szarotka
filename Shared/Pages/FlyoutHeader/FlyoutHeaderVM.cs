@@ -108,8 +108,8 @@ namespace Shared.Pages.FlyoutHeader
             if (view is VisualElement element)
             {
                 await Task.WhenAll(
-                    element.FadeTo(0, 500),
-                    element.TranslateTo(0, -20, 500)
+                    element.FadeToAsync(0, 500),
+                    element.TranslateToAsync(0, -20, 500)
                 );
             }
         }
@@ -166,3 +166,4 @@ namespace Shared.Pages.FlyoutHeader
         }
     }
 }
+

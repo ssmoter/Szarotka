@@ -106,9 +106,11 @@ AND
 
             for (int i = 0; i < count; i++)
             {
-                products[i] = new();
-                products[i].Name = result[i].name;
-                products[i].ProductNameId = result[i].name.Id;
+                products[i] = new()
+                {
+                    Name = result[i].name,
+                    ProductNameId = result[i].name.Id
+                };
                 ProductPrice? price = result[i].price?.FirstOrDefault();
                 if (price is not null)
                 {

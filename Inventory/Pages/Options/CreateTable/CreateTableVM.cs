@@ -68,7 +68,7 @@ namespace Inventory.Pages.Options.CreateTable
                     return;
                 }
 
-                var response = await Shell.Current.DisplayAlert("Generowanie tabeli", "Przy generowaniu tabeli poprzednie tabele zostają usunięte", "Tak", "Nie");
+                var response = await Shell.Current.DisplayAlertAsync("Generowanie tabeli", "Przy generowaniu tabeli poprzednie tabele zostają usunięte", "Tak", "Nie");
                 if (!response)
                 {
                     return;
@@ -150,3 +150,4 @@ namespace Inventory.Pages.Options.CreateTable
 
     }
 }
+

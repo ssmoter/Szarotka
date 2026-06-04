@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui.Extensions;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -149,8 +150,8 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         private readonly IAccessDataBase _db;
         private readonly DataBase.Service.IUpdateLogService _update;
         private readonly Data.RouteApi.ISendCustomersHttp _sendHttp;
-        internal ResidentialAddress[] _address { get; set; } = [];
-        internal CustomerRoutes originCustomer { get; set; }
+        internal ResidentialAddress[] Address { get; set; } = [];
+        internal CustomerRoutes OriginCustomer { get; set; }
 
 
         public AddCustomerVM(IAccessDataBase db,
@@ -373,20 +374,24 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
                     return;
                 }
 
-                if (_address.Length < 1)
+                if (this.Address.Length < 1)
                 {
                     var response = await _IAddressFromCoordinates.FindGoogleApiAddress(Customer.Latitude, Customer.Longitude);
-                    _address = new ResidentialAddress[response.Results.Count];
+                    this.Address = new ResidentialAddress[response.Results.Count];
 
                     for (int i = 0; i < response.Results.Count; i++)
                     {
-                        _address[i] = response.Results[i].FromGoogleToAddress();
+                        this.Address[i] = response.Results[i].FromGoogleToAddress();
                     }
                 }
 
-                var popup = new DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses.ProbableAddressesV(_address);
+                var popup = new DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses.ProbableAddressesV(this.Address);
 
-                var result = await Shell.Current.ShowPopupAsync(popup);
+                var result = default(object);
+                if (Application.Current?.Windows[0].Page != null)
+                {
+                    result = await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
+                }
 
                 if (result is ResidentialAddress address)
                 {

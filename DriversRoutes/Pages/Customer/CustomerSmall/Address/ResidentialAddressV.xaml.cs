@@ -13,9 +13,8 @@ public partial class ResidentialAddressV : ContentView
     = BindableProperty.Create(nameof(ResidentialAddress), typeof(ResidentialAddress), typeof(ResidentialAddressV), propertyChanged: (bindable, oldValu, newValue) =>
     {
         var control = (ResidentialAddressV)bindable;
-        var address = newValue as ResidentialAddress;
 
-        if (address is null)
+        if (newValue is not ResidentialAddress address)
         {
             return;
         }

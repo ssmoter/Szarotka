@@ -7,25 +7,25 @@ using Server.Requests;
 namespace Server.Endpoints
 {
 
-    public static class UserEndpoints 
+    public static class UserEndpoints
     {
         public static void MapEndpoints(WebApplication app)
         {
 
             var user = app.MapGroup("/user");
-            user.MapPost("/register", async ([FromBody] RegisterUser user, IRegisterUserRequests registerUserEndpoint, CancellationToken token = default)=>
+            user.MapPost("/register", async ([FromBody] RegisterUser user, IRegisterUserRequests registerUserEndpoint, CancellationToken token = default) =>
             {
                 return await registerUserEndpoint.InsertUser(user, token);
             });
-            user.MapGet("/confirm-email/{code}", async (int code, IRegisterUserRequests registerUserEndpoint, CancellationToken token = default)=>
+            user.MapGet("/confirm-email/{code}", async (int code, IRegisterUserRequests registerUserEndpoint, CancellationToken token = default) =>
             {
                 return await registerUserEndpoint.ConfirmEmail(code, token);
             });
-            user.MapPost("login", async ([FromBody] LoginUser user, HttpContext context, ILoginUserRequests loginUserRequests, CancellationToken token = default)=>
+            user.MapPost("login", async ([FromBody] LoginUser user, HttpContext context, ILoginUserRequests loginUserRequests, CancellationToken token = default) =>
             {
                 return await loginUserRequests.LogInUser(user, token);
             });
-            user.MapGet("logout", ( /*ILoginUserEndpoint loginUserEndpoint*/)=>
+            user.MapGet("logout", ( /*ILoginUserEndpoint loginUserEndpoint*/) =>
             {
                 throw new NotImplementedException();
                 //return await loginUserEndpoint.LogOutUser("user");
@@ -34,7 +34,7 @@ namespace Server.Endpoints
                 =>
             {
                 // Pobierz wartość nagłówka Authorization
-                var authorizationHeader = context.Request.Headers["Authorization"].ToString();
+                var authorizationHeader = context.Request.Headers.Authorization.ToString();
                 if (string.IsNullOrEmpty(authorizationHeader))
                 {
                     return Results.Unauthorized();
@@ -52,7 +52,7 @@ namespace Server.Endpoints
                 }
                 return await loginUserRequests.RefreshToken(userToken, token);
             }).RequireAuthorization();
-            user.MapPost("edit", async ([FromBody] User user, IEditUserRequests editUserRequests, HttpContext context, CancellationToken token = default)=>
+            user.MapPost("edit", async ([FromBody] User user, IEditUserRequests editUserRequests, HttpContext context, CancellationToken token = default) =>
             {
                 var authorizationHeader = context.Request.Headers.Authorization.ToString();
                 var userToken = DataBase.Helper.ReadToken.RemoveBearer(authorizationHeader);
@@ -72,12 +72,12 @@ namespace Server.Endpoints
                 };
                 return await editUserRequests.Update(editUser, context, token);
             }).RequireAuthorization();
-            user.MapGet("/{id}", async (string id, ILoginUserRequests loginUserRequests, CancellationToken token = default)=>
+            user.MapGet("/{id}", async (string id, ILoginUserRequests loginUserRequests, CancellationToken token = default) =>
             {
-                return await loginUserRequests.GetPublicUser(id);
+                return await loginUserRequests.GetPublicUser(id, token);
             }).RequireAuthorization();
 
-            user.MapGet("reset-password-email/{email}", async (string email, IResetPasswordRequests resetPasswordRequests, CancellationToken token = default)=>
+            user.MapGet("reset-password-email/{email}", async (string email, IResetPasswordRequests resetPasswordRequests, CancellationToken token = default) =>
             {
                 return await resetPasswordRequests.ResetPasswordEmail(email, token);
             });
@@ -86,7 +86,7 @@ namespace Server.Endpoints
                 return await resetPasswordRequests.ResetPasswordCode(code, token);
             });
             user.MapGet("reset-password/{code}/{password}", async (int code, string password, IResetPasswordRequests resetPasswordRequests, CancellationToken token = default) =>
-            {                
+            {
                 return await resetPasswordRequests.ResetPasswordNew(code, password, token);
             });
         }

@@ -13,18 +13,12 @@ namespace DriversRoutes.Data.GoogleApi
         void SetKey(HttpClient httpClient, string key);
     }
 
-    public class Routes : IRoutes
+    public class Routes(IHttpClientFactory httpClient) : IRoutes
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpClientFactory _httpClientFactory = httpClient;
 
-        private readonly string _key;
+        private readonly string _key = Shared.Key.GoogleApi.Key;
         private static string Uri => "https://routes.googleapis.com/directions/v2:computeRoutes";
-
-        public Routes(IHttpClientFactory httpClient)
-        {
-            _httpClientFactory = httpClient;
-            _key = Shared.Key.GoogleApi.Key;
-        }
 
         public void SetKey(HttpClient httpClient, string key)
         {

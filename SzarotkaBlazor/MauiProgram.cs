@@ -19,7 +19,7 @@ namespace SzarotkaBlazor
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
-                .UseMauiCommunityToolkit(options=>
+                .UseMauiCommunityToolkit(options =>
                 {
 #if WINDOWS
                     options.SetShouldEnableSnackbarOnWindows(true);

@@ -15,18 +15,11 @@ namespace Shared.Data.ServerHttpClients
         Task<User> In(LoginUser register, CancellationToken token = default);
     }
 
-    public partial class LoginHttp : ILoginHttp, IDisposable
+    public partial class LoginHttp(IAccessDataBase db, IHttpClientFactory httpClient) : ILoginHttp, IDisposable
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IAccessDataBase _db;
-        private readonly string _url;
-        public LoginHttp(IAccessDataBase db, IHttpClientFactory httpClient)
-        {
-            _db = db;
-            _url = db.GetServerUrl();
-            _httpClientFactory = httpClient;
-        }
-
+        private readonly IHttpClientFactory _httpClientFactory = httpClient;
+        private readonly IAccessDataBase _db = db;
+        private readonly string _url = db.GetServerUrl();
 
         public async Task<User> In(LoginUser login, CancellationToken token = default)
         {

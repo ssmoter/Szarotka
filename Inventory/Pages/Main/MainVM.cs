@@ -94,7 +94,7 @@ namespace Inventory.Pages.Main
         {
             if (days.Id == Guid.Empty)
             {
-                var result = await Shell.Current.DisplayAlert("Czy chcesz utworzyć nowy wpis",
+                var result = await Shell.Current.DisplayAlertAsync("Czy chcesz utworzyć nowy wpis",
                             "Wraz z utworzeniem nowego dnia dane są automatycznie zapisywane",
                             "Utwórz", "Anuluj");
 
@@ -134,3 +134,4 @@ namespace Inventory.Pages.Main
         }
     }
 }
+

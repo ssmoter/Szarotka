@@ -13,18 +13,10 @@ namespace Server.Service
         Task UpdateUserType(User user);
     }
 
-    public class EditUserService : IEditUserService
+    public class EditUserService(IAccessDataBase db, ITimeService timeService) : IEditUserService
     {
-        private readonly IAccessDataBase _db;
-        private readonly ITimeService _timeService;
-
-        public EditUserService(IAccessDataBase db, ITimeService timeService)
-        {
-            _db = db;
-            _timeService = timeService;
-        }
-
-
+        private readonly IAccessDataBase _db = db;
+        private readonly ITimeService _timeService = timeService;
 
         public async Task UpdateName(User user)
         {

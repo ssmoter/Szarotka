@@ -33,7 +33,7 @@ namespace Shared.Pages.UserDisplay
             set => SetProperty(ref user, value, nameof(User));
         }
 
-        private UserDisplayVPopup userDisplayVPopup = new();
+        private readonly UserDisplayVPopup userDisplayVPopup = new();
         public UserDisplayVM()
         {
             User ??= new();

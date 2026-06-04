@@ -185,7 +185,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
         {
             await SaveProduct();
 
-            await Shell.Current.DisplayAlert("Aktualizacja", $"Produkt {Product.Name.Name} został zaktualizowany", "Ok");
+            await Shell.Current.DisplayAlertAsync("Aktualizacja", $"Produkt {Product.Name.Name} został zaktualizowany", "Ok");
         }
 
         private async Task SaveProduct()
@@ -208,16 +208,16 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
 
                 await Toast.Make("Zapisano").Show();
 
-                var response = await _sendHttp.SendProduct(
+                var (httpMessage, content) = await _sendHttp.SendProduct(
                     new EmptyProduct()
                     {
                         Name = Product.Name,
                         Prices = product.Prices,
                     });
 
-                var result = response.httpMessage;
+                var result = httpMessage;
 
-                json = response.content;
+                json = content;
 
                 if (result.IsSuccessStatusCode)
                 {
@@ -283,7 +283,7 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
             try
             {
                 await SaveProduct();
-                await Shell.Current.DisplayAlert("Dodany", $"Produkt {Product.Name.Name} został dodany", "Ok");
+                await Shell.Current.DisplayAlertAsync("Dodany", $"Produkt {Product.Name.Name} został dodany", "Ok");
             }
             finally
             {
@@ -402,4 +402,5 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
 
 
 }
+
 

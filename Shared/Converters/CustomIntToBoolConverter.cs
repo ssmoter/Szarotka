@@ -13,9 +13,9 @@ namespace Shared.Converters
                 {
                     result = true;
                 }
-                if (parameter is bool)
+                if (parameter is bool b)
                 {
-                    if ((bool)parameter)
+                    if (b)
                     {
                         result = !result;
                     }

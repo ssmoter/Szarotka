@@ -5,14 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Handler
 {
-    public class ProblemExceptionHandler : IExceptionHandler
+    public class ProblemExceptionHandler(IProblemDetailsService problemDetailsService) : IExceptionHandler
     {
-        private readonly IProblemDetailsService _problemDetailsService;
-
-        public ProblemExceptionHandler(IProblemDetailsService problemDetailsService)
-        {
-            _problemDetailsService = problemDetailsService;
-        }
+        private readonly IProblemDetailsService _problemDetailsService = problemDetailsService;
 
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {

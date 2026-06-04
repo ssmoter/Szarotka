@@ -75,10 +75,11 @@ namespace Inventory.Pages.RangeDay.Controls
 
         public SortedTypControl()
         {
-            SortedList = new string[]
-            {
+            //niewiem czy mogę usunąć
+            SortedList =
+            [
                 "Jabłko","Gruszka","Śliwka","Jabłko","Gruszka","Śliwka"
-            };
+            ];
 
             this.AddColumnDefinition(new ColumnDefinition() { Width = new GridLength(50) });
             this.AddColumnDefinition(new ColumnDefinition() { Width = GridLength.Star });
@@ -97,7 +98,7 @@ namespace Inventory.Pages.RangeDay.Controls
             this.Add(_desc, 2, 0);
             this.AddWithSpan(_absoluteLayout, 1, 0, 1, 3);
             ZIndex = 1110;
-            _name.TextChanged += _name_TextChanged;
+            _name.TextChanged += Name_TextChanged;
 
             _items.SelectionChanged += (s, e) =>
             {
@@ -109,12 +110,13 @@ namespace Inventory.Pages.RangeDay.Controls
             Application.Current.RequestedThemeChanged += Current_RequestedThemeChanged;
             Current_RequestedThemeChanged(null, null);
         }
+        // Prosta, poprawiona wersja Dispose w SelectionToColorConverter
         public void Dispose()
         {
-            _name.TextChanged -= _name_TextChanged;
             Application.Current.RequestedThemeChanged -= Current_RequestedThemeChanged;
+            // brak GC.SuppressFinalize(this); — niepotrzebne jeśli nie masz finalizatora
         }
-        private void _name_TextChanged(object sender, TextChangedEventArgs e)
+        private void Name_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (sender is Entry entry)
             {
@@ -183,7 +185,7 @@ namespace Inventory.Pages.RangeDay.Controls
             private Color ColorS;
             public void Dispose()
             {
-                Application.Current.RequestedThemeChanged -= Current_RequestedThemeChanged;
+                Application.Current.RequestedThemeChanged -= Current_RequestedThemeChanged;              
             }
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {

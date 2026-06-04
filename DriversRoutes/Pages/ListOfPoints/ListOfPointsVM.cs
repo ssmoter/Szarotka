@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -349,7 +350,11 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
         try
         {
             var popup = new Popups.SelectDay.SelectDayV();
-            var response = await Shell.Current.ShowPopupAsync(popup);
+            var response = default(object);
+            if (Application.Current?.Windows[0].Page != null)
+            {
+                response = await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
+            }
             if (response is null)
             {
                 return;
@@ -383,7 +388,7 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
     {
         try
         {
-            var result = await Shell.Current.DisplayAlert("Zapisywanie", "Czy chcesz zapisać lub zaktualizować wczytane punkty", "Tak", "Nie");
+            var result = await Shell.Current.DisplayAlertAsync("Zapisywanie", "Czy chcesz zapisać lub zaktualizować wczytane punkty", "Tak", "Nie");
             if (!result)
                 return;
             await Toast.Make("Trwa zapisywanie zmian", ToastDuration.Long).Show();
@@ -736,4 +741,5 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
 
 
 }
+
 

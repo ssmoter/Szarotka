@@ -16,18 +16,11 @@ namespace DriversRoutes.Data.RouteApi
         Task<HttpResponseMessage> SendCustomerRoutes(IList<CustomerRoutes> customers, UpdateProgressBar progressBar = null, bool forceUpdate = false, CancellationToken token = default);
     }
 
-    public class SendCustomersHttp : ISendCustomersHttp
+    public class SendCustomersHttp(IAccessDataBase db, IHttpClientFactory httpClient) : ISendCustomersHttp
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IAccessDataBase _db;
-        private readonly string _url;
-        public SendCustomersHttp(IAccessDataBase db, IHttpClientFactory httpClient)
-        {
-            _db = db;
-            _url = db.GetServerUrl();
-            _httpClientFactory = httpClient;
-        }
-
+        private readonly IHttpClientFactory _httpClientFactory = httpClient;
+        private readonly IAccessDataBase _db = db;
+        private readonly string _url = db.GetServerUrl();
 
         public async Task<HttpResponseMessage> SendCustomerRoute(CustomerRoutes customers, UpdateProgressBar progressBar = null, bool forceUpdate = false, CancellationToken token = default)
         {

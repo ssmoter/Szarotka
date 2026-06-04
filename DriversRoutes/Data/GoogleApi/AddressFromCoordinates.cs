@@ -13,17 +13,11 @@ namespace DriversRoutes.Data.GoogleApi
         Task<ResidentialAddress[]> FindResidentialAddress(double latitude, double longitude, CancellationToken token = default);
     }
 
-    public class AddressFromCoordinates : IAddressFromCoordinates
+    public class AddressFromCoordinates(IHttpClientFactory httpClient) : IAddressFromCoordinates
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpClientFactory _httpClientFactory = httpClient;
 
-        private readonly string key;
-
-        public AddressFromCoordinates(IHttpClientFactory httpClient)
-        {
-            _httpClientFactory = httpClient;
-            key = Shared.Key.GoogleApi.Key;
-        }
+        private readonly string key = Shared.Key.GoogleApi.Key;
 
         public async Task<GoogleApiAddress> FindGoogleApiAddress(double latitude, double longitude, CancellationToken token = default)
         {

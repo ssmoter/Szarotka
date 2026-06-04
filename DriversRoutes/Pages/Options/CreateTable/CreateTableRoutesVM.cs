@@ -39,14 +39,14 @@ namespace DriversRoutes.Pages.Options.CreateTable
         {
             _db = db;
 
-            TableMs = new ObservableCollection<CreateTableRoutesM>
-            {
-                new CreateTableRoutesM() { RealTableName = nameof(Routes), TableName = "- z trasami" },
-                new CreateTableRoutesM() { RealTableName = nameof(CustomerRoutes), TableName = "- z przystankami" },
-                new CreateTableRoutesM() { RealTableName = nameof(SelectedDayOfWeekRoutes), TableName = "- z dniami przyjazdu" },
-                new CreateTableRoutesM() { RealTableName = nameof(ResidentialAddress), TableName = "- z adresami" },
+            TableMs =
+            [
+                new() { RealTableName = nameof(Routes), TableName = "- z trasami" },
+                new() { RealTableName = nameof(CustomerRoutes), TableName = "- z przystankami" },
+                new() { RealTableName = nameof(SelectedDayOfWeekRoutes), TableName = "- z dniami przyjazdu" },
+                new() { RealTableName = nameof(ResidentialAddress), TableName = "- z adresami" },
 
-            };
+            ];
 
             Task.Run(async () =>
             {
@@ -77,7 +77,7 @@ namespace DriversRoutes.Pages.Options.CreateTable
                     return;
                 }
 
-                var response = await Shell.Current.DisplayAlert("Generowanie tabeli", "Przy generowaniu tabeli poprzednie tabele zostają usunięte", "Tak", "Nie");
+                var response = await Shell.Current.DisplayAlertAsync("Generowanie tabeli", "Przy generowaniu tabeli poprzednie tabele zostają usunięte", "Tak", "Nie");
                 if (!response)
                 {
                     return;
@@ -198,3 +198,4 @@ namespace DriversRoutes.Pages.Options.CreateTable
         #endregion
     }
 }
+

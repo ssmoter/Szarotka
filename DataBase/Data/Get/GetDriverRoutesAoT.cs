@@ -12,14 +12,9 @@ namespace DataBase.Data.Get
         Task<IList<Routes>> Routes();
     }
 
-    public class GetDriverRoutesAoT : IGetDriverRoutesAoT
+    public class GetDriverRoutesAoT(IAccessDataBase db) : IGetDriverRoutesAoT
     {
-        private readonly IAccessDataBase _db;
-
-        public GetDriverRoutesAoT(IAccessDataBase db)
-        {
-            _db = db;
-        }
+        private readonly IAccessDataBase _db = db;
 
         public async Task<IList<CustomerRoutes>> CustomerRoutes(string where, params object[] args)
         {

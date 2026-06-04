@@ -17,24 +17,15 @@ namespace Server.Requests
         Task<IResult> UpdateUserType(EditUser edit, CancellationToken token = default);
     }
 
-    public class EditUserRequests : IEditUserRequests
+    public class EditUserRequests(IAccessDataBase db,
+                            IUserValidation userValidation,
+                            IEditUserService editUser,
+                            IAuthenticationService authenticationService) : IEditUserRequests
     {
-        private readonly IAccessDataBase _db;
-        private readonly IUserValidation _userValidation;
-        private readonly IEditUserService _editUser;
-        private readonly IAuthenticationService _authenticationService;
-
-        public EditUserRequests(IAccessDataBase db,
-                                IUserValidation userValidation,
-                                IEditUserService editUser,
-                                IAuthenticationService authenticationService)
-        {
-            _db = db;
-            _userValidation = userValidation;
-            _editUser = editUser;
-            _authenticationService = authenticationService;
-        }
-
+        private readonly IAccessDataBase _db = db;
+        private readonly IUserValidation _userValidation = userValidation;
+        private readonly IEditUserService _editUser = editUser;
+        private readonly IAuthenticationService _authenticationService = authenticationService;
 
         public async Task<IResult> Update(EditUser edit, HttpContext context, CancellationToken token = default)
         {

@@ -1,6 +1,7 @@
 ﻿using DataBase.Model.EntitiesServer;
 
 using Server.HtmlBody;
+using HtmlEmail = Server.HtmlBody.Email;
 using Server.Model;
 
 namespace Server.Service
@@ -37,7 +38,7 @@ namespace Server.Service
             var code = _random.Next(9_999, 99_999);
 
             var saveCode = _registerService.InsertCodeEmailAndRemoveOld(new ConfirmCode(user.Id, code));
-            var sendEmail = _emailService.SendMessage(user.Email, "Potwierdź swój email", Email.ConfirmEmail(code, new TimeSpan(0, _emailConfig.ExpireDateMinutes, 0)), token);
+            var sendEmail = _emailService.SendMessage(user.Email, "Potwierdź swój email", HtmlEmail.ConfirmEmail(code, new TimeSpan(0, _emailConfig.ExpireDateMinutes, 0)), token);
 
             await Task.WhenAll(saveCode, sendEmail);
         }
@@ -46,7 +47,7 @@ namespace Server.Service
             var code = _random.Next(9_999, 99_999);
 
             var saveCode = _registerService.InsertCodeEmailAndRemoveOld(new ConfirmCode(user.Id, code));
-            var sendEmail = _emailService.SendMessage(user.Email, "Reset hasła", Email.ResetPassword(code, new TimeSpan(0, _emailConfig.ExpireDateMinutes, 0)), token);
+            var sendEmail = _emailService.SendMessage(user.Email, "Reset hasła", HtmlEmail.ResetPassword(code, new TimeSpan(0, _emailConfig.ExpireDateMinutes, 0)), token);
 
             await Task.WhenAll(saveCode, sendEmail);
         }

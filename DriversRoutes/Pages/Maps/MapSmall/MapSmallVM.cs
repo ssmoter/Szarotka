@@ -194,7 +194,7 @@ public partial class MapSmallVM : ObservableObject
                 RouteDuration = TimeSpan.FromSeconds(GetOnlySeconds(firstRoute.Duration));
                 static int GetOnlySeconds(ReadOnlySpan<char> duration)
                 {
-                    var seconds = int.Parse(duration.Slice(0, duration.Length - 1));
+                    var seconds = int.Parse(duration[..^1]);
                     return seconds;
                 }
 
@@ -269,7 +269,7 @@ public partial class MapSmallVM : ObservableObject
     {
         try
         {
-            var result = await Shell.Current.DisplayAlert("Nowa lokalizacja", "Czy chcesz nadpisać lokalizacje", "Tak", "Nie");
+            var result = await Shell.Current.DisplayAlertAsync("Nowa lokalizacja", "Czy chcesz nadpisać lokalizacje", "Tak", "Nie");
             if (!result)
             {
                 return;
@@ -364,3 +364,4 @@ public partial class MapSmallVM : ObservableObject
         Data.ActionLocation.MapGeolocation.OnStopListeningLocation();
     }
 }
+

@@ -11,7 +11,7 @@ var builder = WebApplication.CreateSlimBuilder(args);
 
 builder.Services.ConfigureHttpJsonOptions((Action<Microsoft.AspNetCore.Http.Json.JsonOptions>)(options =>
 {
-    options.SerializerOptions.TypeInfoResolverChain.Add(AppJsonSerializerContext.Default);
+    //options.SerializerOptions.TypeInfoResolverChain.Add(AppJsonSerializerContext.Default);
     options.SerializerOptions.TypeInfoResolverChain.Add(SzarotkaJsonSerializerContext.Default);
 }));
 
@@ -66,30 +66,30 @@ UpdateLogEndpoints.MapEndpoints(app);
 
 
 
-var sampleTodos = new Todo[] {
-    new(1, "Walk the dog"),
-    new(2, "Do the dishes", DateOnly.FromDateTime(DateTime.Now)),
-    new(3, "Do the laundry", DateOnly.FromDateTime(DateTime.Now.AddDays(1))),
-    new(4, "Clean the bathroom"),
-    new(5, "Clean the car", DateOnly.FromDateTime(DateTime.Now.AddDays(2)))
-};
+//var sampleTodos = new Todo[] {
+//    new(1, "Walk the dog"),
+//    new(2, "Do the dishes", DateOnly.FromDateTime(DateTime.Now)),
+//    new(3, "Do the laundry", DateOnly.FromDateTime(DateTime.Now.AddDays(1))),
+//    new(4, "Clean the bathroom"),
+//    new(5, "Clean the car", DateOnly.FromDateTime(DateTime.Now.AddDays(2)))
+//};
 
-var todosApi = app.MapGroup("/todos");
-//todosApi.MapGet("/", () => new DataBase.Data.AccessDataBase().SaveLog(new Exception("test")));
-todosApi.MapGet("/", () => sampleTodos);
-todosApi.MapGet("/{id}", (int id) =>
-    sampleTodos.FirstOrDefault(a => a.Id == id) is { } todo
-        //? Results.Ok(todo)
-        //? throw new DataBase.Model.EntitiesServer.ErrorException("error", "message")
-        ? throw new ArgumentNullException("test")
-        : Results.NotFound());
+//var todosApi = app.MapGroup("/todos");
+////todosApi.MapGet("/", () => new DataBase.Data.AccessDataBase().SaveLog(new Exception("test")));
+//todosApi.MapGet("/", () => sampleTodos);
+//todosApi.MapGet("/{id}", (int id) =>
+//    sampleTodos.FirstOrDefault(a => a.Id == id) is { } todo
+//        //? Results.Ok(todo)
+//        //? throw new DataBase.Model.EntitiesServer.ErrorException("error", "message")
+//        ? throw new ArgumentNullException("test")
+//        : Results.NotFound());
 
 app.Run();
 
-public record Todo(int Id, string? Title, DateOnly? DueBy = null, bool IsComplete = false);
+//public record Todo(int Id, string? Title, DateOnly? DueBy = null, bool IsComplete = false);
 
-[JsonSerializable(typeof(Todo[]))]
-public partial class AppJsonSerializerContext : JsonSerializerContext
-{
+//[JsonSerializable(typeof(Todo[]))]
+//public partial class AppJsonSerializerContext : JsonSerializerContext
+//{
 
-}
+//}

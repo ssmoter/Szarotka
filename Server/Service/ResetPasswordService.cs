@@ -15,18 +15,11 @@ namespace Server.Service
         Task<User> GetUserIdFromEmail(string email);
     }
 
-    public class ResetPasswordService : IResetPasswordService
+    public class ResetPasswordService(IAccessDataBase db, IUserValidation userValidation, ITimeService time) : IResetPasswordService
     {
-        private readonly IAccessDataBase _db;
-        private readonly IUserValidation _userValidation;
-        private readonly ITimeService _time;
-
-        public ResetPasswordService(IAccessDataBase db, IUserValidation userValidation, ITimeService time)
-        {
-            _db = db;
-            _userValidation = userValidation;
-            _time = time;
-        }
+        private readonly IAccessDataBase _db = db;
+        private readonly IUserValidation _userValidation = userValidation;
+        private readonly ITimeService _time = time;
 
         public async Task<User> GetUserIdFromEmail(string email)
         {

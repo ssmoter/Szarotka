@@ -1,3 +1,4 @@
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 
 using Inventory.Model;
@@ -10,7 +11,7 @@ public partial class PopupSelectRangeDateV : Popup, IDisposable
     {
         InitializeComponent();
         var vm = new PopupSelectRangeDateVM();
-        vm.Close += CloseAsync;
+        vm.Close += OnVmClose;
 
         BindingContext = vm;
     }
@@ -18,7 +19,7 @@ public partial class PopupSelectRangeDateV : Popup, IDisposable
     {
         InitializeComponent();
         var vm = new PopupSelectRangeDateVM(lastResult);
-        vm.Close += CloseAsync;
+        vm.Close += OnVmClose;
 
         BindingContext = vm;
     }
@@ -26,8 +27,14 @@ public partial class PopupSelectRangeDateV : Popup, IDisposable
     {
         if (BindingContext is PopupSelectRangeDateVM vm)
         {
-            vm.Close -= CloseAsync;
+            vm.Close -= OnVmClose;
         }
         GC.SuppressFinalize(this);
+    }
+
+    private Task OnVmClose(object result, CancellationToken token)
+    {
+        return Shell.Current.ClosePopupAsync(result, token);
+        //return CloseAsync(result);
     }
 }

@@ -11,7 +11,7 @@ namespace Shared.Data
             db.SaveLog(ex);
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                Shell.Current.CurrentPage.DisplayAlert("Error", ex.Message, "Ok");
+                Shell.Current.CurrentPage.DisplayAlertAsync("Error", ex.Message, "Ok");
             });
         }
         public static async Task SaveLogAsyncExtension(this IAccessDataBase db, Exception ex)
@@ -19,7 +19,7 @@ namespace Shared.Data
             await db.SaveLogAsync(ex);
             MainThread.BeginInvokeOnMainThread(async () =>
             {
-                await Shell.Current.CurrentPage.DisplayAlert("Error", ex.Message, "Ok");
+                await Shell.Current.CurrentPage.DisplayAlertAsync("Error", ex.Message, "Ok");
             });
         }
 
@@ -54,3 +54,4 @@ namespace Shared.Data
 
     }
 }
+

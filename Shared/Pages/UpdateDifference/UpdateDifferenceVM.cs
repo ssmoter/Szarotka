@@ -114,7 +114,7 @@ namespace Shared.Pages.UpdateDifference
         [RelayCommand]
         static async Task Back()
         {
-            var leave = await Shell.Current.DisplayAlert("Cofnij", "Podczas cofania wybrane rekordy nie zostaną zsynchronizowane. W prawym górnym rogu znajduje się opcja powrotu do tej strony.", "Tak", "Nie");
+            var leave = await Shell.Current.DisplayAlertAsync("Cofnij", "Podczas cofania wybrane rekordy nie zostaną zsynchronizowane. W prawym górnym rogu znajduje się opcja powrotu do tej strony.", "Tak", "Nie");
             if (leave)
             {
                 if (Shell.Current.Navigation.NavigationStack.Count > 1)
@@ -133,7 +133,7 @@ namespace Shared.Pages.UpdateDifference
         {
             try
             {
-                var result = await Shell.Current.DisplayAlert("Zapis", "Czy chcesz zapisać wybrane rekordy", "Tak", "Nie");
+                var result = await Shell.Current.DisplayAlertAsync("Zapis", "Czy chcesz zapisać wybrane rekordy", "Tak", "Nie");
 
                 if (!result)
                 {
@@ -199,3 +199,4 @@ namespace Shared.Pages.UpdateDifference
 
     }
 }
+

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -457,7 +458,7 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
                 RouteDuration = TimeSpan.FromSeconds(GetOnlySeconds(firstRoute.Duration));
                 static int GetOnlySeconds(ReadOnlySpan<char> duration)
                 {
-                    var seconds = int.Parse(duration.Slice(0, duration.Length - 1));
+                    var seconds = int.Parse(duration[..^1]);
                     return seconds;
                 }
 
@@ -546,11 +547,15 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
         {
             if (Routes is null)
             {
-                await Shell.Current.DisplayAlert("Brak trasy", "Zapisywanie jest dostępne tylko po wybraniu trasy konkretnego kierowcy", "Ok");
+                await Shell.Current.DisplayAlertAsync("Brak trasy", "Zapisywanie jest dostępne tylko po wybraniu trasy konkretnego kierowcy", "Ok");
                 return;
             }
             var popup = new Popups.SelectDay.SelectDayV();
-            var response = await Shell.Current.ShowPopupAsync(popup);
+            var response = default(object);
+            if (Application.Current?.Windows[0].Page != null)
+            {
+                response = await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
+            }
             if (response is null)
             {
                 return;
@@ -637,7 +642,7 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
         {
             if (Routes is null)
             {
-                await Shell.Current.DisplayAlert("Brak trasy", "Wczytywanie jest dostępne tylko po wybraniu trasy konkretnego kierowcy", "Ok");
+                await Shell.Current.DisplayAlertAsync("Brak trasy", "Wczytywanie jest dostępne tylko po wybraniu trasy konkretnego kierowcy", "Ok");
                 return;
             }
             var mapSpan = await Data.ActionLocation.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(1));
@@ -807,4 +812,5 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
     #endregion
 
 }
+
 

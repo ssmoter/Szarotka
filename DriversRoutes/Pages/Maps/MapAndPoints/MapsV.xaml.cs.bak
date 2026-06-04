@@ -1,0 +1,134 @@
+﻿using DataBase.Model.EntitiesRoutes;
+
+using Microsoft.Maui.Controls.Maps;
+
+namespace DriversRoutes.Pages.Maps.MapAndPoints;
+
+public partial class MapsV : ContentPage, IDisposable
+{
+    public MapsV(MapsVM vm)
+    {
+        InitializeComponent();
+        vm.GoToLocationAction += Map.MoveToRegion;
+        vm.AddRoutesPolylineAction += SetPolyline;
+        vm.ClearRoutesPolylineAction += ClearPolyline;
+        vm.GetMap = Map;
+        BindingContext = vm;
+    }
+    public void Dispose()
+    {
+        if (BindingContext is MapsVM vm)
+        {
+            vm.GoToLocationAction -= Map.MoveToRegion;
+            vm.AddRoutesPolylineAction -= SetPolyline;
+            vm.ClearRoutesPolylineAction -= ClearPolyline;
+        }
+        GC.SuppressFinalize(this);
+    }
+
+    private void SetPolyline(Polyline polyline)
+    {
+        Map.MapElements.Add(polyline);
+    }
+    private void ClearPolyline()
+    {
+        Map.MapElements.Clear();
+    }
+
+    protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
+    {
+        base.OnNavigatedFrom(args);
+        if (BindingContext is MapsVM vm)
+        {
+            if (!vm.RoutesToken.IsCancellationRequested)
+                vm?.RoutesToken?.Cancel();
+            vm?.RoutesToken?.Dispose();
+            vm.RouteIsVisible = false;
+            ClearPolyline();
+            Data.ActionLocation.MapGeolocation.OnStopListeningLocation();
+            Data.DrawIconOnMap.DisposeImagePinStreams();
+        }
+    }
+
+    protected override async void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        Map.MoveToRegion(await Data.ActionLocation.CurrentLocation.Get(GeolocationAccuracy.Best, TimeSpan.FromSeconds(5)));
+
+        if (BindingContext is MapsVM vm)
+        {
+            vm.RoutesToken = new();
+            vm.DriversRoutesName = vm?.Routes?.Name;
+        }
+    }
+
+    private async void Map_MapClicked(object sender, MapClickedEventArgs e)
+    {
+        if (BindingContext is MapsVM vm)
+        {
+            if (!vm.AddLocationIs)
+            {
+                return;
+            }
+            if (vm.Routes is null)
+            {
+                await Shell.Current.DisplayAlert("Brak trasy", "Zapisywanie jest dostępne tylko po wybraniu trasy konkretnego kierowcy", "Ok");
+                return;
+            }
+
+            var customer = new CustomerRoutes()
+            {
+                Created = DateTime.Now,
+                Longitude = e.Location.Longitude,
+                Latitude = e.Location.Latitude,
+                RoutesId = vm.Routes.Id,
+            };
+
+            await Shell.Current.GoToAsync($"{nameof(Pages.Customer.AddCustomer.AddCustomerV)}"
+                , new Dictionary<string, object>
+                {
+                    [nameof(CustomerRoutes)] = customer,
+                    [nameof(Routes)] = vm.Routes,
+                });
+        }
+    }
+
+    private void Pin_InfoWindowClicked(object sender, PinClickedEventArgs e)
+    {
+        if (BindingContext is MapsVM vm)
+        {
+            if (sender is Pin pin)
+            {
+                vm.OpenMoreDetail(pin);
+            }
+        }
+
+    }
+
+    private void RadioButton_CheckedChanged(object sender, CheckedChangedEventArgs e)
+    {
+        if (BindingContext is MapsVM vm)
+        {
+            if (sender is RadioButton radio)
+            {
+                var value = radio.Value;
+                vm.ChangeTypeOfMapCommand.Execute(value);
+            }
+        }
+    }
+
+    private void CustomPin_InfoWindowClicked(object sender, PinClickedEventArgs e)
+    {
+        if (BindingContext is MapsVM vm)
+        {
+            if (sender is Pin pin)
+            {
+                vm.OpenMoreDetail(pin);
+                vm.StepSelected = Shared.CustomControls.StepSelected.Full;
+            }
+        }
+    }
+
+}
+
+

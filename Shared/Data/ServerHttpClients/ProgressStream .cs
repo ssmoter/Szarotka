@@ -1,18 +1,11 @@
 ﻿namespace Shared.Data.ServerHttpClients
 {
-    public partial class ProgressStream : Stream
+    public partial class ProgressStream(Stream inner, long totalBytes, Action<double> reportProgress) : Stream
     {
-        private readonly Stream _inner;
-        private readonly long _totalBytes;
-        private readonly Action<double> _reportProgress;
+        private readonly Stream _inner = inner;
+        private readonly long _totalBytes = totalBytes;
+        private readonly Action<double> _reportProgress = reportProgress;
         private long _bytesSent;
-
-        public ProgressStream(Stream inner, long totalBytes, Action<double> reportProgress)
-        {
-            _inner = inner;
-            _totalBytes = totalBytes;
-            _reportProgress = reportProgress;
-        }
 
         public override int Read(byte[] buffer, int offset, int count)
         {

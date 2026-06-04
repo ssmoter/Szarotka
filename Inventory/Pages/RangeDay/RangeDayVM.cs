@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -219,10 +220,10 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
     async static Task<string> SelectImportExport(string type)
     {
 #if WINDOWS
-            var result = await Shell.Current.CurrentPage.DisplayActionSheet($"Wybierz co chcesz{Environment.NewLine}wykonać z plikami {type}",
+            var result = await Shell.Current.CurrentPage.DisplayActionSheetAsync($"Wybierz co chcesz{Environment.NewLine}wykonać z plikami {type}",
             "Anuluj", null, "Import", "Eksport");
 #else
-        var result = await Shell.Current.CurrentPage.DisplayActionSheet($"Wybierz co chcesz{Environment.NewLine}wykonać z plikami {type}",
+        var result = await Shell.Current.CurrentPage.DisplayActionSheetAsync($"Wybierz co chcesz{Environment.NewLine}wykonać z plikami {type}",
             "Anuluj", null, "Import", "Eksport", "Pliki");
 #endif
         return result;
@@ -277,7 +278,14 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
             }
             var popup = new SingleDayPreview.SingleDayPreviewPopUp.SingleDayPreviewPopUpV(day);
 
-            await Shell.Current.ShowPopupAsync(popup);
+            if (Application.Current?.Windows != null && Application.Current.Windows.Count > 0)
+            {
+                await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
+            }
+            else if (Application.Current?.Windows[0].Page != null)
+            {
+                await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
+            }
         }
         catch (Exception ex)
         {
@@ -373,7 +381,15 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
             {
                 popup = new PopupSelectRangeDate.PopupSelectRangeDateV(PopupDate);
             }
-            var result = await Shell.Current.ShowPopupAsync(popup);
+            object result = null;
+            if (Application.Current?.Windows != null && Application.Current.Windows.Count > 0)
+            {
+                result = await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
+            }
+            else if (Application.Current?.MainPage != null)
+            {
+                result = await Application.Current.MainPage.ShowPopupAsync(popup);
+            }
 
             if (result is PopupDateModel model)
             {
@@ -745,7 +761,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
     }
     private async Task SaveDay(Day day, bool isServer = false)
     {
-        _db.DataBaseAsync.RunInTransactionAsync(async () =>
+        await _db.DataBaseAsync.RunInTransactionAsync(async c =>
         {
             await _save.SaveDay(day, day.UserUpdatedId.ToByteArray(), isServer);
         });
@@ -767,7 +783,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
     [RelayCommand]
     async Task Send()
     {
-        using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        using CancellationTokenSource cancellationTokenSource = new();
         try
         {
             var allDays = await _get.Days(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks, []);
@@ -835,7 +851,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
     [RelayCommand]
     async Task Download()
     {
-        using CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        using CancellationTokenSource cancellationTokenSource = new();
         try
         {
             using var progress = UpdateProgressBar.CreatedUpdateProgressBar(
@@ -929,4 +945,5 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
     }
 
 }
+
 

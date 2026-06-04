@@ -88,7 +88,7 @@ namespace Server.Service
             {
                 throw task.Exception;
             }
-            throw new ArgumentException();
+            throw new ArgumentException("Nie uało się dodać użytkownika");
         }
         public async Task InsertCodeEmailAndRemoveOld(ConfirmCode user)
         {

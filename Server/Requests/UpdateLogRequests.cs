@@ -8,17 +8,11 @@ namespace Server.Requests
         Task<IResult> GetLogs(string id, CancellationToken token = default);
     }
 
-    public class UpdateLogRequests : IUpdateLogRequests
+    public class UpdateLogRequests(IAccessDataBase db,
+                             IUpdateLogService update) : IUpdateLogRequests
     {
-        private readonly IAccessDataBase _db;
-        private readonly IUpdateLogService _update;
-
-        public UpdateLogRequests(IAccessDataBase db,
-                                 IUpdateLogService update)
-        {
-            _db = db;
-            _update = update;
-        }
+        private readonly IAccessDataBase _db = db;
+        private readonly IUpdateLogService _update = update;
 
         public async Task<IResult> GetLogs(string id, CancellationToken token = default)
         {

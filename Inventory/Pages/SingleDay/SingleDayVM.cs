@@ -56,7 +56,7 @@ namespace Inventory.Pages.SingleDay
                 { }
             }
         }
-        static PeriodicTimer lastFastValuePeriodicTimer = new(TimeSpan.FromSeconds(1));
+        static readonly PeriodicTimer lastFastValuePeriodicTimer = new(TimeSpan.FromSeconds(1));
         static (string name, int value, char sign, string message) lastFastValue = new("", 0, ' ', "");
         static int lastFastValueClearTimerValue = 0;
 
@@ -554,7 +554,7 @@ namespace Inventory.Pages.SingleDay
                 string[] priceArray = [.. Prices.Select(x => x.PriceDecimal.ToString()), "Nowa"];
 
 
-                var result = await Shell.Current.DisplayActionSheet("Zmiana ceny",
+                var result = await Shell.Current.DisplayActionSheetAsync("Zmiana ceny",
                                                                     "Anuluj",
                                                                     null, priceArray);
                 if (result is null)
@@ -605,13 +605,13 @@ namespace Inventory.Pages.SingleDay
         {
             try
             {
-                var result = await Shell.Current.DisplayAlert("Usuwanie", $"Czy chcesz usunąć produkt : {product.Name.Name}", "Tak", "nie");
+                var result = await Shell.Current.DisplayAlertAsync("Usuwanie", $"Czy chcesz usunąć produkt : {product.Name.Name}", "Tak", "nie");
                 if (!result)
                     return;
 
                 product.IsDelete = true;
                 Day.Products.Remove(product);
-                await Shell.Current.DisplayAlert("Usuwanie", $"Produkt {product.Name.Name} został usunięty", "Ok");
+                await Shell.Current.DisplayAlertAsync("Usuwanie", $"Produkt {product.Name.Name} został usunięty", "Ok");
                 await _saveInventoryAoT.SaveProduct(product, Shared.Helper.UserAfterLogin.User.Id.ToByteArray());
                 RefreshListOfProduct();
             }
@@ -634,7 +634,7 @@ namespace Inventory.Pages.SingleDay
 
                 string[] products = [.. selectedProducts.Select(x => x.Name), "Dodaj nowy"];
 
-                var result = await Shell.Current.DisplayActionSheet("Dodaj produkt z list",
+                var result = await Shell.Current.DisplayActionSheetAsync("Dodaj produkt z list",
                                                                     "Anuluj",
                                                                     null,
                                                                     products);
@@ -760,3 +760,4 @@ namespace Inventory.Pages.SingleDay
 
     }
 }
+

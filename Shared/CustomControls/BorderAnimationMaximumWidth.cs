@@ -55,8 +55,7 @@
         {
             double max = 0;
 
-            var parent = this.Parent as View;
-            if (parent is null)
+            if (this.Parent is not View parent)
             {
                 return max;
             }

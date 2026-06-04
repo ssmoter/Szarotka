@@ -55,14 +55,9 @@ namespace DataBase.Data.Save
         Task SaveSelectedDayOfWeekRoutes(SelectedDayOfWeekRoutes selectedDayOfWeek, byte[] driverId, bool isServer = false);
     }
 
-    public class SaveDriverRoutesAoT : ISaveDriverRoutesAoT
+    public class SaveDriverRoutesAoT(IAccessDataBase db) : ISaveDriverRoutesAoT
     {
-        private readonly IAccessDataBase _db;
-
-        public SaveDriverRoutesAoT(IAccessDataBase db)
-        {
-            _db = db;
-        }
+        private readonly IAccessDataBase _db = db;
 
         public async Task SaveCustomerRoutes(CustomerRoutes customerRoutes, byte[] driverId, bool isServer = false)
         {

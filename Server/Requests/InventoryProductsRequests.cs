@@ -14,20 +14,13 @@ namespace Server.Requests
         Task<IResult?> Updates(EmptyProducts products, bool forceUpdate = false, CancellationToken token = default);
     }
 
-    public class InventoryProductsRequests : IInventoryProductsRequests
+    public class InventoryProductsRequests(IAccessDataBase db,
+                                     IGetInventoryAoT getInventoryAoT,
+                                     ISaveInventoryAoT saveInventoryAoT) : IInventoryProductsRequests
     {
-        private readonly IAccessDataBase _db;
-        private readonly IGetInventoryAoT _getInventoryAoT;
-        private readonly ISaveInventoryAoT _saveInventoryAoT;
-        public InventoryProductsRequests(IAccessDataBase db,
-                                         IGetInventoryAoT getInventoryAoT,
-                                         ISaveInventoryAoT saveInventoryAoT)
-        {
-            _db = db;
-            _getInventoryAoT = getInventoryAoT;
-            _saveInventoryAoT = saveInventoryAoT;
-        }
-
+        private readonly IAccessDataBase _db = db;
+        private readonly IGetInventoryAoT _getInventoryAoT = getInventoryAoT;
+        private readonly ISaveInventoryAoT _saveInventoryAoT = saveInventoryAoT;
 
         public async Task<IResult> GetEmptyProducts(bool isDelete = false, CancellationToken token = default)
         {

@@ -21,7 +21,7 @@ namespace DataBase.Data.Get
                 Guid id = ids[i];
                 if (id == Guid.Empty)
                 {
-                    throw new ArgumentNullException(nameof(id));
+                    ArgumentNullException.ThrowIfNull("No valid id");
                 }
                 if (i != 0)
                 {

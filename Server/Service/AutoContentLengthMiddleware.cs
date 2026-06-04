@@ -1,13 +1,8 @@
 ﻿namespace Server.Service
 {
-    public class AutoContentLengthMiddleware
+    public class AutoContentLengthMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
-
-        public AutoContentLengthMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
+        private readonly RequestDelegate _next = next;
 
         public async Task InvokeAsync(HttpContext context)
         {

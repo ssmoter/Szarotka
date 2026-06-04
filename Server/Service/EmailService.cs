@@ -16,17 +16,11 @@ namespace Server.Service
         Task SendMessages(IList<MimeMessage> messages, CancellationToken token = default);
     }
 
-    public class EmailService : IDisposable, IEmailService
+    public class EmailService(IConfiguration configuration, ISmtpClient client) : IDisposable, IEmailService
     {
-        private readonly EmailConfiguration? _emailConfig;
+        private readonly EmailConfiguration? _emailConfig = configuration.GetSection(nameof(EmailConfiguration)).Get<EmailConfiguration>();
         private readonly SecureSocketOptions _secureSocketOptions = SecureSocketOptions.StartTls;
-        private readonly ISmtpClient _client;
-
-        public EmailService(IConfiguration configuration, ISmtpClient client)
-        {
-            _emailConfig = configuration.GetSection(nameof(EmailConfiguration)).Get<EmailConfiguration>();
-            _client = client;
-        }
+        private readonly ISmtpClient _client = client;
 
         public async Task SendMessage(string to, string subject, string body, CancellationToken token = default)
         {

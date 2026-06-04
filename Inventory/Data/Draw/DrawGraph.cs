@@ -110,7 +110,7 @@ namespace Inventory.Data.Draw
             }
             catch (Exception ex)
             {
-                Shell.Current.DisplayAlert("Error", ex.Message + ex.StackTrace, "Ok");
+                Shell.Current.DisplayAlertAsync("Error", ex.Message + ex.StackTrace, "Ok");
             }
         }
 
@@ -512,3 +512,4 @@ namespace Inventory.Data.Draw
 
     }
 }
+

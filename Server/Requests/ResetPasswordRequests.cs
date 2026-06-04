@@ -15,20 +15,12 @@ namespace Server.Requests
         Task<IResult> ResetPasswordNew(int code, string password, CancellationToken token = default);
     }
 
-    public class ResetPasswordRequests : IResetPasswordRequests
+    public class ResetPasswordRequests(IAccessDataBase db, IUserValidation userValidation, IResetPasswordService resetPasswordService, IEmailConfirmService emailConfirmService) : IResetPasswordRequests
     {
-        private readonly IAccessDataBase _db;
-        private readonly IUserValidation _userValidation;
-        private readonly IEmailConfirmService _emailConfirmService;
-        private readonly IResetPasswordService _resetPasswordService;
-
-        public ResetPasswordRequests(IAccessDataBase db, IUserValidation userValidation, IResetPasswordService resetPasswordService, IEmailConfirmService emailConfirmService)
-        {
-            _db = db;
-            _userValidation = userValidation;
-            _resetPasswordService = resetPasswordService;
-            _emailConfirmService = emailConfirmService;
-        }
+        private readonly IAccessDataBase _db = db;
+        private readonly IUserValidation _userValidation = userValidation;
+        private readonly IEmailConfirmService _emailConfirmService = emailConfirmService;
+        private readonly IResetPasswordService _resetPasswordService = resetPasswordService;
 
         public async Task<IResult> ResetPasswordEmail(string email, CancellationToken token = default)
         {
