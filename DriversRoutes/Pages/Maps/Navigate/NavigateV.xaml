@@ -13,12 +13,13 @@
     Shell.PresentationMode="Animated">
 
     <Grid RowDefinitions="*,auto">
-
+        <!--
         <BlazorWebView x:Name="blazorWebViewTable" HostPage="wwwroot/index.html">
             <BlazorWebView.RootComponents>
                 <RootComponent ComponentType="{x:Type controlsMaps:BlazorMap}" Selector="#app" />
             </BlazorWebView.RootComponents>
         </BlazorWebView>
+        -->
         <Grid
             Grid.Row="1"
             BackgroundColor="{AppThemeBinding Light=AliceBlue,

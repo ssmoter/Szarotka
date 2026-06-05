@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
     <TargetFrameworks>net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
     <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
@@ -12,13 +12,16 @@
     <!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
     <OutputType>Exe</OutputType>
     <RootNamespace>SzarotkaBlazor</RootNamespace>
-    <UseMaui>true</UseMaui>
+    <UseMaui>true</UseMaui>	  
     <SingleProject>true</SingleProject>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Nie dostarczamy static web assets z tej aplikacji MAUI -->
+    <StaticWebAssetsEnabled>true</StaticWebAssetsEnabled>
+	  <DisableStaticWebAssetsDevelopmentManifest>false</DisableStaticWebAssetsDevelopmentManifest>
     <EnableDefaultCssItems>false</EnableDefaultCssItems>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
+    <MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>	 	  	  
     <!--
 		<PublishAot>True</PublishAot>
 		<PublishTrimmed>True</PublishTrimmed>
@@ -41,6 +44,7 @@
     <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
   </PropertyGroup>
+	
   <ItemGroup>
     <!-- App Icon -->
     <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
@@ -66,14 +70,18 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.70" />
     <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.70" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.70" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.8" />
+	  <!--
+		  -->
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.70">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataBase\DataBase.csproj" />
-    <ProjectReference Include="..\DriversRoutes\DriversRoutes.csproj" />
-    <ProjectReference Include="..\Inventory\Inventory.csproj" />
-    <ProjectReference Include="..\Shared\Shared.csproj" />
+    <ProjectReference Include="..\DataBase\DataBase.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\DriversRoutes\DriversRoutes.csproj" PrivateAssets="all"/>
+    <ProjectReference Include="..\Inventory\Inventory.csproj" PrivateAssets="all"/>
+    <ProjectReference Include="..\Shared\Shared.csproj" PrivateAssets="all"/>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="AppShell.xaml.cs">
@@ -87,8 +95,7 @@
     <MauiImage Update="Resources\Images\dotnet_bot.png">
       <Resize>True</Resize>
       <BaseSize>300,185</BaseSize>
-      <CopyToOutputDirectory>
-      </CopyToOutputDirectory>
+      <CopyToOutputDirectory></CopyToOutputDirectory>
     </MauiImage>
   </ItemGroup>
   <ItemGroup>
@@ -110,4 +117,27 @@
       <UserProperties XamarinHotReloadDebuggerTimeoutExceptionSzarotkaBlazorHideInfoBar="True" />
     </VisualStudio>
   </ProjectExtensions>
+	<!-- Je?li projekt nie dostarcza static web assets, zdefiniuj puste targety wymagane przez pakiet WebView.Maui
+  <Target Name="StaticWebAssetsPrepareForRun" />
+  <Target Name="StaticWebAssetsPrepareForPublish" />
+  <Target Name="LoadStaticWebAssetsPublishManifest" />
+  -->
+
+	<!-- Wymuszone tworzenie pustych manifestów dla podarchitektur Androida w .NET 10 -->
+	<Target Name="PreCreateAndroidBlazorManifests" BeforeTargets="GetStaticWebAssetsManifest;StaticWebAssetsPrepareForRun;ProcessStaticWebAssetsManifest">
+		<PropertyGroup>
+			<Arm64ManifestDir>$(ProjectDir)obj\Debug\net10.0-android\android-arm64\</Arm64ManifestDir>
+			<X64ManifestDir>$(ProjectDir)obj\Debug\net10.0-android\android-x64\</X64ManifestDir>
+		</PropertyGroup>
+
+		<!-- Tworzy foldery architektur, jeśli jeszcze nie istnieją -->
+		<MakeDir Directories="$(Arm64ManifestDir);$(X64ManifestDir)" />
+
+		<!-- Generuje puste pliki JSON, aby oszukać walidator MSBuild -->
+		<WriteLinesToFile File="$(Arm64ManifestDir)staticwebassets.build.json" Lines="{}" Overwrite="false" Condition="!Exists('$(Arm64ManifestDir)staticwebassets.build.json')" />
+		<WriteLinesToFile File="$(X64ManifestDir)staticwebassets.build.json" Lines="{}" Overwrite="false" Condition="!Exists('$(X64ManifestDir)staticwebassets.build.json')" />
+	</Target>
+
+
+
 </Project>

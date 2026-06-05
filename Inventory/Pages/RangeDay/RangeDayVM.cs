@@ -386,9 +386,9 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
             {
                 result = await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
             }
-            else if (Application.Current?.MainPage != null)
+            else if (Application.Current?.Windows[0].Page != null)
             {
-                result = await Application.Current.MainPage.ShowPopupAsync(popup);
+                result = await Application.Current?.Windows[0].Page.ShowPopupAsync(popup);
             }
 
             if (result is PopupDateModel model)

@@ -9,14 +9,42 @@ namespace DataBase.Model
         [PrimaryKey]
         public int Id { get; set; } = 0;
 
-        [ObservableProperty]
-        int dataBase;
-        [ObservableProperty]
-        int inventory;
-        [ObservableProperty]
-        int driversRoutes;
-        [ObservableProperty]
-        long lastBackup = DateTime.Today.Ticks;
+        private int dataBase;
+        public int DataBase
+        {
+            get => dataBase;
+            set
+            {
+                if (SetProperty(ref dataBase, value, nameof(DataBase))) { }
+            }
+        }
+        private int inventory;
+        public int Inventory
+        {
+            get => inventory;
+            set
+            {
+                if (SetProperty(ref inventory, value, nameof(Inventory))) { }
+            }
+        }
+        private int driversRoutes;
+        public int DriversRoutes
+        {
+            get => driversRoutes;
+            set
+            {
+                if (SetProperty(ref driversRoutes, value, nameof(DriversRoutes))) { }
+            }
+        }
+        private long lastBackup = DateTime.Today.Ticks;
+        public long LastBackup
+        {
+            get => lastBackup;
+            set
+            {
+                if (SetProperty(ref lastBackup, value, nameof(LastBackup))) { }
+            }
+        }
         public DataBaseVersion()
         {
             DataBase = 3;

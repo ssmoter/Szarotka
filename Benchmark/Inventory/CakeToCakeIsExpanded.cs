@@ -24,15 +24,15 @@ namespace Benchmark.Inventory
 
 
         [Benchmark]
-        public ObservableCollection<CakeIsExpanded> GetCakeIsExpandedCast()
+        public static ObservableCollection<CakeIsExpanded> GetCakeIsExpandedCast()
         {
             ObservableCollection<CakeIsExpanded> result = [.. cakes.OrderByDescending(x => x.IsSell).Cast<CakeIsExpanded>()];
             return result;
         }
         [Benchmark]
-        public ObservableCollection<CakeIsExpanded> GetCakeIsExpandedSelect()
+        public static ObservableCollection<CakeIsExpanded> GetCakeIsExpandedSelect()
         {
-            ObservableCollection<CakeIsExpanded> result = [.. cakes.OrderByDescending(x => x.IsSell).Select(x => x as CakeIsExpanded)];
+            ObservableCollection<CakeIsExpanded> result = [.. cakes.OrderByDescending(x => x.IsSell).Select(x => (x as CakeIsExpanded)!)];
             return result;
         }
 

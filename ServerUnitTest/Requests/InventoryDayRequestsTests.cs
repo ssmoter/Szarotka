@@ -166,7 +166,7 @@ namespace ServerUnitTest.Requests
 
             _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object>()));
 
-            var result = _inventoryDayRequests.SaveDay(day);
+            var result = _inventoryDayRequests.SaveDay(day!);
 
             await Assert.ThrowsAsync<ArgumentNullException>(async () => { await result; });
         }
