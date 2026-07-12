@@ -4,8 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 using DataBase.Data;
 using DataBase.Model;
 
-using Shared.Data;
-
 using System.Collections.ObjectModel;
 using System.Reflection;
 
@@ -25,10 +23,10 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
     }
 
 
-    private string serverUrl="";
+    private string serverUrl;
     public string ServerUrl
     {
-        get => _db.GetServerUrl();
+        get => serverUrl;
         set
         {
             if (SetProperty(ref serverUrl, value, nameof(ServerUrl))) { }
@@ -94,7 +92,7 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
     }
 
     public IAccessDataBase _db { get; private set; }
-    public MainOptionsVM(IAccessDataBase db)
+    public MainOptionsVM(IAccessDataBase db, IHttpClientFactory httpClientFactory)
     {
         MainOptionsM ??= new();
         SelectTypOfOptions(TypOfOptions.Main);
@@ -119,10 +117,12 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
             [nameof(AppTheme.Dark)] = (int)AppTheme.Dark
         };
         _db = db;
+
         MainOptionsM.Version = _db.DataBase.Table<DataBaseVersion>().FirstOrDefault();
+        ServerUrl = httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka).BaseAddress!.ToString();
     }
 
-    #region Method
+
 
     Dictionary<string, int> _appThemes;
     void ChangeTheme(string value)
@@ -169,11 +169,6 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
         }
     }
 
-    #endregion
-
-
-    #region Command
-
     [RelayCommand]
     void ChangeDisplayOptions(TypOfOptions options)
     {
@@ -185,34 +180,6 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
     {
         await Shell.Current.GoToAsync(nameof(Shared.Pages.Log.LogV));
     }
-
-    [RelayCommand]
-    async Task UpdateServerUrl()
-    {
-        try
-        {
-            var result = await Shell.Current.DisplayPromptAsync("Aktualizuj",
-                                                                "Podaj nowy adres serwera",
-                                                                "Zapisz",
-                                                                "Anuluj",
-                                                                placeholder: ServerUrl,
-                                                                initialValue: ServerUrl);
-
-            if (result is null)
-            {
-                return;
-            }
-
-            await Shared.Model.HelperTableExtension.SetAsync
-                (new Shared.Model.HelperTable(nameof(DataBase.Helper.Constants.ServerUrl), result), _db);
-            ServerUrl = result;
-        }
-        catch (Exception ex)
-        {
-            _db.SaveLogExtension(ex);
-        }
-    }
-    #endregion
 }
 public enum TypOfOptions
 {

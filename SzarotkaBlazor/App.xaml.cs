@@ -22,8 +22,7 @@ namespace SzarotkaBlazor
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            var window = new AppShell();
-            return new Window(window);
+            return new Window(new AppShell());
         }
     }
 }

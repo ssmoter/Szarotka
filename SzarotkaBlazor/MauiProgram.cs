@@ -1,5 +1,8 @@
 ﻿using CommunityToolkit.Maui;
 
+using Microsoft.Extensions.Configuration;
+
+
 #if ANDROID
 using DriversRoutes.Platforms.Android;
 #endif
@@ -30,8 +33,16 @@ namespace SzarotkaBlazor
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
 
+            using var stream = FileSystem.OpenAppPackageFileAsync("appsettings.json").Result;
+            var config = new ConfigurationBuilder()
+                .AddJsonStream(stream)
+                .Build();
+            builder.Configuration.AddConfiguration(config);
+
+
+
             builder.Services.AddMauiBlazorWebView();
-            builder.Services.AddMyService();
+            builder.Services.AddMyService(builder.Configuration);
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();
             builder.Logging.AddDebug();
@@ -46,8 +57,8 @@ namespace SzarotkaBlazor
                 handlers.AddHandler<Microsoft.Maui.Controls.Maps.Map, CustomMapHandler>();
             });
 #endif
-
             return builder.Build();
         }
+
     }
 }

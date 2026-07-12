@@ -107,7 +107,6 @@
                                 Text="Adres serwera:"
                                 VerticalOptions="Center" />
                             <Entry IsReadOnly="True" Text="{Binding ServerUrl}" />
-                            <Button Command="{Binding UpdateServerUrlCommand}" Text="Aktualizuj" />
                         </VerticalStackLayout>
                     </Border>
 

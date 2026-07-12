@@ -4,6 +4,8 @@ using DriversRoutes.Service;
 
 using Inventory.Service;
 
+using Microsoft.Extensions.Configuration;
+
 using Shared.Service;
 
 using SzarotkaBlazor.Pages.Options.Main;
@@ -12,12 +14,13 @@ namespace SzarotkaBlazor.Service
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddMyService(this IServiceCollection services)
+        public static IServiceCollection AddMyService(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddMyServiceDataBase();
             services.AddMyServiceShared();
             services.AddMyServiceInventory();
             services.AddMyServiceDriversRoutes();
+            services.AddMyServiceHttpClients(services.BuildServiceProvider().GetRequiredService<IConfiguration>());
 #if ANDROID
 #endif
 
