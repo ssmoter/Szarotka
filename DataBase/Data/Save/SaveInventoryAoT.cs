@@ -122,10 +122,10 @@ namespace DataBase.Data.Save
             {
                 day.Id = Guid.CreateVersion7();
             }
-            ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveDay)}");
+            ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveDay)} is null");
             if (new Guid(driverId) == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(driverId), nameof(SaveDay));
+                throw new ArgumentNullException(nameof(driverId), $"{nameof(SaveDay)} is not valid as guid");
             }
             if (day.DriverGuid == Guid.Empty)
             {
@@ -245,23 +245,23 @@ namespace DataBase.Data.Save
             {
                 product.Id = Guid.CreateVersion7();
             }
-            ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveProduct)}");
+            ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveProduct)} is null");
 
             if (new Guid(driverId) == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(driverId), nameof(SaveProduct));
+                throw new ArgumentNullException(nameof(driverId), $"{nameof(SaveProduct)} is not valid as guid");
             }
             if (product.DayId == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(product), nameof(product.DayId));
+                throw new ArgumentNullException(nameof(product), $"{nameof(product.DayId)} is not valid as guid");
             }
             if (product.ProductNameId == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(product), nameof(product.ProductNameId));
+                throw new ArgumentNullException(nameof(product), $"{nameof(product.ProductNameId)} is not valid as guid");
             }
             if (product.ProductPriceId == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(product), nameof(product.ProductPriceId));
+                throw new ArgumentNullException(nameof(product), $"{nameof(product.ProductPriceId)} is not valid as guid");
             }
 
             if (product.UserCreatedId == Guid.Empty)
@@ -387,11 +387,11 @@ namespace DataBase.Data.Save
 
             if (new Guid(driverId) == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(driverId), nameof(SaveProduct));
+                throw new ArgumentNullException(nameof(driverId), $"{nameof(SaveProduct)} is not valid as guid");
             }
             if (cake.DayId == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(cake), nameof(cake.DayId));
+                throw new ArgumentNullException(nameof(cake), $"{nameof(cake.DayId)} is not valid as guid");
             }
             if (cake.UserCreatedId == Guid.Empty)
             {
@@ -504,11 +504,11 @@ namespace DataBase.Data.Save
             {
                 productName.Id = Guid.CreateVersion7();
             }
-            ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveProductName)}");
+            ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveProductName)} is null");
 
             if (new Guid(driverId) == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(driverId), nameof(SaveProductName));
+                throw new ArgumentNullException(nameof(driverId), $"{nameof(driverId)} in {nameof(SaveProductName)} is not valid guid");
             }
             if (productName.UserCreatedId == Guid.Empty)
             {
@@ -620,11 +620,11 @@ namespace DataBase.Data.Save
             {
                 productPrice.Id = Guid.CreateVersion7();
             }
-            ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveProductPrice)}");
+            ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveProductPrice)} is null");
 
             if (new Guid(driverId) == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(driverId), nameof(SaveProductPrice));
+                throw new ArgumentNullException(nameof(driverId), $"{nameof(SaveProductPrice)} is not valid as guid");
             }
             if (productPrice.UserCreatedId == Guid.Empty)
             {

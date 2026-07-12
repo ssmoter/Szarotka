@@ -20,7 +20,11 @@ namespace Shared.Helper
 
         static UserAfterLogin()
         {
-            _db = Shared.Service.AppServiceProvider.Current.GetRequiredService<IAccessDataBase>();
+            var db = Shared.Service.AppServiceProvider.GetService<IAccessDataBase>();
+            if (db is not null)
+            {
+                _db = db;
+            }
             // OnLogin?.Invoke(new(), true);
         }
 
@@ -42,7 +46,11 @@ namespace Shared.Helper
 
                 OnLogin?.Invoke(User, IsLogin);
 
-                var helperTable = new HelperTable(nameof(UserAfterLogin.User.Token), token);
+                var helperTable = new HelperTable(nameof(UserAfterLogin.User.Token), token)
+                {
+                    UserCreatedId = user.Id,
+                    UserUpdatedId = user.Id,
+                };
                 helperTable.Set(_db);
             }
             catch (Microsoft.IdentityModel.Tokens.SecurityTokenException)

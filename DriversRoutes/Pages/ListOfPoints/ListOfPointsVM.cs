@@ -1,7 +1,6 @@
-﻿using CommunityToolkit.Maui.Alerts;
+﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
-using CommunityToolkit.Maui.Extensions;
-using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -162,6 +161,7 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
     private readonly Data.RouteApi.IGetCustomersHttp _getHttp;
     private readonly Data.RouteApi.ISendCustomersHttp _sendHttp;
     private readonly Shared.Data.ServerHttpClients.IUpdateLogsHttp _updateLogsHttp;
+    private readonly IPopupService _popupService;
 
     public Action CalculateRoute;
 
@@ -171,7 +171,8 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
                           DataBase.Service.IUpdateLogService update,
                           Data.RouteApi.IGetCustomersHttp getCustomersHttp,
                           Data.RouteApi.ISendCustomersHttp sendHttp,
-                          Shared.Data.ServerHttpClients.IUpdateLogsHttp updateLogsHttp)
+                          Shared.Data.ServerHttpClients.IUpdateLogsHttp updateLogsHttp,
+                          IPopupService popupService)
     {
         _db = db;
 
@@ -182,6 +183,7 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
         this._getHttp = getCustomersHttp;
         _sendHttp = sendHttp;
         _updateLogsHttp = updateLogsHttp;
+        _popupService = popupService;
     }
 
 
@@ -349,17 +351,15 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
     {
         try
         {
-            var popup = new Popups.SelectDay.SelectDayV();
-            var response = default(object);
-            if (Application.Current?.Windows[0].Page != null)
-            {
-                response = await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
-            }
+
+            IPopupResult<SelectedDayOfWeekRoutes> response = await _popupService.ShowPopupAsync<Popups.SelectDay.SelectDayVM, SelectedDayOfWeekRoutes>(Shell.Current);
+
             if (response is null)
             {
                 return;
             }
-            if (response is SelectedDayOfWeekRoutes day)
+
+            if (response.Result is SelectedDayOfWeekRoutes day)
             {
                 GetPointsFireAndForget(Route, day);
             }
@@ -478,7 +478,8 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
     {
         try
         {
-            var result = await MoveTimeOnCustomersV.ShowPopUp(Route, selectDayMs, _get, _save, _update);
+
+            var result = await MoveTimeOnCustomersV.ShowPopUp(Route, selectDayMs, _get, _save, _update, _popupService);
             if (result)
             {
                 Refresh();
@@ -721,7 +722,7 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
                 await Shell.Current.GoToAsync(nameof(UpdateDifferenceV), navigationParameter);
             }
             Shell.Current.FlyoutIsPresented = false;
-            GetPointsFireAndForget(Route, lastSelectedDayOfWeekRoutes);            
+            GetPointsFireAndForget(Route, lastSelectedDayOfWeekRoutes);
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Conflict)
         {

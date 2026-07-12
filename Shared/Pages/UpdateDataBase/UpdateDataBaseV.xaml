@@ -9,6 +9,7 @@
     x:DataType="VM:UpdateDataBaseVM"
     Shell.PresentationMode="Animated">
 
+
     <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
         <Label HorizontalOptions="Center" Text="Aktualizacja baz danych" />
         <VerticalStackLayout Padding="5" IsVisible="{Binding UpdateDataBaseM.DataBaseIsVisible}">

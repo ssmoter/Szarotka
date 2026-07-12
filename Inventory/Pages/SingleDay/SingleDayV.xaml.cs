@@ -12,10 +12,12 @@ public partial class SingleDayV : ContentPage
         InitializeComponent();
         _vm = vm;
         BindingContext = vm;
+        DataTemplate cakesTemplate = null;
         if (DeviceInfo.Platform == DevicePlatform.Android)
-            this.CollectionViewCakes.ItemTemplate = (DataTemplate)Resources["Android"];
+            cakesTemplate = Resources["Android"] as DataTemplate;
         else if (DeviceInfo.Platform == DevicePlatform.WinUI)
-            this.CollectionViewCakes.ItemTemplate = (DataTemplate)Resources["WinUI"];
+            cakesTemplate = Resources["WinUI"] as DataTemplate;
+        this.CollectionViewCakes.ItemTemplate = cakesTemplate;
     }
 
     protected override void OnNavigatedTo(NavigatedToEventArgs args)

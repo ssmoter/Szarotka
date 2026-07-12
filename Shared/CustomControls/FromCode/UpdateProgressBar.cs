@@ -2,6 +2,19 @@
 
 namespace Shared.CustomControls.FromCode
 {
+    public interface IMainThreadDispatcher
+    {
+        void BeginInvokeOnMainThread(Action action);
+    }
+
+    public class MauiMainThreadDispatcher : IMainThreadDispatcher
+    {
+        public void BeginInvokeOnMainThread(Action action)
+        {
+            MainThread.BeginInvokeOnMainThread(action);
+        }
+    }
+
     public partial class UpdateProgressBar : IDisposable
     {
         public ProgressBar ProgressBar { get; set; } = new();
@@ -22,7 +35,7 @@ namespace Shared.CustomControls.FromCode
         }
 
         public Action Action { get; set; }
-
+        public static IMainThreadDispatcher MainThreadDispatcher { get; set; } = new MauiMainThreadDispatcher();
 
         private readonly Label _title = new();
         private readonly Label _description = new();
@@ -116,7 +129,7 @@ namespace Shared.CustomControls.FromCode
 
         public static void UpdateProgress(UpdateProgressBar updateProgressBar, double progress)
         {
-            MainThread.BeginInvokeOnMainThread(async () =>
+            MainThreadDispatcher.BeginInvokeOnMainThread(async () =>
             {
                 if (updateProgressBar is not null)
                 {
@@ -131,8 +144,11 @@ namespace Shared.CustomControls.FromCode
                 {
                     Span<char> buffer = stackalloc char[32];
                     bool success = progress.TryFormat(buffer, out int charsWritten);
-                    ReadOnlySpan<char> span = buffer[..charsWritten];
-                    return span[..4].ToString();
+                    if (charsWritten > 5)
+                    {
+                        ReadOnlySpan<char> span = buffer[..charsWritten];
+                        return span[..4].ToString();
+                    }
                 }
                 return progress.ToString();
             }

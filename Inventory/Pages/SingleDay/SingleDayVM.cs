@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using DataBase.Data;
 using DataBase.Data.Get;
 using DataBase.Data.Save;
+using DataBase.Helper;
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesServer;
 using DataBase.Model.JsonContext;
@@ -132,7 +133,11 @@ namespace Inventory.Pages.SingleDay
             }
         }
         private bool isPropertyChanged;
-        private async void SingleDayVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void SingleDayVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            ExecuteSafe_SingleDayVM_PropertyChanged(sender, e).FireAndForget();
+        }
+        private async Task ExecuteSafe_SingleDayVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             try
             {
@@ -194,7 +199,11 @@ namespace Inventory.Pages.SingleDay
         }
 
         private CancellationTokenSource _sendHttpCancellationToken;
-        private async void DayHttpUpdate_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void DayHttpUpdate_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            ExecuteSafe_DayHttpUpdate_PropertyChanged(sender, e).FireAndForget();
+        }
+        private async Task ExecuteSafe_DayHttpUpdate_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (SingleDayM.IsModelSend)
             {
@@ -264,8 +273,14 @@ namespace Inventory.Pages.SingleDay
                     message.EnsureSuccessStatusCode();
                 }
             }
+            catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException || !ex.CancellationToken.IsCancellationRequested)
+            {
+                // OBSŁUGA TIMEOUTU: internet jest zbyt wolny lub serwer nie odpowiada
+                await Toast.Make("Błąd połączenia Serwer nie odpowiedział w oczekiwanym czasie.").Show();
+            }
             catch (TaskCanceledException)
             {
+                await Toast.Make("Operacja została anulowana przez użytkownika.").Show();
             }
             catch (Exception ex)
             {

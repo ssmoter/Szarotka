@@ -14,15 +14,14 @@ namespace Shared.Data.ServerHttpClients
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClient;
         private readonly IAccessDataBase _db = db;
-        private readonly string _url = db.GetServerUrl();
 
         public async Task SendEmail(string email)
         {
             Shared.Service.AndroidPermissionService.InternetCheck();
 
-            string url = _url + "/user/reset-password-email/" + email;
+            string url =  "user/reset-password-email/" + email;
 
-            using var httpClient = _httpClientFactory.CreateClient();
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             var response = await httpClient.GetAsync(url);
 
@@ -40,9 +39,9 @@ namespace Shared.Data.ServerHttpClients
         {
             Shared.Service.AndroidPermissionService.InternetCheck();
 
-            string url = _url + "/user/reset-password/" + code;
+            string url = "user/reset-password/" + code;
 
-            using var httpClient = _httpClientFactory.CreateClient();
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             var response = await httpClient.GetAsync(url);
 
@@ -59,9 +58,9 @@ namespace Shared.Data.ServerHttpClients
         {
             Shared.Service.AndroidPermissionService.InternetCheck();
 
-            string url = $"{_url}/user/reset-password/{code}/{password}";
+            string url = $"user/reset-password/{code}/{password}";
 
-            using var httpClient = _httpClientFactory.CreateClient();
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             var response = await httpClient.GetAsync(url);
 

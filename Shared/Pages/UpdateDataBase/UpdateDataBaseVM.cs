@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 using DataBase.Data;
 
 using Shared.Data;
+using Shared.Helper;
+using Shared.Pages.LogIn;
 using Shared.Service;
 
 namespace Shared.Pages.UpdateDataBase
@@ -82,11 +84,18 @@ namespace Shared.Pages.UpdateDataBase
         }
 
         [RelayCommand]
-        async static Task Back()
+        async Task Back()
         {
-            await Shell.Current.GoToAsync("..");
+            if (UserAfterLogin.IsLogin)
+            {
+                await Shell.Current.GoToAsync($"../MainPage");
+            }
+            else
+            {
+                await Shell.Current.GoToAsync($"../{nameof(LogInV)}");
+            }
+            //await Shell.Current.GoToAsync("..");
         }
-
 
     }
 }

@@ -18,7 +18,6 @@ namespace DriversRoutes.Data.GoogleApi
         private readonly IHttpClientFactory _httpClientFactory = httpClient;
 
         private readonly string _key = Shared.Key.GoogleApi.Key;
-        private static string Uri => "https://routes.googleapis.com/directions/v2:computeRoutes";
 
         public void SetKey(HttpClient httpClient, string key)
         {
@@ -43,11 +42,11 @@ namespace DriversRoutes.Data.GoogleApi
         /// <exception cref="HttpRequestException"></exception>
         public async Task<string> ComputeAsString(string fieldMask, Model.Route.ComputeRoutesRequest request, CancellationToken token = default)
         {
-            using var httpClient = _httpClientFactory.CreateClient();
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.GoogleRoutes);
             SetKey(httpClient, _key);
             SetFieldMask(httpClient, fieldMask);
 
-            using var result = await httpClient.PostAsJsonAsync(Uri, request, GoogleApiJsonSerializerContext.Default.ComputeRoutesRequest, token);
+            using var result = await httpClient.PostAsJsonAsync("", request, GoogleApiJsonSerializerContext.Default.ComputeRoutesRequest, token);
 
             var json = await result.Content.ReadAsStringAsync(token);
             if (!result.IsSuccessStatusCode)
@@ -69,11 +68,11 @@ namespace DriversRoutes.Data.GoogleApi
         /// <exception cref="HttpRequestException"></exception>
         public async Task<DriversRoutes.Model.Route.Response> Compute(string fieldMask, Model.Route.ComputeRoutesRequest request, CancellationToken token = default)
         {
-            using var httpClient = _httpClientFactory.CreateClient();
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.GoogleRoutes);
             SetKey(httpClient, _key);
             SetFieldMask(httpClient, fieldMask);
 
-            using var result = await httpClient.PostAsJsonAsync(Uri, request, GoogleApiJsonSerializerContext.Default.ComputeRoutesRequest, token);
+            using var result = await httpClient.PostAsJsonAsync("", request, GoogleApiJsonSerializerContext.Default.ComputeRoutesRequest, token);
 
             if (!result.IsSuccessStatusCode)
             {

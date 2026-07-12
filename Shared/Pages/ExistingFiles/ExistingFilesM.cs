@@ -11,9 +11,8 @@ namespace Shared.Pages.ExistingFiles
             get => path;
             set
             {
-                if (SetProperty(ref path, value))
+                if (SetProperty(ref path, value, nameof(Path)))
                 {
-                    OnPropertyChanged(nameof(Path));
                 }
             }
         }
@@ -24,9 +23,8 @@ namespace Shared.Pages.ExistingFiles
             get => name;
             set
             {
-                if (SetProperty(ref name, value))
+                if (SetProperty(ref name, value, nameof(Name)))
                 {
-                    OnPropertyChanged(nameof(Name));
                 }
             }
         }

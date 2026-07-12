@@ -20,12 +20,11 @@ namespace DriversRoutes.Data.RouteApi
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClient;
         private readonly IAccessDataBase _db = db;
-        private readonly string _url = db.GetServerUrl();
 
         public async Task<HttpResponseMessage> SendCustomerRoute(CustomerRoutes customers, UpdateProgressBar progressBar = null, bool forceUpdate = false, CancellationToken token = default)
         {
-            string url = $"{_url}/driver-routes/update{(forceUpdate ? "?forceUpdate=true" : "")}";
-            using var httpClient = _httpClientFactory.CreateClient();
+            string url = $"/driver-routes/update{(forceUpdate ? "?forceUpdate=true" : "")}";
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             httpClient.SetAuthorization();
 
@@ -47,8 +46,8 @@ namespace DriversRoutes.Data.RouteApi
 
         public async Task<HttpResponseMessage> SendCustomerRoutes(IList<CustomerRoutes> customers, UpdateProgressBar progressBar = null, bool forceUpdate = false, CancellationToken token = default)
         {
-            string url = $"{_url}/driver-routes/updates{(forceUpdate ? "?forceUpdate=true" : "")}";
-            using var httpClient = _httpClientFactory.CreateClient();
+            string url = $"/driver-routes/updates{(forceUpdate ? "?forceUpdate=true" : "")}";
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             httpClient.SetAuthorization();
 

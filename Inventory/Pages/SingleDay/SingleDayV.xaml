@@ -18,7 +18,7 @@
             <toolkit:MultiMathExpressionConverter x:Key="MultiMathExpressionConverter" />
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
 
-            <DataTemplate x:Key="Andorid">
+            <DataTemplate x:Key="Android">
                 <Border Margin="2">
 
                     <Border.StrokeShape>
@@ -142,6 +142,7 @@
                 </Border>
 
             </DataTemplate>
+
         </ResourceDictionary>
     </ContentPage.Resources>
 

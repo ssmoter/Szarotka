@@ -2,7 +2,6 @@
 using DataBase.Model.EntitiesInventory;
 
 using Shared.CustomControls.FromCode;
-using Shared.Data;
 using Shared.Data.ServerHttpClients;
 using Shared.Helper;
 
@@ -20,13 +19,12 @@ namespace Inventory.Data.InventoryApi
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClient;
         private readonly IAccessDataBase _db = db;
-        private readonly string _url = db.GetServerUrl();
 
 
         public async Task<HttpResponseMessage> SendDay(Day day, bool forceUpdate = false, UpdateProgressBar progressBar = null, CancellationToken token = default)
         {
-            string url = $"{_url}/inventory/day/update{(forceUpdate ? "?forceUpdate=true" : "")}";
-            using var httpClient = _httpClientFactory.CreateClient();
+            string url = $"/inventory/day/update{(forceUpdate ? "?forceUpdate=true" : "")}";
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             httpClient.SetAuthorization();
 
@@ -44,18 +42,17 @@ namespace Inventory.Data.InventoryApi
                 _db.SaveLog(new Exception(responseJson));
             }
             return response;
-
         }
         public async Task<HttpResponseMessage> SendDays(IList<Day> days, bool forceUpdate = false, UpdateProgressBar progressBar = null, CancellationToken token = default)
         {
-            string url = $"{_url}/inventory/days/update{(forceUpdate ? "?forceUpdate=true" : "")}";
-            using var httpClient = _httpClientFactory.CreateClient();
+            string url = $"/inventory/days/update{(forceUpdate ? "?forceUpdate=true" : "")}";
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             httpClient.SetAuthorization();
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressBar?.Grid);
 
-            var json = JsonSerializer.Serialize(days, DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.DayArray);
+            var json = JsonSerializer.Serialize(days, DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.IListDay);
 
             var response = await httpClient.PostWithProgressAsync(url, json,
                 (progress) => { UpdateProgressBar.UpdateProgress(progressBar, progress); }

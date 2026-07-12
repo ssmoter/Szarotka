@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using Inventory.Model;
@@ -7,8 +8,20 @@ using System.Collections.ObjectModel;
 
 namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
 {
-    public partial class PopupSelectRangeDateVM : ObservableObject, IDisposable
+    public partial class PopupSelectRangeDateVM : ObservableObject, IQueryAttributable
     {
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.TryGetValue(nameof(PopupDateModel), out object popupDateModel))
+            {
+                if (popupDateModel is PopupDateModel _popupDateModel  && _popupDateModel is not null )
+                {
+                    FromDate = new DateTime(_popupDateModel.From);
+                    ToDate = new DateTime(_popupDateModel.To);
+                }
+            }
+        }
+
         DateTime fromDate;
         public DateTime FromDate
         {
@@ -101,21 +114,12 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
         long from = 0;
         long to = 0;
 
-        public Func<object, CancellationToken, Task> Close;
-        public Task OnClose(object result = null, CancellationToken token = default)
-        {
-            return Close?.Invoke(result, token);
-        }
+        private readonly IPopupService _popupService;
 
-        public PopupSelectRangeDateVM()
+        public PopupSelectRangeDateVM(IPopupService popupService)
         {
             Init();
-        }
-        public PopupSelectRangeDateVM(PopupDateModel lastResult)
-        {
-            Init();
-            FromDate = new DateTime(lastResult.From);
-            ToDate = new DateTime(lastResult.To);
+            _popupService = popupService;
         }
 
         private void Init()
@@ -303,47 +307,24 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
         [RelayCommand]
         async Task SaveAndReturn()
         {
-            try
+            var guids = new Guid[SelectRangeDateMs.Count(x => x.IsChecked)];
+            int n = 0;
+            for (int i = 0; i < SelectRangeDateMs.Count; i++)
             {
-                var guids = new Guid[SelectRangeDateMs.Count(x => x.IsChecked)];
-                int n = 0;
-                for (int i = 0; i < SelectRangeDateMs.Count; i++)
+                if (SelectRangeDateMs[i].IsChecked)
                 {
-                    if (SelectRangeDateMs[i].IsChecked)
-                    {
-                        guids[n] = new Guid(SelectRangeDateMs[i].Driver.Id.ToByteArray());
-                        n++;
-                    }
+                    guids[n] = new Guid(SelectRangeDateMs[i].Driver.Id.ToByteArray());
+                    n++;
                 }
-
-                await OnClose(new PopupDateModel(from, to, guids));
             }
-            catch (Exception)
-            {
-            }
-            finally { Dispose(); }
+            await _popupService.ClosePopupAsync(page: Shell.Current, result: new PopupDateModel(from, to, guids));
         }
         [RelayCommand]
         async Task CancelAndReturn()
         {
-            try
-            {
-                await OnClose(null);
-            }
-            catch (Exception)
-            {
-            }
-            finally
-            {
-                Dispose();
-            }
+            await _popupService.ClosePopupAsync(page: Shell.Current);
         }
 
-        public void Dispose()
-        {
-            this.RangeFast?.Clear();
-            this.RangeMonth?.Clear();
-            GC.SuppressFinalize(this);
-        }
+
     }
 }

@@ -1,6 +1,5 @@
-﻿using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Extensions;
-using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -23,7 +22,7 @@ namespace DriversRoutes.Pages.Maps.MapAndPoints;
 
 public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
 {
-    #region Variable
+
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
@@ -219,13 +218,15 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
     private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _save;
     private readonly Data.GoogleApi.IRoutes _routes;
     private readonly DataBase.Service.IUpdateLogService _update;
+    private readonly IPopupService _popupService;
 
-    #endregion
+
     public MapsVM(IAccessDataBase db,
                   Data.GoogleApi.IRoutes routes,
                   DataBase.Data.Get.IGetDriverRoutesAoT get,
                   DataBase.Data.Save.ISaveDriverRoutesAoT save,
-                  DataBase.Service.IUpdateLogService update)
+                  DataBase.Service.IUpdateLogService update,
+                  IPopupService popupService)
     {
         _db = db;
         MapType = MapType.Street;
@@ -234,6 +235,7 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
         _get = get;
         _save = save;
         _update = update;
+        _popupService = popupService;
     }
 
     public void Dispose()
@@ -242,7 +244,7 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
         _db.Dispose();
     }
 
-    #region Method
+
 
     private void UpdatePinNumber()
     {
@@ -535,10 +537,10 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
         }
     }
 
-    #endregion
 
 
-    #region Command
+
+
 
     [RelayCommand]
     async Task ChangeDay()
@@ -550,17 +552,13 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
                 await Shell.Current.DisplayAlertAsync("Brak trasy", "Zapisywanie jest dostępne tylko po wybraniu trasy konkretnego kierowcy", "Ok");
                 return;
             }
-            var popup = new Popups.SelectDay.SelectDayV();
-            var response = default(object);
-            if (Application.Current?.Windows[0].Page != null)
-            {
-                response = await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
-            }
+            var response = await _popupService.ShowPopupAsync<Popups.SelectDay.SelectDayVM, SelectedDayOfWeekRoutes>(Shell.Current);
+
             if (response is null)
             {
                 return;
             }
-            if (response is SelectedDayOfWeekRoutes day)
+            if (response.Result is SelectedDayOfWeekRoutes day)
             {
                 LastSelectedDayOfWeek = day;
                 GetSelectedDaysAndForget(day);
@@ -688,7 +686,7 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
     {
         try
         {
-            var result = await MoveTimeOnCustomersV.ShowPopUp(Routes, selectDayMs, _get, _save, _update);
+            var result = await MoveTimeOnCustomersV.ShowPopUp(Routes, selectDayMs, _get, _save, _update, _popupService);
             if (result)
             {
                 GetSelectedDaysAndForget(LastSelectedDayOfWeek);
@@ -809,7 +807,6 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
         }
 
     }
-    #endregion
 
 }
 

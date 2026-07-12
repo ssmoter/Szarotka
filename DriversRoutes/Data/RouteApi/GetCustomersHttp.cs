@@ -23,13 +23,12 @@ namespace DriversRoutes.Data.RouteApi
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClient;
         private readonly IAccessDataBase _db = db;
-        private readonly string _url = db.GetServerUrl();
 
         public async Task<ObservableCollection<CustomerRoutes>> GetCustomerRoutes(Guid[] ids, UpdateProgressBar progressContent = null, CancellationToken token = default)
         {
             StringBuilder url = new();
+            url.Append("/driver-routes/customer-routes?");
 
-            url.Append($"\"{{_url}}/driver-routes/customer-routes?");
             for (int i = 0; i < ids.Length; i++)
             {
                 if (i != 0)
@@ -40,7 +39,7 @@ namespace DriversRoutes.Data.RouteApi
                 url.Append(ids[i]);
             }
 
-            using var httpClient = _httpClientFactory.CreateClient();
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             httpClient.SetAuthorization();
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent?.Grid);
@@ -57,8 +56,8 @@ namespace DriversRoutes.Data.RouteApi
         }
         public async Task<ObservableCollection<CustomerRoutes>> GetCustomerRoutes(Guid routeId, SelectedDayOfWeekRoutes day, UpdateProgressBar progressContent, CancellationToken token = default)
         {
-            string url = $"{_url}/driver-routes/customer-routes/{routeId}";
-            using var httpClient = _httpClientFactory.CreateClient();
+            string url = $"/driver-routes/customer-routes/{routeId}";
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             httpClient.SetAuthorization();
 

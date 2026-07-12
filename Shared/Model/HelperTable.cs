@@ -40,7 +40,9 @@ namespace Shared.Model
                     {nameof(Value)}, 
                     {nameof(CreatedTicks)}, 
                     {nameof(UpdatedTicks)}, 
-                    {nameof(IsDelete)}
+                    {nameof(IsDelete)},
+                    {nameof(UserCreatedId)},
+                    {nameof(UserUpdatedId)}
                 )
                 VALUES (
                     '{helperTable.Id}', 
@@ -48,14 +50,17 @@ namespace Shared.Model
                     '{helperTable.Value}', 
                     '{helperTable.CreatedTicks}', 
                     '{helperTable.UpdatedTicks}', 
-                    '{helperTable.IsDelete}'
+                    '{helperTable.IsDelete}',
+                    '{nameof(UserCreatedId)}',
+                    '{nameof(UserUpdatedId)}'
                 )
                 ON CONFLICT({nameof(Name)}) 
                 DO UPDATE SET 
                     {nameof(Name)} = '{helperTable.Name}', 
                     {nameof(Value)} = '{helperTable.Value}', 
                     {nameof(IsDelete)} = '{helperTable.IsDelete}', 
-                    {nameof(UpdatedTicks)} = '{helperTable.UpdatedTicks}'";
+                    {nameof(UpdatedTicks)} = '{helperTable.UpdatedTicks}',
+                    {nameof(UserUpdatedId)} = '{helperTable.UserUpdatedId}'";
             return sql;
         }
     }

@@ -1,21 +1,31 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Model.EntitiesRoutes;
 
+using DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses;
+
 using Shared.Helper;
+
+using System.Xml.Linq;
 
 namespace DriversRoutes.Pages.Popups.MoveTimeOnCustomers
 {
-    public partial class MoveTimeOnCustomersVM : ObservableObject
+    public partial class MoveTimeOnCustomersVM : ObservableObject, IQueryAttributable
     {
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.TryGetValue(nameof(SelectedDayOfWeekRoutes), out object selectDayMs))
+            {
+                if (selectDayMs is SelectedDayOfWeekRoutes _selectDayMs)
+                {
+                    SelectDayMs = _selectDayMs;
+                }
+            }
+        }
         private const string after = "po godzinie";
         private const string befor = "przed godziną";
-        public Func<object, CancellationToken, Task> Close;
-        public Task OnClose(object result = null, CancellationToken token = default)
-        {
-            return Close?.Invoke(result, token);
-        }
 
 
         private SelectedDayOfWeekRoutes selectDayMs;
@@ -57,10 +67,12 @@ namespace DriversRoutes.Pages.Popups.MoveTimeOnCustomers
                 if (SetProperty(ref sign, value, nameof(Sign))) { }
             }
         }
+        private readonly IPopupService _popupService;
 
-        public MoveTimeOnCustomersVM(SelectedDayOfWeekRoutes selectDayMs)
+        public MoveTimeOnCustomersVM(IPopupService popupService)
         {
-            SelectDayMs = new(selectDayMs)
+            _popupService = popupService;
+            SelectDayMs = new()
             {
                 Sunday = false,
                 Monday = false,
@@ -72,6 +84,12 @@ namespace DriversRoutes.Pages.Popups.MoveTimeOnCustomers
             };
         }
 
+        public MoveTimeOnCustomersVM(SelectedDayOfWeekRoutes selectDayMs, IPopupService popupService)
+        {
+            SelectDayMs = new(selectDayMs);
+            _popupService = popupService;
+        }
+
 
         public void SetTimeFromSelectDayMs(TimeSpan time)
         {
@@ -79,7 +97,7 @@ namespace DriversRoutes.Pages.Popups.MoveTimeOnCustomers
         }
 
 
-        #region Command
+
         [RelayCommand]
         async Task SaveAndReturn()
         {
@@ -111,13 +129,12 @@ namespace DriversRoutes.Pages.Popups.MoveTimeOnCustomers
             SelectDayMs.TuesdayTimeSpan = new TimeSpan(AddTime.Ticks);
             SelectDayMs.WednesdayTimeSpan = new TimeSpan(AddTime.Ticks);
 
-
-            await OnClose(SelectDayMs);
+            await _popupService.ClosePopupAsync(page: Shell.Current, result: SelectDayMs);
         }
         [RelayCommand]
         async Task CancelAndReturn()
         {
-            await OnClose(null);
+            await _popupService.ClosePopupAsync(page: Shell.Current);
         }
         [RelayCommand]
         void Add(string time)
@@ -140,7 +157,6 @@ namespace DriversRoutes.Pages.Popups.MoveTimeOnCustomers
 
         }
 
-        #endregion
     }
 }
 

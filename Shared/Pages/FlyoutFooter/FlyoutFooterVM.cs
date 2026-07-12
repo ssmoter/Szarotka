@@ -2,11 +2,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using DataBase.Data;
 using DataBase.Model.EntitiesServer;
 
 using Shared.Helper;
-using Shared.Model;
 
 namespace Shared.Pages.FlyoutFooter
 {
@@ -53,10 +51,8 @@ namespace Shared.Pages.FlyoutFooter
         async Task LogOut()
         {
             var toast = Toast.Make("Wylogowywanie...");
-            var log = Shared.Service.AppServiceProvider.GetService<LogIn.LogInV>();
-            var navigation = Shell.Current.Navigation.PushAsync(log);
 
-            var pages = Shell.Current.Navigation.NavigationStack.Where(x => x is not null).ToArray();
+            var pages = Shell.Current.Navigation.NavigationStack.Where(x => x is not null);
 
             foreach (Page item in pages)
             {
@@ -69,8 +65,8 @@ namespace Shared.Pages.FlyoutFooter
                 }
             }
             UserAfterLogin.RemoveLoginUser();
-
-            await Task.WhenAll(toast.Show(), navigation);
+            await toast.Show();
+            await Shell.Current.GoToAsync($"{nameof(LogIn.LogInV)}");
         }
 
         public void Dispose()

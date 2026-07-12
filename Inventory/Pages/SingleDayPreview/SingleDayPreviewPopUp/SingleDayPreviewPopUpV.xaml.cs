@@ -5,8 +5,18 @@ using DataBase.Model.EntitiesInventory;
 
 namespace Inventory.Pages.SingleDayPreview.SingleDayPreviewPopUp;
 
-public partial class SingleDayPreviewPopUpV : Popup
+public partial class SingleDayPreviewPopUpV : Popup, IQueryAttributable
 {
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        if (query.TryGetValue(nameof(Day), out object day))
+        {
+            if (day is Day _day)
+            {
+                Day = _day;
+            }
+        }
+    }
     private Day _day;
     public Day Day
     {
@@ -45,4 +55,6 @@ public partial class SingleDayPreviewPopUpV : Popup
         var toast = Toast.Make("Wczytywanie wybranego dnia");
         await Task.WhenAll(close, navigate, toast.Show());
     }
+
+
 }

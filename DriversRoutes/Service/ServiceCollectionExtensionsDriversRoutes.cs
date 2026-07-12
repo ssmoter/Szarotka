@@ -1,5 +1,10 @@
-﻿using DriversRoutes.Data.GoogleApi;
+﻿using CommunityToolkit.Maui;
+
+using DriversRoutes.Data.GoogleApi;
+using DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses;
 using DriversRoutes.Pages.Maps.Controls;
+using DriversRoutes.Pages.Popups.MoveTimeOnCustomers;
+using DriversRoutes.Pages.Popups.SelectDay;
 
 namespace DriversRoutes.Service
 {
@@ -40,6 +45,12 @@ namespace DriversRoutes.Service
             services.AddScoped<Data.RouteApi.ISendCustomersHttp, Data.RouteApi.SendCustomersHttp>();
 
             services.AddSingleton<BlazorMap>();
+
+            services.AddScopedPopup<SelectDayV, SelectDayVM>();
+            services.AddScopedPopup<ProbableAddressesV, ProbableAddressesVM>();
+            services.AddScopedPopup<MoveTimeOnCustomersV, MoveTimeOnCustomersVM>();
+
+
 
             return services;
         }

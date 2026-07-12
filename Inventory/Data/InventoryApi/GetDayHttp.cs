@@ -22,13 +22,12 @@ namespace Inventory.Data.InventoryApi
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
         private readonly IAccessDataBase _db = db;
-        private readonly string _url = db.GetServerUrl();
 
         public async Task<Day> GetDay(Guid id, UpdateProgressBar progressContent = null, CancellationToken token = default)
         {
             Shared.Service.AndroidPermissionService.InternetCheck();
-            string url = $"{_url}/inventory/day/{id}";
-            using var httpClient = _httpClientFactory.CreateClient();
+            string url = $"/inventory/day/{id}";
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             httpClient.SetAuthorization();
 
@@ -47,8 +46,8 @@ namespace Inventory.Data.InventoryApi
         public async Task<Day> GetDay(string selectedDateString, Guid userId, UpdateProgressBar progressContent = null, CancellationToken token = default)
         {
             Shared.Service.AndroidPermissionService.InternetCheck();
-            string url = $"{_url}/inventory/day?selectedDateString={selectedDateString}&userIds={userId}";
-            using var httpClient = _httpClientFactory.CreateClient();
+            string url = $"/inventory/day?selectedDateString={selectedDateString}&userId={userId}";
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             httpClient.SetAuthorization();
 
@@ -68,14 +67,14 @@ namespace Inventory.Data.InventoryApi
         public async Task<IList<Day>> GetDays(long from, long to, Guid[] userIds, UpdateProgressBar progressContent = null, CancellationToken token = default)
         {
             Shared.Service.AndroidPermissionService.InternetCheck();
-            string url = $"{_url}/inventory/days?from={from}&to={to}";
+            string url = $"/inventory/days?from={from}&to={to}";
 
             foreach (Guid id in userIds)
             {
                 url += $"&userId={id}";
             }
 
-            using var httpClient = _httpClientFactory.CreateClient();
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             httpClient.SetAuthorization();
 

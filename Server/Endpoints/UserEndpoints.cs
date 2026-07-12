@@ -13,7 +13,9 @@ namespace Server.Endpoints
         {
 
             var user = app.MapGroup("/user");
-            user.MapPost("/register", async ([FromBody] RegisterUser user, IRegisterUserRequests registerUserEndpoint, CancellationToken token = default) =>
+            user.MapPost("/register", async ([FromBody] RegisterUser user,
+                                             IRegisterUserRequests registerUserEndpoint,
+                                             CancellationToken token = default) =>
             {
                 return await registerUserEndpoint.InsertUser(user, token);
             });

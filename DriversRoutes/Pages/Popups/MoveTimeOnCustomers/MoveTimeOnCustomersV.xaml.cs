@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Maui.Extensions;
+﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Views;
 
 using DataBase.Data.Get;
@@ -9,28 +9,15 @@ using DataBase.Service;
 
 namespace DriversRoutes.Pages.Popups.MoveTimeOnCustomers;
 
-public partial class MoveTimeOnCustomersV : Popup, IDisposable
+public partial class MoveTimeOnCustomersV : Popup
 {
-    public MoveTimeOnCustomersV(SelectedDayOfWeekRoutes selectDayMs)
+    public MoveTimeOnCustomersV(SelectedDayOfWeekRoutes vm)
     {
         InitializeComponent();
-        var vm = new MoveTimeOnCustomersVM(selectDayMs);
-        //vm.Close += Closed;
-        vm.Close = async (result, token) => await Shell.Current.ClosePopupAsync(result, token);
-
-
         BindingContext = vm;
     }
 
-    public void Dispose()
-    {
-        if (BindingContext is MoveTimeOnCustomersVM vm)
-        {
-            //vm.Close -= CloseAsync;
-            vm.Close = null;
-        }
-        GC.SuppressFinalize(this);
-    }
+
 
     private void RadioButton_CheckedChanged(object sender, CheckedChangedEventArgs e)
     {
@@ -74,21 +61,23 @@ public partial class MoveTimeOnCustomersV : Popup, IDisposable
         SelectedDayOfWeekRoutes selectDayMs,
         IGetDriverRoutesAoT _get,
         ISaveDriverRoutesAoT _save,
-        IUpdateLogService _update)
+        IUpdateLogService _update,
+        IPopupService _popupService)
     {
-        var popup = new MoveTimeOnCustomersV(selectDayMs);
 
-        var result = default(object);
-        if (Application.Current?.Windows[0].Page != null)
+        var queryAttributes = new Dictionary<string, object>
         {
-            result = await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
-        }
+            [nameof(SelectedDayOfWeekRoutes)] = selectDayMs
+        };
+
+        var result = await _popupService.ShowPopupAsync<MoveTimeOnCustomersVM, SelectedDayOfWeekRoutes>(Shell.Current,
+                                                                                                        shellParameters: queryAttributes);
 
         if (result is null)
         {
             return false;
         }
-        if (result is SelectedDayOfWeekRoutes dayOf)
+        if (result.Result is SelectedDayOfWeekRoutes dayOf)
         {
             CommunityToolkit.Maui.Alerts.Toast toast = new()
             {

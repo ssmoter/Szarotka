@@ -1,6 +1,4 @@
-﻿using DataBase.Service;
-
-using MudBlazor.Services;
+﻿using MudBlazor.Services;
 
 using Shared.Data;
 using Shared.Data.ServerHttpClients;
@@ -18,7 +16,6 @@ namespace Shared.Service
         public static IServiceCollection AddMyServiceShared(this IServiceCollection services)
         {
             services.AddMudServices();
-            services.AddHttpClient();
 
             services.AddScoped<ICreatedDataBase, CreatedDataBase>();
 

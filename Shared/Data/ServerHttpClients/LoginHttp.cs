@@ -19,13 +19,12 @@ namespace Shared.Data.ServerHttpClients
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClient;
         private readonly IAccessDataBase _db = db;
-        private readonly string _url = db.GetServerUrl();
 
         public async Task<User> In(LoginUser login, CancellationToken token = default)
         {
             Shared.Service.AndroidPermissionService.InternetCheck();
 
-            string url = _url + "/user/login";
+            string url =  "user/login";
 
             ArgumentNullException.ThrowIfNull(login);
 
@@ -33,7 +32,7 @@ namespace Shared.Data.ServerHttpClients
 
             var content = new StringContent(request, Encoding.UTF8, "application/json");
 
-            using var httpClient = _httpClientFactory.CreateClient();
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             var response = await httpClient.PostAsync(url, content, token);
 
@@ -56,8 +55,8 @@ namespace Shared.Data.ServerHttpClients
         {
             Shared.Service.AndroidPermissionService.InternetCheck();
 
-            string url = _url + $"/user/{id}";
-            using var httpClient = _httpClientFactory.CreateClient();
+            string url = $"user/{id}";
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             httpClient.SetAuthorization();
 

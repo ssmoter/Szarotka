@@ -20,13 +20,12 @@ namespace Inventory.Data.InventoryApi
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
         private readonly IAccessDataBase _db = db;
-        private readonly string _url = db.GetServerUrl();
 
         public async Task<EmptyProducts> GetProducts(UpdateProgressBar progressContent = null, CancellationToken token = default)
         {
             Shared.Service.AndroidPermissionService.InternetCheck();
-            string url = $"{_url}/inventory/products/empty";
-            using var httpClient = _httpClientFactory.CreateClient();
+            string url = $"/inventory/products/empty";
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             httpClient.SetAuthorization();
 

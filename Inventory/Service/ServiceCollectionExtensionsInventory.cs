@@ -1,5 +1,9 @@
-﻿using Inventory.Data;
+﻿using CommunityToolkit.Maui;
+
+using Inventory.Data;
 using Inventory.Pages.Options.CreateTable;
+using Inventory.Pages.RangeDay.PopupSelectRangeDate;
+using Inventory.Pages.SingleDayPreview.SingleDayPreviewPopUp;
 
 namespace Inventory.Service
 {
@@ -35,6 +39,10 @@ namespace Inventory.Service
             services.AddScoped<Data.InventoryApi.ISendProductHttp, Data.InventoryApi.SendProductHttp>();
             services.AddScoped<Data.InventoryApi.ISendDayHttp, Data.InventoryApi.SendDayHttp>();
             services.AddScoped<Data.InventoryApi.IGetDayHttp, Data.InventoryApi.GetDayHttp>();
+
+            services.AddScopedPopup<PopupSelectRangeDateV, PopupSelectRangeDateVM>();
+            services.AddScopedPopup<SingleDayPreviewPopUpV>();
+
 
             return services;
         }

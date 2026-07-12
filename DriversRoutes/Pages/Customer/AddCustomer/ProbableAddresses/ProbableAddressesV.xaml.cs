@@ -7,19 +7,11 @@ namespace DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses;
 
 public partial class ProbableAddressesV : Popup
 {
-    public ProbableAddressesV(ResidentialAddress[] residentialAddresses)
+    public ProbableAddressesV(ProbableAddressesVM vm)
     {
         InitializeComponent();
-        ProbableAddressesVM vm = new();
-        vm.Close += OnVmClose;
-        vm.ProbableAddressesM.ResidentialAddresses =
-            [.. residentialAddresses];
         BindingContext = vm;
     }
 
-    private Task OnVmClose(object result, CancellationToken token)
-    {
-        return Shell.Current.ClosePopupAsync(result, token);
-        //return CloseAsync(result);
-    }
+
 }

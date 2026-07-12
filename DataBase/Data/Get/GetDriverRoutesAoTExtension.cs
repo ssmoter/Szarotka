@@ -105,14 +105,5 @@ namespace DataBase.Data.Get
         }
 
 
-
-
-
-
-
-
-
-
-
     }
 }

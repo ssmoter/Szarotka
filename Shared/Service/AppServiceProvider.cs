@@ -15,7 +15,7 @@
             IPlatformApplication.Current.Services;
             //MauiUIApplicationDelegate.Current.Services;
 #else
-            null;
+         new Microsoft.Extensions.DependencyInjection.ServiceCollection().BuildServiceProvider();
 #endif
     }
 }

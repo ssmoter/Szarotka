@@ -19,10 +19,11 @@ public static class ReadToken
             _handler.ValidateToken(token
                 , new TokenValidationParameters
                 {
-                    ValidateIssuerSigningKey = true,
+                    ValidateIssuerSigningKey = true,                   
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("81234CFB77034ECCDDD547F5SADFAASADSFGAFGDFAEWFCVZXVB")),
                     ValidateIssuer = false,
                     ValidateAudience = false,
+                    
                     ClockSkew = TimeSpan.Zero
                 }, out SecurityToken validatedToken);
 

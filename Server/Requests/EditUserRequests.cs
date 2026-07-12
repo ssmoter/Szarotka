@@ -4,6 +4,8 @@ using DataBase.Model.EntitiesServer;
 using Server.Model;
 using Server.Service;
 using Server.Validation;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Server.Requests
 {
@@ -20,17 +22,20 @@ namespace Server.Requests
     public class EditUserRequests(IAccessDataBase db,
                             IUserValidation userValidation,
                             IEditUserService editUser,
-                            IAuthenticationService authenticationService) : IEditUserRequests
+                            IAuthenticationService authenticationService,
+                            ILogger<EditUserRequests>? logger = null) : IEditUserRequests
     {
         private readonly IAccessDataBase _db = db;
         private readonly IUserValidation _userValidation = userValidation;
         private readonly IEditUserService _editUser = editUser;
         private readonly IAuthenticationService _authenticationService = authenticationService;
+        private readonly ILogger<EditUserRequests> _logger = logger ?? NullLogger<EditUserRequests>.Instance;
 
         public async Task<IResult> Update(EditUser edit, HttpContext context, CancellationToken token = default)
         {
             try
             {
+                _logger.LogInformation("Update started for user edit request");
                 ArgumentNullException.ThrowIfNull(edit);
                 var tasks = new List<Task>
                 {
@@ -52,17 +57,18 @@ namespace Server.Requests
             catch (ValidationException)
             {
                 var userToken = await CreatedNewToken(edit.New.Id.ToString());
-                Console.WriteLine(_userValidation.Validation.GetError());
+                _logger.LogWarning("Validation failed in Update: {Error}", _userValidation.Validation.GetError());
                 _userValidation.AddToken(userToken.Token);
                 throw;
             }
             catch (OperationCanceledException ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogWarning(ex, "Operation cancelled in Update");
                 throw;
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unexpected error in Update");
                 _db.SaveLog(ex);
                 throw;
             }
@@ -72,6 +78,7 @@ namespace Server.Requests
         {
             try
             {
+                _logger.LogInformation("UpdateDescription started for userId={UserId}", edit?.New?.Id);
                 token.ThrowIfCancellationRequested();
                 _userValidation.Validation.Throw();
                 await UpdateDescriptionTask(edit);
@@ -80,17 +87,17 @@ namespace Server.Requests
             }
             catch (ValidationException)
             {
-                Console.WriteLine(_userValidation.Validation.GetError());
+                _logger.LogWarning("Validation failed in UpdateDescription: {Error}", _userValidation.Validation.GetError());
                 throw;
             }
             catch (OperationCanceledException ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogWarning(ex, "Operation cancelled in UpdateDescription");
                 throw;
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _logger.LogError(ex, "Unexpected error in UpdateDescription");
                 throw;
             }
         }
@@ -98,6 +105,7 @@ namespace Server.Requests
         {
             try
             {
+                _logger.LogInformation("UpdateName started for userId={UserId}", edit?.New?.Id);
                 token.ThrowIfCancellationRequested();
                 await UpdateNameTask(edit);
                 _userValidation.Validation.Throw();
@@ -106,17 +114,17 @@ namespace Server.Requests
             }
             catch (ValidationException)
             {
-                Console.WriteLine(_userValidation.Validation.GetError());
+                _logger.LogWarning("Validation failed in UpdateName: {Error}", _userValidation.Validation.GetError());
                 throw;
             }
             catch (OperationCanceledException ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogWarning(ex, "Operation cancelled in UpdateName");
                 throw;
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _logger.LogError(ex, "Unexpected error in UpdateName");
                 throw;
             }
         }
@@ -124,6 +132,7 @@ namespace Server.Requests
         {
             try
             {
+                _logger.LogInformation("UpdateEmail started for userId={UserId}", edit?.New?.Id);
                 token.ThrowIfCancellationRequested();
                 await UpdateEmailTask(edit);
                 _userValidation.Validation.Throw();
@@ -132,17 +141,17 @@ namespace Server.Requests
             }
             catch (ValidationException)
             {
-                Console.WriteLine(_userValidation.Validation.GetError());
+                _logger.LogWarning("Validation failed in UpdateEmail: {Error}", _userValidation.Validation.GetError());
                 throw;
             }
             catch (OperationCanceledException ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogWarning(ex, "Operation cancelled in UpdateEmail");
                 throw;
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _logger.LogError(ex, "Unexpected error in UpdateEmail");
                 throw;
             }
         }
@@ -150,6 +159,7 @@ namespace Server.Requests
         {
             try
             {
+                _logger.LogInformation("UpdatePhoneNumber started for userId={UserId}", edit?.New?.Id);
                 token.ThrowIfCancellationRequested();
                 await UpdatePhoneNumberTask(edit);
                 _userValidation.Validation.Throw();
@@ -158,17 +168,17 @@ namespace Server.Requests
             }
             catch (ValidationException)
             {
-                Console.WriteLine(_userValidation.Validation.GetError());
+                _logger.LogWarning("Validation failed in UpdatePhoneNumber: {Error}", _userValidation.Validation.GetError());
                 throw;
             }
             catch (OperationCanceledException ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogWarning(ex, "Operation cancelled in UpdatePhoneNumber");
                 throw;
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _logger.LogError(ex, "Unexpected error in UpdatePhoneNumber");
                 throw;
             }
         }
@@ -176,6 +186,7 @@ namespace Server.Requests
         {
             try
             {
+                _logger.LogInformation("UpdateUserType started for userId={UserId}", edit?.New?.Id);
                 token.ThrowIfCancellationRequested();
                 await UpdateUserTypeTask(edit);
                 _userValidation.Validation.Throw();
@@ -184,17 +195,17 @@ namespace Server.Requests
             }
             catch (ValidationException)
             {
-                Console.WriteLine(_userValidation.Validation.GetError());
+                _logger.LogWarning("Validation failed in UpdateUserType: {Error}", _userValidation.Validation.GetError());
                 throw;
             }
             catch (OperationCanceledException ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogWarning(ex, "Operation cancelled in UpdateUserType");
                 throw;
             }
             catch (Exception ex)
             {
-                _db.SaveLog(ex);
+                _logger.LogError(ex, "Unexpected error in UpdateUserType");
                 throw;
             }
         }

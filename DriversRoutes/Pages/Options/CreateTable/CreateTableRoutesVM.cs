@@ -64,7 +64,6 @@ namespace DriversRoutes.Pages.Options.CreateTable
         }
 
 
-        #region Command
 
         [RelayCommand]
         async Task CreateTables()
@@ -136,9 +135,6 @@ namespace DriversRoutes.Pages.Options.CreateTable
         }
 
 
-        #endregion
-
-        #region Method
 
         async Task CheckTables()
         {
@@ -195,7 +191,6 @@ namespace DriversRoutes.Pages.Options.CreateTable
             random.NextBytes(guidBytes);
             return new Guid(guidBytes);
         }
-        #endregion
     }
 }
 

@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Model.EntitiesRoutes;
@@ -27,31 +28,26 @@ namespace DriversRoutes.Pages.Popups.SelectDay
             }
         }
 
+        private readonly IPopupService _popupService;
 
-        public Func<object, CancellationToken, Task> Close;
-        public Task OnClose(object result = null, CancellationToken token = default)
-        {
-            return Close?.Invoke(result, token);
-        }
-        public SelectDayVM()
+        public SelectDayVM(IPopupService popupService)
         {
             this.SelectDayMs ??= new();
+            _popupService = popupService;
         }
 
 
-        #region Command
         [RelayCommand]
         async Task SaveAndReturn()
         {
-            await OnClose(SelectDayMs);
+            await _popupService.ClosePopupAsync<SelectedDayOfWeekRoutes>(page: Shell.Current, result: SelectDayMs);
         }
         [RelayCommand]
         async Task CancelAndReturn()
         {
-            await OnClose(null);
+            await _popupService.ClosePopupAsync(page: Shell.Current);
         }
 
-        #endregion
 
     }
 }

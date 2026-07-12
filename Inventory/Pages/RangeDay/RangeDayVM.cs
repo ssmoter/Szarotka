@@ -1,6 +1,5 @@
-﻿using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Extensions;
-using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -159,13 +158,16 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
     private readonly Data.InventoryApi.ISendDayHttp _sendDayHttp;
     private readonly Shared.Data.ServerHttpClients.IUpdateLogsHttp _updateLogsHttp;
     private readonly DataBase.Service.IUpdateLogService _updateLogService;
+    private readonly IPopupService _popupService;
+
     public RangeDayVM(IAccessDataBase db,
                       IGetInventoryAoT get,
                       Data.InventoryApi.IGetDayHttp getDayHttp,
                       Data.InventoryApi.ISendDayHttp sendDayHttp,
                       Shared.Data.ServerHttpClients.IUpdateLogsHttp updateLogsHttp,
                       DataBase.Service.IUpdateLogService updateLogService,
-                      ISaveInventoryAoT save)
+                      ISaveInventoryAoT save,
+                      IPopupService popupService)
     {
         _db = db;
         _get = get;
@@ -182,6 +184,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
         _updateLogsHttp = updateLogsHttp;
         _updateLogService = updateLogService;
         _save = save;
+        _popupService = popupService;
     }
     private bool _isScheduledFilterTyp = false;
     private bool _isScheduledOrderBy = false;
@@ -276,16 +279,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
             {
                 return;
             }
-            var popup = new SingleDayPreview.SingleDayPreviewPopUp.SingleDayPreviewPopUpV(day);
-
-            if (Application.Current?.Windows != null && Application.Current.Windows.Count > 0)
-            {
-                await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
-            }
-            else if (Application.Current?.Windows[0].Page != null)
-            {
-                await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
-            }
+            await _popupService.ShowPopupAsync<SingleDayPreview.SingleDayPreviewPopUp.SingleDayPreviewPopUpV>(Shell.Current);
         }
         catch (Exception ex)
         {
@@ -372,27 +366,15 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
     {
         try
         {
-            PopupSelectRangeDate.PopupSelectRangeDateV popup;
-            if (PopupDate is null)
-            {
-                popup = new PopupSelectRangeDate.PopupSelectRangeDateV();
-            }
-            else
-            {
-                popup = new PopupSelectRangeDate.PopupSelectRangeDateV(PopupDate);
-            }
-            object result = null;
-            if (Application.Current?.Windows != null && Application.Current.Windows.Count > 0)
-            {
-                result = await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
-            }
-            else if (Application.Current?.Windows[0].Page != null)
-            {
-                result = await Application.Current?.Windows[0].Page.ShowPopupAsync(popup);
-            }
+            var parameters = new Dictionary<string, object>
+                {
+                    { nameof(PopupDateModel), PopupDate }
+                };
+            var result = await _popupService.ShowPopupAsync<PopupSelectRangeDate.PopupSelectRangeDateVM, PopupDateModel>(Shell.Current, shellParameters: parameters);
 
-            if (result is PopupDateModel model)
+            if (result.Result is PopupDateModel popupResult)
             {
+                var model = popupResult;
                 PopupDate = model;
                 var list = await _get.Days(model.From, model.To, model.DriverId);
                 AllDays = [.. list.OrderByDescending(x => x.SelectedDateTicks)];
@@ -789,7 +771,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
             var allDays = await _get.Days(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks, []);
 
 
-            var result = await SendData(allDays, false, cancellationTokenSource);
+            var result = await SendData([.. allDays], false, cancellationTokenSource);
 
             if (result.StatusCode == HttpStatusCode.Conflict)
             {

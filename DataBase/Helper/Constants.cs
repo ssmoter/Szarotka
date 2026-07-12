@@ -37,8 +37,7 @@ namespace DataBase.Helper
         // create the database if it doesn't exist
             SQLite.SQLiteOpenFlags.Create |
         // enable multi-threaded database access
-            SQLite.SQLiteOpenFlags.SharedCache;
-
+            SQLite.SQLiteOpenFlags.NoMutex;
         public static string GetPathFolder
         {
             get
@@ -97,18 +96,9 @@ namespace DataBase.Helper
 
         public static CultureInfo CultureInfo => new("pl-PL");
 
-        public static string ServerUrl
-        {
-            get
-            {
-#if ANDROID
-               // return "http://192.168.1.102:5021";
-                return "http://10.0.2.2:5021";
-#else
-                return "http://localhost:5021";
-                //return "http://localhost:32783";
-#endif
-            }
-        }
+
+
+
+        
     }
 }

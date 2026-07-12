@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Maui.Extensions;
-using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -150,6 +149,8 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         private readonly IAccessDataBase _db;
         private readonly DataBase.Service.IUpdateLogService _update;
         private readonly Data.RouteApi.ISendCustomersHttp _sendHttp;
+        private readonly IPopupService _popupService;
+
         internal ResidentialAddress[] Address { get; set; } = [];
         internal CustomerRoutes OriginCustomer { get; set; }
 
@@ -159,7 +160,8 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
                              DataBase.Data.Save.ISaveDriverRoutesAoT save,
                              DataBase.Data.Get.IGetDriverRoutesAoT get,
                              DataBase.Service.IUpdateLogService update,
-                             Data.RouteApi.ISendCustomersHttp sendHttp)
+                             Data.RouteApi.ISendCustomersHttp sendHttp,
+                             IPopupService popupService)
         {
             AddCustomer ??= new();
             Customer ??= new();
@@ -170,6 +172,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
             _get = get;
             _update = update;
             _sendHttp = sendHttp;
+            _popupService = popupService;
         }
 
 
@@ -385,15 +388,13 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
                     }
                 }
 
-                var popup = new DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses.ProbableAddressesV(this.Address);
-
-                var result = default(object);
-                if (Application.Current?.Windows[0].Page != null)
+                var queryAttributes = new Dictionary<string, object>
                 {
-                    result = await Application.Current.Windows[0].Page.ShowPopupAsync(popup);
-                }
+                    [nameof(ResidentialAddress)] = this.Address
+                };
+                var result = await _popupService.ShowPopupAsync<ProbableAddresses.ProbableAddressesVM, ResidentialAddress>(Shell.Current);
 
-                if (result is ResidentialAddress address)
+                if (result.Result is ResidentialAddress address)
                 {
                     Customer.ResidentialAddress = address;
                 }

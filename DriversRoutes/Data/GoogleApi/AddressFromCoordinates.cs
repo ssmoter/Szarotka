@@ -26,10 +26,9 @@ namespace DriversRoutes.Data.GoogleApi
                 var lat = latitude.ToString().Replace(',', '.');
                 var lon = longitude.ToString().Replace(',', '.');
 
-                using var client = _httpClientFactory.CreateClient();
+                using var client = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.GoogleApis);
 
-                var uri = new Uri($"https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lon}&key={key}");
-                client.BaseAddress = uri;
+                var uri = new Uri($"maps/api/geocode/json?latlng={lat},{lon}&key={key}");
 
                 var result = await client.GetFromJsonAsync<GoogleApiAddress>(uri, GoogleApiAddressJsonSerializerContext.Default.GoogleApiAddress, token) ?? throw new Exception("Wystąpił nieznany błąd przy odwróconej geolokalizacji");
 

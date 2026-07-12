@@ -13,18 +13,10 @@ namespace Shared.Data.ServerHttpClients
         Task<bool> PostNewAccount(RegisterUser user);
     }
 
-    public class RegisterHttp : IRegisterHttp
+    public class RegisterHttp(IHttpClientFactory httpClient, IAccessDataBase db) : IRegisterHttp
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IAccessDataBase _db;
-        private readonly string _url;
-
-        public RegisterHttp(IHttpClientFactory httpClient, IAccessDataBase db)
-        {
-            _httpClientFactory = httpClient;
-            _db = db;
-            _url = _db.GetServerUrl();
-        }
+        private readonly IHttpClientFactory _httpClientFactory = httpClient;
+        private readonly IAccessDataBase db = db;
 
         public async Task<bool> PostNewAccount(RegisterUser user)
         {
@@ -36,9 +28,9 @@ namespace Shared.Data.ServerHttpClients
 
             var content = new StringContent(request, Encoding.UTF8, "application/json");
 
-            var url = _url + "/user" + "/register";
+            var url = "user/register";
 
-            using var httpClient = _httpClientFactory.CreateClient();
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             var response = await httpClient.PostAsync(url, content);
 
@@ -60,8 +52,8 @@ namespace Shared.Data.ServerHttpClients
 
             ArgumentNullException.ThrowIfNull(code);
 
-            var ulr = _url + "/user" + "/confirm-email/" + code;
-            using var httpClient = _httpClientFactory.CreateClient();
+            var ulr =  "user/confirm-email/" + code;
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             var response = await httpClient.GetAsync(ulr);
             response.EnsureSuccessStatusCode();

@@ -4,6 +4,8 @@ using DataBase.Model.EntitiesServer;
 using Server.Model;
 using Server.Service;
 using Server.Validation;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 
 namespace Server.Requests
@@ -15,17 +17,19 @@ namespace Server.Requests
         Task<IResult> ResetPasswordNew(int code, string password, CancellationToken token = default);
     }
 
-    public class ResetPasswordRequests(IAccessDataBase db, IUserValidation userValidation, IResetPasswordService resetPasswordService, IEmailConfirmService emailConfirmService) : IResetPasswordRequests
+    public class ResetPasswordRequests(IAccessDataBase db, IUserValidation userValidation, IResetPasswordService resetPasswordService, IEmailConfirmService emailConfirmService, ILogger<ResetPasswordRequests>? logger = null) : IResetPasswordRequests
     {
         private readonly IAccessDataBase _db = db;
         private readonly IUserValidation _userValidation = userValidation;
         private readonly IEmailConfirmService _emailConfirmService = emailConfirmService;
         private readonly IResetPasswordService _resetPasswordService = resetPasswordService;
+        private readonly ILogger<ResetPasswordRequests> _logger = logger ?? NullLogger<ResetPasswordRequests>.Instance;
 
         public async Task<IResult> ResetPasswordEmail(string email, CancellationToken token = default)
         {
             try
             {
+                _logger.LogInformation("ResetPasswordEmail started for email={Email}", email);
                 if (_userValidation.EmailIsNull(email) == ServerEnums.Result.Success)
                 {
                     _userValidation.EmailValidFormat(email);
@@ -38,21 +42,22 @@ namespace Server.Requests
                 token.ThrowIfCancellationRequested();
 
                 await _emailConfirmService.SendResetPasswordEmailCode(id, token);
-
+                _logger.LogInformation("ResetPasswordEmail: reset code sent for userId={UserId}", id);
                 return Results.Ok();
             }
             catch (ValidationException)
             {
-                Console.WriteLine(_userValidation.Validation.GetError());
+                _logger.LogWarning("Validation failed in ResetPasswordEmail: {Error}", _userValidation.Validation.GetError());
                 throw;
             }
             catch (OperationCanceledException ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogWarning(ex, "Operation cancelled in ResetPasswordEmail");
                 throw;
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unexpected error in ResetPasswordEmail");
                 _db.SaveLog(ex);
                 throw;
             }
@@ -61,24 +66,27 @@ namespace Server.Requests
         {
             try
             {
+                _logger.LogInformation("ResetPasswordCode started for code={Code}", code);
                 token.ThrowIfCancellationRequested();
 
                 _ = await CheckCode(code);
 
+                _logger.LogInformation("ResetPasswordCode succeeded for code={Code}", code);
                 return Results.Ok();
             }
             catch (ValidationException ex)
             {
-                Console.WriteLine(ex.GetError());
+                _logger.LogWarning("Validation failed in ResetPasswordCode: {Error}", ex.GetError());
                 throw;
             }
             catch (OperationCanceledException ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogWarning(ex, "Operation cancelled in ResetPasswordCode");
                 throw;
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unexpected error in ResetPasswordCode");
                 _db.SaveLog(ex);
                 throw;
             }
@@ -87,6 +95,7 @@ namespace Server.Requests
         {
             try
             {
+                _logger.LogInformation("ResetPasswordNew started for code={Code}", code);
                 token.ThrowIfCancellationRequested();
 
                 var confirmCode = await CheckCode(code);
@@ -104,21 +113,23 @@ namespace Server.Requests
                 _userValidation.Validation.Throw();
 
                 await _resetPasswordService.ChangePassword(confirmCode.UserId, password);
+                _logger.LogInformation("ResetPasswordNew: password changed for userId={UserId}", confirmCode.UserId);
 
                 return Results.Ok();
             }
             catch (ValidationException)
             {
-                Console.WriteLine(_userValidation.Validation.GetError());
+                _logger.LogWarning("Validation failed in ResetPasswordNew: {Error}", _userValidation.Validation.GetError());
                 throw;
             }
             catch (OperationCanceledException ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogWarning(ex, "Operation cancelled in ResetPasswordNew");
                 throw;
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unexpected error in ResetPasswordNew");
                 _db.SaveLog(ex);
                 throw;
             }

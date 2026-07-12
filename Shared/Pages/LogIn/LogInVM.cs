@@ -133,7 +133,7 @@ namespace Shared.Pages.LogIn
                 }
                 else
                 {
-                    await Shell.Current.GoToAsync("MainPage");
+                    await Shell.Current.GoToAsync("../MainPage");
                 }
             }
             catch (ValidationExceptionClient ex)

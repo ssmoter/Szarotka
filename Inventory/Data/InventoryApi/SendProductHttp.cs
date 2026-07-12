@@ -20,12 +20,11 @@ namespace Inventory.Data.InventoryApi
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClient;
         private readonly IAccessDataBase _db = db;
-        private readonly string _url = db.GetServerUrl();
 
         public async Task<(HttpResponseMessage httpMessage, string content)> SendProduct(EmptyProduct product, UpdateProgressBar progressBar = null, bool forceUpdate = false, CancellationToken token = default)
         {
-            string url = $"{_url}/inventory/product/update{(forceUpdate ? "?forceUpdate=true" : "")}";
-            using var httpClient = _httpClientFactory.CreateClient();
+            string url = $"/inventory/product/update{(forceUpdate ? "?forceUpdate=true" : "")}";
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             httpClient.SetAuthorization();
 
@@ -49,8 +48,8 @@ namespace Inventory.Data.InventoryApi
 
         public async Task<(HttpResponseMessage httpMessage, string content)> SendProducts(EmptyProducts products, UpdateProgressBar progressBar = null, bool forceUpdate = false, CancellationToken token = default)
         {
-            string url = $"{_url}/inventory/products/update{(forceUpdate ? "?forceUpdate=true" : "")}";
-            using var httpClient = _httpClientFactory.CreateClient();
+            string url = $"/inventory/products/update{(forceUpdate ? "?forceUpdate=true" : "")}";
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             httpClient.SetAuthorization();
 

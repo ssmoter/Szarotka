@@ -14,12 +14,27 @@ namespace Server.Service
                                                             , IConfiguration configuration)
         {
             DataBase.Service.ServiceCollectionExtensionsDataBase.AddMyServiceDataBase(services);
-            services.AddScoped<IAccessDataBase>(options =>
+            var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(AccessDataBase));
+            if (descriptor != null)
             {
+                services.Remove(descriptor);
+            }
+            services.AddSingleton<IAccessDataBase>(options =>
+            {
+                string dbPath;
+#if DEBUG
                 var env = options.GetRequiredService<IWebHostEnvironment>();
-                var path = Path.Combine(env.ContentRootPath,
+                dbPath = Path.Combine(env.ContentRootPath,
                                 env.EnvironmentName, DataBase.Helper.Constants.DatabaseName);
-                return new AccessDataBase(path);
+#else
+                string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                dbPath = Path.Combine(appData, DataBase.Helper.Constants.DatabaseName);
+                Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
+#endif
+                var db = new AccessDataBase(dbPath);
+                db.DataBase.ExecuteScalar<string>("PRAGMA journal_mode=WAL;");
+                db.DataBaseAsync.ExecuteScalarAsync<string>("PRAGMA journal_mode=WAL;").GetAwaiter().GetResult();
+                return db;
             });
 
             services.AddScoped<IUserValidation, UserValidation>();

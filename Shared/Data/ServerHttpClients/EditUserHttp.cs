@@ -18,14 +18,13 @@ namespace Shared.Data.ServerHttpClients
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClient;
         private readonly IAccessDataBase _db = db;
-        private readonly string _url = db.GetServerUrl();
 
         public async Task<User> EditUser(User user)
         {
             Shared.Service.AndroidPermissionService.InternetCheck();
 
-            string url = _url + $"/user/edit";
-            using var httpClient = _httpClientFactory.CreateClient();
+            string url = $"user/edit";
+            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             httpClient.SetAuthorization();
 
