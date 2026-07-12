@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="SzarotkaNET10.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:emailConfirm="clr-namespace:Shared.Pages.ConfirmEmail;assembly=Shared"
+    xmlns:footer="clr-namespace:Shared.Pages.FlyoutFooter;assembly=Shared"
+    xmlns:header="clr-namespace:Shared.Pages.FlyoutHeader;assembly=Shared"
+    xmlns:img="clr-namespace:Shared.Helper.Img;assembly=Shared"
+    xmlns:inventory="clr-namespace:Inventory.Pages.Main;assembly=Inventory"
+    xmlns:local="clr-namespace:SzarotkaNET10"
+    xmlns:login="clr-namespace:Shared.Pages.LogIn;assembly=Shared"
+    xmlns:options="clr-namespace:SzarotkaNET10.Pages.Options.Main"
+    xmlns:register="clr-namespace:Shared.Pages.Register;assembly=Shared"
+    xmlns:routes="clr-namespace:DriversRoutes.Pages.Main;assembly=DriversRoutes"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:user="clr-namespace:Shared.Pages.UserDisplay;assembly=Shared"
+    xmlns:vm="clr-namespace:SzarotkaNET10"
+    Title="Szarotka"
+    x:DataType="vm:AppShellVM"
+    Shell.FlyoutBehavior="Flyout">
+
+
+
+    <Shell.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+
+    </Shell.Resources>
+
+
+    <Shell.FlyoutHeader>
+        <header:FlyoutHeaderV />
+    </Shell.FlyoutHeader>
+
+    <Shell.FlyoutFooter>
+        <footer:FlyoutFooterV />
+    </Shell.FlyoutFooter>
+
+    <!--<ShellContent
+            Title="Home"
+            ContentTemplate="{DataTemplate local:MainPage}"
+            Icon="{AppThemeBinding Light={Static img:TabBarImg.MainBlack},
+                                   Dark={Static img:TabBarImg.MainWhite}}" />-->
+
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems" IsVisible="{Binding IsLogin}">
+
+        <ShellContent
+            Title="Inwentarz"
+            ContentTemplate="{DataTemplate inventory:MainV}"
+            Icon="{AppThemeBinding Light={Static img:TabBarImg.InventoryBlack},
+                                   Dark={Static img:TabBarImg.InventoryWhite}}" />
+
+        <ShellContent
+            Title="Mapy"
+            ContentTemplate="{DataTemplate routes:MainVDriversRoutesV}"
+            Icon="{AppThemeBinding Light={Static img:TabBarImg.MapBlack},
+                                   Dark={Static img:TabBarImg.MapWhite}}"
+            IsVisible="{OnPlatform Android=true,
+                                   Default=false}" />
+
+
+    </FlyoutItem>
+
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems" IsVisible="{Binding IsLogin}">
+        <ShellContent
+            Title="Opcje"
+            ContentTemplate="{DataTemplate options:MainOptionsV}"
+            Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
+                                   Dark={Static img:TabBarImg.OptionWhite}}" />
+
+    </FlyoutItem>
+
+
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems" IsVisible="{Binding IsLogin, Converter={StaticResource InvertedBoolConverter}}">
+
+        <ShellContent
+            Title="Zaloguj się"
+            ContentTemplate="{DataTemplate login:LogInV}"
+            Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
+                                   Dark={Static img:TabBarImg.OptionWhite}}" />
+
+        <ShellContent
+            Title="Rejestracja"
+            ContentTemplate="{DataTemplate register:RegisterV}"
+            Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
+                                   Dark={Static img:TabBarImg.OptionWhite}}" />
+
+        <ShellContent
+            Title="Potwierdź email"
+            ContentTemplate="{DataTemplate emailConfirm:ConfirmEmailV}"
+            Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
+                                   Dark={Static img:TabBarImg.OptionWhite}}" />
+    </FlyoutItem>
+
+</Shell>

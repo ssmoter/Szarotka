@@ -1,0 +1,140 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
+
+
+		<OutputType>Exe</OutputType>
+		<RootNamespace>Szarotka</RootNamespace>
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<!--
+		<UseMauiBlazorWebView>true</UseMauiBlazorWebView>
+		<StaticWebAssetsEnabled>true</StaticWebAssetsEnabled>
+		<DisableStaticWebAssetsDevelopmentManifest>false</DisableStaticWebAssetsDevelopmentManifest>
+		-->
+		
+		<EnableDefaultCssItems>false</EnableDefaultCssItems>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
+		<TrimMode>partial</TrimMode>
+
+		
+		<!-- REWOLUCJA DLA .NET 10: Prawidłowa konfiguracja architektur dla Androida android-arm64;
+		-->
+		<RuntimeIdentifiers Condition="$(TargetFramework.Contains('-android'))">android-x64</RuntimeIdentifiers>
+
+		<!-- ROZWIĄZANIE BŁĘDU SQLITE: Wymuszenie spakowania bibliotek natywnych .so w trybie Debug -->
+		<EmbedAssembliesIntoApk Condition="'$(Configuration)' == 'Debug' and $(TargetFramework.Contains('-android'))">true</EmbedAssembliesIntoApk>
+
+		<!-- Display name -->
+		<ApplicationTitle>Szarotka</ApplicationTitle>
+		<ApplicationId>com.szarotka.szarotka</ApplicationId>
+		<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>
+		<WindowsPackageType>None</WindowsPackageType>
+
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.3</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- App Icon -->
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+		<!-- Splash Screen -->
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+		<!-- Images -->
+		<MauiImage Include="Resources\Images\*" />
+		<MauiImage Include="Resources\Images\ciasta\*" />
+		<MauiImage Include="Resources\Images\ciastka\*" />
+		<MauiImage Include="Resources\Images\drozdzowki\*" />
+		<MauiImage Include="Resources\Images\Icon\*" />
+		<MauiImage Include="Resources\Images\inne\*" />
+		<MauiImage Include="Resources\Images\pieczywo\*" />
+		<MauiImage Include="Resources\Images\torty\*" />
+		<!-- Custom Fonts -->
+		<MauiFont Include="Resources\Fonts\*" />
+		<!-- Raw Assets -->
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Remove="resources\raw\appsettings.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Platforms\Android\Resources\xml\network_security_config.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AndroidResource Include="Platforms\Android\Resources\xml\network_security_config.xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.9" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.80" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.80" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.9" />		
+		<!--
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.80" />
+		-->
+	</ItemGroup>
+
+	<!-- POPRAWKA RELACJI: Usunięto atrybut PrivateAssets="contentFiles", który blokował natywne pliki SQLite w folderze DataBase -->
+	<ItemGroup>
+		<ProjectReference Include="..\DataBase\DataBase.csproj" />
+		<ProjectReference Include="..\DriversRoutes\DriversRoutes.csproj" />
+		<ProjectReference Include="..\Inventory\Inventory.csproj" />
+		<ProjectReference Include="..\Shared\Shared.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="AppShell.xaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+		<Compile Update="Pages\Options\Main\MainOptionsV.xaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<MauiAsset Update="Resources\Raw\appsettings.json">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</MauiAsset>
+	</ItemGroup>
+	<ItemGroup>
+		<MauiImage Update="Resources\Images\dotnet_bot.png">
+			<Resize>True</Resize>
+			<BaseSize>300,185</BaseSize>
+		</MauiImage>
+	</ItemGroup>
+	<ItemGroup>
+		<MauiXaml Update="AppShell.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\Options\Main\MainOptionsV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Resources\Styles\Colors.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Resources\Styles\Styles.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+	</ItemGroup>
+	<ProjectExtensions>
+		<VisualStudio>
+			<UserProperties XamarinHotReloadDebuggerTimeoutExceptionSzarotkaNET10HideInfoBar="True" />
+		</VisualStudio>
+	</ProjectExtensions>
+
+	<!-- Blokada błędów webowych dla czystego projektu .NET MAUI -->
+	<Target Name="StaticWebAssetsPrepareForRun" />
+	<Target Name="StaticWebAssetsPrepareForPublish" />
+	<Target Name="LoadStaticWebAssetsPublishManifest" />
+
+
+</Project>
