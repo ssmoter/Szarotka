@@ -9,24 +9,24 @@ namespace DataBaseUnitTest.DataGet
         {
             var db = await Helper.CreateDataBaseForTest(nameof(GetDaysExtension_ShouldGet_AllGuids));
 
-            var excepted = await Helper.SetExampleDays(15, db);
+            var expected = await Helper.SetExampleDays(15, db);
 
-            excepted = [.. excepted.OrderBy(x => x.SelectedDateTicks)];
+            expected = [.. expected.OrderBy(x => x.SelectedDateTicks)];
 
-            var ids = excepted.Select(x => x.UserCreatedId).ToArray();
+            var ids = expected.Select(x => x.UserCreatedId).ToArray();
 
             var aot = new GetInventoryAoT(db);
 
-            var result = await aot.Days(excepted.First().SelectedDateTicks,
-                                        excepted.Last().SelectedDateTicks,
+            var result = await aot.Days(expected.First().SelectedDateTicks,
+                                        expected.Last().SelectedDateTicks,
                                         ids);
 
             result = [.. result.OrderBy(x => x.SelectedDateTicks)];
 
-            var exceptedJson = System.Text.Json.JsonSerializer.Serialize(excepted);
+            var expectedJson = System.Text.Json.JsonSerializer.Serialize(expected);
             var resultJson = System.Text.Json.JsonSerializer.Serialize(result);
 
-            Assert.Equal(exceptedJson, resultJson);
+            Assert.Equal(expectedJson, resultJson);
         }
 
         [Fact]
@@ -34,26 +34,26 @@ namespace DataBaseUnitTest.DataGet
         {
             var db = await Helper.CreateDataBaseForTest(nameof(GetDaysExtension_ShouldGet_SingleGuid));
 
-            var excepted = await Helper.SetExampleDays(15, db);
+            var expected = await Helper.SetExampleDays(15, db);
 
-            excepted = [.. excepted.OrderBy(x => x.SelectedDateTicks)];
+            expected = [.. expected.OrderBy(x => x.SelectedDateTicks)];
 
-            var ids = excepted.Select(x => x.UserCreatedId).First();
+            var ids = expected.Select(x => x.UserCreatedId).First();
 
-            excepted = [.. excepted.Where(x => x.UserCreatedId == ids)];
+            expected = [.. expected.Where(x => x.UserCreatedId == ids)];
 
             var aot = new GetInventoryAoT(db);
 
-            var result = await aot.Days(excepted.First().SelectedDateTicks,
-                                        excepted.Last().SelectedDateTicks,
+            var result = await aot.Days(expected.First().SelectedDateTicks,
+                                        expected.Last().SelectedDateTicks,
                                         [ids]);
 
             result = [.. result.OrderBy(x => x.SelectedDateTicks)];
 
-            var exceptedJson = System.Text.Json.JsonSerializer.Serialize(excepted);
+            var expectedJson = System.Text.Json.JsonSerializer.Serialize(expected);
             var resultJson = System.Text.Json.JsonSerializer.Serialize(result);
 
-            Assert.Equal(exceptedJson, resultJson);
+            Assert.Equal(expectedJson, resultJson);
         }
 
         [Fact]
@@ -61,22 +61,22 @@ namespace DataBaseUnitTest.DataGet
         {
             var db = await Helper.CreateDataBaseForTest(nameof(GetDaysExtension_ShouldGet_NoGuids_GetAll));
 
-            var excepted = await Helper.SetExampleDays(15, db);
+            var expected = await Helper.SetExampleDays(15, db);
 
-            excepted = [.. excepted.OrderBy(x => x.SelectedDateTicks)];
+            expected = [.. expected.OrderBy(x => x.SelectedDateTicks)];
 
             var aot = new GetInventoryAoT(db);
 
-            var result = await aot.Days(excepted.First().SelectedDateTicks,
-                                        excepted.Last().SelectedDateTicks,
+            var result = await aot.Days(expected.First().SelectedDateTicks,
+                                        expected.Last().SelectedDateTicks,
                                         []);
 
             result = [.. result.OrderBy(x => x.SelectedDateTicks)];
 
-            var exceptedJson = System.Text.Json.JsonSerializer.Serialize(excepted);
+            var expectedJson = System.Text.Json.JsonSerializer.Serialize(expected);
             var resultJson = System.Text.Json.JsonSerializer.Serialize(result);
 
-            Assert.Equal(exceptedJson, resultJson);
+            Assert.Equal(expectedJson, resultJson);
         }
 
     }

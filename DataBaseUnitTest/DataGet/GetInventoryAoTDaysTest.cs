@@ -9,16 +9,16 @@ namespace DataBaseUnitTest.DataGet
         {
             var db = await Helper.CreateDataBaseForTest(nameof(GetDays_ShouldGet));
 
-            var excepted = await Helper.SetExampleDays(15, db);
+            var expected = await Helper.SetExampleDays(15, db);
 
             var aot = new GetInventoryAoT(db);
 
             var result = await aot.Days("", null!);
 
-            var exceptedJson = System.Text.Json.JsonSerializer.Serialize(excepted);
+            var expectedJson = System.Text.Json.JsonSerializer.Serialize(expected);
             var resultJson = System.Text.Json.JsonSerializer.Serialize(result);
 
-            Assert.Equal(exceptedJson, resultJson);
+            Assert.Equal(expectedJson, resultJson);
         }
 
     }

@@ -15,6 +15,7 @@ namespace DataBaseUnitTest.DataGet
             Delete(db);
             return await DataSave.Helper.CreateDataBaseInventoryForTest(db);
         }
+        
 
 
         public static async Task<IList<Day>> SetExampleDays(int n, IAccessDataBase db)
@@ -36,10 +37,11 @@ namespace DataBaseUnitTest.DataGet
                     Updated = time,
                     Created = time,
                     UserCreatedId = user,
+                    DriverGuid = user,
                     UserUpdatedId = user,
                     TotalPriceMoney = rnd.Next(0, 1000),
-                    Products = [.. GetExampleProducts(names, prices, id)],
-                    Cakes = [.. GetExampleCakes(id, rnd.Next(0, 5))]
+                    Products = [.. GetExampleProducts(names, prices, id,user)],
+                    Cakes = [.. GetExampleCakes(id, rnd.Next(0, 5),user)]
                 };
 
                 day.CalculatePrice();
@@ -52,7 +54,7 @@ namespace DataBaseUnitTest.DataGet
             return days;
         }
 
-        public static IList<Product> GetExampleProducts(IList<ProductName> names, IList<ProductPrice> prices, Guid dayId)
+        public static IList<Product> GetExampleProducts(IList<ProductName> names, IList<ProductPrice> prices, Guid dayId, Guid userId)
         {
             var products = new List<Product>();
 
@@ -72,7 +74,9 @@ namespace DataBaseUnitTest.DataGet
                     ProductNameId = names[i].Id,
                     Price = price,
                     ProductPriceId = price.Id,
-                    Number = rnd.Next(0, 40)
+                    Number = rnd.Next(0, 40),
+                    UserCreatedId = userId,
+                    UserUpdatedId = userId
                 };
                 product.CalculatePrice();
                 products.Add(product);
@@ -80,7 +84,7 @@ namespace DataBaseUnitTest.DataGet
             return products;
         }
 
-        public static IList<Cake> GetExampleCakes(Guid dayId, int n)
+        public static IList<Cake> GetExampleCakes(Guid dayId, int n, Guid userId)
         {
             var cakes = new List<Cake>();
 
@@ -90,7 +94,9 @@ namespace DataBaseUnitTest.DataGet
                 {
                     DayId = dayId,
                     Id = Guid.CreateVersion7(),
-                    PriceDecimal = rnd.Next(0, 50)
+                    PriceDecimal = rnd.Next(0, 50),
+                    UserCreatedId=userId,
+                    UserUpdatedId=userId,                    
                 };
                 cakes.Add(cake);
             }

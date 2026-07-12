@@ -8,7 +8,7 @@ namespace DataBaseUnitTest.DataGet
         public async Task GetEmptyProductsNameAndPrices_ShouldGet()
         {
             var db = await Helper.CreateDataBaseForTest(nameof(GetEmptyProductsNameAndPrices_ShouldGet));
-            var excepted = await Helper.SetExampleDays(1, db);
+            var expected = await Helper.SetExampleDays(1, db);
 
 
             var aot = new GetInventoryAoT(db);
@@ -16,14 +16,14 @@ namespace DataBaseUnitTest.DataGet
             var result = await aot.EmptyProductsNameAndPrices();
 
             Assert.NotEmpty(result);
-            Assert.Equal(excepted[0].Products.Count, result.Count);
+            Assert.Equal(expected[0].Products.Count, result.Count);
         }
 
         [Fact]
         public async Task GetDaysEmptyProducts_ShouldGet()
         {
             var db = await Helper.CreateDataBaseForTest(nameof(GetDaysEmptyProducts_ShouldGet));
-            var excepted = await Helper.SetExampleDays(1, db);
+            var expected = await Helper.SetExampleDays(1, db);
 
 
             var aot = new GetInventoryAoT(db);
@@ -31,7 +31,7 @@ namespace DataBaseUnitTest.DataGet
             var result = await aot.EmptyProducts();
 
             Assert.NotEmpty(result);
-            Assert.Equal(excepted[0].Products.Count, result.Count);
+            Assert.Equal(expected[0].Products.Count, result.Count);
         }
 
     }

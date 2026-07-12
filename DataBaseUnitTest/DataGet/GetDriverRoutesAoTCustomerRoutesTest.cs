@@ -9,16 +9,16 @@ namespace DataBaseUnitTest.DataGet
         {
             var db = await Helper.CreateDataBaseForTest(nameof(GetCustomerRoutes_ShouldGet));
 
-            var excepted = Helper.SetExampleCustomerRoutes(15, db).OrderBy(x => x.CreatedTicks);
+            var expected = Helper.SetExampleCustomerRoutes(15, db).OrderBy(x => x.CreatedTicks);
 
             var aot = new GetDriverRoutesAoT(db);
 
             var result = await aot.CustomerRoutes("", false, null!);
 
-            var exceptedJson = System.Text.Json.JsonSerializer.Serialize(excepted);
+            var expectedJson = System.Text.Json.JsonSerializer.Serialize(expected);
             var resultJson = System.Text.Json.JsonSerializer.Serialize(result.OrderBy(x => x.CreatedTicks));
 
-            Assert.Equal(exceptedJson, resultJson);
+            Assert.Equal(expectedJson, resultJson);
         }
     }
 }

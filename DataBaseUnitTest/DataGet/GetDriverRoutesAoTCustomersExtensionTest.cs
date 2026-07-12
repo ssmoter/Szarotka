@@ -9,20 +9,20 @@ namespace DataBaseUnitTest.DataGet
         {
             var db = await Helper.CreateDataBaseForTest(nameof(GetCustomerRoutes_ShouldGet_AllFromRouteId));
 
-            var excepted = Helper.SetExampleCustomerRoutes(16, db);
+            var expected = Helper.SetExampleCustomerRoutes(16, db);
 
-            var id = excepted.First();
+            var id = expected.First();
 
-            var exceptedSelected = excepted.Where(x => x.RoutesId == id.RoutesId).OrderBy(x => x.CreatedTicks);
+            var expectedSelected = expected.Where(x => x.RoutesId == id.RoutesId).OrderBy(x => x.CreatedTicks);
 
             var aot = new GetDriverRoutesAoT(db);
 
             var result = await aot.CustomerRoutes(id.RoutesId, []);
 
-            var exceptedJson = System.Text.Json.JsonSerializer.Serialize(exceptedSelected);
+            var expectedJson = System.Text.Json.JsonSerializer.Serialize(expectedSelected);
             var resultJson = System.Text.Json.JsonSerializer.Serialize(result!.OrderBy(x => x.CreatedTicks));
 
-            Assert.Equal(exceptedJson, resultJson);
+            Assert.Equal(expectedJson, resultJson);
         }
 
         [Fact]
@@ -30,11 +30,11 @@ namespace DataBaseUnitTest.DataGet
         {
             var db = await Helper.CreateDataBaseForTest(nameof(GetCustomerRoutes_ShouldGet_AllWhereDayOfWeekIsSelected_Single));
 
-            var excepted = Helper.SetExampleCustomerRoutes(20, db);
+            var expected = Helper.SetExampleCustomerRoutes(20, db);
 
-            var id = excepted.First();
+            var id = expected.First();
 
-            var exceptedSelected = excepted
+            var expectedSelected = expected
                 .Where(x => x.RoutesId == id.RoutesId && x.DayOfWeek.Monday == true)
                 .OrderBy(x => x.CreatedTicks);
 
@@ -42,10 +42,10 @@ namespace DataBaseUnitTest.DataGet
 
             var result = await aot.CustomerRoutes(id.RoutesId, [DayOfWeek.Monday]);
 
-            var exceptedJson = System.Text.Json.JsonSerializer.Serialize(exceptedSelected);
+            var expectedJson = System.Text.Json.JsonSerializer.Serialize(expectedSelected);
             var resultJson = System.Text.Json.JsonSerializer.Serialize(result!.OrderBy(x => x.CreatedTicks));
 
-            Assert.Equal(exceptedJson, resultJson);
+            Assert.Equal(expectedJson, resultJson);
         }
 
         [Fact]
@@ -53,11 +53,11 @@ namespace DataBaseUnitTest.DataGet
         {
             var db = await Helper.CreateDataBaseForTest(nameof(GetCustomerRoutes_ShouldGet_AllWhereDayOfWeekIsSelected_Multi));
 
-            var excepted = Helper.SetExampleCustomerRoutes(100, db, 60);
+            var expected = Helper.SetExampleCustomerRoutes(100, db, 60);
 
-            var id = excepted.First();
+            var id = expected.First();
 
-            var exceptedSelected = excepted
+            var expectedSelected = expected
                 .Where(x => x.RoutesId == id.RoutesId && (x.DayOfWeek.Monday == true || x.DayOfWeek.Friday == true))
                 .OrderBy(x => x.CreatedTicks);
 
@@ -65,10 +65,10 @@ namespace DataBaseUnitTest.DataGet
 
             var result = await aot.CustomerRoutes(id.RoutesId, [DayOfWeek.Monday, DayOfWeek.Friday]);
 
-            var exceptedJson = System.Text.Json.JsonSerializer.Serialize(exceptedSelected);
+            var expectedJson = System.Text.Json.JsonSerializer.Serialize(expectedSelected);
             var resultJson = System.Text.Json.JsonSerializer.Serialize(result!.OrderBy(x => x.CreatedTicks));
 
-            Assert.Equal(exceptedJson, resultJson);
+            Assert.Equal(expectedJson, resultJson);
         }
     }
 }

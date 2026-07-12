@@ -9,18 +9,18 @@ namespace DataBaseUnitTest.DataGet
         {
             var db = await Helper.CreateDataBaseForTest(nameof(GetCustomerRoute_ShouldGet_SingleFromId));
 
-            var excepted = Helper.SetExampleCustomerRoutes(15, db).OrderBy(x => x.CreatedTicks);
+            var expected = Helper.SetExampleCustomerRoutes(15, db).OrderBy(x => x.CreatedTicks);
 
-            var id = excepted.First();
+            var id = expected.First();
 
             var aot = new GetDriverRoutesAoT(db);
 
             var result = await aot.CustomerRoute(id.Id);
 
-            var exceptedJson = System.Text.Json.JsonSerializer.Serialize(id);
+            var expectedJson = System.Text.Json.JsonSerializer.Serialize(id);
             var resultJson = System.Text.Json.JsonSerializer.Serialize(result);
 
-            Assert.Equal(exceptedJson, resultJson);
+            Assert.Equal(expectedJson, resultJson);
         }
         [Fact]
         public async Task GetCustomerRoute_ShouldThrow_GuidEmpty()
