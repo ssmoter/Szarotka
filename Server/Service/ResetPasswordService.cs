@@ -2,11 +2,11 @@
 using DataBase.Model.EntitiesServer;
 using DataBase.Service;
 
+using Microsoft.Extensions.Logging.Abstractions;
+
 using Server.Helper;
 using Server.SqlQuery;
 using Server.Validation;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Server.Service
 {
@@ -17,9 +17,9 @@ namespace Server.Service
         Task<User> GetUserIdFromEmail(string email);
     }
 
-    public class ResetPasswordService(IAccessDataBase db, IUserValidation userValidation, ITimeService time, ILogger<ResetPasswordService>? logger = null) : IResetPasswordService
+    public class ResetPasswordService(IAccessDataBaseAoT db, IUserValidation userValidation, ITimeService time, ILogger<ResetPasswordService>? logger = null) : IResetPasswordService
     {
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
         private readonly IUserValidation _userValidation = userValidation;
         private readonly ITimeService _time = time;
         private readonly ILogger<ResetPasswordService> _logger = logger ?? NullLogger<ResetPasswordService>.Instance;
@@ -29,7 +29,7 @@ namespace Server.Service
             _logger.LogInformation("GetUserIdFromEmail started for email={Email}", email);
             string sql = UserQuery.GetIdFromEmail(email);
             var Email = email;
-            var ids = await _db.DataBaseAsync.QueryAsync<User>(sql, Email);
+            var ids = await _db.DbAsyncAoT.QueryAsync<User>(sql, Email);
             var id = ids.FirstOrDefault();
 
             _userValidation.AccountNotFound(id);
@@ -44,7 +44,7 @@ namespace Server.Service
         {
             _logger.LogInformation("GetConfirmCode started for code={Code}", code);
             var sql = UserQuery.CodeConfirmCheck(code);
-            var result = await _db.DataBaseAsync.QueryAsync<ConfirmCode>(sql, code);
+            var result = await _db.DbAsyncAoT.QueryAsync<ConfirmCode>(sql, code);
             var codeResult = result.FirstOrDefault();
             _logger.LogInformation("GetConfirmCode returned {Found} result for code={Code}", codeResult is not null, code);
             return codeResult;
@@ -60,7 +60,7 @@ namespace Server.Service
             var slq = UserQuery.UpdatePassword(Password, UpdateTicks, UserUpdatedId, Id);
             try
             {
-                await _db.DataBaseAsync.ExecuteAsync(slq, Password, UpdateTicks, UserUpdatedId, Id);
+                await _db.DbAsyncAoT.ExecuteAsync(slq, new { Password, UpdateTicks, UserUpdatedId, Id });
                 _logger.LogInformation("ChangePassword succeeded for userId={UserId}", id);
             }
             catch (Exception ex)

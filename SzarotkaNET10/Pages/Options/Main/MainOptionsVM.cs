@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 using DataBase.Data;
 using DataBase.Model;
 
+using Shared.Data;
+
 using System.Collections.ObjectModel;
 using System.Reflection;
 
@@ -91,8 +93,8 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
         }
     }
 
-    public IAccessDataBase _db { get; private set; }
-    public MainOptionsVM(IAccessDataBase db, IHttpClientFactory httpClientFactory)
+    public IAccessDataBaseAoT _db { get; private set; }
+    public MainOptionsVM(IAccessDataBaseAoT db, IHttpClientFactory httpClientFactory)
     {
         MainOptionsM ??= new();
         SelectTypOfOptions(TypOfOptions.Main);
@@ -118,7 +120,7 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
         };
         _db = db;
 
-        MainOptionsM.Version = _db.DataBase.Table<DataBaseVersion>().FirstOrDefault();
+        MainOptionsM.Version = CreatedDataBase.GetDataBaseVersion(_db);
         ServerUrl = httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka).BaseAddress!.ToString();
     }
 

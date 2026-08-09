@@ -8,7 +8,7 @@ using DataBase.Data.Save;
 using DataBase.Helper;
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesServer;
-using DataBase.Model.JsonContext;
+using DataBase.Model.SourceGenerator;
 
 using Shared.Data;
 using Shared.Helper;
@@ -62,13 +62,13 @@ namespace Inventory.Pages.SingleDay
         static int lastFastValueClearTimerValue = 0;
 
         const char signPlus = '+';
-        private readonly IAccessDataBase _db;
+        private readonly IAccessDataBaseAoT _db;
         private readonly ISaveInventoryAoT _saveInventoryAoT;
         private readonly IGetInventoryAoT _get;
         private readonly Data.InventoryApi.ISendDayHttp _sendHttp;
         private readonly DataBase.Service.IUpdateLogService _updateLogService;
 
-        public SingleDayVM(IAccessDataBase db,
+        public SingleDayVM(IAccessDataBaseAoT db,
             ISaveInventoryAoT saveInventoryAoT,
             IGetInventoryAoT get,
             Data.InventoryApi.ISendDayHttp sendHttp,
@@ -93,31 +93,43 @@ namespace Inventory.Pages.SingleDay
 
 
 
-        private async void AddPropertyChangedEvent()
+        private void AddPropertyChangedEvent()
         {
-            if (Day.Id == Guid.Empty)
+            ExecuteSafe_AddPropertyChangedEvent().FireAndForget();
+        }
+        private async Task ExecuteSafe_AddPropertyChangedEvent()
+        {
+            try
             {
-                var userId = UserAfterLogin.User.Id.ToByteArray();
-                await _saveInventoryAoT.SaveDay(day, userId);
-                var dayId = Day.Id;
-                foreach (var product in Day.Products)
+                if (Day.Id == Guid.Empty)
                 {
-                    product.DayId = dayId;
+                    var userId = UserAfterLogin.User.Id.ToByteArray();
+                    await _saveInventoryAoT.SaveDay(day, userId);
+                    var dayId = Day.Id;
+                    foreach (var product in Day.Products)
+                    {
+                        product.DayId = dayId;
+                    }
+                }
+
+                Day.PropertyChanged += SingleDayVM_PropertyChanged;
+                Day.PropertyChanged += DayHttpUpdate_PropertyChanged;
+
+                for (int i = 0; i < Day.Products.Count; i++)
+                {
+                    Day.Products[i].PropertyChanged += SingleDayVM_PropertyChanged;
+                }
+                for (int i = 0; i < Day.Cakes.Count; i++)
+                {
+                    Day.Cakes[i].PropertyChanged += SingleDayVM_PropertyChanged;
                 }
             }
-
-            Day.PropertyChanged += SingleDayVM_PropertyChanged;
-            Day.PropertyChanged += DayHttpUpdate_PropertyChanged;
-
-            for (int i = 0; i < Day.Products.Count; i++)
+            catch (Exception ex)
             {
-                Day.Products[i].PropertyChanged += SingleDayVM_PropertyChanged;
-            }
-            for (int i = 0; i < Day.Cakes.Count; i++)
-            {
-                Day.Cakes[i].PropertyChanged += SingleDayVM_PropertyChanged;
+                _db.SaveLogExtension(ex);
             }
         }
+
         public void RemovePropertyChangedEvent()
         {
             Day.PropertyChanged -= SingleDayVM_PropertyChanged;

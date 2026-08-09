@@ -91,8 +91,8 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
         }
     }
 
-    public IAccessDataBase _db { get; private set; }
-    public MainOptionsVM(IAccessDataBase db, IHttpClientFactory httpClientFactory)
+    public IAccessDataBaseAoT _db { get; private set; }
+    public MainOptionsVM(IAccessDataBaseAoT db, IHttpClientFactory httpClientFactory)
     {
         MainOptionsM ??= new();
         SelectTypOfOptions(TypOfOptions.Main);

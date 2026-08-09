@@ -41,11 +41,11 @@ public partial class DisplayCustomerVM : ObservableObject, IQueryAttributable
             if (SetProperty(ref displayCustomerM, value, nameof(DisplayCustomerM))) { }
         }
     }
-    private readonly IAccessDataBase _db;
+    private readonly IAccessDataBaseAoT _db;
     private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _save;
     private readonly DataBase.Service.IUpdateLogService _update;
 
-    public DisplayCustomerVM(IAccessDataBase db, DataBase.Data.Save.ISaveDriverRoutesAoT save, DataBase.Service.IUpdateLogService update)
+    public DisplayCustomerVM(IAccessDataBaseAoT db, DataBase.Data.Save.ISaveDriverRoutesAoT save, DataBase.Service.IUpdateLogService update)
     {
         _db = db;
         DisplayCustomerM ??= new();

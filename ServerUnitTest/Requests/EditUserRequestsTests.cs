@@ -15,14 +15,14 @@ namespace ServerUnitTest.Requests
 {
     public class EditUserRequestsTests
     {
-        private readonly Mock<IAccessDataBase> _mockDb;
+        private readonly Mock<IAccessDataBaseAoT> _mockDb;
         private readonly Mock<IUserValidation> _userValidation;
         private readonly Mock<IEditUserService> _mockEditUserService;
         private readonly Mock<IAuthenticationService> _mockAuthenticationService;
         private readonly EditUserRequests _editUserEndpoint;
         public EditUserRequestsTests()
         {
-            _mockDb = new Mock<IAccessDataBase>();
+            _mockDb = new Mock<IAccessDataBaseAoT>();
             _userValidation = new Mock<IUserValidation>();
             _mockEditUserService = new Mock<IEditUserService>();
             _mockAuthenticationService = new Mock<IAuthenticationService>();
@@ -196,7 +196,7 @@ namespace ServerUnitTest.Requests
         private void CreatedNewTokenSetup(User user)
         {
             _mockAuthenticationService.Setup(_mockAuthenticationService => _mockAuthenticationService.AuthenticateAsync(It.IsAny<User>())).ReturnsAsync(new User());
-            _mockDb.Setup(_mockDb => _mockDb.DataBaseAsync.QueryAsync<User>(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync([user]);
+            _mockDb.Setup(_mockDb => _mockDb.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync([user]);
         }
     }
 }

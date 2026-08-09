@@ -2,12 +2,12 @@
 using DataBase.Model.EntitiesServer;
 using DataBase.Service;
 
+using Microsoft.Extensions.Logging.Abstractions;
+
 using Server.Helper;
 using Server.Model;
 using Server.SqlQuery;
 using Server.Validation;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Server.Service
 {
@@ -20,13 +20,13 @@ namespace Server.Service
 
     public class RegisterUserService : IRegisterUserService
     {
-        private readonly IAccessDataBase _db;
+        private readonly IAccessDataBaseAoT _db;
         private readonly IUserValidation _userValidation;
         private readonly ITimeService _time;
         private readonly EmailConfiguration _emailConfig = new();
         private readonly ILogger<RegisterUserService> _logger;
 
-        public RegisterUserService(IAccessDataBase db, IUserValidation userValidation, ITimeService time, IConfiguration configuration, ILogger<RegisterUserService>? logger = null)
+        public RegisterUserService(IAccessDataBaseAoT db, IUserValidation userValidation, ITimeService time, IConfiguration configuration, ILogger<RegisterUserService>? logger = null)
         {
             _db = db;
             _userValidation = userValidation;
@@ -68,18 +68,21 @@ namespace Server.Service
                                                   registerUser.IsDelete,
                                                   registerUser.IsEmailConfirm,
                                                   registerUser.Password);
-            var task = _db.DataBaseAsync.ExecuteAsync(query,
-                                                      registerUser.Id,
-                                                      registerUser.CreatedTicks,
-                                                      registerUser.UpdatedTicks,
-                                                      registerUser.Name,
-                                                      registerUser.Description,
-                                                      registerUser.Email,
-                                                      registerUser.PhoneNumber,
-                                                      registerUser.UserType,
-                                                      registerUser.IsDelete,
-                                                      registerUser.IsEmailConfirm,
-                                                      registerUser.Password);
+            var task = _db.DbAsyncAoT.ExecuteAsync(query,
+                                                      new
+                                                      {
+                                                          registerUser.Id,
+                                                          registerUser.CreatedTicks,
+                                                          registerUser.UpdatedTicks,
+                                                          registerUser.Name,
+                                                          registerUser.Description,
+                                                          registerUser.Email,
+                                                          registerUser.PhoneNumber,
+                                                          registerUser.UserType,
+                                                          registerUser.IsDelete,
+                                                          registerUser.IsEmailConfirm,
+                                                          registerUser.Password
+                                                      });
 
             await task;
 
@@ -102,9 +105,9 @@ namespace Server.Service
             var now = _time.UtcNow();
             user.ExpireDate = now.AddMinutes(_emailConfig.ExpireDateMinutes).Ticks;
             var codeOldTaskSql = UserQuery.RemoveExpireCode(now.Ticks);
-            var codeOldTask = _db.DataBaseAsync.ExecuteAsync(codeOldTaskSql, now.AddDays(-7).Ticks);
+            var codeOldTask = _db.DbAsyncAoT.ExecuteAsync(codeOldTaskSql, new { now.AddDays(-7).Ticks });
             var codeNewTaskSql = UserQuery.ConfirmCodeInsert(user.CreatedTicks, user.UpdatedTicks, user.UserId, user.Code, user.ExpireDate);
-            var codeNewTask = _db.DataBaseAsync.ExecuteAsync(codeNewTaskSql, user.CreatedTicks, user.UpdatedTicks, user.UserId, user.Code, user.ExpireDate);
+            var codeNewTask = _db.DbAsyncAoT.ExecuteAsync(codeNewTaskSql, new { user.CreatedTicks, user.UpdatedTicks, user.UserId, user.Code, user.ExpireDate });
 
             try
             {
@@ -121,7 +124,7 @@ namespace Server.Service
         {
             _logger.LogInformation("GetUserEmailFromCodeAndRemoveOld started for code={Code}", code);
             var sql = UserQuery.CodeConfirmCheck(code);
-            var userEmails = await _db.DataBaseAsync.QueryAsync<ConfirmCode>(sql, code);
+            var userEmails = await _db.DbAsyncAoT.QueryAsync<ConfirmCode>(sql, new { Code = code });
             var userEmail = userEmails.FirstOrDefault();
 
             _userValidation.CodeNotExist(userEmail);
@@ -141,15 +144,15 @@ namespace Server.Service
                 UserUpdatedId = userEmail.UserId
             };
             var userSql = UserQuery.EmailIsConfirmUpdate(user.IsEmailConfirm, user.UpdatedTicks, user.UserUpdatedId, user.Id);
-            var userTask = _db.DataBaseAsync.ExecuteAsync(userSql, user.IsEmailConfirm, user.UpdatedTicks, user.UserUpdatedId, user.Id);
+            var userTask = _db.DbAsyncAoT.ExecuteAsync(userSql, new { user.IsEmailConfirm, user.UpdatedTicks, user.UserUpdatedId, user.Id });
 
             var TicksNow = _time.UtcNow().Ticks;
 
             var codeSql = UserQuery.RemoveExpireCode(TicksNow);
-            var codeTask = _db.DataBaseAsync.ExecuteAsync(codeSql, TicksNow);
+            var codeTask = _db.DbAsyncAoT.ExecuteAsync(codeSql, new { TicksNow });
 
             var emailSql = UserQuery.GetEmailFromId(userEmail.UserId);
-            var emailTask = _db.DataBaseAsync.QueryAsync<User>(emailSql, userEmail.UserId);
+            var emailTask = _db.DbAsyncAoT.QueryAsync<User>(emailSql, new { userEmail.UserId });
 
             try
             {

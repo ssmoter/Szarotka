@@ -78,9 +78,9 @@ namespace Shared.Pages.UserDisplay.UserEdit
             }
         }
 
-        private readonly IAccessDataBase _db;
+        private readonly IAccessDataBaseAoT _db;
         private readonly IEditUserHttp _editUserHttp;
-        public UserEditVM(IAccessDataBase db, IEditUserHttp editUserHttp)
+        public UserEditVM(IAccessDataBaseAoT db, IEditUserHttp editUserHttp)
         {
             Edit = new User();
             Old = new User();

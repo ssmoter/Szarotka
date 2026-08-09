@@ -1,4 +1,7 @@
-﻿using DataBaseUnitTest;
+﻿using DataBase.Data.Get;
+using DataBase.Model.EntitiesRoutes;
+
+using DataBaseUnitTest;
 
 using DriversRoutes.Data.RouteApi;
 
@@ -31,7 +34,7 @@ namespace DriversRoutesUnitTest.API.Get
         public async Task GetCustomerRoutesRouteId()
         {
 
-            var expected = await _iGetDriverRoutesAoT.CustomerRoutes("", []);
+            var expected = _factory.AllCustomers;
             var guid = expected[0].RoutesId;
 
             var result = await _getCustomersHttp.GetCustomerRoutes(guid, new DataBase.Model.EntitiesRoutes.SelectedDayOfWeekRoutes()
@@ -54,10 +57,10 @@ namespace DriversRoutesUnitTest.API.Get
         public async Task GetCustomerRoutesIds()
         {
 
-            var all = await _iGetDriverRoutesAoT.CustomerRoutes("", []);
+            IList<CustomerRoutes> all = _factory.AllCustomers;
             var expected = all.Take(5);
 
-            var result = await _getCustomersHttp.GetCustomerRoutes(expected.Select(x => x.Id).ToArray());
+            var result = await _getCustomersHttp.GetCustomerRoutes([.. expected.Select(x => x.Id)]);
 
             var expectedJson = System.Text.Json.JsonSerializer.Serialize(expected.ToArray());
             var resultJson = System.Text.Json.JsonSerializer.Serialize(result.ToArray());

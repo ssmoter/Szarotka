@@ -11,7 +11,7 @@ using Shared.Data.ServerHttpClients;
 
 namespace Shared.Pages.LogIn.ForgetPassword
 {
-    public partial class ForgetPasswordVM(IResetPasswordHttp resetPasswordHttp, IAccessDataBase db) : ObservableObject
+    public partial class ForgetPasswordVM(IResetPasswordHttp resetPasswordHttp, IAccessDataBaseAoT db) : ObservableObject
     {
         private ForgetPasswordM model = new();
         public ForgetPasswordM Model
@@ -23,7 +23,7 @@ namespace Shared.Pages.LogIn.ForgetPassword
         }
 
 
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
         private readonly IResetPasswordHttp _resetPasswordHttp = resetPasswordHttp;
 
         [RelayCommand]

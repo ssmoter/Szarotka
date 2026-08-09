@@ -19,13 +19,13 @@ namespace Server.Requests
         Task<IResult> UpdateUserType(EditUser edit, CancellationToken token = default);
     }
 
-    public class EditUserRequests(IAccessDataBase db,
+    public class EditUserRequests(IAccessDataBaseAoT db,
                             IUserValidation userValidation,
                             IEditUserService editUser,
                             IAuthenticationService authenticationService,
                             ILogger<EditUserRequests>? logger = null) : IEditUserRequests
     {
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
         private readonly IUserValidation _userValidation = userValidation;
         private readonly IEditUserService _editUser = editUser;
         private readonly IAuthenticationService _authenticationService = authenticationService;
@@ -281,7 +281,7 @@ namespace Server.Requests
         private async Task<User> CreatedNewToken(string id)
         {
             var sql = SqlQuery.LoginQuery.InFromId(id);
-            var users = await _db.DataBaseAsync.QueryAsync<User>(sql, id);
+            var users = await _db.DbAsyncAoT.QueryAsync<User>(sql, new { Id = id });
 
             User updateUser = users.FirstOrDefault() ?? throw new UnauthorizedAccessException();
 

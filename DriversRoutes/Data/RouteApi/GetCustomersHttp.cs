@@ -1,6 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesRoutes;
-using DataBase.Model.JsonContext;
+using DataBase.Model.SourceGenerator;
 
 using Shared.CustomControls.FromCode;
 using Shared.Data;
@@ -19,10 +19,10 @@ namespace DriversRoutes.Data.RouteApi
         Task<ObservableCollection<CustomerRoutes>> GetCustomerRoutes(Guid[] ids, UpdateProgressBar progressContent = null, CancellationToken token = default);
     }
 
-    public class GetCustomersHttp(IAccessDataBase db, IHttpClientFactory httpClient) : IGetCustomersHttp
+    public class GetCustomersHttp(IAccessDataBaseAoT db, IHttpClientFactory httpClient) : IGetCustomersHttp
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClient;
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
 
         public async Task<ObservableCollection<CustomerRoutes>> GetCustomerRoutes(Guid[] ids, UpdateProgressBar progressContent = null, CancellationToken token = default)
         {

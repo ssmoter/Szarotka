@@ -15,33 +15,20 @@ namespace DataBase.Data
         Task SaveLogAsync(Exception ex);
     }
 
-    public class AccessDataBase : IDisposable, IAccessDataBase
+    public partial class AccessDataBase : IDisposable, IAccessDataBase
     {
         public ISQLiteAsyncConnection DataBaseAsync { get; private set; }
         public ISQLiteConnection DataBase { get; private set; }
-        private readonly ITimeService _timeService;
+        private ITimeService _timeService;
 
         public AccessDataBase()
         {
-            CreatedFolderPath();
-
-            var path = Constants.DatabasePath;
-            DataBaseAsync ??= new SQLiteAsyncConnection(path, Constants.Flags);
-            DataBase ??= new SQLiteConnection(path, Constants.Flags);
-            _timeService = new CurrentUtc();
-            ConfigureDatabase();
-
+            Init(Constants.DatabasePath, new CurrentUtc(), Constants.Flags, ensureFolder: true);
         }
+
         public AccessDataBase(ITimeService time)
         {
-            CreatedFolderPath();
-
-            var path = Constants.DatabasePath;
-            DataBaseAsync ??= new SQLiteAsyncConnection(path, Constants.Flags);
-            DataBase ??= new SQLiteConnection(path, Constants.Flags);
-            _timeService = time;
-            ConfigureDatabase();
-
+            Init(Constants.DatabasePath, time ?? new CurrentUtc(), Constants.Flags, ensureFolder: true);
         }
         /// <summary>
         /// Tylko dla testów i serwera        
@@ -49,12 +36,7 @@ namespace DataBase.Data
         /// <param name="path"></param>
         public AccessDataBase(string path)
         {
-
-            DataBaseAsync ??= new SQLiteAsyncConnection(path, Constants.Flags);
-            DataBase ??= new SQLiteConnection(path, Constants.Flags);
-            _timeService = new CurrentUtc();
-            ConfigureDatabase();
-
+            Init(path, new CurrentUtc(), Constants.Flags, ensureFolder: false);
         }
         /// <summary>
         /// Tylko dla testów i serwera        
@@ -62,12 +44,7 @@ namespace DataBase.Data
         /// <param name="path"></param>
         public AccessDataBase(string path, ITimeService time)
         {
-
-            DataBaseAsync ??= new SQLiteAsyncConnection(path, Constants.Flags);
-            DataBase ??= new SQLiteConnection(path, Constants.Flags);
-            _timeService = time;
-            ConfigureDatabase();
-
+            Init(path, time ?? new CurrentUtc(), Constants.Flags, ensureFolder: false);
         }
         /// <summary>
         /// Tylko dla testów        
@@ -75,11 +52,21 @@ namespace DataBase.Data
         /// <param name="path"></param>
         public AccessDataBase(string path, ITimeService time, SQLiteOpenFlags Flags)
         {
-            DataBaseAsync ??= new SQLiteAsyncConnection(path, Flags);
-            DataBase ??= new SQLiteConnection(path, Flags);
+            Init(path, time ?? new CurrentUtc(), Flags, ensureFolder: false);
+        }
+
+        private void Init(string path, ITimeService time, SQLiteOpenFlags flags, bool ensureFolder)
+        {
+            if (ensureFolder)
+                CreatedFolderPath();
+            DataBaseAsync ??= new SQLiteAsyncConnection(path, flags);
+            DataBase ??= new SQLiteConnection(path, flags);
             _timeService = time;
             ConfigureDatabase();
         }
+
+
+
         public void SaveLog(Exception ex)
         {
             Model.LogsModel log = new()

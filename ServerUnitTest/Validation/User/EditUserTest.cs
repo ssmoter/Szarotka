@@ -3,6 +3,7 @@ using DataBase.Service;
 
 using Server.Model;
 using Server.Validation;
+using DataBase.Data.MySqliteConnection;
 
 namespace ServerUnitTest.Validation.User
 {
@@ -13,7 +14,13 @@ namespace ServerUnitTest.Validation.User
 
         public EditUserTest()
         {
-            _userValidation = new UserValidation(new AccessDataBase(), new CurrentUtc());
+            var faktory = new SqliteConnectionFactory();
+            var sync = new MyDbConnection(faktory);
+            var async = new MyDbAsyncConnection(faktory);
+            var time = new CurrentUtc();
+            var oldDb = new AccessDataBase();
+            var db = new AccessDataBaseAoT(oldDb, sync, async, time);
+            _userValidation = new UserValidation(db, time);
         }
 
         [Theory]

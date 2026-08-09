@@ -9,7 +9,7 @@ using DataBase.Data.Get;
 using DataBase.Data.Save;
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesServer;
-using DataBase.Model.JsonContext;
+using DataBase.Model.SourceGenerator;
 using DataBase.Service;
 
 using Inventory.Helper.Calculations;
@@ -151,14 +151,14 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
 
 
     private PopupDateModel PopupDate = null;
-    private readonly IAccessDataBase _db;
+    private readonly IAccessDataBaseAoT _db;
     private readonly IGetInventoryAoT _get;
     private readonly ISaveInventoryAoT _save;
     private readonly Data.InventoryApi.IGetDayHttp _getDayHttp;
     private readonly Data.InventoryApi.ISendDayHttp _sendDayHttp;
     private readonly Shared.Data.ServerHttpClients.IUpdateLogsHttp _updateLogsHttp;
     private readonly DataBase.Service.IUpdateLogService _updateLogService;
-    public RangeDayVM(IAccessDataBase db,
+    public RangeDayVM(IAccessDataBaseAoT db,
                       IGetInventoryAoT get,
                       Data.InventoryApi.IGetDayHttp getDayHttp,
                       Data.InventoryApi.ISendDayHttp sendDayHttp,

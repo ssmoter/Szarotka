@@ -1,6 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model;
-using DataBase.Model.JsonContext;
+using DataBase.Model.SourceGenerator;
 
 using Shared.CustomControls.FromCode;
 using Shared.Helper;
@@ -14,10 +14,10 @@ namespace Shared.Data.ServerHttpClients
         Task<IList<UpdateLog>> GetLogs(Guid logId, UpdateProgressBar progressContent, CancellationToken token = default);
     }
 
-    public partial class UpdateLogsHttp(IAccessDataBase db, IHttpClientFactory httpClient) : IUpdateLogsHttp
+    public partial class UpdateLogsHttp(IAccessDataBaseAoT db, IHttpClientFactory httpClient) : IUpdateLogsHttp
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClient;
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
 
         public async Task<IList<UpdateLog>> GetLogs(Guid logId, UpdateProgressBar progressContent, CancellationToken token = default)
         {

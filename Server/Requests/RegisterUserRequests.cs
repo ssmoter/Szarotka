@@ -17,7 +17,7 @@ namespace Server.Requests
     }
 
 
-    public class RegisterUserRequests(IAccessDataBase db
+    public class RegisterUserRequests(IAccessDataBaseAoT db
                                     , IRegisterUserService register
                                     , IUserValidation userValidation
                                     , IEmailService emailService
@@ -25,7 +25,7 @@ namespace Server.Requests
                                     , ITimeService time
                                     , ILogger<RegisterUserRequests>? logger = null) : IRegisterUserRequests
     {
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
         private readonly IRegisterUserService _registerService = register;
         private readonly IUserValidation _userValidation = userValidation;
         private readonly IEmailService _emailService = emailService;

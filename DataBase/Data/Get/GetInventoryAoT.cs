@@ -1,13 +1,15 @@
-﻿using DataBase.Data.SqlQuery;
+﻿
+using DataBase.Data.SqlQuery;
 using DataBase.Model.EntitiesInventory;
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace DataBase.Data.Get
 {
     public interface IGetInventoryAoT
     {
-        Task<IList<Day>> Days(string where, params object[] args);
+        Task<IList<Day>> Days<Tparam>(string where, Tparam? args = default);
         Task<IList<(ProductName, IList<ProductPrice>)>> EmptyProductsNameAndPrices(bool isDelete = false);
 
         Task<ProductName?> GetProductName(Guid id);
@@ -15,101 +17,112 @@ namespace DataBase.Data.Get
         Task<IList<ProductPrice>> GetProductPrices(Guid nameId);
     }
 
-    public class GetInventoryAoT(IAccessDataBase db) : IGetInventoryAoT
+    public class GetInventoryAoT(IAccessDataBaseAoT db) : IGetInventoryAoT
     {
-        private readonly IAccessDataBase _db = db;
-        public async Task<IList<Day>> Days(string where, params object[] args)
+        private readonly IAccessDataBaseAoT _db = db;
+
+
+        public async Task<IList<Day>> Days<Tparam>(string where, Tparam? args = default)
         {
             var sql = DayQuery.GetFullDaysProcedureWithoutWhere() + where;
-            List<DayFromQuery> result = [];
+            IEnumerable<DayFromQuery> result = [];
             if (args is null)
             {
-                result = await _db.DataBaseAsync.QueryAsync<DayFromQuery>(sql);
+                result = await _db.DbAsyncAoT.QueryAsync<DayFromQuery>(sql);
             }
-            else
+            if (args is not null)
             {
-                result = await _db.DataBaseAsync.QueryAsync<DayFromQuery>(sql, args);
+                result = await _db.DbAsyncAoT.QueryAsync<DayFromQuery>(sql, args!);
             }
-            for (int i = 0; i < result.Count; i++)
+
+            foreach (DayFromQuery day in result)
             {
                 var products =
                     System.Text.Json.JsonSerializer.Deserialize(
-                        result[i].JsonProducts,
-                        DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.ObservableCollectionProduct);
+                        day.JsonProducts,
+                        DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.ObservableCollectionProduct);
                 var cakes =
                     System.Text.Json.JsonSerializer.Deserialize(
-                        result[i].JsonCakes,
-                        DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.ObservableCollectionCake);
+                        day.JsonCakes,
+                        DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.ObservableCollectionCake);
                 if (products is not null)
                 {
-                    result[i].Products = products;
+                    day.Products = products;
                 }
                 if (cakes is not null)
                 {
-                    result[i].Cakes = cakes;
+                    day.Cakes = cakes;
                 }
             }
 
             return [.. result.Select(x => new Day(x))];
         }
+
+
         public async Task<IList<(ProductName, IList<ProductPrice>)>> EmptyProductsNameAndPrices(bool isDelete = false)
         {
             var sql = ProductNameQuery.GetNameAndPrice(isDelete);
 
-            var result = await _db.DataBaseAsync.QueryAsync<ProductNameAndPrice>(sql);
-            int count = result.Count;
-            (ProductName name, IList<ProductPrice> prices)[] product = new (ProductName name, IList<ProductPrice> prices)[count];
-
-
-            for (int i = 0; i < count; i++)
+            var result = await _db.DbAsyncAoT.QueryAsync<ProductNameAndPrice>(sql);
+            List<(ProductName name, IList<ProductPrice> prices)> product = new(26);
+            foreach (ProductNameAndPrice item in result)
             {
-                if (result[i] is null)
+                if (item is null)
                 {
                     continue;
                 }
-
                 IList<ProductPrice>? price =
                      System.Text.Json.JsonSerializer.Deserialize(
-                         result[i].JsonPrice,
-                         DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.IListProductPrice);
-
+                         item.JsonPrice,
+                         DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.IListProductPrice);
                 if (price is not null)
                 {
-                    product[i].prices = [.. price.OrderByDescending(x => x.CreatedTicks)];
+                    product.Add(new() { name = item, prices = [.. price.OrderByDescending(x => x.CreatedTicks)] });
                 }
-                product[i].name = result[i];
+                else
+                {
+                    product.Add(new() { name = item });
+                }
             }
+
             return product;
         }
-        public async Task<ProductName?> GetProductName(Guid id)
-        {
-            string sql = $"SELECT * FROM {nameof(ProductName)} WHERE {nameof(ProductName)}.{nameof(ProductName.Id)} == ?";
 
-            var result = await _db.DataBaseAsync.QueryAsync<ProductName>(sql, id);
-            return result?.FirstOrDefault();
-        }
-        public async Task<IList<ProductPrice>> GetProductPrices(Guid nameId)
-        {
-            string sql = $"SELECT * FROM {nameof(ProductPrice)} WHERE {nameof(ProductPrice)}.{nameof(ProductPrice.ProductNameId)} == ?";
+        [StringSyntax("Sql")]
+        const string _sqlGetProductName = $"SELECT * FROM {nameof(ProductName)} WHERE {nameof(ProductName)}.{nameof(ProductName.Id)} == @{nameof(ProductName.Id)}";
 
-            var result = await _db.DataBaseAsync.QueryAsync<ProductPrice>(sql, nameId);
-            return result;
-        }
-        public async Task<ProductPrice?> GetProductPrice(Guid id)
+        public async Task<ProductName?> GetProductName(Guid Id)
         {
-            string sql = $"SELECT * FROM {nameof(ProductPrice)} WHERE {nameof(ProductPrice)}.{nameof(ProductPrice.Id)} == ?";
-
-            var result = await _db.DataBaseAsync.QueryAsync<ProductPrice>(sql, id);
+            var result = await _db.DbAsyncAoT.QueryAsync<ProductName>(_sqlGetProductName, new { Id });
             return result?.FirstOrDefault();
         }
 
+        [StringSyntax("Sql")]
+        const string _sqlGetProductPrices = $"SELECT * FROM {nameof(ProductPrice)} WHERE {nameof(ProductPrice)}.{nameof(ProductPrice.ProductNameId)} == @{nameof(ProductPrice.ProductNameId)}";
 
-        private partial class ProductNameAndPrice : ProductName
+        public async Task<IList<ProductPrice>> GetProductPrices(Guid ProductNameId)
+        {
+
+            var result = await _db.DbAsyncAoT.QueryAsync<ProductPrice>(_sqlGetProductPrices, new { ProductNameId });
+            return [.. result];
+        }
+
+        [StringSyntax("Sql")]
+        const string _sqlGetProductPrice = $"SELECT * FROM {nameof(ProductPrice)} WHERE {nameof(ProductPrice)}.{nameof(ProductPrice.Id)} == @{nameof(ProductPrice.Id)}";
+
+        public async Task<ProductPrice?> GetProductPrice(Guid Id)
+        {
+            var result = await _db.DbAsyncAoT.QueryAsync<ProductPrice>(_sqlGetProductPrice, new { Id });
+            return result?.FirstOrDefault();
+        }
+
+
+        public partial class ProductNameAndPrice : ProductName
         {
             [JsonIgnore]
             public string JsonPrice { get; set; } = "";
         }
-        private partial class DayFromQuery : Day
+        public partial class DayFromQuery : Day
         {
             [JsonIgnore]
             public string JsonProducts { get; set; } = "";

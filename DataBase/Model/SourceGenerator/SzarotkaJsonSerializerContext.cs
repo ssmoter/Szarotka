@@ -5,7 +5,9 @@ using DataBase.Model.EntitiesServer;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace DataBase.Model.JsonContext;
+namespace DataBase.Model.SourceGenerator;
+
+[JsonSerializable(typeof(IList<Guid>))]
 
 [JsonSerializable(typeof(UpdateLog))]
 [JsonSerializable(typeof(UpdateLog[]))]
@@ -24,6 +26,9 @@ namespace DataBase.Model.JsonContext;
 [JsonSerializable(typeof(RegisterUser))]
 [JsonSerializable(typeof(LoginUser))]
 
+[JsonSerializable(typeof(List<SelectedDayOfWeekRoutes>))]
+[JsonSerializable(typeof(IList<SelectedDayOfWeekRoutes>))]
+[JsonSerializable(typeof(SelectedDayOfWeekRoutes[]))]
 [JsonSerializable(typeof(SelectedDayOfWeekRoutes))]
 [JsonSerializable(typeof(ResidentialAddress))]
 [JsonSerializable(typeof(CustomerRoutes))]

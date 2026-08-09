@@ -16,12 +16,12 @@ namespace Server.Requests
         Task<IResult?> Updates(EmptyProducts products, bool forceUpdate = false, CancellationToken token = default);
     }
 
-    public class InventoryProductsRequests(IAccessDataBase db,
+    public class InventoryProductsRequests(IAccessDataBaseAoT db,
                                      IGetInventoryAoT getInventoryAoT,
                                      ISaveInventoryAoT saveInventoryAoT,
                                      ILogger<InventoryProductsRequests>? logger = null) : IInventoryProductsRequests
     {
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
         private readonly IGetInventoryAoT _getInventoryAoT = getInventoryAoT;
         private readonly ISaveInventoryAoT _saveInventoryAoT = saveInventoryAoT;
         private readonly ILogger<InventoryProductsRequests> _logger = logger ?? NullLogger<InventoryProductsRequests>.Instance;

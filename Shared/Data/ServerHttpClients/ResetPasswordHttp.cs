@@ -10,10 +10,10 @@ namespace Shared.Data.ServerHttpClients
         Task SendEmail(string email);
     }
 
-    public class ResetPasswordHttp(IAccessDataBase db, IHttpClientFactory httpClient) : IResetPasswordHttp
+    public class ResetPasswordHttp(IAccessDataBaseAoT db, IHttpClientFactory httpClient) : IResetPasswordHttp
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClient;
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
 
         public async Task SendEmail(string email)
         {

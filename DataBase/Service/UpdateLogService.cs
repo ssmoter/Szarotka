@@ -3,6 +3,8 @@ using DataBase.Model;
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesRoutes;
 
+using System.Text.Json;
+
 namespace DataBase.Service
 {
     public interface IUpdateLogService
@@ -12,25 +14,31 @@ namespace DataBase.Service
         Task<UpdateLog> SelectFirst(bool isServer, params UpdateEnum[] updateEnum);
     }
 
-    public class UpdateLogService(IAccessDataBase db, ITimeService timeService) : IUpdateLogService
+    public class UpdateLogService(IAccessDataBaseAoT db, ITimeService timeService) : IUpdateLogService
     {
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
         private readonly ITimeService _timeService = timeService;
 
         public async Task<UpdateLog> Insert(UpdateLog update)
         {
+            var time = _timeService.UtcNow();
+            var halfHour = TimeSpan.FromMinutes(30).Ticks;
 
             string sqlSelect = $@"
 SELECT *
 FROM {nameof(UpdateLog)}
-WHERE {nameof(UpdateLog)}.{nameof(UpdateLog.UpdateId)} == ?
-AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - ? ) <= ?
+WHERE {nameof(UpdateLog)}.{nameof(UpdateLog.UpdateId)} == @{nameof(update.UpdateId)}
+AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - @{nameof(time.Ticks)} ) <= @{nameof(halfHour)}
 ";
-            var time = _timeService.UtcNow();
-            var halfHour = TimeSpan.FromMinutes(30).Ticks;
 
-            var exists = await _db.DataBaseAsync.QueryAsync<UpdateLog>(sqlSelect, update.UpdateId, time.Ticks, halfHour);
-
+            var Iexists = await _db.DbAsyncAoT.QueryAsync<UpdateLog>(sqlSelect,
+                                                                    new
+                                                                    {
+                                                                        update.UpdateId,
+                                                                        time.Ticks,
+                                                                        halfHour
+                                                                    });
+            var exists = Iexists.ToList();
 
             string sqlInsert = $@"INSERT INTO {nameof(UpdateLog)} 
                 (
@@ -64,8 +72,8 @@ AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - ? ) <= ?
                 {nameof(UpdateLog.UpdatedTicks)} = @{nameof(UpdateLog.UpdatedTicks)},
                 {nameof(UpdateLog.IsDelete)} = @{nameof(UpdateLog.IsDelete)},
                 {nameof(UpdateLog.UserUpdatedId)} = @{nameof(UpdateLog.UserUpdatedId)},
-                {nameof(UpdateLog.JsonUpdate)} = @{nameof(UpdateLog.JsonUpdate)};
-                {nameof(UpdateLog.IsServer)} = @{nameof(UpdateLog.IsServer)};
+                {nameof(UpdateLog.JsonUpdate)} = @{nameof(UpdateLog.JsonUpdate)},
+                {nameof(UpdateLog.IsServer)} = @{nameof(UpdateLog.IsServer)}
 ";
 
             if (exists?.Count > 0)
@@ -82,17 +90,20 @@ AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - ? ) <= ?
                 update.Updated = time;
             }
 
-            await _db.DataBaseAsync.ExecuteAsync(sqlInsert,
-                update.Id,
-                (int)update.UpdateEnum,
-                update.UpdateId,
-                update.CreatedTicks,
-                update.UpdatedTicks,
-                update.IsDelete,
-                update.UserCreatedId,
-                update.UserUpdatedId,
-                update.JsonUpdate,
-                update.IsServer
+            await _db.DbAsyncAoT.ExecuteAsync(sqlInsert,
+      new
+      {
+          update.Id,
+          update.UpdateEnum,
+          update.UpdateId,
+          update.CreatedTicks,
+          update.UpdatedTicks,
+          update.IsDelete,
+          update.UserCreatedId,
+          update.UserUpdatedId,
+          update.JsonUpdate,
+          update.IsServer
+      }
             );
             return update;
         }
@@ -117,21 +128,23 @@ AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - ? ) <= ?
                 {select}
                 FROM {nameof(UpdateLog)}  WHERE {nameof(UpdateLog.Id)} == @id";
 
-            var result = await _db.DataBaseAsync.QueryAsync<UpdateLog>(sql, id);
+            UpdateLog[] result = [.. await _db.DbAsyncAoT.QueryAsync<UpdateLog>(sql, new { id })];
 
-            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(result.Count, 0, "Don't find a record");
+            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(result.Length, 0, "Don't find a record");
 
             sql = $@"
                 {select}
                 FROM {nameof(UpdateLog)}  WHERE {nameof(UpdateLog.CreatedTicks)} <= @{nameof(UpdateLog.CreatedTicks)}";
 
-            var results = await _db.DataBaseAsync.QueryAsync<UpdateLog>(sql, result[0].CreatedTicks);
+            var results = await _db.DbAsyncAoT.QueryAsync<UpdateLog>(sql, new { CreatedTicks = result[0].CreatedTicks });
 
-            return results;
+            return [.. results];
         }
 
         public async Task<UpdateLog> SelectFirst(bool isServer, params UpdateEnum[] updateEnum)
         {
+            string enums = JsonSerializer.Serialize(updateEnum);
+
             string select = $@"SELECT 
                 {nameof(UpdateLog.Id)}, 
                 {nameof(UpdateLog.UpdateEnum)}, 
@@ -143,42 +156,16 @@ AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - ? ) <= ?
                 {nameof(UpdateLog.UserUpdatedId)},
                 {nameof(UpdateLog.JsonUpdate)},
                 {nameof(UpdateLog.IsServer)}
-                ";
-
-            string sql = $@"
-                {select}
                 FROM {nameof(UpdateLog)}  
-                WHERE {nameof(UpdateLog.IsServer)} == ?
-            ";
-
-            if (updateEnum.Length > 1)
-            {
-
-                sql += " AND (";
-                for (int i = 0; i < updateEnum.Length; i++)
-                {
-                    if (i > 0)
-                    {
-                        sql += " OR ";
-                    }
-                    sql += $@" {nameof(UpdateLog.UpdateEnum)} == ?";
-                }
-                sql += ")";
-            }
-            else
-            {
-                sql += $@" AND {nameof(UpdateLog.UpdateEnum)} == ?";
-            }
-
-
-            sql += $@"
+                WHERE {nameof(UpdateLog.IsServer)} == @{nameof(isServer)} AND
+                {nameof(UpdateLog.UpdateEnum)}
+                IN (SELECT value FROM json_each(@{nameof(enums)}))
                 ORDER By {nameof(UpdateLog.CreatedTicks)} DESC
-                LIMIT 1";
+                LIMIT 1
+                ";
+            UpdateLog[] result = [.. await _db.DbAsyncAoT.QueryAsync<UpdateLog>(select, new { isServer, enums })];
 
-            var parameters = (new object[] { isServer }).Concat(updateEnum.Cast<object>()).ToArray();
-            var result = await _db.DataBaseAsync.QueryAsync<UpdateLog>(sql, parameters);
-
-            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(result.Count, 0, "Don't find a record");
+            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(result.Length, 0, "Don't find a record");
 
             return result[0];
         }
@@ -201,7 +188,7 @@ AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - ? ) <= ?
 
         public static async Task<UpdateLog> Insert(this IUpdateLogService service, UpdateLog update, ProductName name)
         {
-            var json = System.Text.Json.JsonSerializer.Serialize(name, Model.JsonContext.SzarotkaJsonSerializerContext.Default.ProductName);
+            var json = System.Text.Json.JsonSerializer.Serialize(name, Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.ProductName);
             update ??= new UpdateLog();
             update.JsonUpdate = json;
             update.UserCreatedId = name.UserUpdatedId;
@@ -212,7 +199,7 @@ AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - ? ) <= ?
         }
         public static async Task<UpdateLog> Insert(this IUpdateLogService service, UpdateLog update, ProductPrice price)
         {
-            var json = System.Text.Json.JsonSerializer.Serialize(price, Model.JsonContext.SzarotkaJsonSerializerContext.Default.ProductPrice);
+            var json = System.Text.Json.JsonSerializer.Serialize(price, Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.ProductPrice);
             update ??= new UpdateLog();
             update.JsonUpdate = json;
             update.UserCreatedId = price.UserUpdatedId;
@@ -223,7 +210,7 @@ AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - ? ) <= ?
         }
         public static async Task<UpdateLog> Insert(this IUpdateLogService service, UpdateLog update, CustomerRoutes customer)
         {
-            var json = System.Text.Json.JsonSerializer.Serialize(customer, Model.JsonContext.SzarotkaJsonSerializerContext.Default.CustomerRoutes);
+            var json = System.Text.Json.JsonSerializer.Serialize(customer, Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.CustomerRoutes);
             update ??= new UpdateLog();
             update.JsonUpdate = json;
             update.UserCreatedId = customer.UserUpdatedId;
@@ -234,7 +221,7 @@ AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - ? ) <= ?
         }
         public static async Task<UpdateLog> Insert(this IUpdateLogService service, UpdateLog update, Day day)
         {
-            var json = System.Text.Json.JsonSerializer.Serialize(day, Model.JsonContext.SzarotkaJsonSerializerContext.Default.Day);
+            var json = System.Text.Json.JsonSerializer.Serialize(day, Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.Day);
             update ??= new UpdateLog();
             update.JsonUpdate = json;
             update.UserCreatedId = day.UserUpdatedId;

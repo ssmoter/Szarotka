@@ -6,7 +6,7 @@ using DataBase.Data;
 using DataBase.Data.Get;
 using DataBase.Model.EntitiesRoutes;
 using DataBase.Model.EntitiesServer;
-using DataBase.Model.JsonContext;
+using DataBase.Model.SourceGenerator;
 using DataBase.Service;
 
 using DriversRoutes.Helper;
@@ -146,7 +146,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _save;
         private readonly DataBase.Data.Get.IGetDriverRoutesAoT _get;
         private readonly Data.GoogleApi.IAddressFromCoordinates _IAddressFromCoordinates;
-        private readonly IAccessDataBase _db;
+        private readonly IAccessDataBaseAoT _db;
         private readonly DataBase.Service.IUpdateLogService _update;
         private readonly Data.RouteApi.ISendCustomersHttp _sendHttp;
         private readonly IPopupService _popupService;
@@ -155,7 +155,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
         internal CustomerRoutes OriginCustomer { get; set; }
 
 
-        public AddCustomerVM(IAccessDataBase db,
+        public AddCustomerVM(IAccessDataBaseAoT db,
                              Data.GoogleApi.IAddressFromCoordinates IAddressFromCoordinates,
                              DataBase.Data.Save.ISaveDriverRoutesAoT save,
                              DataBase.Data.Get.IGetDriverRoutesAoT get,
@@ -195,8 +195,8 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
                 {
                     date = Customer.DayOfWeek.GetTodayDatetimeFromSelectedDayOfWeekRoutes(date);
                 }
-                DayOfWeekCustomerBeforeList = await _db.DataBaseAsync.QueryAsync<SelectedDayOfWeekRoutes>(
-                    Helper.SqlQuery.GetSelectedDayOfWeekRoutesNearestDate(date, Helper.SqlQuery._less, Helper.SqlQuery._DESC));
+                DayOfWeekCustomerBeforeList = [.. (await _db.DbAsyncAoT.QueryAsync<SelectedDayOfWeekRoutes>(
+                    Helper.SqlQuery.GetSelectedDayOfWeekRoutesNearestDate(date, Helper.SqlQuery._less, Helper.SqlQuery._DESC)))];
                 var first = DayOfWeekCustomerBeforeList.FirstOrDefault();
                 if (first is not null)
                 {
@@ -219,8 +219,8 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
                 {
                     date = Customer.DayOfWeek.GetTodayDatetimeFromSelectedDayOfWeekRoutes(date);
                 }
-                DayOfWeekCustomerAfterList = await _db.DataBaseAsync.QueryAsync<SelectedDayOfWeekRoutes>(
-                    Helper.SqlQuery.GetSelectedDayOfWeekRoutesNearestDate(date, Helper.SqlQuery._more, Helper.SqlQuery._ASC));
+                DayOfWeekCustomerAfterList = [..await _db.DbAsyncAoT.QueryAsync<SelectedDayOfWeekRoutes>(
+                    Helper.SqlQuery.GetSelectedDayOfWeekRoutesNearestDate(date, Helper.SqlQuery._more, Helper.SqlQuery._ASC))];
                 var first = DayOfWeekCustomerAfterList.FirstOrDefault();
                 if (first is not null)
                 {

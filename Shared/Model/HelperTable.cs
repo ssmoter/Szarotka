@@ -1,6 +1,4 @@
-﻿using DataBase.Data;
-
-namespace Shared.Model
+﻿namespace Shared.Model
 {
     public partial class HelperTable : DataBase.Model.BaseEntities<Guid>
     {
@@ -28,7 +26,7 @@ namespace Shared.Model
                          {nameof(CreatedTicks)},  
                          {nameof(UpdatedTicks)}, 
                          {nameof(IsDelete)}  
-                         FROM {nameof(HelperTable)} WHERE {nameof(Name)} = '{name}'";
+                         FROM {nameof(HelperTable)} WHERE {nameof(Name)} = @{nameof(name)}";
             return sql;
         }
         public static string SetQuery(HelperTable helperTable)
@@ -45,22 +43,22 @@ namespace Shared.Model
                     {nameof(UserUpdatedId)}
                 )
                 VALUES (
-                    '{helperTable.Id}', 
-                    '{helperTable.Name}', 
-                    '{helperTable.Value}', 
-                    '{helperTable.CreatedTicks}', 
-                    '{helperTable.UpdatedTicks}', 
-                    '{helperTable.IsDelete}',
-                    '{nameof(UserCreatedId)}',
-                    '{nameof(UserUpdatedId)}'
+                    @{nameof(Id)}, 
+                    @{nameof(Name)}, 
+                    @{nameof(Value)}, 
+                    @{nameof(CreatedTicks)}, 
+                    @{nameof(UpdatedTicks)}, 
+                    @{nameof(IsDelete)},
+                    @{nameof(UserCreatedId)},
+                    @{nameof(UserUpdatedId)}
                 )
                 ON CONFLICT({nameof(Name)}) 
                 DO UPDATE SET 
-                    {nameof(Name)} = '{helperTable.Name}', 
-                    {nameof(Value)} = '{helperTable.Value}', 
-                    {nameof(IsDelete)} = '{helperTable.IsDelete}', 
-                    {nameof(UpdatedTicks)} = '{helperTable.UpdatedTicks}',
-                    {nameof(UserUpdatedId)} = '{helperTable.UserUpdatedId}'";
+                    {nameof(Name)} = @{nameof(Name)}, 
+                    {nameof(Value)} = @{nameof(Value)}, 
+                    {nameof(IsDelete)} = @{nameof(IsDelete)}, 
+                    {nameof(UpdatedTicks)} = @{nameof(UpdatedTicks)},
+                    {nameof(UserUpdatedId)} = @{nameof(UserUpdatedId)}";
             return sql;
         }
     }

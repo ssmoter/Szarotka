@@ -7,7 +7,7 @@ using DataBase.Data.Get;
 using DataBase.Data.Save;
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesServer;
-using DataBase.Model.JsonContext;
+using DataBase.Model.SourceGenerator;
 
 using Shared.Data;
 using Shared.Helper;
@@ -61,13 +61,13 @@ namespace Inventory.Pages.SingleDay
         static int lastFastValueClearTimerValue = 0;
 
         const char signPlus = '+';
-        private readonly IAccessDataBase _db;
+        private readonly IAccessDataBaseAoT _db;
         private readonly ISaveInventoryAoT _saveInventoryAoT;
         private readonly IGetInventoryAoT _get;
         private readonly Data.InventoryApi.ISendDayHttp _sendHttp;
         private readonly DataBase.Service.IUpdateLogService _updateLogService;
 
-        public SingleDayVM(IAccessDataBase db,
+        public SingleDayVM(IAccessDataBaseAoT db,
             ISaveInventoryAoT saveInventoryAoT,
             IGetInventoryAoT get,
             Data.InventoryApi.ISendDayHttp sendHttp,

@@ -47,13 +47,13 @@ public interface IUserValidation
 
 public class UserValidation : IUserValidation
 {
-    private readonly IAccessDataBase _db;
+    private readonly IAccessDataBaseAoT _db;
     private readonly ITimeService _timeService;
     private readonly string _special = "!@#$%^&*()_+-=[]{}|;:'\",.<>?/\\`~";
     private readonly string _phoneNumberPattern = @"^\+?[1-9]\d{1,14}$"; // E.164 format
 
     public IValidationException Validation { get; private set; } = new ValidationException();
-    public UserValidation(IAccessDataBase db, ITimeService timeService, IValidationException? validation = null)
+    public UserValidation(IAccessDataBaseAoT db, ITimeService timeService, IValidationException? validation = null)
     {
         _db = db;
         _timeService = timeService;
@@ -245,11 +245,11 @@ public class UserValidation : IUserValidation
     public async Task<ServerEnums.Result> EmailExist(string email)
     {
         var sql = ValidationUserQuery.SelectEmails(email);
-        var emails = await _db.DataBaseAsync.QueryAsync<User>(sql, email);
+        var emails = await _db.DbAsyncAoT.QueryAsync<User>(sql, new{ email});
 
         var result = ServerEnums.Result.Success;
 
-        if (emails.Count > 0)
+        if (emails.Any())
         {
             result = ServerEnums.Result.Error;
             string message = $"{nameof(RegisterUser.Email)} arleady exist";

@@ -18,13 +18,13 @@ namespace ServerUnitTest.Requests
     {
 
         private readonly Mock<IGetInventoryAoT> _mockGet;
-        private readonly Mock<IAccessDataBase> _mockDb;
+        private readonly Mock<IAccessDataBaseAoT> _mockDb;
         private readonly InventoryDayRequests _inventoryDayRequests;
         private readonly Mock<ISaveInventoryAoT> _mockSave;
         private readonly Mock<IUpdateLogService> _mockUpdateLog;
         public InventoryDaysRequestsTests()
         {
-            _mockDb = new Mock<IAccessDataBase>();
+            _mockDb = new Mock<IAccessDataBaseAoT>();
             _mockGet = new Mock<IGetInventoryAoT>();
             _mockSave = new Mock<ISaveInventoryAoT>();
             _mockUpdateLog = new Mock<IUpdateLogService>();
@@ -39,7 +39,7 @@ namespace ServerUnitTest.Requests
             days.Add(new());
             days.Add(new());
 
-            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object[]>())).ReturnsAsync(days);
+            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(days);
 
             var result = await _inventoryDayRequests.GetDays(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string[]>());
 
@@ -95,7 +95,7 @@ namespace ServerUnitTest.Requests
 
             Day[] days = [new() { Id = id, UpdatedTicks = 9 }, day];
 
-            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object[]>())).ReturnsAsync([new Day() { Id = id, UpdatedTicks = 9 }]);
+            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync([new Day() { Id = id, UpdatedTicks = 9 }]);
 
 
             var result = await _inventoryDayRequests.SaveDays(days);

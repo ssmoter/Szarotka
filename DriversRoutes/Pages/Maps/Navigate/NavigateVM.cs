@@ -13,7 +13,7 @@ using System.Collections.ObjectModel;
 
 
 namespace DriversRoutes.Pages.Maps.Navigate;
-public partial class NavigateVM(IAccessDataBase db) : ObservableObject, IQueryAttributable
+public partial class NavigateVM(IAccessDataBaseAoT db) : ObservableObject, IQueryAttributable
 {
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -63,7 +63,7 @@ public partial class NavigateVM(IAccessDataBase db) : ObservableObject, IQueryAt
         }
     }
 
-    private readonly IAccessDataBase _db = db;
+    private readonly IAccessDataBaseAoT _db = db;
 
     private void DescriptionOfPreviousPoint(int direction)
     {

@@ -1,26 +1,28 @@
 ﻿using DataBase.Model.EntitiesInventory;
+using DataBase.Model.SourceGenerator;
 
 using System.Text;
+using System.Text.Json;
 
 namespace DataBase.Data.Get
 {
     public static class GetInventoryAoTExtension
     {
-        public static async Task<Day?> Day(this IGetInventoryAoT get, Guid id)
+        public static async Task<Day?> Day(this IGetInventoryAoT get, Guid Id)
         {
-            if (id == Guid.Empty)
+            if (Id == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(id));
+                throw new ArgumentNullException(nameof(Id));
             }
 
-            var where = $"WHERE {nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.Id)} = ?";
+            var where = $"WHERE {nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.Id)} = @{nameof(Id)}";
 
-            var result = await get.Days(where, id);
+            var result = await get.Days(where, new { Id });
 
             return result?.FirstOrDefault();
         }
         public static async Task<Day?> DaySelectedDateString(
-            this IGetInventoryAoT get, string selectedDateString, Guid userId)
+            this IGetInventoryAoT get, string selectedDateString, Guid UserId)
         {
             if (string.IsNullOrWhiteSpace(selectedDateString))
             {
@@ -29,11 +31,11 @@ namespace DataBase.Data.Get
 
             var where = $@"
 WHERE 
-{nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.SelectedDateString)} = ?
+{nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.SelectedDateString)} = @{nameof(selectedDateString)}
 AND
-{nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.UserCreatedId)} = ?";
+{nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.UserCreatedId)} = @{nameof(UserId)}";
 
-            var result = await get.Days(where, selectedDateString, userId);
+            var result = await get.Days(where, new { selectedDateString, UserId });
             return result?.FirstOrDefault();
         }
 
@@ -47,49 +49,42 @@ AND
             }
             if (to > 0)
             {
-                where.AppendLine($" {nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.SelectedDateTicks)} >= ? AND {nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.SelectedDateTicks)} <= ? ");
+                where.AppendLine($" {nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.SelectedDateTicks)} >= @{nameof(from)} AND {nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.SelectedDateTicks)} <= @{nameof(to)} ");
             }
-            for (int i = 0; i < userIds.Count; i++)
+
+            string jsonUserIds = JsonSerializer.Serialize(userIds,SzarotkaJsonSerializerContext.Default.IListGuid);
+            if (userIds.Count > 0)
             {
-                if (i == 0)
+                if (to > 0)
                 {
-                    if (to > 0)
-                    {
-                        where.Append(" AND ");
-                    }
-                    where.AppendLine(" ( ");
-                    where.Append(nameof(Model.EntitiesInventory.Day));
-                    where.Append('.');
-                    where.Append(nameof(Model.EntitiesInventory.Day.UserCreatedId));
-                    where.Append(" = ? ");
+                    where.Append(" AND ");
                 }
-                if (i > 0)
-                {
-                    where.AppendLine(" OR ");
-                    where.Append(nameof(Model.EntitiesInventory.Day));
-                    where.Append('.');
-                    where.Append(nameof(Model.EntitiesInventory.Day.UserCreatedId));
-                    where.Append(" = ? ");
-                }
+                where.AppendLine(" ( ");
+                where.Append(nameof(Model.EntitiesInventory.Day));
+                where.Append('.');
+                where.Append(nameof(Model.EntitiesInventory.Day.UserCreatedId));
+                where.Append(" IN (SELECT value FROM json_each(@");
+                where.Append(nameof(jsonUserIds));
+                where.Append(")) ");
             }
             if (userIds.Count > 0)
             {
                 where.Append(')');
             }
 
-            object[]? args = null!;
+            object? args = null!;
 
             if (to > 0)
             {
-                args = [from, to];
+                args = new { from, to };
             }
             if (userIds.Count > 0)
             {
-                args = [.. userIds];
+                args = new { jsonUserIds };
             }
             if (to > 0 && userIds.Count > 0)
             {
-                args = [from, to, .. userIds];
+                args = new { from, to, jsonUserIds };
             }
 
             var result = await get.Days(where.ToString(), args);

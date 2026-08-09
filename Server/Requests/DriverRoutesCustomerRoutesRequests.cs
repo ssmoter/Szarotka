@@ -20,9 +20,9 @@ namespace Server.Requests
         Task<IResult> UpdateCustomers(IList<CustomerRoutes> customers, bool forceUpdate, CancellationToken token = default);
     }
 
-    public class DriverRoutesCustomerRoutesRequests(IAccessDataBase db, IGetDriverRoutesAoT get, ISaveDriverRoutesAoT save, IUpdateLogService updateLogService, ILogger<DriverRoutesCustomerRoutesRequests>? logger = null) : IDriverRoutesCustomerRoutesRequests
+    public class DriverRoutesCustomerRoutesRequests(IAccessDataBaseAoT db, IGetDriverRoutesAoT get, ISaveDriverRoutesAoT save, IUpdateLogService updateLogService, ILogger<DriverRoutesCustomerRoutesRequests>? logger = null) : IDriverRoutesCustomerRoutesRequests
     {
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
         private readonly IGetDriverRoutesAoT _get = get;
         private readonly ISaveDriverRoutesAoT _save = save;
         private readonly IUpdateLogService _updateLogService = updateLogService;

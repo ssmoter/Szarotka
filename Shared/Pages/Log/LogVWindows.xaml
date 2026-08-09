@@ -11,7 +11,7 @@
         <BackButtonBehavior Command="{Binding BackCommand}" />
     </Shell.BackButtonBehavior>
 
-    <ScrollView VerticalOptions="FillAndExpand">
+    <ScrollView VerticalOptions="Fill">
         <Grid RowDefinitions="auto,*,auto">
             <CollectionView Grid.Row="1" ItemsSource="{Binding Logs}">
                 <CollectionView.Header>
@@ -66,12 +66,6 @@
                                     Text="{Binding Message}"
                                     VerticalOptions="Center" />
                                 <HorizontalStackLayout Grid.Column="3">
-                                    <Button
-                                        BackgroundColor="Red"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type VM:LogVM}}, Path=DeleteLogCommand, x:DataType=VM:LogVM}"
-                                        CommandParameter="{Binding .}"
-                                        Text="Usuń"
-                                        VerticalOptions="Center" />
                                     <Button
                                         BackgroundColor="Green"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type VM:LogVM}}, Path=OpenSelectedLogCommand, x:DataType=VM:LogVM}"

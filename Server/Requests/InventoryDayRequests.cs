@@ -20,13 +20,13 @@ namespace Server.Requests
         Task<IResult> SaveDays(IList<Day> days, bool forceUpdate = false, CancellationToken token = default);
     }
 
-    public class InventoryDayRequests(IAccessDataBase db,
+    public class InventoryDayRequests(IAccessDataBaseAoT db,
                                 IGetInventoryAoT getInventoryAoT,
                                 ISaveInventoryAoT saveInventoryAoT,
                                 DataBase.Service.IUpdateLogService updateLog,
                                 ILogger<InventoryDayRequests>? logger = null) : IInventoryDayRequests
     {
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
         private readonly IGetInventoryAoT _getInventoryAoT = getInventoryAoT;
         private readonly ISaveInventoryAoT _saveInventoryAoT = saveInventoryAoT;
         private DataBase.Service.IUpdateLogService _UpdateLog = updateLog;

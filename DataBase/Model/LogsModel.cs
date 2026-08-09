@@ -13,7 +13,7 @@ namespace DataBase.Model
         public string Message { get; set; } = "";
         public string Created { get; set; } = "";
         [Ignore]
-        [JsonConverter(typeof(JsonContext.CustomDateTimeConverter))]
+        [JsonConverter(typeof(SourceGenerator.CustomDateTimeConverter))]
         public DateTime CreatedDateTime
         {
             get

@@ -1,6 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
-using DataBase.Model.JsonContext;
+using DataBase.Model.SourceGenerator;
 
 using System.Text;
 using System.Text.Json;
@@ -13,10 +13,10 @@ namespace Shared.Data.ServerHttpClients
         Task<bool> PostNewAccount(RegisterUser user);
     }
 
-    public class RegisterHttp(IHttpClientFactory httpClient, IAccessDataBase db) : IRegisterHttp
+    public class RegisterHttp(IHttpClientFactory httpClient, IAccessDataBaseAoT db) : IRegisterHttp
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClient;
-        private readonly IAccessDataBase db = db;
+        private readonly IAccessDataBaseAoT db = db;
 
         public async Task<bool> PostNewAccount(RegisterUser user)
         {

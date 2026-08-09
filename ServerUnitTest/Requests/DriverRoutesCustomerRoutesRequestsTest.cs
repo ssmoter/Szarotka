@@ -16,7 +16,7 @@ namespace ServerUnitTest.Requests
     public class DriverRoutesCustomerRoutesRequestsTest
     {
         private readonly Mock<IGetDriverRoutesAoT> _mockGet;
-        private readonly Mock<IAccessDataBase> _mockDb;
+        private readonly Mock<IAccessDataBaseAoT> _mockDb;
         private readonly Mock<ISaveDriverRoutesAoT> _mockSave;
         private readonly Mock<IUpdateLogService> _mockUpdateLogService;
 
@@ -24,7 +24,7 @@ namespace ServerUnitTest.Requests
 
         public DriverRoutesCustomerRoutesRequestsTest()
         {
-            _mockDb = new Mock<IAccessDataBase>();
+            _mockDb = new Mock<IAccessDataBaseAoT>();
             _mockGet = new Mock<IGetDriverRoutesAoT>();
             _mockSave = new Mock<ISaveDriverRoutesAoT>();
             _mockUpdateLogService = new Mock<IUpdateLogService>();
@@ -87,7 +87,7 @@ namespace ServerUnitTest.Requests
             customers.Add(new());
             customers.Add(new());
 
-            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<object[]>())).ReturnsAsync(customers);
+            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(customers);
 
             var result = await _driverRoutesCustomerRoutesRequests.GetCustomers(id.ToString(), []);
 
@@ -144,7 +144,7 @@ namespace ServerUnitTest.Requests
             customers.Add(new() { Id = id });
             customers.Add(new() { Id = id1 });
 
-            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<object[]>())).ReturnsAsync(customers);
+            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(customers);
 
             var result = await _driverRoutesCustomerRoutesRequests.GetCustomers([id.ToString(), id1.ToString()]);
 

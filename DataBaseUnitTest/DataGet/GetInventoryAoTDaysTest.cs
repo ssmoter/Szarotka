@@ -1,4 +1,5 @@
 ﻿using DataBase.Data.Get;
+using DataBase.Model.EntitiesInventory;
 
 namespace DataBaseUnitTest.DataGet
 {
@@ -13,7 +14,7 @@ namespace DataBaseUnitTest.DataGet
 
             var aot = new GetInventoryAoT(db);
 
-            var result = await aot.Days("", null!);
+            var result = await aot.Days<int>("", default);
 
             var expectedJson = System.Text.Json.JsonSerializer.Serialize(expected);
             var resultJson = System.Text.Json.JsonSerializer.Serialize(result);

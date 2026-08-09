@@ -12,12 +12,12 @@ namespace ServerUnitTest.Requests
 {
     public class UpdateLogRequestsTests
     {
-        private readonly Mock<IAccessDataBase> _mockDb;
+        private readonly Mock<IAccessDataBaseAoT> _mockDb;
         private readonly Mock<IUpdateLogService> _mockUpdateLogsService;
         private readonly UpdateLogRequests _updateLogRequests;
         public UpdateLogRequestsTests()
         {
-            _mockDb = new Mock<IAccessDataBase>();
+            _mockDb = new Mock<IAccessDataBaseAoT>();
             _mockUpdateLogsService = new Mock<IUpdateLogService>();
 
             _updateLogRequests = new UpdateLogRequests(_mockDb.Object, _mockUpdateLogsService.Object);

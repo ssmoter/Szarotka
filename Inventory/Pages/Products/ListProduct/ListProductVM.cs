@@ -8,7 +8,7 @@ using DataBase.Data.Get;
 using DataBase.Data.Save;
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesServer;
-using DataBase.Model.JsonContext;
+using DataBase.Model.SourceGenerator;
 using DataBase.Service;
 
 using Shared.CustomControls.FromCode;
@@ -46,7 +46,7 @@ namespace Inventory.Pages.Products.ListProduct
             }
         }
 
-        private readonly IAccessDataBase _db;
+        private readonly IAccessDataBaseAoT _db;
         private readonly IUpdateLogService _updateLogService;
         private readonly IGetInventoryAoT _get;
         private readonly ISaveInventoryAoT _save;
@@ -54,7 +54,7 @@ namespace Inventory.Pages.Products.ListProduct
         private readonly Data.InventoryApi.ISendProductHttp _sendHttp;
 
         public Action<int, int, ScrollToPosition, bool> ScrollTo;
-        public ListProductVM(IAccessDataBase db,
+        public ListProductVM(IAccessDataBaseAoT db,
                              IGetInventoryAoT get,
                              ISaveInventoryAoT save,
                              Data.InventoryApi.IGetProductHttp getHttp,
@@ -163,37 +163,6 @@ namespace Inventory.Pages.Products.ListProduct
             {
                 var user = UserAfterLogin.User.Id.ToByteArray();
                 await _save.SaveProductName(value, user);
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
-        }
-
-        [RelayCommand]
-        async Task DeleteProduct(ListProductM value)
-        {
-            try
-            {
-                bool result = await Shell.Current.DisplayAlertAsync(value.Name.Name, "Czy na pewno chcesz usunąć?", "Tak", "Nie");
-                if (result)
-                {
-                    try
-                    {
-                        await _db.DataBaseAsync.DeleteAsync(value.Name);
-                        for (int i = 0; i < value.Prices.Count; i++)
-                        {
-                            await _db.DataBaseAsync.DeleteAsync(value.Prices[i]);
-                        }
-                        ProductMs.Remove(value);
-                        await Shell.Current.DisplayAlertAsync(value.Name.Name, "Obiekt został usunięty", "Ok");
-                    }
-                    catch (Exception ex)
-                    {
-                        await _db.SaveLogAsyncExtension(ex);
-                        await Shell.Current.DisplayAlertAsync("Error", ex.Message, "Ok");
-                    }
-                }
             }
             catch (Exception ex)
             {
@@ -474,7 +443,7 @@ namespace Inventory.Pages.Products.ListProduct
                     (bool canUpdate, var isExist) = await ModelsDifferences.Check(_get, item.Name, false);
                     if (canUpdate)
                     {
-                        await _save.SaveProductName(item.Name, item.Name.UserUpdatedId.ToByteArray(), true);       
+                        await _save.SaveProductName(item.Name, item.Name.UserUpdatedId.ToByteArray(), true);
                         var log = await _updateLogService.Insert(new DataBase.Model.UpdateLog()
                         {
                             IsServer = false,

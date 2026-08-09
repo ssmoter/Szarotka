@@ -32,12 +32,4 @@ public partial class LogV : ContentPage
         _vm.OpenSelectedLogCommand.Execute(product);
     }
 
-    private void SwipeItem_Invoked_Delete(object sender, EventArgs e)
-    {
-        if (sender is not SwipeItem item) { return; }
-
-        if (item.BindingContext is not LogM product) { return; }
-
-        _vm.DeleteLogCommand.Execute(product);
-    }
 }

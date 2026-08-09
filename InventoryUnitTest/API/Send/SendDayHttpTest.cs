@@ -30,9 +30,7 @@ namespace InventoryUnitTest.API.Send
         [Fact]
         public async Task SendDayHttp()
         {
-            var a = _factory.CreateClient();
-
-            var testList = await _getInventoryAoT.Days(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks, []);
+            var testList = _factory.AllDays;
             var test = testList[0];
             test.Description = Guid.NewGuid().ToString();
 
@@ -51,9 +49,7 @@ namespace InventoryUnitTest.API.Send
         [Fact]
         public async Task SendDaysHttp()
         {
-            var a = _factory.CreateClient();
-
-            var testList = await _getInventoryAoT.Days(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks, []);
+            var testList = _factory.AllDays;
 
             for (int i = 0; i < testList.Count; i++)
             {
@@ -64,8 +60,8 @@ namespace InventoryUnitTest.API.Send
 
             var expected = await _getInventoryAoT.Days(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks, []);
 
-            var expectedJson = System.Text.Json.JsonSerializer.Serialize(expected);
-            var resultJson = System.Text.Json.JsonSerializer.Serialize(testList);
+            var expectedJson = System.Text.Json.JsonSerializer.Serialize(expected.OrderBy(x=>x.Id));
+            var resultJson = System.Text.Json.JsonSerializer.Serialize(testList.OrderBy(x => x.Id));
 
             Assert.True(result.IsSuccessStatusCode);
             Assert.Equal(expectedJson, resultJson);

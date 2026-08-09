@@ -1,22 +1,17 @@
-﻿using DataBase.Data;
+﻿
+
+using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 
 using Shared.Helper.Img;
+using Shared.Model;
 using Shared.Service;
 
 namespace Shared.Data
 {
-    public class InventoryTables(IAccessDataBase db) : IUpdateDataBase
+    public class InventoryTables(IAccessDataBaseAoT db) : IUpdateDataBase
     {
-        readonly IAccessDataBase _db = db;
-        static readonly Random _random = new(2137);
-
-        public static Guid GetGuidSed()
-        {
-            byte[] guidBytes = new byte[16];
-            _random.NextBytes(guidBytes);
-            return new Guid(guidBytes);
-        }
+        readonly IAccessDataBaseAoT _db = db;
         public static Guid GetGuidSed(string guid)
         {
             return new Guid(guid);
@@ -33,14 +28,15 @@ namespace Shared.Data
             if (oldVersion < 1)
             {
                 await CreateInventoryTables();
+#if DEBUG
                 await CreatedDefaultProduct();
+#endif
                 progressBar += updateProgressBar;
                 oldVersion = 1;
                 updateInventory?.Invoke(progressBar, oldVersion);
             }
             if (oldVersion < 2)
             {
-                await CreateInventoryTables();
                 progressBar += updateProgressBar;
                 oldVersion = 2;
                 updateInventory?.Invoke(progressBar, oldVersion);
@@ -59,43 +55,30 @@ namespace Shared.Data
 
         private async Task CopyDriverGuidToUserCreatedIdAndUserUpdateId()
         {
-            var query = $"PRAGMA table_info('{nameof(Day)}')";
-            var result = await _db.DataBaseAsync.QueryAsync<TableInfo>(query);
+            var result = CreatedDataBase.GetTableInfo(_db, nameof(Day));
 
             if (result.Any(row => row.Name == "DriverGuid"))
             {
-                await _db.DataBaseAsync.ExecuteAsync(@"
-UPDATE Day
-SET 
-UserCreatedId = DriverGuid,
-UserUpdatedId = DriverGuid
-");
+                await _db.DbAsyncAoT.ExecuteAsync(@"
+                                            UPDATE Day
+                                            SET 
+                                            UserCreatedId = DriverGuid,
+                                            UserUpdatedId = DriverGuid
+                                            ");
             }
-
         }
 
-        private class TableInfo
-        {
-            public int Cid { get; set; }
-            public string Name { get; set; } = "";
-            public string Type { get; set; } = "";
-            public int NotNull { get; set; }
-            public string DefaultValue { get; set; } = "";
-            public int PrimaryKey { get; set; }
-        }
+
 
         private async Task CreateInventoryTables()
         {
-            var driver = _db.DataBaseAsync.CreateTableAsync<Driver>();
-            var selectedDriver = _db.DataBaseAsync.CreateTableAsync<SelectedDriver>();
-            var name = _db.DataBaseAsync.CreateTableAsync<ProductName>();
-            var price = _db.DataBaseAsync.CreateTableAsync<ProductPrice>();
-            var product = _db.DataBaseAsync.CreateTableAsync<Product>();
-            var cake = _db.DataBaseAsync.CreateTableAsync<Cake>();
-            var day = _db.DataBaseAsync.CreateTableAsync<Day>();
+            var name = _db.DbAsyncAoT.ExecuteAsync(SQlCreatedProductName);
+            var price = _db.DbAsyncAoT.ExecuteAsync(SQlCreatedProductPrice);
+            var product = _db.DbAsyncAoT.ExecuteAsync(SQlCreatedProduct);
+            var cake = _db.DbAsyncAoT.ExecuteAsync(SQlCreatedCake);
+            var day = _db.DbAsyncAoT.ExecuteAsync(SQlCreatedDay);
 
-            await Task.WhenAll(driver, selectedDriver, name, price, product, cake, day);
-
+            await Task.WhenAll(name, price, product, cake, day);
         }
 
         private async Task CreatedDefaultProduct()
@@ -122,13 +105,103 @@ UserUpdatedId = DriverGuid
 
             (Task name, Task price) task = new()
             {
-                name = _db.DataBaseAsync.InsertOrReplaceAsync(product.Name),
-                price = _db.DataBaseAsync.InsertOrReplaceAsync(product.Price)
+                name = _db.DbAsyncAoT.ExecuteAsync(DataBase.Data.SqlQuery.ProductNameQuery.SaveOrUpdate(product.Name.Id,
+                                                                                                        product.Name.Arrangement,
+                                                                                                        product.Name.Name,
+                                                                                                        product.Name.Description,
+                                                                                                        product.Name.Img,
+                                                                                                        product.Name.IsVisible,
+                                                                                                        product.Name.CreatedTicks,
+                                                                                                        product.Name.UpdatedTicks,
+                                                                                                        product.Name.UserCreatedId,
+                                                                                                        product.Name.UserUpdatedId,
+                                                                                                        product.Name.IsDelete), new
+                                                                                                        {
+                                                                                                            product.Name.Id,
+                                                                                                            product.Name.Arrangement,
+                                                                                                            product.Name.Name,
+                                                                                                            product.Name.Description,
+                                                                                                            product.Name.Img,
+                                                                                                            product.Name.IsVisible,
+                                                                                                            product.Name.CreatedTicks,
+                                                                                                            product.Name.UpdatedTicks,
+                                                                                                            product.Name.UserCreatedId,
+                                                                                                            product.Name.UserUpdatedId,
+                                                                                                            product.Name.IsDelete
+                                                                                                        }),
+                price = _db.DbAsyncAoT.ExecuteAsync(DataBase.Data.SqlQuery.ProductPriceQuery.SaveOrUpdate(product.Price.Id,
+                                                                                                          product.Price.Price,
+                                                                                                          product.Price.CreatedTicks,
+                                                                                                          product.Price.UpdatedTicks,
+                                                                                                          product.Price.UserCreatedId,
+                                                                                                          product.Price.UserUpdatedId,
+                                                                                                          product.Price.ProductNameId,
+                                                                                                          product.Price.IsDelete), new
+                                                                                                          {
+                                                                                                              product.Price.Id,
+                                                                                                              product.Price.Price,
+                                                                                                              product.Price.CreatedTicks,
+                                                                                                              product.Price.UpdatedTicks,
+                                                                                                              product.Price.UserCreatedId,
+                                                                                                              product.Price.UserUpdatedId,
+                                                                                                              product.Price.ProductNameId,
+                                                                                                              product.Price.IsDelete
+                                                                                                          })
             };
             return task;
         }
 
+        const string SQlCreatedDay = $@"CREATE TABLE IF NOT EXISTS [{nameof(Day)}] (
+            [{nameof(Day.Id)}] TEXT PRIMARY KEY,
+            [{nameof(Day.Description)}] TEXT,
+            [{nameof(Day.DriverGuid)}] TEXT,
+            [{nameof(Day.SelectedDateString)}] TEXT,
+            [{nameof(Day.SelectedDateTicks)}] INTEGER,
+            [{nameof(Day.TotalPriceProducts)}] INTEGER,
+            [{nameof(Day.TotalPriceCake)}] INTEGER,
+            [{nameof(Day.TotalPrice)}] INTEGER,
+            [{nameof(Day.TotalPriceCorrect)}] INTEGER,
+            [{nameof(Day.TotalPriceAfterCorrect)}] INTEGER,
+            [{nameof(Day.TotalPriceMoney)}] INTEGER,
+            [{nameof(Day.TotalPriceDifference)}] INTEGER,
+            {HelperTable.AdditionalColumns})";
 
+        const string SQlCreatedProductName = $@"CREATE TABLE IF NOT EXISTS [{nameof(ProductName)}] (
+            [{nameof(ProductName.Id)}] TEXT PRIMARY KEY,
+            [{nameof(ProductName.Arrangement)}] INTEGER,
+            [{nameof(ProductName.Name)}] TEXT,
+            [{nameof(ProductName.Description)}] TEXT,
+            [{nameof(ProductName.Img)}] TEXT,
+            [{nameof(ProductName.IsVisible)}] INTEGER,
+            {HelperTable.AdditionalColumns})";
+
+        const string SQlCreatedProductPrice = $@"CREATE TABLE IF NOT EXISTS [{nameof(ProductPrice)}] (
+            [{nameof(ProductPrice.Id)}] TEXT PRIMARY KEY,
+            [{nameof(ProductPrice.ProductNameId)}] TEXT,
+            [{nameof(ProductPrice.Price)}] INTEGER,
+            {HelperTable.AdditionalColumns})";
+
+
+        const string SQlCreatedProduct = $@"CREATE TABLE IF NOT EXISTS [{nameof(Product)}] (
+            [{nameof(Product.Id)}] TEXT PRIMARY KEY,
+            [{nameof(Product.DayId)}] TEXT,
+            [{nameof(Product.ProductNameId)}] TEXT,
+            [{nameof(Product.ProductPriceId)}] TEXT,
+            [{nameof(Product.Description)}] TEXT,
+            [{nameof(Product.PriceTotal)}] INTEGER,
+            [{nameof(Product.PriceTotalCorrect)}] INTEGER,
+            [{nameof(Product.PriceTotalAfterCorrect)}] INTEGER,
+            [{nameof(Product.Number)}] INTEGER,
+            [{nameof(Product.NumberEdit)}] INTEGER,
+            [{nameof(Product.NumberReturn)}] INTEGER,
+            {HelperTable.AdditionalColumns})";
+
+        const string SQlCreatedCake = $@"CREATE TABLE IF NOT EXISTS [{nameof(Cake)}] (
+            [{nameof(Cake.Id)}] TEXT PRIMARY KEY,
+            [{nameof(Cake.DayId)}] TEXT,
+            [{nameof(Cake.IsSell)}] INTEGER,
+            [{nameof(Cake.Price)}] INTEGER,
+            {HelperTable.AdditionalColumns})";
 
         public static Product[] DefaultProducts { get => defaultProducts; }
         private static readonly Product[] defaultProducts =

@@ -15,10 +15,10 @@ namespace Inventory.Data.InventoryApi
         Task<HttpResponseMessage> SendDays(IList<Day> days, bool forceUpdate = false, UpdateProgressBar progressBar = null, CancellationToken token = default);
     }
 
-    public partial class SendDayHttp(IAccessDataBase db, IHttpClientFactory httpClient) : ISendDayHttp
+    public partial class SendDayHttp(IAccessDataBaseAoT db, IHttpClientFactory httpClient) : ISendDayHttp
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClient;
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
 
 
         public async Task<HttpResponseMessage> SendDay(Day day, bool forceUpdate = false, UpdateProgressBar progressBar = null, CancellationToken token = default)
@@ -30,7 +30,7 @@ namespace Inventory.Data.InventoryApi
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressBar?.Grid);
 
-            var json = JsonSerializer.Serialize(day, DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.Day);
+            var json = JsonSerializer.Serialize(day, DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.Day);
 
             var response = await httpClient.PostWithProgressAsync(url, json,
                 (progress) => { UpdateProgressBar.UpdateProgress(progressBar, progress); }
@@ -52,7 +52,7 @@ namespace Inventory.Data.InventoryApi
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressBar?.Grid);
 
-            var json = JsonSerializer.Serialize(days, DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.IListDay);
+            var json = JsonSerializer.Serialize(days, DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.IListDay);
 
             var response = await httpClient.PostWithProgressAsync(url, json,
                 (progress) => { UpdateProgressBar.UpdateProgress(progressBar, progress); }

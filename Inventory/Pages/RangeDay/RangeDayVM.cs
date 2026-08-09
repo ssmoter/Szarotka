@@ -9,7 +9,7 @@ using DataBase.Data.Get;
 using DataBase.Data.Save;
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesServer;
-using DataBase.Model.JsonContext;
+using DataBase.Model.SourceGenerator;
 using DataBase.Service;
 
 using Inventory.Helper.Calculations;
@@ -151,7 +151,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
 
 
     private PopupDateModel PopupDate = null;
-    private readonly IAccessDataBase _db;
+    private readonly IAccessDataBaseAoT _db;
     private readonly IGetInventoryAoT _get;
     private readonly ISaveInventoryAoT _save;
     private readonly Data.InventoryApi.IGetDayHttp _getDayHttp;
@@ -160,7 +160,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
     private readonly DataBase.Service.IUpdateLogService _updateLogService;
     private readonly IPopupService _popupService;
 
-    public RangeDayVM(IAccessDataBase db,
+    public RangeDayVM(IAccessDataBaseAoT db,
                       IGetInventoryAoT get,
                       Data.InventoryApi.IGetDayHttp getDayHttp,
                       Data.InventoryApi.ISendDayHttp sendDayHttp,
@@ -743,10 +743,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
     }
     private async Task SaveDay(Day day, bool isServer = false)
     {
-        await _db.DataBaseAsync.RunInTransactionAsync(async c =>
-        {
-            await _save.SaveDay(day, day.UserUpdatedId.ToByteArray(), isServer);
-        });
+        await _save.SaveDay(day, day.UserUpdatedId.ToByteArray(), isServer);
 
         foreach (Product product in day.Products)
         {

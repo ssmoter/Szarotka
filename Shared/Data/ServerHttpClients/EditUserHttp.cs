@@ -1,6 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
-using DataBase.Model.JsonContext;
+using DataBase.Model.SourceGenerator;
 
 using Shared.Helper;
 
@@ -14,10 +14,10 @@ namespace Shared.Data.ServerHttpClients
         Task<User> EditUser(User user);
     }
 
-    public class EditUserHttp(IAccessDataBase db, IHttpClientFactory httpClient) : IEditUserHttp
+    public class EditUserHttp(IAccessDataBaseAoT db, IHttpClientFactory httpClient) : IEditUserHttp
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClient;
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
 
         public async Task<User> EditUser(User user)
         {

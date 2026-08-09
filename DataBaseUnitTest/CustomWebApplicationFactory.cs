@@ -1,5 +1,7 @@
 ﻿using DataBase.Data;
-using DataBase.Helper;
+using DataBase.Data.MySqliteConnection;
+using DataBase.Model.EntitiesInventory;
+using DataBase.Model.EntitiesRoutes;
 using DataBase.Model.EntitiesServer;
 using DataBase.Service;
 
@@ -9,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Maui.Platform;
 
 using Server.Model;
 
@@ -30,14 +33,14 @@ namespace DataBaseUnitTest
     {
         public const string TestJwtSecret = "81234CFB77034ECCDDD547F5SADFAASADSFGAFGDFAEWFCVZXVB";
 
-        public AccessDataBase? TestDatabase { get; private set; }
+        public AccessDataBaseAoT? TestDatabase { get; private set; }
         public ITimeService? TimeService { get; private set; }
         public RegisterUser? User { get; private set; }
         public Server.Service.IAuthenticationService? JwtToken { get; private set; }
+        public IList<CustomerRoutes> AllCustomers { get; private set; } = [];
+        public IList<Day> AllDays { get; private set; } = [];
+        public IList<EmptyProduct> AllProducts { get; private set; } = [];
 
-        public CustomWebApplicationFactory()
-        {
-        }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -52,21 +55,26 @@ namespace DataBaseUnitTest
             // !!! USUNIĘTO 'async' z deklaracji poniżej - teraz jest to w 100% synchroniczne !!!
             builder.ConfigureServices(services =>
             {
-                services.RemoveAll<IAccessDataBase>();
+                services.RemoveAll<IAccessDataBaseAoT>();
                 services.RemoveAll<IHttpClientFactory>();
 
-                services.AddSingleton<IAccessDataBase>(opt =>
-                {
-                    string dbName = Helper.GetPath + "1TestDB.db3";
-                    dbName = Helper.AddDBIfDontHave(dbName);
-                    var db = new AccessDataBase(dbName, TimeService, Constants.Flags);
-                    TestDatabase = db;
 
-                    return db;
+                services.AddSingleton<ITimeService, CurrentUtc>();
+
+                services.AddSingleton<ISqliteConnectionFactory>(opt =>
+                {                
+                    string dbName = Helper.GetPath + "1TestDB.db3";
+                    return new SqliteConnectionFactory(dbName);
                 });
+
+                services.AddScoped<IMyDbConnection, MyDbConnection>();
+                services.AddScoped<IMyDbAsyncConnection, MyDbAsyncConnection>();
+
+                services.AddScoped<IAccessDataBaseAoT, AccessDataBaseAoT>();
 
                 services.AddSingleton<IHttpClientFactory>(new LocalHttpClientFactory(this));
             });
+
         }
 
         // Ta metoda wykona się AUTOMATYCZNIE zaraz po uruchomieniu serwera, ale PRZED pierwszym testem.
@@ -91,26 +99,25 @@ namespace DataBaseUnitTest
 
             // 3. Autoryzujemy i ustawiamy sesję (tutaj bezpiecznie robimy await)
             var token = await JwtToken.AuthenticateAsync(User);
-            ref IAccessDataBase? privateDbField = ref SetDB(null);
+            ref IAccessDataBaseAoT? privateDbField = ref SetDB(null);
             privateDbField = db;
             UserAfterLogin.SetLoginUser(token);
 
-            await DataBaseUnitTest.DataGet.Helper.SetExampleDays(10, db);
-            DataBaseUnitTest.DataGet.Helper.SetExampleCustomerRoutes(10, db);
+            AllDays = await DataBaseUnitTest.DataGet.Helper.SetExampleDays(10, db);
+            AllCustomers = DataBaseUnitTest.DataGet.Helper.SetExampleCustomerRoutes(10, db);
+
+            db.Dispose();
         }
 
-        public async Task<AccessDataBase> InitDatabase()
+        public async Task<AccessDataBaseAoT> InitDatabase()
         {
             var db = TestDatabase;
             if (TestDatabase == null)
             {
                 string dbName = Helper.GetPath + "1TestDB.db3";
                 dbName = Helper.AddDBIfDontHave(dbName);
-                db = new AccessDataBase(dbName, TimeService, Constants.Flags);
+                db = DataSave.Helper.CreatedDataBaseUpdateLogForTest(dbName).GetAwaiter().GetResult();
             }
-            var update = new Shared.Data.CreatedDataBase(db);
-            await update.UpdateDataBase(data, data, data);
-            static void data(double a, int b) { }
             return db!;
         }
 
@@ -159,7 +166,7 @@ namespace DataBaseUnitTest
 
 
         [UnsafeAccessor(UnsafeAccessorKind.StaticField, Name = "_db")]
-        extern static ref IAccessDataBase? SetDB(
+        extern static ref IAccessDataBaseAoT? SetDB(
         [UnsafeAccessorType("Shared.Helper.UserAfterLogin,Shared")] object? dummy
         );
         [UnsafeAccessor(UnsafeAccessorKind.StaticMethod, Name = "ServerUrl")]

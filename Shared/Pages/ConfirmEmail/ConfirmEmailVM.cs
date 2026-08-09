@@ -25,9 +25,9 @@ namespace Shared.Pages.ConfirmEmail
             }
         }
 
-        private readonly IAccessDataBase _db;
+        private readonly IAccessDataBaseAoT _db;
         private readonly IRegisterHttp _registerHttp;
-        public ConfirmEmailVM(IAccessDataBase db, IRegisterHttp registerHttp)
+        public ConfirmEmailVM(IAccessDataBaseAoT db, IRegisterHttp registerHttp)
         {
             ConfirmEmailM = new();
             _db = db;

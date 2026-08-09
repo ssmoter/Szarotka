@@ -1,6 +1,7 @@
 ﻿using DataBase.Model.EntitiesRoutes;
 
 using System.Text;
+using System.Text.Json;
 
 namespace DataBase.Data.Get
 {
@@ -9,31 +10,24 @@ namespace DataBase.Data.Get
 
         public static async Task<IList<CustomerRoutes>> CustomerRoutes(this IGetDriverRoutesAoT get, params Guid[] ids)
         {
+            if (ids.Length == 0)
+            {
+                return await get.CustomerRoutes("", null);
+            }
+            string jsonIds = JsonSerializer.Serialize(ids);
             StringBuilder sb = new();
             sb.Append(" WHERE ");
             sb.Append(nameof(Model.EntitiesRoutes.CustomerRoutes));
             sb.Append('.');
             sb.Append(nameof(Model.EntitiesRoutes.CustomerRoutes.Id));
-            sb.Append(" IN ( ");
+            sb.Append(" IN (SELECT value FROM json_each(@");
+            sb.Append(nameof(jsonIds));
+            sb.Append(")) ");
 
-            for (int i = 0; i < ids.Length; i++)
-            {
-                Guid id = ids[i];
-                if (id == Guid.Empty)
-                {
-                    ArgumentNullException.ThrowIfNull("No valid id");
-                }
-                if (i != 0)
-                {
-                    sb.Append(", ");
-                }
-                sb.Append('?');
-            }
-            sb.Append(')');
-
-            var result = await get.CustomerRoutes(sb.ToString(), [.. ids]);
+            var result = await get.CustomerRoutes(sb.ToString(), new { jsonIds });
             return result;
         }
+
         public static async Task<CustomerRoutes?> CustomerRoute(this IGetDriverRoutesAoT get, Guid id)
         {
             StringBuilder sb = new();
@@ -45,24 +39,28 @@ namespace DataBase.Data.Get
             sb.Append(nameof(Model.EntitiesRoutes.CustomerRoutes));
             sb.Append('.');
             sb.Append(nameof(Model.EntitiesRoutes.CustomerRoutes.Id));
-            sb.Append(" = ?");
-            var result = await get.CustomerRoutes(sb.ToString(), id);
+            sb.Append(" = @");
+            sb.Append(nameof(id));
+            var result = await get.CustomerRoutes(sb.ToString(), new { id });
 
             return result.FirstOrDefault();
         }
-        public static async Task<IList<CustomerRoutes>> CustomerRoutes(this IGetDriverRoutesAoT get, Guid routeId, DayOfWeek[] selected_day, bool isDelete = false)
+        public static async Task<IList<CustomerRoutes>> CustomerRoutes(this IGetDriverRoutesAoT get,
+                                                                       Guid routeId,
+                                                                       DayOfWeek[] selected_day,
+                                                                       bool isDelete = false)
         {
             if (routeId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(routeId));
             }
-
             StringBuilder sb = new();
             sb.Append(" WHERE ");
             sb.Append(nameof(Model.EntitiesRoutes.CustomerRoutes));
             sb.Append('.');
             sb.Append(nameof(Model.EntitiesRoutes.CustomerRoutes.RoutesId));
-            sb.Append(" = ?");
+            sb.Append(" = @");
+            sb.Append(nameof(routeId));
             sb.AppendLine();
 
             for (int i = 0; i < selected_day.Length; i++)
@@ -99,7 +97,7 @@ namespace DataBase.Data.Get
             sb.Append(')');
 
 
-            var result = await get.CustomerRoutes(sb.ToString(), [routeId, .. selected_day]);
+            var result = await get.CustomerRoutes(sb.ToString(), new { routeId, selected_day });
 
             return result;
         }

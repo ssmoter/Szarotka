@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesServer;
-using DataBase.Model.JsonContext;
+using DataBase.Model.SourceGenerator;
 using DataBase.Service;
 
 using Shared.Data;
@@ -104,8 +104,8 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
         private readonly DataBase.Data.Save.ISaveInventoryAoT _save;
         private readonly Data.InventoryApi.ISendProductHttp _sendHttp;
         private readonly DataBase.Service.IUpdateLogService _updateLog;
-        private readonly IAccessDataBase _db;
-        public AddEditProductVM(IAccessDataBase db,
+        private readonly IAccessDataBaseAoT _db;
+        public AddEditProductVM(IAccessDataBaseAoT db,
                                 DataBase.Data.Save.ISaveInventoryAoT save,
                                 Data.InventoryApi.ISendProductHttp sendHttp,
                                 DataBase.Service.IUpdateLogService updateLog)

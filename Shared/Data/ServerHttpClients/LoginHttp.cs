@@ -1,6 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
-using DataBase.Model.JsonContext;
+using DataBase.Model.SourceGenerator;
 
 using Shared.Helper;
 
@@ -15,10 +15,10 @@ namespace Shared.Data.ServerHttpClients
         Task<User> In(LoginUser register, CancellationToken token = default);
     }
 
-    public partial class LoginHttp(IAccessDataBase db, IHttpClientFactory httpClient) : ILoginHttp, IDisposable
+    public partial class LoginHttp(IAccessDataBaseAoT db, IHttpClientFactory httpClient) : ILoginHttp, IDisposable
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClient;
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
 
         public async Task<User> In(LoginUser login, CancellationToken token = default)
         {

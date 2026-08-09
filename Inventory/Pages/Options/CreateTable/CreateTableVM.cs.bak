@@ -35,8 +35,8 @@ namespace Inventory.Pages.Options.CreateTable
             }
         }
 
-        readonly IAccessDataBase _db;
-        public CreateTableVM(IAccessDataBase dataBase)
+        readonly IAccessDataBaseAoT _db;
+        public CreateTableVM(IAccessDataBaseAoT dataBase)
         {
             TableMs =
             [

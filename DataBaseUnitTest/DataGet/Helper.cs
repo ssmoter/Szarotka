@@ -9,7 +9,7 @@ namespace DataBaseUnitTest.DataGet
         public static void Delete(string dbName) => DataSave.Helper.Delete(dbName);
         private static Random rnd = new();
 
-        public static async Task<IAccessDataBase> CreateDataBaseForTest(string dbName)
+        public static async Task<IAccessDataBaseAoT> CreateDataBaseForTest(string dbName)
         {
             var db = DataSave.Helper.GetPath + dbName + ".db3";
             Delete(db);
@@ -18,7 +18,7 @@ namespace DataBaseUnitTest.DataGet
         
 
 
-        public static async Task<IList<Day>> SetExampleDays(int n, IAccessDataBase db)
+        public static async Task<IList<Day>> SetExampleDays(int n, IAccessDataBaseAoT db)
         {
             var days = new List<Day>();
 
@@ -51,6 +51,9 @@ namespace DataBaseUnitTest.DataGet
                 db.DataBase.InsertAll(day.Products);
                 db.DataBase.InsertAll(day.Cakes);
             }
+
+           // var a = await SqliteGuidMigration.MigrateGuidTextToBlobAsync(db.DbAsyncAoT.GetConnection(), nameof(Day), nameof(Day.DriverGuid));
+
             return days;
         }
 

@@ -83,8 +83,8 @@
 //        const string _szt = " _szt.";
 //        const string _zl = " zł";
 //        readonly Driver[] _allDrivers;
-//        readonly IAccessDataBase _db;
-//        public GraphVM(IAccessDataBase db)
+//        readonly IAccessDataBaseAoT _db;
+//        public GraphVM(IAccessDataBaseAoT db)
 //        {
 //            RangeDayMs ??= [];
 //            Legend ??= [];

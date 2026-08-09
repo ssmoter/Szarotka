@@ -1,6 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
-using DataBase.Model.JsonContext;
+using DataBase.Model.SourceGenerator;
 
 using Shared.CustomControls.FromCode;
 using Shared.Data;
@@ -18,10 +18,10 @@ namespace Inventory.Data.InventoryApi
         Task<IList<Day>> GetDays(long from, long to, Guid[] userId, UpdateProgressBar progressContent = null, CancellationToken token = default);
     }
 
-    public partial class GetDayHttp(IHttpClientFactory httpClientFactory, IAccessDataBase db) : IGetDayHttp
+    public partial class GetDayHttp(IHttpClientFactory httpClientFactory, IAccessDataBaseAoT db) : IGetDayHttp
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
 
         public async Task<Day> GetDay(Guid id, UpdateProgressBar progressContent = null, CancellationToken token = default)
         {

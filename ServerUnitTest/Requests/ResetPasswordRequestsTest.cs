@@ -13,7 +13,7 @@ using Server.Validation;
 namespace ServerUnitTest.Requests;
 public class ResetPasswordRequestsTests
 {
-    private readonly Mock<IAccessDataBase> _mockDb;
+    private readonly Mock<IAccessDataBaseAoT> _mockDb;
     private readonly Mock<IUserValidation> _mockUserValidation;
     private readonly Mock<IEmailConfirmService> _mockEmailConfirmService;
     private readonly Mock<IResetPasswordService> _mockResetPasswordService;
@@ -21,7 +21,7 @@ public class ResetPasswordRequestsTests
 
     public ResetPasswordRequestsTests()
     {
-        _mockDb = new Mock<IAccessDataBase>();
+        _mockDb = new Mock<IAccessDataBaseAoT>();
         _mockUserValidation = new Mock<IUserValidation>();
         _mockEmailConfirmService = new Mock<IEmailConfirmService>();
         _mockResetPasswordService = new Mock<IResetPasswordService>();

@@ -1,4 +1,4 @@
-﻿using DataBase.Model.JsonContext;
+﻿using DataBase.Model.SourceGenerator;
 
 using System.Text.Json.Serialization;
 

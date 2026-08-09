@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
     <PublishAot>true</PublishAot>
+	<IsAotCompatible>true</IsAotCompatible>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <InvariantGlobalization>false</InvariantGlobalization>
     <EnableI18n>true</EnableI18n>

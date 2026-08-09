@@ -15,7 +15,7 @@ namespace ServerUnitTest.Requests
 {
     public class RegisterUserRequestsTests
     {
-        private readonly Mock<IAccessDataBase> _mockDb;
+        private readonly Mock<IAccessDataBaseAoT> _mockDb;
         private readonly Mock<IRegisterUserService> _mockRegisterService;
         private readonly Mock<IUserValidation> _mockUserValidation;
         private readonly Mock<IEmailService> _mockEmailService;
@@ -25,7 +25,7 @@ namespace ServerUnitTest.Requests
 
         public RegisterUserRequestsTests()
         {
-            _mockDb = new Mock<IAccessDataBase>();
+            _mockDb = new Mock<IAccessDataBaseAoT>();
             _mockRegisterService = new Mock<IRegisterUserService>();
             _mockUserValidation = new Mock<IUserValidation>();
             _mockEmailService = new Mock<IEmailService>();

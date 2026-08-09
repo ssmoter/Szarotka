@@ -79,11 +79,11 @@ public partial class MapSmallVM : ObservableObject
 
     private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _save;
     private readonly DataBase.Service.IUpdateLogService _update;
-    private readonly IAccessDataBase _db;
+    private readonly IAccessDataBaseAoT _db;
     private readonly Data.GoogleApi.IRoutes _routes;
     private Pin _pin;
     CancellationTokenSource _tokenSource;
-    public MapSmallVM(IAccessDataBase db, Data.GoogleApi.IRoutes routes, DataBase.Data.Save.ISaveDriverRoutesAoT save, DataBase.Service.IUpdateLogService update)
+    public MapSmallVM(IAccessDataBaseAoT db, Data.GoogleApi.IRoutes routes, DataBase.Data.Save.ISaveDriverRoutesAoT save, DataBase.Service.IUpdateLogService update)
     {
         MapSmallM = new();
         _tokenSource = new();

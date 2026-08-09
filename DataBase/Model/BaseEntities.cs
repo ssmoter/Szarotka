@@ -32,9 +32,9 @@ public partial interface IDifference
 
 public partial class BaseEntities<T> : ObservableObject, IDifference
 {
-    private T? id;
+    private T id = default!;
     [PrimaryKey]
-    public T? Id
+    public T Id
     {
         get => id;
         set
@@ -44,7 +44,7 @@ public partial class BaseEntities<T> : ObservableObject, IDifference
         }
     }
     [Ignore]
-    [JsonConverter(typeof(JsonContext.CustomDateTimeConverter))]
+    [JsonConverter(typeof(SourceGenerator.CustomDateTimeConverter))]
     public DateTime Created
     {
         get
@@ -63,7 +63,7 @@ public partial class BaseEntities<T> : ObservableObject, IDifference
         }
     }
     [Ignore]
-    [JsonConverter(typeof(JsonContext.CustomDateTimeConverter))]
+    [JsonConverter(typeof(SourceGenerator.CustomDateTimeConverter))]
     public DateTime Updated
     {
         get
@@ -97,7 +97,7 @@ public partial class BaseEntities<T> : ObservableObject, IDifference
     private long _updatedTicks;
 
     private bool isDelete;
-    [JsonConverter(typeof(JsonContext.CustomBoolConverter))]
+    [JsonConverter(typeof(SourceGenerator.CustomBoolConverter))]
     public bool IsDelete
     {
         get => isDelete;
@@ -108,7 +108,7 @@ public partial class BaseEntities<T> : ObservableObject, IDifference
     }
 
     private Guid userCreatedId;
-    [JsonConverter(typeof(JsonContext.CustomGuidConverter))]
+    [JsonConverter(typeof(SourceGenerator.CustomGuidConverter))]
     public Guid UserCreatedId
     {
         get => userCreatedId;
@@ -119,7 +119,7 @@ public partial class BaseEntities<T> : ObservableObject, IDifference
     }
 
     private Guid userUpdatedId;
-    [JsonConverter(typeof(JsonContext.CustomGuidConverter))]
+    [JsonConverter(typeof(SourceGenerator.CustomGuidConverter))]
     public Guid UserUpdatedId
     {
         get => userUpdatedId;
@@ -143,7 +143,15 @@ public partial class BaseEntities<T> : ObservableObject, IDifference
         UpdatedTicks = copy.UpdatedTicks;
         UserUpdatedId = copy.UserUpdatedId;
         UserCreatedId = copy.UserCreatedId;
-
     }
+
+
+    public const string AdditionalColumns = $@"
+            [{nameof(CreatedTicks)}] INTEGER,
+            [{nameof(UpdatedTicks)}] INTEGER,
+            [{nameof(IsDelete)}] INTEGER,
+            [{nameof(UserCreatedId)}] TEXT,
+            [{nameof(UserUpdatedId)}] TEXT";
+
 }
 

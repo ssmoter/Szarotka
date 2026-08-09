@@ -1,6 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
-using DataBase.Model.JsonContext;
+using DataBase.Model.SourceGenerator;
 
 using Shared.CustomControls.FromCode;
 using Shared.Data;
@@ -16,10 +16,10 @@ namespace Inventory.Data.InventoryApi
         Task<EmptyProducts> GetProducts(UpdateProgressBar progressContent = null, CancellationToken token = default);
     }
 
-    public partial class GetProductHttp(IHttpClientFactory httpClientFactory, IAccessDataBase db) : IGetProductHttp
+    public partial class GetProductHttp(IHttpClientFactory httpClientFactory, IAccessDataBaseAoT db) : IGetProductHttp
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
 
         public async Task<EmptyProducts> GetProducts(UpdateProgressBar progressContent = null, CancellationToken token = default)
         {

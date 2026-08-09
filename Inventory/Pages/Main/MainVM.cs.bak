@@ -23,11 +23,11 @@ namespace Inventory.Pages.Main
             }
         }
 
-        private readonly IAccessDataBase _db;
+        private readonly IAccessDataBaseAoT _db;
         private readonly DataBase.Data.Get.IGetInventoryAoT _get;
         private readonly DataBase.Service.ITimeService _time;
 
-        public MainVM(IAccessDataBase db,
+        public MainVM(IAccessDataBaseAoT db,
                       DataBase.Data.Get.IGetInventoryAoT get,
                       DataBase.Service.ITimeService time)
         {

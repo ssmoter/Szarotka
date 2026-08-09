@@ -1,6 +1,7 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
 using DataBase.Service;
+using DataBase.Data.MySqliteConnection;
 
 using Server.Model;
 using Server.Validation;
@@ -16,7 +17,15 @@ namespace ServerUnitTest.Validation.User
         {
             var utc = new CurrentUtc();
             _timeService = utc;
-            _userValidation = new UserValidation(new AccessDataBase(), _timeService);
+
+            var faktory = new SqliteConnectionFactory();
+            var sync = new MyDbConnection(faktory);
+            var async = new MyDbAsyncConnection(faktory);
+            var time = new CurrentUtc();
+            var oldDb = new AccessDataBase();
+            var db = new AccessDataBaseAoT(oldDb, sync, async, time);
+
+            _userValidation = new UserValidation(db, _timeService);
         }
 
         [Fact]

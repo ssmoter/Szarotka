@@ -127,14 +127,11 @@ namespace DataBase.Data.Save
                 }
             }
 
-            var task = new Task[dayOfs.Count()];
-            int taskCount = 0;
-            foreach (var item in dayOfs)
-            {                
-                task[taskCount] = save.SaveSelectedDayOfWeekRoutes(item, item.UserUpdatedId.ToByteArray());
-                taskCount++;
-            }
-            await Task.WhenAll(task);
+            var first = dayOfs.FirstOrDefault();
+            var id = first!.UserUpdatedId.ToByteArray();
+
+            await save.SaveSelectedDayOfWeekRoutesTransaction([.. dayOfs], id);
+
             return dayOfs;
         }
 

@@ -17,9 +17,9 @@ namespace Server.Service
         Task<IResult> LogOut(LoginUser user);
     }
 
-    public class LoginService(IAccessDataBase db, ITimeService timeService, IUserValidation userValidation, ILogger<LoginService>? logger = null) : ILoginService
+    public class LoginService(IAccessDataBaseAoT db, ITimeService timeService, IUserValidation userValidation, ILogger<LoginService>? logger = null) : ILoginService
     {
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
         private readonly ITimeService _timeService = timeService;
         private readonly IUserValidation _userValidation = userValidation;
         private readonly ILogger<LoginService> _logger = logger ?? NullLogger<LoginService>.Instance;
@@ -31,7 +31,7 @@ namespace Server.Service
 
             var sql = LoginQuery.In(user.Email, user.Password);
 
-            var dbUser = await _db.DataBaseAsync.QueryAsync<User>(sql, user.Email, user.Password);
+            var dbUser = await _db.DbAsyncAoT.QueryAsync<User>(sql, new { user.Email, user.Password });
 
             var firstUser = dbUser.FirstOrDefault();
 
@@ -45,7 +45,7 @@ namespace Server.Service
                 firstUser.RememberMe = user.RememberMe;
                 firstUser.Updated = _timeService.UtcNow();
                 sql = LoginQuery.UpdateRememberMe(firstUser.RememberMe, firstUser.UpdatedTicks, firstUser.UserUpdatedId, firstUser.Id);
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql, firstUser.RememberMe, firstUser.UpdatedTicks, firstUser.UserUpdatedId, firstUser.Id);
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql, new { firstUser.RememberMe, firstUser.UpdatedTicks, firstUser.UserUpdatedId, firstUser.Id });
                 _logger.LogInformation("LogIn: updated RememberMe for userId={UserId} to {RememberMe}", firstUser.Id, firstUser.RememberMe);
             }
 
@@ -66,9 +66,7 @@ namespace Server.Service
         {
             _logger.LogInformation("GetPublicUser started for id={Id}", id);
             var sql = LoginQuery.PublicUser(id);
-            string Id = id;
-
-            var users = await _db.DataBaseAsync.QueryAsync<User>(sql, Id);
+            IEnumerable<User> users = await _db.DbAsyncAoT.QueryAsync<User>(sql, new { Id = id });
             var user = users.FirstOrDefault();
 
             ArgumentNullException.ThrowIfNull(user, nameof(user));

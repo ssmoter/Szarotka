@@ -1,6 +1,8 @@
 ﻿using DataBase.Data.SqlQuery;
 using DataBase.Model.EntitiesRoutes;
 
+using System.Text.Json;
+
 namespace DataBase.Data.Save
 {
     public interface ISaveDriverRoutesAoT
@@ -17,6 +19,8 @@ namespace DataBase.Data.Save
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         Task SaveCustomerRoutes(CustomerRoutes customerRoutes, byte[] driverId, bool isServer = false);
+        Task SaveCustomerRoutesTransaction(IList<CustomerRoutes> customerRoutes, byte[] driverId, bool isServer = false);
+
         /// <summary>
         /// Zapisanie rekordu wykorzustując zapytanie sql.Tworzy nowy jeżeli nie istnieje
         /// </summary>
@@ -53,16 +57,331 @@ namespace DataBase.Data.Save
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         Task SaveSelectedDayOfWeekRoutes(SelectedDayOfWeekRoutes selectedDayOfWeek, byte[] driverId, bool isServer = false);
+        Task SaveSelectedDayOfWeekRoutesTransaction(IList<SelectedDayOfWeekRoutes> selectedDayOfWeekRoutes, byte[] driverId, bool isServer = false);
     }
 
-    public class SaveDriverRoutesAoT(IAccessDataBase db) : ISaveDriverRoutesAoT
+    public class SaveDriverRoutesAoT(IAccessDataBaseAoT db) : ISaveDriverRoutesAoT
     {
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
 
         public async Task SaveCustomerRoutes(CustomerRoutes customerRoutes, byte[] driverId, bool isServer = false)
         {
-            var lastUpdate = customerRoutes.Updated;
-            var userUpdateId = customerRoutes.UserUpdatedId.ToByteArray();
+            SetCustomerRoutes(customerRoutes, driverId, isServer, out var lastUpdate, out var userUpdateId, out var sql);
+            try
+            {
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                                                         new
+                                                         {
+                                                             customerRoutes.Id,
+                                                             customerRoutes.RoutesId,
+                                                             customerRoutes.Name,
+                                                             customerRoutes.Description,
+                                                             customerRoutes.PhoneNumber,
+                                                             customerRoutes.Longitude,
+                                                             customerRoutes.Latitude,
+                                                             customerRoutes.CreatedTicks,
+                                                             customerRoutes.UpdatedTicks,
+                                                             customerRoutes.IsDelete,
+                                                             customerRoutes.UserCreatedId,
+                                                             customerRoutes.UserUpdatedId
+                                                         });
+            }
+            catch (Exception)
+            {
+                customerRoutes.Updated = lastUpdate;
+                customerRoutes.UserUpdatedId = new Guid(userUpdateId);
+                throw;
+            }
+        }
+        public async Task SaveCustomerRoutesTransaction(IList<CustomerRoutes> customerRoutes, byte[] driverId, bool isServer = false)
+        {
+            byte[] copy = JsonSerializer.SerializeToUtf8Bytes(customerRoutes, DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.IListCustomerRoutes);
+
+            await using var tx = await _db.DbAsyncAoT.BeginTransactionAsync();
+
+            try
+            {
+                foreach (var item in customerRoutes)
+                {
+                    SetCustomerRoutes(item,
+                                      driverId,
+                                      isServer,
+                                      out var lastUpdate,
+                                      out var userUpdateId,
+                                      out var sql);
+                    _ = await tx.ExecuteAsync(sql,
+                                         new
+                                         {
+                                             item.Id,
+                                             item.RoutesId,
+                                             item.Name,
+                                             item.Description,
+                                             item.PhoneNumber,
+                                             item.Longitude,
+                                             item.Latitude,
+                                             item.CreatedTicks,
+                                             item.UpdatedTicks,
+                                             item.IsDelete,
+                                             item.UserCreatedId,
+                                             item.UserUpdatedId
+                                         });
+                    await SaveResidentialAddressTransaction(item.ResidentialAddress, driverId, isServer);
+                    await SaveSelectedDayOfWeekRoutesTransaction(item.DayOfWeek, driverId, isServer);
+                }
+                await tx.CommitAsync();
+            }
+            catch (Exception)
+            {
+                await tx.RollbackAsync();
+                var fromCopy = JsonSerializer.Deserialize(copy, DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.IListCustomerRoutes)!;
+                customerRoutes = fromCopy;
+                throw;
+            }
+            async Task SaveResidentialAddressTransaction(ResidentialAddress residentialAddress, byte[] driverId, bool isServer = false)
+            {
+                SetResidentialAddress(residentialAddress,
+                  driverId,
+                  isServer,
+                  out var lastUpdate,
+                  out var userUpdateId,
+                  out var sql);
+                try
+                {
+                    _ = await tx.ExecuteAsync(sql,
+                                     new
+                                     {
+                                         residentialAddress.Id,
+                                         residentialAddress.CustomerId,
+                                         residentialAddress.Name,
+                                         residentialAddress.Surname,
+                                         residentialAddress.Street,
+                                         residentialAddress.HouseNumber,
+                                         residentialAddress.ApartmentNumber,
+                                         residentialAddress.PostalCode,
+                                         residentialAddress.City,
+                                         residentialAddress.Country,
+                                         residentialAddress.CreatedTicks,
+                                         residentialAddress.UpdatedTicks,
+                                         residentialAddress.IsDelete,
+                                         residentialAddress.UserCreatedId,
+                                         residentialAddress.UserUpdatedId
+                                     });
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+
+            }
+            async Task SaveSelectedDayOfWeekRoutesTransaction(SelectedDayOfWeekRoutes selectedDayOfWeek, byte[] driverId, bool isServer = false)
+            {
+                SetSelectedDayOfWeekRoutes(selectedDayOfWeek,
+                           driverId,
+                           isServer,
+                           out var lastUpdate,
+                           out var userUpdateId,
+                           out var sql);
+                try
+                {
+                    _ = await tx.ExecuteAsync(sql,
+                                                new
+                                                {
+                                                    selectedDayOfWeek.Id,
+                                                    selectedDayOfWeek.CustomerId,
+                                                    selectedDayOfWeek.Sunday,
+                                                    selectedDayOfWeek.SundayTicks,
+                                                    selectedDayOfWeek.Monday,
+                                                    selectedDayOfWeek.MondayTicks,
+                                                    selectedDayOfWeek.Tuesday,
+                                                    selectedDayOfWeek.TuesdayTicks,
+                                                    selectedDayOfWeek.Wednesday,
+                                                    selectedDayOfWeek.WednesdayTicks,
+                                                    selectedDayOfWeek.Thursday,
+                                                    selectedDayOfWeek.ThursdayTicks,
+                                                    selectedDayOfWeek.Friday,
+                                                    selectedDayOfWeek.FridayTicks,
+                                                    selectedDayOfWeek.Saturday,
+                                                    selectedDayOfWeek.SaturdayTicks,
+                                                    selectedDayOfWeek.Optional,
+                                                    selectedDayOfWeek.CreatedTicks,
+                                                    selectedDayOfWeek.UpdatedTicks,
+                                                    selectedDayOfWeek.IsDelete,
+                                                    selectedDayOfWeek.UserCreatedId,
+                                                    selectedDayOfWeek.UserUpdatedId
+                                                });
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+        }
+        public async Task SaveResidentialAddress(ResidentialAddress residentialAddress, byte[] driverId, bool isServer = false)
+        {
+            SetResidentialAddress(residentialAddress,
+                                  driverId,
+                                  isServer,
+                                  out var lastUpdate,
+                                  out var userUpdateId,
+                                  out var sql);
+            try
+            {
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                                                         new
+                                                         {
+                                                             residentialAddress.Id,
+                                                             residentialAddress.CustomerId,
+                                                             residentialAddress.Name,
+                                                             residentialAddress.Surname,
+                                                             residentialAddress.Street,
+                                                             residentialAddress.HouseNumber,
+                                                             residentialAddress.ApartmentNumber,
+                                                             residentialAddress.PostalCode,
+                                                             residentialAddress.City,
+                                                             residentialAddress.Country,
+                                                             residentialAddress.CreatedTicks,
+                                                             residentialAddress.UpdatedTicks,
+                                                             residentialAddress.IsDelete,
+                                                             residentialAddress.UserCreatedId,
+                                                             residentialAddress.UserUpdatedId
+                                                         });
+            }
+            catch (Exception)
+            {
+                residentialAddress.Updated = lastUpdate;
+                residentialAddress.UserUpdatedId = new Guid(userUpdateId);
+                throw;
+            }
+        }
+        public async Task SaveRoutes(Routes routes, byte[] driverId, bool isServer = false)
+        {
+            SetRoutes(routes, driverId, isServer, out var lastUpdate, out var userUpdateId, out var sql);
+            try
+            {
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                                               new
+                                               {
+                                                   routes.Id,
+                                                   routes.Name,
+                                                   routes.CreatedTicks,
+                                                   routes.UpdatedTicks,
+                                                   routes.IsDelete,
+                                                   routes.UserCreatedId,
+                                                   routes.UserUpdatedId
+                                               });
+            }
+            catch (Exception)
+            {
+                routes.Updated = lastUpdate;
+                routes.UserUpdatedId = new Guid(userUpdateId);
+                throw;
+            }
+        }
+        public async Task SaveSelectedDayOfWeekRoutes(SelectedDayOfWeekRoutes selectedDayOfWeek, byte[] driverId, bool isServer = false)
+        {
+            SetSelectedDayOfWeekRoutes(selectedDayOfWeek,
+                                       driverId,
+                                       isServer,
+                                       out var lastUpdate,
+                                       out var userUpdateId,
+                                       out var sql);
+            try
+            {
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                                                         new
+                                                         {
+                                                             selectedDayOfWeek.Id,
+                                                             selectedDayOfWeek.CustomerId,
+                                                             selectedDayOfWeek.Sunday,
+                                                             selectedDayOfWeek.SundayTicks,
+                                                             selectedDayOfWeek.Monday,
+                                                             selectedDayOfWeek.MondayTicks,
+                                                             selectedDayOfWeek.Tuesday,
+                                                             selectedDayOfWeek.TuesdayTicks,
+                                                             selectedDayOfWeek.Wednesday,
+                                                             selectedDayOfWeek.WednesdayTicks,
+                                                             selectedDayOfWeek.Thursday,
+                                                             selectedDayOfWeek.ThursdayTicks,
+                                                             selectedDayOfWeek.Friday,
+                                                             selectedDayOfWeek.FridayTicks,
+                                                             selectedDayOfWeek.Saturday,
+                                                             selectedDayOfWeek.SaturdayTicks,
+                                                             selectedDayOfWeek.Optional,
+                                                             selectedDayOfWeek.CreatedTicks,
+                                                             selectedDayOfWeek.UpdatedTicks,
+                                                             selectedDayOfWeek.IsDelete,
+                                                             selectedDayOfWeek.UserCreatedId,
+                                                             selectedDayOfWeek.UserUpdatedId
+                                                         });
+            }
+            catch (Exception)
+            {
+                selectedDayOfWeek.Updated = lastUpdate;
+                selectedDayOfWeek.UserUpdatedId = new Guid(userUpdateId);
+                throw;
+            }
+        }
+        public async Task SaveSelectedDayOfWeekRoutesTransaction(IList<SelectedDayOfWeekRoutes> selectedDayOfWeekRoutes, byte[] driverId, bool isServer = false)
+        {
+            byte[] copy = JsonSerializer.SerializeToUtf8Bytes(selectedDayOfWeekRoutes, DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.IListSelectedDayOfWeekRoutes);
+
+            await using var tx = await _db.DbAsyncAoT.BeginTransactionAsync();
+
+            try
+            {
+                foreach (var item in selectedDayOfWeekRoutes)
+                {
+                    SetSelectedDayOfWeekRoutes(item,
+                            driverId,
+                            isServer,
+                            out var lastUpdate,
+                            out var userUpdateId,
+                            out var sql);
+
+                    _ = await tx.ExecuteAsync(sql,
+                                                new
+                                                {
+                                                    item.Id,
+                                                    item.CustomerId,
+                                                    item.Sunday,
+                                                    item.SundayTicks,
+                                                    item.Monday,
+                                                    item.MondayTicks,
+                                                    item.Tuesday,
+                                                    item.TuesdayTicks,
+                                                    item.Wednesday,
+                                                    item.WednesdayTicks,
+                                                    item.Thursday,
+                                                    item.ThursdayTicks,
+                                                    item.Friday,
+                                                    item.FridayTicks,
+                                                    item.Saturday,
+                                                    item.SaturdayTicks,
+                                                    item.Optional,
+                                                    item.CreatedTicks,
+                                                    item.UpdatedTicks,
+                                                    item.IsDelete,
+                                                    item.UserCreatedId,
+                                                    item.UserUpdatedId
+                                                });
+
+                }
+                await tx.CommitAsync();
+            }
+            catch (Exception)
+            {
+                await tx.RollbackAsync();
+                var fromCopy = JsonSerializer.Deserialize(copy, DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.IListSelectedDayOfWeekRoutes)!;
+                selectedDayOfWeekRoutes = fromCopy;
+                throw;
+            }
+        }
+
+
+        private static void SetCustomerRoutes(CustomerRoutes customerRoutes, byte[] driverId, bool isServer, out DateTime lastUpdate, out byte[] userUpdateId, out string sql)
+        {
+            lastUpdate = customerRoutes.Updated;
+            userUpdateId = customerRoutes.UserUpdatedId.ToByteArray();
             var now = DateTime.UtcNow;
             if (customerRoutes.Id == Guid.Empty)
             {
@@ -94,7 +413,7 @@ namespace DataBase.Data.Save
 
             customerRoutes.UserUpdatedId = new Guid(driverId);
 
-            var sql = CustomerRoutesQuery.SaveOrUpdate(customerRoutes.Id,
+            sql = CustomerRoutesQuery.SaveOrUpdate(customerRoutes.Id,
                                                        customerRoutes.RoutesId,
                                                        customerRoutes.Name,
                                                        customerRoutes.Description,
@@ -106,33 +425,11 @@ namespace DataBase.Data.Save
                                                        customerRoutes.IsDelete,
                                                        customerRoutes.UserCreatedId,
                                                        customerRoutes.UserUpdatedId);
-            try
-            {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
-                                                         customerRoutes.Id,
-                                                         customerRoutes.RoutesId,
-                                                         customerRoutes.Name,
-                                                         customerRoutes.Description,
-                                                         customerRoutes.PhoneNumber,
-                                                         customerRoutes.Longitude,
-                                                         customerRoutes.Latitude,
-                                                         customerRoutes.CreatedTicks,
-                                                         customerRoutes.UpdatedTicks,
-                                                         customerRoutes.IsDelete,
-                                                         customerRoutes.UserCreatedId,
-                                                         customerRoutes.UserUpdatedId);
-            }
-            catch (Exception)
-            {
-                customerRoutes.Updated = lastUpdate;
-                customerRoutes.UserUpdatedId = new Guid(userUpdateId);
-                throw;
-            }
         }
-        public async Task SaveResidentialAddress(ResidentialAddress residentialAddress, byte[] driverId, bool isServer = false)
+        private static void SetResidentialAddress(ResidentialAddress residentialAddress, byte[] driverId, bool isServer, out DateTime lastUpdate, out byte[] userUpdateId, out string sql)
         {
-            var lastUpdate = residentialAddress.Updated;
-            var userUpdateId = residentialAddress.UserUpdatedId.ToByteArray();
+            lastUpdate = residentialAddress.Updated;
+            userUpdateId = residentialAddress.UserUpdatedId.ToByteArray();
             var now = DateTime.UtcNow;
             if (residentialAddress.Id == Guid.Empty)
             {
@@ -161,7 +458,7 @@ namespace DataBase.Data.Save
             }
             residentialAddress.UserUpdatedId = new Guid(driverId);
 
-            var sql = ResidentialAddressQuery.SaveOrUpdate(residentialAddress.Id,
+            sql = ResidentialAddressQuery.SaveOrUpdate(residentialAddress.Id,
                                                            residentialAddress.CustomerId,
                                                            residentialAddress.Name,
                                                            residentialAddress.Surname,
@@ -176,36 +473,11 @@ namespace DataBase.Data.Save
                                                            residentialAddress.IsDelete,
                                                            residentialAddress.UserCreatedId,
                                                            residentialAddress.UserUpdatedId);
-            try
-            {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
-                                                         residentialAddress.Id,
-                                                         residentialAddress.CustomerId,
-                                                         residentialAddress.Name,
-                                                         residentialAddress.Surname,
-                                                         residentialAddress.Street,
-                                                         residentialAddress.HouseNumber,
-                                                         residentialAddress.ApartmentNumber,
-                                                         residentialAddress.PostalCode,
-                                                         residentialAddress.City,
-                                                         residentialAddress.Country,
-                                                         residentialAddress.CreatedTicks,
-                                                         residentialAddress.UpdatedTicks,
-                                                         residentialAddress.IsDelete,
-                                                         residentialAddress.UserCreatedId,
-                                                         residentialAddress.UserUpdatedId);
-            }
-            catch (Exception)
-            {
-                residentialAddress.Updated = lastUpdate;
-                residentialAddress.UserUpdatedId = new Guid(userUpdateId);
-                throw;
-            }
         }
-        public async Task SaveRoutes(Routes routes, byte[] driverId, bool isServer = false)
+        private static void SetRoutes(Routes routes, byte[] driverId, bool isServer, out DateTime lastUpdate, out byte[] userUpdateId, out string sql)
         {
-            var lastUpdate = routes.Updated;
-            var userUpdateId = routes.UserUpdatedId.ToByteArray();
+            lastUpdate = routes.Updated;
+            userUpdateId = routes.UserUpdatedId.ToByteArray();
             var now = DateTime.UtcNow;
             if (routes.Id == Guid.Empty)
             {
@@ -230,35 +502,18 @@ namespace DataBase.Data.Save
             }
             routes.UserUpdatedId = new Guid(driverId);
 
-            var sql = RoutesQuery.SaveOrUpdate(routes.Id,
+            sql = RoutesQuery.SaveOrUpdate(routes.Id,
                                                routes.Name,
                                                routes.CreatedTicks,
                                                routes.UpdatedTicks,
                                                routes.IsDelete,
                                                routes.UserCreatedId,
                                                routes.UserUpdatedId);
-            try
-            {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
-                                               routes.Id,
-                                               routes.Name,
-                                               routes.CreatedTicks,
-                                               routes.UpdatedTicks,
-                                               routes.IsDelete,
-                                               routes.UserCreatedId,
-                                               routes.UserUpdatedId);
-            }
-            catch (Exception)
-            {
-                routes.Updated = lastUpdate;
-                routes.UserUpdatedId = new Guid(userUpdateId);
-                throw;
-            }
         }
-        public async Task SaveSelectedDayOfWeekRoutes(SelectedDayOfWeekRoutes selectedDayOfWeek, byte[] driverId, bool isServer = false)
+        private static void SetSelectedDayOfWeekRoutes(SelectedDayOfWeekRoutes selectedDayOfWeek, byte[] driverId, bool isServer, out DateTime lastUpdate, out byte[] userUpdateId, out string sql)
         {
-            var lastUpdate = selectedDayOfWeek.Updated;
-            var userUpdateId = selectedDayOfWeek.UserUpdatedId.ToByteArray();
+            lastUpdate = selectedDayOfWeek.Updated;
+            userUpdateId = selectedDayOfWeek.UserUpdatedId.ToByteArray();
             var now = DateTime.UtcNow;
             if (selectedDayOfWeek.Id == Guid.Empty)
             {
@@ -288,7 +543,7 @@ namespace DataBase.Data.Save
             }
             selectedDayOfWeek.UserUpdatedId = new Guid(driverId);
 
-            var sql = SelectedDayOfWeekRoutesQuery.SaveOrUpdate(selectedDayOfWeek.Id,
+            sql = SelectedDayOfWeekRoutesQuery.SaveOrUpdate(selectedDayOfWeek.Id,
                                                                 selectedDayOfWeek.CustomerId,
                                                                 selectedDayOfWeek.Sunday,
                                                                 selectedDayOfWeek.SundayTicks,
@@ -310,38 +565,6 @@ namespace DataBase.Data.Save
                                                                 selectedDayOfWeek.IsDelete,
                                                                 selectedDayOfWeek.UserCreatedId,
                                                                 selectedDayOfWeek.UserUpdatedId);
-            try
-            {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
-                                                         selectedDayOfWeek.Id,
-                                                         selectedDayOfWeek.CustomerId,
-                                                         selectedDayOfWeek.Sunday,
-                                                         selectedDayOfWeek.SundayTicks,
-                                                         selectedDayOfWeek.Monday,
-                                                         selectedDayOfWeek.MondayTicks,
-                                                         selectedDayOfWeek.Tuesday,
-                                                         selectedDayOfWeek.TuesdayTicks,
-                                                         selectedDayOfWeek.Wednesday,
-                                                         selectedDayOfWeek.WednesdayTicks,
-                                                         selectedDayOfWeek.Thursday,
-                                                         selectedDayOfWeek.ThursdayTicks,
-                                                         selectedDayOfWeek.Friday,
-                                                         selectedDayOfWeek.FridayTicks,
-                                                         selectedDayOfWeek.Saturday,
-                                                         selectedDayOfWeek.SaturdayTicks,
-                                                         selectedDayOfWeek.Optional,
-                                                         selectedDayOfWeek.CreatedTicks,
-                                                         selectedDayOfWeek.UpdatedTicks,
-                                                         selectedDayOfWeek.IsDelete,
-                                                         selectedDayOfWeek.UserCreatedId,
-                                                         selectedDayOfWeek.UserUpdatedId);
-            }
-            catch (Exception)
-            {
-                selectedDayOfWeek.Updated = lastUpdate;
-                selectedDayOfWeek.UserUpdatedId = new Guid(userUpdateId);
-                throw;
-            }
         }
 
 

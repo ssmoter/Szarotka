@@ -24,10 +24,10 @@ namespace Server.Service
         Task<User> AuthenticateAsync(string token);
     }
 
-    public class AuthenticationService(JSONWebTokensSettings jSONWebTokensSettings, IAccessDataBase db, ILogger<AuthenticationService>? logger = null) : IAuthenticationService
+    public class AuthenticationService(JSONWebTokensSettings jSONWebTokensSettings, IAccessDataBaseAoT db, ILogger<AuthenticationService>? logger = null) : IAuthenticationService
     {
         private readonly JSONWebTokensSettings _jwtSettings = jSONWebTokensSettings;
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
         private readonly JwtSecurityTokenHandler _handler = new();
         private readonly ILogger<AuthenticationService> _logger = logger ?? NullLogger<AuthenticationService>.Instance;
 
@@ -46,7 +46,7 @@ namespace Server.Service
             var result = DataBase.Helper.ReadToken.GetUserFromToken(token);
             var id = result.user.Id.ToString();
             var sql = LoginQuery.InFromId(id);
-            var users = await _db.DataBaseAsync.QueryAsync<User>(sql, new { Id = id });
+            var users = await _db.DbAsyncAoT.QueryAsync<User>(sql, new { Id = id });
             var user = users.FirstOrDefault();
 
             if (user is null)

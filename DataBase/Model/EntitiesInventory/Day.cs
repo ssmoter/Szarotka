@@ -22,6 +22,8 @@ public partial class Day : BaseEntities<Guid>, IDisposable
     }
 
     private Guid driverGuid;
+    [Ignore]
+    [JsonIgnore]
     public Guid DriverGuid
     {
         get => driverGuid;
@@ -29,7 +31,6 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         {
             if (SetProperty(ref driverGuid, value, nameof(DriverGuid)))
             {
-                //OnPropertyChanged(nameof(DriverGuid));
             }
         }
     }
@@ -47,7 +48,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
     }
 
     [Ignore]
-    [JsonConverter(typeof(JsonContext.CustomDateTimeConverter))]
+    [JsonConverter(typeof(SourceGenerator.CustomDateTimeConverter))]
     public DateTime SelectedDate
     {
         get => new(selectedDateTicks);

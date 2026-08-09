@@ -62,7 +62,7 @@ public partial class UserDisplayVPopup : Popup, IDisposable
         Init();
     }
     private CancellationTokenSource _tokenSource;
-    private IAccessDataBase _db;
+    private IAccessDataBaseAoT _db;
     public static Dictionary<Guid, User> Users { get; } = [];
     private ILoginHttp _loginHttp;
     private void Init()
@@ -73,7 +73,7 @@ public partial class UserDisplayVPopup : Popup, IDisposable
         _tokenSource = new();
         this.CanBeDismissedByTappingOutsideOfPopup = false;
 
-        _db = Shared.Service.AppServiceProvider.GetService<IAccessDataBase>();
+        _db = Shared.Service.AppServiceProvider.GetService<IAccessDataBaseAoT>();
         _loginHttp = Shared.Service.AppServiceProvider.GetService<ILoginHttp>();
     }
 

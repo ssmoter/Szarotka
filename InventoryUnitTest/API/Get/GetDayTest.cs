@@ -1,4 +1,5 @@
 ﻿using DataBase.Data.Get;
+using DataBase.Model.EntitiesInventory;
 
 using DataBaseUnitTest;
 
@@ -30,9 +31,8 @@ namespace InventoryUnitTest.API.Get
         [Fact]
         public async Task GetDayHttpId()
         {
-            var a = _factory.CreateClient();
 
-            var expected = await _getInventoryAoT.Days(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks, []);
+            IList<Day> expected = _factory.AllDays;
 
             var result = await _getDay.GetDay(expected[0].Id);
 
@@ -45,11 +45,10 @@ namespace InventoryUnitTest.API.Get
         [Fact]
         public async Task GetDayHttpSelectedDateStringUserId()
         {
-            var a = _factory.CreateClient();
 
-            var expected = await _getInventoryAoT.Days(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks, []);
+            var expected = _factory.AllDays;
 
-            var result = await _getDay.GetDay(expected[0].SelectedDateString, expected[0].DriverGuid);
+            var result = await _getDay.GetDay(expected[0].SelectedDateString, expected[0].UserCreatedId);
 
             var expectedJson = System.Text.Json.JsonSerializer.Serialize(expected[0]);
             var resultJson = System.Text.Json.JsonSerializer.Serialize(result);
@@ -60,9 +59,7 @@ namespace InventoryUnitTest.API.Get
         [Fact]
         public async Task GetDays()
         {
-            var a = _factory.CreateClient();
-
-            var expected = await _getInventoryAoT.Days(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks, []);
+            var expected = _factory.AllDays;
 
             var result = await _getDay.GetDays(DateTime.MinValue.Ticks, DateTime.MaxValue.Ticks, []);
 

@@ -17,9 +17,9 @@ namespace Server.Requests
         Task<IResult> ResetPasswordNew(int code, string password, CancellationToken token = default);
     }
 
-    public class ResetPasswordRequests(IAccessDataBase db, IUserValidation userValidation, IResetPasswordService resetPasswordService, IEmailConfirmService emailConfirmService, ILogger<ResetPasswordRequests>? logger = null) : IResetPasswordRequests
+    public class ResetPasswordRequests(IAccessDataBaseAoT db, IUserValidation userValidation, IResetPasswordService resetPasswordService, IEmailConfirmService emailConfirmService, ILogger<ResetPasswordRequests>? logger = null) : IResetPasswordRequests
     {
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
         private readonly IUserValidation _userValidation = userValidation;
         private readonly IEmailConfirmService _emailConfirmService = emailConfirmService;
         private readonly IResetPasswordService _resetPasswordService = resetPasswordService;

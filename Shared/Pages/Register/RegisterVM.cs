@@ -55,9 +55,9 @@ namespace Shared.Pages.Register
         }
 
 
-        private readonly IAccessDataBase _db;
+        private readonly IAccessDataBaseAoT _db;
         private readonly IRegisterHttp _registerHttp;
-        public RegisterVM(IAccessDataBase db, IRegisterHttp registerHttp)
+        public RegisterVM(IAccessDataBaseAoT db, IRegisterHttp registerHttp)
         {
             RegisterUser = new();
             RegisterM = new();
@@ -66,8 +66,6 @@ namespace Shared.Pages.Register
             Drivers = new ObservableCollection<Driver>(dri);
             _registerHttp = registerHttp;
         }
-
-
 
         #region Methods
         public void IsPasswordEqual()
@@ -163,7 +161,5 @@ namespace Shared.Pages.Register
         }
 
         #endregion
-
-
     }
 }

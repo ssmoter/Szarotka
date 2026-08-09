@@ -19,7 +19,7 @@ namespace SzarotkaBlazor
             var vm = new AppShellVM();
             BindingContext = vm;
             _createdDataBase = Shared.Service.AppServiceProvider.GetService<ICreatedDataBase>();
-            _db = Shared.Service.AppServiceProvider.GetService<IAccessDataBase>();
+            _db = Shared.Service.AppServiceProvider.GetService<IAccessDataBaseAoT>();
 
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.ActionToolbarItemSet += SetToolbarItem;
@@ -27,7 +27,7 @@ namespace SzarotkaBlazor
         }
 
         private readonly ICreatedDataBase _createdDataBase;
-        private readonly IAccessDataBase _db;
+        private readonly IAccessDataBaseAoT _db;
         protected override async void OnAppearing()
         {
             base.OnAppearing();

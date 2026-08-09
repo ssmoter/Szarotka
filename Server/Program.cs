@@ -1,4 +1,4 @@
-﻿using DataBase.Model.JsonContext;
+﻿using DataBase.Model.SourceGenerator;
 
 using Microsoft.AspNetCore.Http.Features;
 
@@ -6,6 +6,10 @@ using Server.Endpoints;
 using Server.Service;
 
 using System.Text.Json.Serialization;
+
+SQLitePCL.Batteries_V2.Init();
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
@@ -48,7 +52,7 @@ builder.Services.AddCors(options =>
         });
 });
 #endif
-
+builder.WebHost.UseUrls($"http://0.0.0:{port}");
 var app = builder.Build();
 
 #if DEBUG

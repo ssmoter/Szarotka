@@ -32,7 +32,7 @@ namespace DriversRoutesUnitTest.API.Send
         [Fact]
         public async Task SendCustomerRoute()
         {
-            var all = await _iGetDriverRoutesAoT.CustomerRoutes("", []);
+            var all = await _iGetDriverRoutesAoT.CustomerRoutes();
 
             var edit = all[0];
             edit.Description = Guid.NewGuid().ToString();
@@ -51,7 +51,7 @@ namespace DriversRoutesUnitTest.API.Send
         [Fact]
         public async Task SendCustomerRoutes()
         {
-            var all = await _iGetDriverRoutesAoT.CustomerRoutes("", []);
+            var all = await _iGetDriverRoutesAoT.CustomerRoutes();
 
             foreach (var item in all)
             {
@@ -60,7 +60,7 @@ namespace DriversRoutesUnitTest.API.Send
 
             var result = await _sendCustomersHttp.SendCustomerRoutes(all, forceUpdate: true);
 
-            var actual = await _iGetDriverRoutesAoT.CustomerRoutes("", []);
+            var actual = await _iGetDriverRoutesAoT.CustomerRoutes();
 
             var expectedJson = System.Text.Json.JsonSerializer.Serialize(all);
             var resultJson = System.Text.Json.JsonSerializer.Serialize(actual);

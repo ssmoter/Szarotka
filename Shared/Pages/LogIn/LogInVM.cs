@@ -70,9 +70,9 @@ namespace Shared.Pages.LogIn
         }
 
 
-        private readonly IAccessDataBase _db;
+        private readonly IAccessDataBaseAoT _db;
         private readonly ILoginHttp _loginHttp;
-        public LogInVM(IAccessDataBase db, ILoginHttp loginHttp)
+        public LogInVM(IAccessDataBaseAoT db, ILoginHttp loginHttp)
         {
             User = new();
             _db = db;

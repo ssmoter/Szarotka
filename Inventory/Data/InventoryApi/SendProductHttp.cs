@@ -16,10 +16,10 @@ namespace Inventory.Data.InventoryApi
         Task<(HttpResponseMessage httpMessage, string content)> SendProducts(EmptyProducts products, UpdateProgressBar progressBar = null, bool forceUpdate = false, CancellationToken token = default);
     }
 
-    public partial class SendProductHttp(IAccessDataBase db, IHttpClientFactory httpClient) : ISendProductHttp
+    public partial class SendProductHttp(IAccessDataBaseAoT db, IHttpClientFactory httpClient) : ISendProductHttp
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClient;
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
 
         public async Task<(HttpResponseMessage httpMessage, string content)> SendProduct(EmptyProduct product, UpdateProgressBar progressBar = null, bool forceUpdate = false, CancellationToken token = default)
         {
@@ -30,7 +30,7 @@ namespace Inventory.Data.InventoryApi
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressBar?.Grid);
 
-            var json = JsonSerializer.Serialize(product, DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.EmptyProduct);
+            var json = JsonSerializer.Serialize(product, DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.EmptyProduct);
 
             var response = await httpClient.PostWithProgressAsync(url, json,
                 (progress) => { UpdateProgressBar.UpdateProgress(progressBar, progress); }
@@ -55,7 +55,7 @@ namespace Inventory.Data.InventoryApi
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressBar?.Grid);
 
-            var json = JsonSerializer.Serialize(products, DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.EmptyProducts);
+            var json = JsonSerializer.Serialize(products, DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.EmptyProducts);
 
             var response = await httpClient.PostWithProgressAsync(url, json,
                 (progress) => { UpdateProgressBar.UpdateProgress(progressBar, progress); }

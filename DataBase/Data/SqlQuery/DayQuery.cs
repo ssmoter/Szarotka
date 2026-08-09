@@ -65,7 +65,7 @@ namespace DataBase.Data.SqlQuery
                 )
                 ON CONFLICT({nameof(Day.Id)}) DO UPDATE SET
                     {nameof(Day.Description)} = @{nameof(Description)},
-                    {nameof(Day.DriverGuid)} = {nameof(DriverGuid)},
+                    {nameof(Day.DriverGuid)} = @{nameof(DriverGuid)},
                     {nameof(Day.SelectedDateString)} = @{nameof(SelectedDateString)},
                     {nameof(Day.SelectedDateTicks)} = @{nameof(SelectedDateTicks)},
                     {nameof(Day.TotalPriceProducts)} = @{nameof(TotalPriceProducts)},
@@ -85,7 +85,6 @@ namespace DataBase.Data.SqlQuery
         public static string GetFullDaysProcedureWithoutWhere()
         {
             string sql = $@"
-
 SELECT 
   {nameof(Day)}.{nameof(Day.SelectedDateString)},
   {nameof(Day)}.{nameof(Day.SelectedDateTicks)},
@@ -120,9 +119,9 @@ SELECT
         '{nameof(Product.NumberReturn)}', {nameof(Product)}.{nameof(Product.NumberReturn)},
         '{nameof(Product.CreatedTicks)}', {nameof(Product)}.{nameof(Product.CreatedTicks)},
         '{nameof(Product.UpdatedTicks)}', {nameof(Product)}.{nameof(Product.UpdatedTicks)},
-        '{nameof(Product.UserCreatedId)}',{nameof(Product)}.{nameof(Product.UserCreatedId)},
-        '{nameof(Product.IsDelete)}',{nameof(Product)}.{nameof(Product.IsDelete)},
-        '{nameof(Product.UserUpdatedId)}',{nameof(Product)}.{nameof(Product.UserUpdatedId)},
+        '{nameof(Product.UserCreatedId)}', {nameof(Product)}.{nameof(Product.UserCreatedId)},
+        '{nameof(Product.IsDelete)}', {nameof(Product)}.{nameof(Product.IsDelete)},
+        '{nameof(Product.UserUpdatedId)}', {nameof(Product)}.{nameof(Product.UserUpdatedId)},
         '{nameof(Product.Name)}', json_object(
           '{nameof(ProductName.Id)}', {nameof(ProductName)}.{nameof(ProductName.Id)},
           '{nameof(ProductName.Name)}', {nameof(ProductName)}.{nameof(ProductName.Name)},
@@ -170,8 +169,8 @@ SELECT
     WHERE {nameof(Cake)}.{nameof(Cake.DayId)} = {nameof(Day)}.{nameof(Day.Id)}
   ) AS JsonCakes
 FROM {nameof(Day)}
-
 ";
+
             return sql;
         }
     }

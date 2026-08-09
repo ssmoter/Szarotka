@@ -1,4 +1,5 @@
 ﻿using DataBase.Data;
+using DataBase.Data.MySqliteConnection;
 
 using MailKit.Net.Smtp;
 
@@ -18,6 +19,7 @@ namespace Server.Service
             if (descriptor != null)
             {
                 services.Remove(descriptor);
+                descriptor = null;
             }
             services.AddSingleton<IAccessDataBase>(options =>
             {
@@ -26,16 +28,36 @@ namespace Server.Service
                 var env = options.GetRequiredService<IWebHostEnvironment>();
                 dbPath = Path.Combine(env.ContentRootPath,
                                 env.EnvironmentName, DataBase.Helper.Constants.DatabaseName);
+                var db = new AccessDataBase(dbPath);
+                db.DataBase.ExecuteScalar<string>("PRAGMA journal_mode=WAL;");
+                db.DataBaseAsync.ExecuteScalarAsync<string>("PRAGMA journal_mode=WAL;").GetAwaiter().GetResult();
 #else
                 string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                 dbPath = Path.Combine(appData, DataBase.Helper.Constants.DatabaseName);
                 Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
-#endif
-                var db = new AccessDataBase(dbPath);
+
+                 var db = new AccessDataBase(dbPath);
                 db.DataBase.ExecuteScalar<string>("PRAGMA journal_mode=WAL;");
                 db.DataBaseAsync.ExecuteScalarAsync<string>("PRAGMA journal_mode=WAL;").GetAwaiter().GetResult();
+#endif
                 return db;
             });
+
+            descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DataBase.Data.MySqliteConnection.SqliteConnectionFactory));
+            if (descriptor != null)
+            {
+                services.Remove(descriptor);
+            }
+            services.AddSingleton<ISqliteConnectionFactory>(opt =>
+            {
+                // Pobiera ścieżkę z systemu Google Cloud, jeśli nie istnieje - używa folderu aplikacji
+                string mountPath = Environment.GetEnvironmentVariable("PERSISTENT_DB_PATH") ?? AppContext.BaseDirectory;
+                string dbPath = Path.Combine(mountPath, "baza_produkcyjna.db");
+
+                string connectionString = $"Data Source={dbPath};";
+                return new SqliteConnectionFactory(connectionString);
+            });
+
 
             services.AddScoped<IUserValidation, UserValidation>();
             services.AddScoped<IRegisterUserService, RegisterUserService>();

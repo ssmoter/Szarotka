@@ -8,28 +8,28 @@ namespace DataBase.Data.Get
 {
     public interface IGetDriverRoutesAoT
     {
-        Task<IList<CustomerRoutes>> CustomerRoutes(string where, params object[] args);
+        Task<IList<CustomerRoutes>> CustomerRoutes(string where, object? args);
         Task<IList<Routes>> Routes();
     }
 
-    public class GetDriverRoutesAoT(IAccessDataBase db) : IGetDriverRoutesAoT
+    public class GetDriverRoutesAoT(IAccessDataBaseAoT db) : IGetDriverRoutesAoT
     {
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
 
-        public async Task<IList<CustomerRoutes>> CustomerRoutes(string where, params object[] args)
+        public async Task<IList<CustomerRoutes>> CustomerRoutes(string where, object? args)
         {
             var sb = new StringBuilder();
             sb.AppendLine(CustomerRoutesQuery.GetFullProcedureWithoutWhere());
             sb.AppendLine(where);
             var sql = sb.ToString();
-            List<CustomerRoutesFromQuery> result = [];
+            IEnumerable<CustomerRoutesFromQuery> result = [];
             if (args is null)
             {
-                result = await _db.DataBaseAsync.QueryAsync<CustomerRoutesFromQuery>(sql);
+                result = await _db.DbAsyncAoT.QueryAsync<CustomerRoutesFromQuery>(sql);
             }
             else
             {
-                result = await _db.DataBaseAsync.QueryAsync<CustomerRoutesFromQuery>(sql, args);
+                result = await _db.DbAsyncAoT.QueryAsync<CustomerRoutesFromQuery>(sql, args);
             }
 
             foreach (CustomerRoutesFromQuery item in result)
@@ -37,11 +37,11 @@ namespace DataBase.Data.Get
                 var dayOfWeek = !string.IsNullOrWhiteSpace(item.JsonDayOfWeek) ?
                     System.Text.Json.JsonSerializer.Deserialize(
                         item.JsonDayOfWeek,
-                        DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.SelectedDayOfWeekRoutes) : null;
+                        DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.SelectedDayOfWeekRoutes) : null;
                 var address = !string.IsNullOrWhiteSpace(item.JsonAddress) ?
                     System.Text.Json.JsonSerializer.Deserialize(
                         item.JsonAddress,
-                        DataBase.Model.JsonContext.SzarotkaJsonSerializerContext.Default.ResidentialAddress) : null;
+                        DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.ResidentialAddress) : null;
                 if (dayOfWeek is not null)
                 {
                     item.DayOfWeek = dayOfWeek;
@@ -51,20 +51,20 @@ namespace DataBase.Data.Get
                     item.ResidentialAddress = address;
                 }
             }
-            return [.. result.Select(x=>new CustomerRoutes(x))];
+            return [.. result.Select(x => new CustomerRoutes(x))];
         }
         public async Task<IList<Routes>> Routes()
         {
             var sql = $"SELECT * FROM {nameof(Routes)}";
 
-            var result = await _db.DataBaseAsync.QueryAsync<Routes>(sql);
+            var result = await _db.DbAsyncAoT.QueryAsync<Routes>(sql);
 
-            return result;
+            return [.. result];
         }
 
 
 
-        class CustomerRoutesFromQuery : CustomerRoutes
+        public partial class CustomerRoutesFromQuery : CustomerRoutes
         {
             [JsonIgnore]
             public string JsonDayOfWeek { get; set; } = "";

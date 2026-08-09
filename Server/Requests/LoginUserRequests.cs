@@ -16,14 +16,14 @@ namespace Server.Requests
         Task<IResult> RefreshToken(string userToken, CancellationToken token = default);
     }
 
-    public class LoginUserRequests(IAccessDataBase db,
+    public class LoginUserRequests(IAccessDataBaseAoT db,
                              ILoginService loginService,
                              IEmailConfirmService emailConfirmService,
                              IAuthenticationService authenticationService,
                              IUserValidation userValidation,
                              ILogger<LoginUserRequests>? logger = null) : ILoginUserRequests
     {
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
         private readonly ILoginService _loginService = loginService;
         private readonly IEmailConfirmService _emailConfirmService = emailConfirmService;
         private readonly IAuthenticationService _authenticationService = authenticationService;

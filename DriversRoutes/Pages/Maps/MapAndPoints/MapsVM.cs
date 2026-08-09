@@ -213,7 +213,7 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
     public Action<Polyline> AddRoutesPolylineAction;
     public Action ClearRoutesPolylineAction;
     public Microsoft.Maui.Controls.Maps.Map GetMap { get; set; }
-    private readonly IAccessDataBase _db;
+    private readonly IAccessDataBaseAoT _db;
     private readonly DataBase.Data.Get.IGetDriverRoutesAoT _get;
     private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _save;
     private readonly Data.GoogleApi.IRoutes _routes;
@@ -221,7 +221,7 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
     private readonly IPopupService _popupService;
 
 
-    public MapsVM(IAccessDataBase db,
+    public MapsVM(IAccessDataBaseAoT db,
                   Data.GoogleApi.IRoutes routes,
                   DataBase.Data.Get.IGetDriverRoutesAoT get,
                   DataBase.Data.Save.ISaveDriverRoutesAoT save,

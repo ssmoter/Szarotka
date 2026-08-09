@@ -26,8 +26,8 @@ namespace Shared.Pages.Log
             }
         }
 
-        readonly IAccessDataBase _db;
-        public LogVM(IAccessDataBase db)
+        readonly IAccessDataBaseAoT _db;
+        public LogVM(IAccessDataBaseAoT db)
         {
             Logs = [];
             _db = db;
@@ -37,8 +37,10 @@ namespace Shared.Pages.Log
         {
             try
             {
+                string sql = $"SELECT * FROM LogsModel ORDER BY Id DESC LIMIT {10 * take}";
 
-                var table = await _db.DataBaseAsync.Table<LogsModel>().OrderByDescending(x => x.Id).Take(10 * take).ToArrayAsync();
+                var itable = await _db.DbAsyncAoT.QueryAsync<LogsModel>(sql);
+                var table = itable.ToArray();
                 if (Logs.Count != table.Length)
                 {
                     Logs.Clear();
@@ -77,25 +79,7 @@ namespace Shared.Pages.Log
             }
 
         }
-        [RelayCommand]
-        async Task DeleteLog(LogM log)
-        {
-            try
-            {
 
-                if (log is null)
-                {
-                    return;
-                }
-                var delete = log.ParseAsLog();
-                await _db.DataBaseAsync.DeleteAsync(delete);
-                Logs.Remove(log);
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
-        }
         [RelayCommand]
         async Task GetMoreLogs()
         {

@@ -16,11 +16,11 @@ namespace Shared.Helper
 
         public static event Action<User, bool> OnLogin;
 
-        private readonly static IAccessDataBase _db;
+        private readonly static IAccessDataBaseAoT _db;
 
         static UserAfterLogin()
         {
-            var db = Shared.Service.AppServiceProvider.GetService<IAccessDataBase>();
+            var db = Shared.Service.AppServiceProvider.GetService<IAccessDataBaseAoT>();
             if (db is not null)
             {
                 _db = db;

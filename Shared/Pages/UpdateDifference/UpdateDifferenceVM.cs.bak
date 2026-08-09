@@ -71,9 +71,9 @@ namespace Shared.Pages.UpdateDifference
 
 
         private Action<IEnumerable> _saveAction;
-        private readonly DataBase.Data.IAccessDataBase _db;
+        private readonly DataBase.Data.IAccessDataBaseAoT _db;
         private readonly ToolbarItem ToolbarItem;
-        public UpdateDifferenceVM(DataBase.Data.IAccessDataBase db)
+        public UpdateDifferenceVM(DataBase.Data.IAccessDataBaseAoT db)
         {
             _db = db;
             ToolbarItem = new ToolbarItem()

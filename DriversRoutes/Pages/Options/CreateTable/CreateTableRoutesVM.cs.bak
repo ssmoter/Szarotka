@@ -33,9 +33,9 @@ namespace DriversRoutes.Pages.Options.CreateTable
             }
         }
 
-        readonly IAccessDataBase _db;
+        readonly IAccessDataBaseAoT _db;
 
-        public CreateTableRoutesVM(IAccessDataBase db)
+        public CreateTableRoutesVM(IAccessDataBaseAoT db)
         {
             _db = db;
 

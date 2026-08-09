@@ -1,6 +1,8 @@
 ﻿using DataBase.Data.SqlQuery;
 using DataBase.Model.EntitiesInventory;
 
+using System.Text.Json;
+
 namespace DataBase.Data.Save
 {
     public interface ISaveInventoryAoT
@@ -65,9 +67,9 @@ namespace DataBase.Data.Save
         Task SaveProductPrice(ProductPrice productPrice, byte[] driverId, bool isServer = false);
     }
 
-    public class SaveInventoryAoT(IAccessDataBase db) : ISaveInventoryAoT
+    public class SaveInventoryAoT(IAccessDataBaseAoT db) : ISaveInventoryAoT
     {
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
 
         public async Task SaveDay(Day day, byte[] driverId, bool isServer = false)
         {
@@ -79,24 +81,27 @@ namespace DataBase.Data.Save
                    out string sql);
             try
             {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
-                                                         day.Id,
-                                                         day.Description,
-                                                         day.DriverGuid,
-                                                         day.SelectedDateString,
-                                                         day.SelectedDateTicks,
-                                                         day.TotalPriceProducts,
-                                                         day.TotalPriceCake,
-                                                         day.TotalPrice,
-                                                         day.TotalPriceCorrect,
-                                                         day.TotalPriceAfterCorrect,
-                                                         day.TotalPriceMoney,
-                                                         day.TotalPriceDifference,
-                                                         day.CreatedTicks,
-                                                         day.UpdatedTicks,
-                                                         day.IsDelete,
-                                                         day.UserCreatedId,
-                                                         day.UserUpdatedId);
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                                                        new
+                                                        {
+                                                            day.Id,
+                                                            day.Description,
+                                                            day.DriverGuid,
+                                                            day.SelectedDateString,
+                                                            day.SelectedDateTicks,
+                                                            day.TotalPriceProducts,
+                                                            day.TotalPriceCake,
+                                                            day.TotalPrice,
+                                                            day.TotalPriceCorrect,
+                                                            day.TotalPriceAfterCorrect,
+                                                            day.TotalPriceMoney,
+                                                            day.TotalPriceDifference,
+                                                            day.CreatedTicks,
+                                                            day.UpdatedTicks,
+                                                            day.IsDelete,
+                                                            day.UserCreatedId,
+                                                            day.UserUpdatedId
+                                                        });
             }
             catch (Exception)
             {
@@ -155,41 +160,130 @@ namespace DataBase.Data.Save
         }
         public async Task SaveDaysTransaction(IList<Day> days, byte[] driverId, bool isServer = false)
         {
-            await Task.Run(() =>
-             {
-                 _db.DataBase.RunInTransaction(() =>
-                 {
-                     foreach (Day day in days)
-                     {
-                         SetDay(day,
-                               driverId,
-                               isServer,
-                               out DateTime lastUpdate,
-                               out byte[] userUpdateId,
-                               out string sql);
-                         _ = _db.DataBase.Execute(sql,
-                                         day.Id,
-                                         day.Description,
-                                         day.DriverGuid,
-                                         day.SelectedDateString,
-                                         day.SelectedDateTicks,
-                                         day.TotalPriceProducts,
-                                         day.TotalPriceCake,
-                                         day.TotalPrice,
-                                         day.TotalPriceCorrect,
-                                         day.TotalPriceAfterCorrect,
-                                         day.TotalPriceMoney,
-                                         day.TotalPriceDifference,
-                                         day.CreatedTicks,
-                                         day.UpdatedTicks,
-                                         day.IsDelete,
-                                         day.UserCreatedId,
-                                         day.UserUpdatedId);
-                         SaveProductsNonTransaction(day.Products, driverId, isServer);
-                         SaveCakesNonTransaction(day.Cakes, driverId, isServer);
-                     }
-                 });
-             });
+            byte[] copy = JsonSerializer.SerializeToUtf8Bytes(days, DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.IListDay);
+
+            await using var tx = await _db.DbAsyncAoT.BeginTransactionAsync();
+            try
+            {
+                foreach (var day in days)
+                {
+                    SetDay(day,
+                           driverId,
+                           isServer,
+                           out DateTime lastUpdate,
+                           out byte[] userUpdateId,
+                           out string sql);
+
+                    await tx.ExecuteAsync(sql,
+                                             new
+                                             {
+                                                 day.Id,
+                                                 day.Description,
+                                                 day.DriverGuid,
+                                                 day.SelectedDateString,
+                                                 day.SelectedDateTicks,
+                                                 day.TotalPriceProducts,
+                                                 day.TotalPriceCake,
+                                                 day.TotalPrice,
+                                                 day.TotalPriceCorrect,
+                                                 day.TotalPriceAfterCorrect,
+                                                 day.TotalPriceMoney,
+                                                 day.TotalPriceDifference,
+                                                 day.CreatedTicks,
+                                                 day.UpdatedTicks,
+                                                 day.IsDelete,
+                                                 day.UserCreatedId,
+                                                 day.UserUpdatedId
+                                             });
+
+                    await SaveProductsTransaction(day.Products, driverId, isServer);
+                    await SaveCakesTransaction(day.Cakes, driverId, isServer);
+
+                }
+
+
+                await tx.CommitAsync();
+            }
+            catch (Exception)
+            {
+                await tx.RollbackAsync();
+                var fromCopy = JsonSerializer.Deserialize(copy, DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.IListDay)!;
+                days = fromCopy;
+                throw;
+            }
+
+            async Task SaveProductsTransaction(IList<Product> products, byte[] driverId, bool isServer = false)
+            {
+                foreach (var product in products)
+                {
+                    SetProduct(product,
+                             driverId,
+                             isServer,
+                             out DateTime lastUpdate,
+                             out byte[] userUpdateId,
+                             out string sql);
+                    try
+                    {
+                        await tx.ExecuteAsync(sql,
+                                                new
+                                                {
+                                                    product.Id,
+                                                    product.DayId,
+                                                    product.ProductNameId,
+                                                    product.ProductPriceId,
+                                                    product.Description,
+                                                    product.PriceTotal,
+                                                    product.PriceTotalCorrect,
+                                                    product.PriceTotalAfterCorrect,
+                                                    product.Number,
+                                                    product.NumberEdit,
+                                                    product.NumberReturn,
+                                                    product.CreatedTicks,
+                                                    product.UpdatedTicks,
+                                                    product.IsDelete,
+                                                    product.UserCreatedId,
+                                                    product.UserUpdatedId
+                                                });
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
+            }
+            async Task SaveCakesTransaction(IList<Cake> cakes, byte[] driverId, bool isServer = false)
+            {
+                foreach (Cake cake in cakes)
+                {
+                    SetCake(cake,
+                            driverId,
+                            isServer,
+                            out DateTime lastUpdate,
+                            out byte[] userUpdateId,
+                            out string sql);
+
+                    try
+                    {
+                        await tx.ExecuteAsync(sql,
+                                                new
+                                                {
+                                                    cake.Id,
+                                                    cake.DayId,
+                                                    cake.IsSell,
+                                                    cake.Price,
+                                                    cake.CreatedTicks,
+                                                    cake.UpdatedTicks,
+                                                    cake.IsDelete,
+                                                    cake.UserCreatedId,
+                                                    cake.UserUpdatedId
+                                                });
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+                }
+            }
         }
 
 
@@ -203,23 +297,26 @@ namespace DataBase.Data.Save
                        out string sql);
             try
             {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
-                                                         product.Id,
-                                                         product.DayId,
-                                                         product.ProductNameId,
-                                                         product.ProductPriceId,
-                                                         product.Description,
-                                                         product.PriceTotal,
-                                                         product.PriceTotalCorrect,
-                                                         product.PriceTotalAfterCorrect,
-                                                         product.Number,
-                                                         product.NumberEdit,
-                                                         product.NumberReturn,
-                                                         product.CreatedTicks,
-                                                         product.UpdatedTicks,
-                                                         product.IsDelete,
-                                                         product.UserCreatedId,
-                                                         product.UserUpdatedId);
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                                                  new
+                                                  {
+                                                      product.Id,
+                                                      product.DayId,
+                                                      product.ProductNameId,
+                                                      product.ProductPriceId,
+                                                      product.Description,
+                                                      product.PriceTotal,
+                                                      product.PriceTotalCorrect,
+                                                      product.PriceTotalAfterCorrect,
+                                                      product.Number,
+                                                      product.NumberEdit,
+                                                      product.NumberReturn,
+                                                      product.CreatedTicks,
+                                                      product.UpdatedTicks,
+                                                      product.IsDelete,
+                                                      product.UserCreatedId,
+                                                      product.UserUpdatedId
+                                                  });
             }
             catch (Exception)
             {
@@ -289,54 +386,6 @@ namespace DataBase.Data.Save
                                                 product.UserCreatedId,
                                                 product.UserUpdatedId);
         }
-        private void SaveProductsNonTransaction(IList<Product> products, byte[] driverId, bool isServer = false)
-        {
-            foreach (Product product in products)
-            {
-                SetProduct(product,
-                           driverId,
-                           isServer,
-                           out DateTime lastUpdate,
-                           out byte[] userUpdateId,
-                           out string sql);
-                try
-                {
-                    _ = _db.DataBase.Execute(sql,
-                                             product.Id,
-                                             product.DayId,
-                                             product.ProductNameId,
-                                             product.ProductPriceId,
-                                             product.Description,
-                                             product.PriceTotal,
-                                             product.PriceTotalCorrect,
-                                             product.PriceTotalAfterCorrect,
-                                             product.Number,
-                                             product.NumberEdit,
-                                             product.NumberReturn,
-                                             product.CreatedTicks,
-                                             product.UpdatedTicks,
-                                             product.IsDelete,
-                                             product.UserCreatedId,
-                                             product.UserUpdatedId);
-                }
-                catch (Exception)
-                {
-                    product.Updated = lastUpdate;
-                    product.UserUpdatedId = new Guid(userUpdateId);
-                    throw;
-                }
-            }
-        }
-        public async Task SaveProductsTransaction(IList<Product> products, byte[] driverId, bool isServer = false)
-        {
-            await Task.Run(() =>
-            {
-                _db.DataBase.RunInTransaction(() =>
-                {
-                    SaveProductsNonTransaction(products, driverId, isServer);
-                });
-            });
-        }
 
         public async Task SaveCake(Cake cake, byte[] driverId, bool isServer = false)
         {
@@ -348,16 +397,19 @@ namespace DataBase.Data.Save
                     out string sql);
             try
             {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
-                                                         cake.Id,
-                                                         cake.DayId,
-                                                         cake.IsSell,
-                                                         cake.Price,
-                                                         cake.CreatedTicks,
-                                                         cake.UpdatedTicks,
-                                                         cake.IsDelete,
-                                                         cake.UserCreatedId,
-                                                         cake.UserUpdatedId);
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                                                       new
+                                                       {
+                                                           cake.Id,
+                                                           cake.DayId,
+                                                           cake.IsSell,
+                                                           cake.Price,
+                                                           cake.CreatedTicks,
+                                                           cake.UpdatedTicks,
+                                                           cake.IsDelete,
+                                                           cake.UserCreatedId,
+                                                           cake.UserUpdatedId
+                                                       });
             }
             catch (Exception)
             {
@@ -410,52 +462,6 @@ namespace DataBase.Data.Save
                                              cake.UserCreatedId,
                                              cake.UserUpdatedId);
         }
-        public void SaveCakesNonTransaction(IList<Cake> cakes, byte[] driverId, bool isServer = false)
-        {
-            foreach (Cake cake in cakes)
-            {
-                SetCake(cake,
-                        driverId,
-                        isServer,
-                        out DateTime lastUpdate,
-                        out byte[] userUpdateId,
-                        out string sql);
-
-                try
-                {
-                    _ = _db.DataBase.Execute(sql,
-                                            cake.Id,
-                                            cake.DayId,
-                                            cake.IsSell,
-                                            cake.Price,
-                                            cake.CreatedTicks,
-                                            cake.UpdatedTicks,
-                                            cake.IsDelete,
-                                            cake.UserCreatedId,
-                                            cake.UserUpdatedId);
-                }
-                catch (Exception)
-                {
-                    cake.Updated = lastUpdate;
-                    cake.UserUpdatedId = new Guid(userUpdateId);
-                    throw;
-                }
-            }
-
-        }
-        public async Task SaveCakesTransaction(IList<Cake> cakes, byte[] driverId, bool isServer = false)
-        {
-            await Task.Run(() =>
-            {
-                _db.DataBase.RunInTransaction(() =>
-                {
-                    SaveCakesNonTransaction(cakes, driverId, isServer);
-                });
-            });
-        }
-
-
-
 
         public async Task SaveProductName(ProductName productName, byte[] driverId, bool isServer = false)
         {
@@ -467,18 +473,21 @@ namespace DataBase.Data.Save
                            out string sql);
             try
             {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
-                                                         productName.Id,
-                                                         productName.Arrangement,
-                                                         productName.Name,
-                                                         productName.Description,
-                                                         productName.Img,
-                                                         productName.IsVisible,
-                                                         productName.CreatedTicks,
-                                                         productName.UpdatedTicks,
-                                                         productName.UserCreatedId,
-                                                         productName.UserUpdatedId,
-                                                         productName.IsDelete);
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                                                         new
+                                                         {
+                                                             productName.Id,
+                                                             productName.Arrangement,
+                                                             productName.Name,
+                                                             productName.Description,
+                                                             productName.Img,
+                                                             productName.IsVisible,
+                                                             productName.CreatedTicks,
+                                                             productName.UpdatedTicks,
+                                                             productName.UserCreatedId,
+                                                             productName.UserUpdatedId,
+                                                             productName.IsDelete
+                                                         });
             }
             catch (Exception)
             {
@@ -529,52 +538,6 @@ namespace DataBase.Data.Save
                                                     productName.UserUpdatedId,
                                                     productName.IsDelete);
         }
-        public void SaveProductNamesNonTransaction(IList<ProductName> productNames, byte[] driverId, bool isServer = false)
-        {
-            foreach (ProductName productName in productNames)
-            {
-                SetProductName(productName,
-                              driverId,
-                              isServer,
-                              out DateTime lastUpdate,
-                              out byte[] userUpdateId,
-                              out string sql);
-                try
-                {
-                    _ = _db.DataBase.Execute(sql,
-                                            productName.Id,
-                                            productName.Arrangement,
-                                            productName.Name,
-                                            productName.Description,
-                                            productName.Img,
-                                            productName.IsVisible,
-                                            productName.CreatedTicks,
-                                            productName.UpdatedTicks,
-                                            productName.UserCreatedId,
-                                            productName.UserUpdatedId,
-                                            productName.IsDelete);
-                }
-                catch (Exception)
-                {
-                    productName.Updated = lastUpdate;
-                    productName.UserUpdatedId = new Guid(userUpdateId);
-                    throw;
-                }
-            }
-
-        }
-        public async Task SaveProductNamesTransaction(IList<ProductName> productNames, byte[] driverId, bool isServer = false)
-        {
-            await Task.Run(() =>
-            {
-                _db.DataBase.RunInTransaction(() =>
-                {
-                    SaveProductNamesNonTransaction(productNames, driverId, isServer);
-                });
-            });
-        }
-
-
 
         public async Task SaveProductPrice(ProductPrice productPrice, byte[] driverId, bool isServer = false)
         {
@@ -586,7 +549,9 @@ namespace DataBase.Data.Save
                           out string sql);
             try
             {
-                _ = await _db.DataBaseAsync.ExecuteAsync(sql,
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                                                     new
+                                                     {
                                                          productPrice.Id,
                                                          productPrice.Price,
                                                          productPrice.CreatedTicks,
@@ -594,7 +559,8 @@ namespace DataBase.Data.Save
                                                          productPrice.UserCreatedId,
                                                          productPrice.UserUpdatedId,
                                                          productPrice.ProductNameId,
-                                                         productPrice.IsDelete);
+                                                         productPrice.IsDelete
+                                                     });
             }
             catch (Exception)
             {
@@ -641,47 +607,6 @@ namespace DataBase.Data.Save
                                                      productPrice.UserUpdatedId,
                                                      productPrice.ProductNameId,
                                                      productPrice.IsDelete);
-        }
-        public void SaveProductPricesNonTransaction(IList<ProductPrice> productPrices, byte[] driverId, bool isServer = false)
-        {
-            foreach (ProductPrice productPrice in productPrices)
-            {
-                SetProductPrice(productPrice,
-                              driverId,
-                              isServer,
-                              out DateTime lastUpdate,
-                              out byte[] userUpdateId,
-                              out string sql);
-                try
-                {
-                    _ = _db.DataBase.Execute(sql,
-                                            productPrice.Id,
-                                            productPrice.Price,
-                                            productPrice.CreatedTicks,
-                                            productPrice.UpdatedTicks,
-                                            productPrice.UserCreatedId,
-                                            productPrice.UserUpdatedId,
-                                            productPrice.ProductNameId,
-                                            productPrice.IsDelete);
-                }
-                catch (Exception)
-                {
-                    productPrice.Updated = lastUpdate;
-                    productPrice.UserUpdatedId = new Guid(userUpdateId);
-                    throw;
-                }
-            }
-
-        }
-        public async Task SaveProductPricesTransaction(IList<ProductPrice> productPrices, byte[] driverId, bool isServer = false)
-        {
-            await Task.Run(() =>
-            {
-                _db.DataBase.RunInTransaction(() =>
-                {
-                    SaveProductPricesNonTransaction(productPrices, driverId, isServer);
-                });
-            });
         }
 
     }

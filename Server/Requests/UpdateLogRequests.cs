@@ -10,11 +10,11 @@ namespace Server.Requests
         Task<IResult> GetLogs(string id, CancellationToken token = default);
     }
 
-    public class UpdateLogRequests(IAccessDataBase db,
+    public class UpdateLogRequests(IAccessDataBaseAoT db,
                              IUpdateLogService update,
                              ILogger<UpdateLogRequests>? logger = null) : IUpdateLogRequests
     {
-        private readonly IAccessDataBase _db = db;
+        private readonly IAccessDataBaseAoT _db = db;
         private readonly IUpdateLogService _update = update;
         private readonly ILogger<UpdateLogRequests> _logger = logger ?? NullLogger<UpdateLogRequests>.Instance;
 

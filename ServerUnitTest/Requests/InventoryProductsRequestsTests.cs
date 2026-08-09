@@ -16,12 +16,12 @@ namespace ServerUnitTest.Requests
     {
         private readonly Mock<IGetInventoryAoT> _mockGet;
         private readonly Mock<ISaveInventoryAoT> _mockSave;
-        private readonly Mock<IAccessDataBase> _mockDb;
+        private readonly Mock<IAccessDataBaseAoT> _mockDb;
         private readonly InventoryProductsRequests _inventoryProductsRequests;
 
         public InventoryProductsRequestsTests()
         {
-            _mockDb = new Mock<IAccessDataBase>();
+            _mockDb = new Mock<IAccessDataBaseAoT>();
             _mockGet = new Mock<IGetInventoryAoT>();
             _mockSave = new Mock<ISaveInventoryAoT>();
             _inventoryProductsRequests = new InventoryProductsRequests(_mockDb.Object, _mockGet.Object, _mockSave.Object);

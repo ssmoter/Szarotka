@@ -9,7 +9,7 @@ using DataBase.Data.CheckUpdateDifferences;
 using DataBase.Data.Get;
 using DataBase.Model.EntitiesRoutes;
 using DataBase.Model.EntitiesServer;
-using DataBase.Model.JsonContext;
+using DataBase.Model.SourceGenerator;
 using DataBase.Service;
 
 using DriversRoutes.Pages.Popups.MoveTimeOnCustomers;
@@ -153,7 +153,7 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
         }
     }
 
-    readonly IAccessDataBase _db;
+    readonly IAccessDataBaseAoT _db;
 
     private readonly DataBase.Data.Get.IGetDriverRoutesAoT _get;
     private readonly DataBase.Data.Save.ISaveDriverRoutesAoT _save;
@@ -165,7 +165,7 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
 
     public Action CalculateRoute;
 
-    public ListOfPointsVM(IAccessDataBase db,
+    public ListOfPointsVM(IAccessDataBaseAoT db,
                           DataBase.Data.Get.IGetDriverRoutesAoT get,
                           DataBase.Data.Save.ISaveDriverRoutesAoT save,
                           DataBase.Service.IUpdateLogService update,
