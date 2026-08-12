@@ -82,6 +82,7 @@ var sampleTodos = new Todo[] {
     new(4, "Clean the bathroom"),
     new(5, "Clean the car", DateOnly.FromDateTime(DateTime.Now.AddDays(2)))
 };
+app.MapGet("/", () => "Serwer .NET Native AOT z czystą architekturą działa!");
 
 var todosApi = app.MapGroup("/todos");
 //todosApi.MapGet("/", () => new DataBase.Data.AccessDataBase().SaveLog(new Exception("test")));

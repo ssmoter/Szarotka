@@ -2,6 +2,8 @@
 
 using Microsoft.Data.Sqlite;
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace DataBase.Data.MySqliteConnection
 {
     public interface ISqliteConnectionFactory
@@ -61,15 +63,13 @@ namespace DataBase.Data.MySqliteConnection
             }
         }
 
-
-
-        public static void AddParameters(object? param, Microsoft.Data.Sqlite.SqliteCommand command)
+        public static void AddParameters(Dictionary<string, object?>? param, Microsoft.Data.Sqlite.SqliteCommand command)
         {
             if (param != null)
             {
-                foreach (var prop in param.GetType().GetProperties())
+                foreach (var kvp in param)
                 {
-                    var value = prop.GetValue(param) ?? DBNull.Value;
+                    var value = kvp.Value ?? DBNull.Value;
 
                     // WYJĄTEK DLA GUID: Jeśli wartość to Guid, zamień ją na string
                     if (value is Guid guidValue)
@@ -81,9 +81,13 @@ namespace DataBase.Data.MySqliteConnection
                     {
                         value = ((Guid)value).ToString();
                     }
-                    command.Parameters.AddWithValue($"@{prop.Name}", value);
+                    command.Parameters.AddWithValue($"@{kvp.Key}", value);
                 }
             }
         }
+
+
+
+
     }
 }

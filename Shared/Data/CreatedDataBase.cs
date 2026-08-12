@@ -82,7 +82,14 @@ namespace Shared.Data
 
         public void UpdateCurrentVersion(DataBaseVersion version)
         {
-            _db.DbSyncAoT.Execute(SQlInsertOrReplaceDataBaseVersion, version);
+            _db.DbSyncAoT.Execute(SQlInsertOrReplaceDataBaseVersion, new()
+            {
+                [nameof(DataBaseVersion.Id)] = version.Id,
+                [nameof(DataBaseVersion.DataBase)] = version.DataBase,
+                [nameof(DataBaseVersion.DriversRoutes)] = version.DriversRoutes,
+                [nameof(DataBaseVersion.Inventory)] = version.Inventory,
+                [nameof(DataBaseVersion.LastBackup)] = version.LastBackup
+            });
         }
         public async Task CreateBackUp()
         {

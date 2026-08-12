@@ -43,7 +43,7 @@ namespace ServerUnitTest.Requests
             customers.Add(new());
             customers.Add(new());
 
-            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(customers);
+            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(customers);
 
             var result = await _driverRoutesCustomerRoutesRequests.GetCustomer(id.ToString());
 
@@ -57,7 +57,7 @@ namespace ServerUnitTest.Requests
             customers.Add(new());
             customers.Add(new());
 
-            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(customers);
+            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(customers);
 
             var result = await _driverRoutesCustomerRoutesRequests.GetCustomer(id.ToString());
 
@@ -69,7 +69,7 @@ namespace ServerUnitTest.Requests
             var id = Guid.CreateVersion7();
             List<CustomerRoutes> customers = [];
 
-            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(customers);
+            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(customers);
 
             var result = await _driverRoutesCustomerRoutesRequests.GetCustomer(id.ToString());
 
@@ -87,7 +87,7 @@ namespace ServerUnitTest.Requests
             customers.Add(new());
             customers.Add(new());
 
-            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(customers);
+            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(customers);
 
             var result = await _driverRoutesCustomerRoutesRequests.GetCustomers(id.ToString(), []);
 
@@ -101,7 +101,7 @@ namespace ServerUnitTest.Requests
             customers.Add(new());
             customers.Add(new());
 
-            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<object[]>())).ReturnsAsync(customers);
+            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(customers);
 
             var result = await _driverRoutesCustomerRoutesRequests.GetCustomers("", []);
 
@@ -113,7 +113,7 @@ namespace ServerUnitTest.Requests
             var id = Guid.CreateVersion7();
             List<CustomerRoutes> customers = [];
 
-            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<object[]>())).ReturnsAsync(customers);
+            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(customers);
 
             var result = await _driverRoutesCustomerRoutesRequests.GetCustomers(id.ToString(), []);
 
@@ -125,7 +125,7 @@ namespace ServerUnitTest.Requests
             var id = Guid.CreateVersion7();
             List<CustomerRoutes> customers = [];
 
-            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<object[]>())).ReturnsAsync(customers);
+            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(customers);
 
             var token = new CancellationTokenSource();
             token.Cancel();
@@ -144,7 +144,7 @@ namespace ServerUnitTest.Requests
             customers.Add(new() { Id = id });
             customers.Add(new() { Id = id1 });
 
-            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(customers);
+            _mockGet.Setup(x => x.CustomerRoutes(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(customers);
 
             var result = await _driverRoutesCustomerRoutesRequests.GetCustomers([id.ToString(), id1.ToString()]);
 

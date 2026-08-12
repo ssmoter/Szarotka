@@ -32,11 +32,11 @@ AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - @{nameof(time.Tic
 ";
 
             var Iexists = await _db.DbAsyncAoT.QueryAsync<UpdateLog>(sqlSelect,
-                                                                    new
+                                                                    new()
                                                                     {
-                                                                        update.UpdateId,
-                                                                        time.Ticks,
-                                                                        halfHour
+                                                                        [nameof(update.UpdateId)] = update.UpdateId,
+                                                                        [nameof(time.Ticks)] = time.Ticks,
+                                                                        [nameof(halfHour)] = halfHour
                                                                     });
             var exists = Iexists.ToList();
 
@@ -91,18 +91,18 @@ AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - @{nameof(time.Tic
             }
 
             await _db.DbAsyncAoT.ExecuteAsync(sqlInsert,
-      new
-      {
-          update.Id,
-          update.UpdateEnum,
-          update.UpdateId,
-          update.CreatedTicks,
-          update.UpdatedTicks,
-          update.IsDelete,
-          update.UserCreatedId,
-          update.UserUpdatedId,
-          update.JsonUpdate,
-          update.IsServer
+      new()
+      {         
+          [nameof(UpdateLog.Id)] = update.Id,
+          [nameof(UpdateLog.UpdateEnum)] = update.UpdateEnum,
+          [nameof(UpdateLog.UpdateId)] = update.UpdateId,
+          [nameof(UpdateLog.CreatedTicks)] = update.CreatedTicks,
+          [nameof(UpdateLog.UpdatedTicks)] = update.UpdatedTicks,
+          [nameof(UpdateLog.IsDelete)] = update.IsDelete,
+          [nameof(UpdateLog.UserCreatedId)] = update.UserCreatedId,
+          [nameof(UpdateLog.UserUpdatedId)] = update.UserUpdatedId,
+          [nameof(UpdateLog.JsonUpdate)] = update.JsonUpdate,
+          [nameof(UpdateLog.IsServer)] = update.IsServer
       }
             );
             return update;
@@ -128,7 +128,7 @@ AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - @{nameof(time.Tic
                 {select}
                 FROM {nameof(UpdateLog)}  WHERE {nameof(UpdateLog.Id)} == @id";
 
-            UpdateLog[] result = [.. await _db.DbAsyncAoT.QueryAsync<UpdateLog>(sql, new { id })];
+            UpdateLog[] result = [.. await _db.DbAsyncAoT.QueryAsync<UpdateLog>(sql, new() { [nameof(id)] = id })];
 
             ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(result.Length, 0, "Don't find a record");
 
@@ -136,7 +136,7 @@ AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - @{nameof(time.Tic
                 {select}
                 FROM {nameof(UpdateLog)}  WHERE {nameof(UpdateLog.CreatedTicks)} <= @{nameof(UpdateLog.CreatedTicks)}";
 
-            var results = await _db.DbAsyncAoT.QueryAsync<UpdateLog>(sql, new { CreatedTicks = result[0].CreatedTicks });
+            var results = await _db.DbAsyncAoT.QueryAsync<UpdateLog>(sql, new() { [nameof(UpdateLog.CreatedTicks)] = result[0].CreatedTicks });
 
             return [.. results];
         }
@@ -163,7 +163,7 @@ AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - @{nameof(time.Tic
                 ORDER By {nameof(UpdateLog.CreatedTicks)} DESC
                 LIMIT 1
                 ";
-            UpdateLog[] result = [.. await _db.DbAsyncAoT.QueryAsync<UpdateLog>(select, new { isServer, enums })];
+            UpdateLog[] result = [.. await _db.DbAsyncAoT.QueryAsync<UpdateLog>(select, new() { [nameof(isServer)] = isServer, [nameof(enums)] = enums })];
 
             ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(result.Length, 0, "Don't find a record");
 

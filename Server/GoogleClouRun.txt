@@ -1,0 +1,12 @@
+KROK 1: Budowanie nowej wersji kodu w chmurze (Kompilacja Native AOT)
+
+gcloud builds submit --tag gcr.io/szarotka-505112/serwer-aot:latest --project=szarotka-505112 .
+
+
+KROK 2: Uruchomienie zaktualizowanego serwera na Google Cloud Run
+
+gcloud run deploy serwer-aot --image="gcr.io/szarotka-505112/serwer-aot:latest" --region="europe-west1" --add-volume="name=dysk-sqlite,type=cloud-storage,bucket=szarotka-db" --add-volume-mount="volume=dysk-sqlite,mount-path=/data" --set-env-vars="PERSISTENT_DB_PATH=/data" --execution-environment="gen2" --max-instances=1 --allow-unauthenticated --project="szarotka-505112"
+
+Przydatna komenda dodatkowa (Podgląd logów "na żywo")
+
+gcloud beta run services logs tail serwer-aot --project=szarotka-505112 --region=europe-west1

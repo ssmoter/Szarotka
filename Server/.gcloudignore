@@ -1,0 +1,25 @@
+# Ignoruj foldery kompilacji i pliki tymczasowe .NET
+**/bin/
+**/obj/
+**/.vs/
+
+# Ignoruj pliki bazy danych i logi lokalne
+*.db
+*.db-journal
+*.log
+
+# Ignoruj konfiguracje Git
+.git/
+.gitignore
+
+# IGNORUJ CAŁY FOLDER APLIKACJI MOBILNEJ:
+Benchmark/
+DataBaseUnitTest/
+DriversRoutes/
+DriversRoutesUnitTest/
+Inventory/
+InventoryUnitTest/
+ServerUnitTest/
+Shared/
+SzarotkaBlazor/
+SzarotkaNET10/

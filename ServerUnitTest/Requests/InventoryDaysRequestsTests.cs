@@ -39,7 +39,7 @@ namespace ServerUnitTest.Requests
             days.Add(new());
             days.Add(new());
 
-            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(days);
+            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(days);
 
             var result = await _inventoryDayRequests.GetDays(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string[]>());
 
@@ -53,7 +53,7 @@ namespace ServerUnitTest.Requests
             days.Add(new());
             days.Add(new());
 
-            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object[]>())).ReturnsAsync(days);
+            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(days);
 
             var token = new CancellationTokenSource();
             token.Cancel();
@@ -95,7 +95,7 @@ namespace ServerUnitTest.Requests
 
             Day[] days = [new() { Id = id, UpdatedTicks = 9 }, day];
 
-            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync([new Day() { Id = id, UpdatedTicks = 9 }]);
+            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync([new Day() { Id = id, UpdatedTicks = 9 }]);
 
 
             var result = await _inventoryDayRequests.SaveDays(days);

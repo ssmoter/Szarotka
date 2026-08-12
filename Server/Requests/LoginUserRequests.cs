@@ -39,7 +39,7 @@ namespace Server.Requests
 
                 _userValidation.Validation.Throw();
 
-                _userValidation.EmailIsNull(user.Email);
+                _userValidation.EmailIsNull(user!.Email);
                 _userValidation.PasswordIsNull(user.Password);
 
 

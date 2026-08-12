@@ -7,8 +7,8 @@ namespace DataBase.Data.MySqliteConnection
     // Interfejs dla aktywnej transakcji synchronicznej
     public interface IMyDbTransaction : IDisposable
     {
-        int Execute(string sql, object? param = null);
-        IEnumerable<T> Query<T>(string sql, object? param = null);
+        int Execute(string sql, Dictionary<string, object?> param);
+        IEnumerable<T> Query<T>(string sql, Dictionary<string, object?> param);
         void Commit();
         void Rollback();
     }
@@ -25,7 +25,7 @@ namespace DataBase.Data.MySqliteConnection
             _transaction = transaction;
         }
 
-        public int Execute(string sql, object? param = null)
+        public int Execute(string sql, Dictionary<string, object?> param)
         {
             if (_transaction == null) throw new InvalidOperationException("Transaction closed.");
 
@@ -37,7 +37,7 @@ namespace DataBase.Data.MySqliteConnection
             return command.ExecuteNonQuery();
         }
 
-        public IEnumerable<T> Query<T>(string sql, object? param = null)
+        public IEnumerable<T> Query<T>(string sql, Dictionary<string, object?> param)
         {
             if (_transaction == null) throw new InvalidOperationException("Transaction closed.");
 

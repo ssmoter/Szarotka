@@ -38,7 +38,7 @@ namespace ServerUnitTest.Requests
             List<Day> days = [];
             days.Add(new());
 
-            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(days);
+            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(days);
 
             var result = await _inventoryDayRequests.GetDay(id.ToString());
 
@@ -50,7 +50,7 @@ namespace ServerUnitTest.Requests
             var id = Guid.CreateVersion7();
             List<Day> days = [];
 
-            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(days);
+            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(days);
 
             var result = await _inventoryDayRequests.GetDay(id.ToString());
 
@@ -62,7 +62,7 @@ namespace ServerUnitTest.Requests
             var id = "asd";
             List<Day> days = [];
 
-            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(days);
+            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(days);
 
             var result = await _inventoryDayRequests.GetDay(id.ToString());
 
@@ -78,7 +78,7 @@ namespace ServerUnitTest.Requests
             List<Day> days = [];
             days.Add(new());
 
-            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(days);
+            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(days);
 
             var result = await _inventoryDayRequests.GetDay(id, Guid.Empty.ToString());
 
@@ -91,7 +91,7 @@ namespace ServerUnitTest.Requests
             var id = DateTime.Now.ToShortDateString();
             List<Day> days = [];
 
-            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object[]>())).ReturnsAsync(days);
+            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(days);
 
             var result = await _inventoryDayRequests.GetDay(id, Guid.Empty.ToString());
 
@@ -103,7 +103,7 @@ namespace ServerUnitTest.Requests
             var id = "";
             List<Day> days = [];
 
-            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(days);
+            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(days);
 
             var result = await _inventoryDayRequests.GetDay(id, Guid.Empty.ToString());
 
@@ -115,7 +115,7 @@ namespace ServerUnitTest.Requests
             var id = "asd";
             List<Day> days = [];
 
-            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(days);
+            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync(days);
 
             var result = await _inventoryDayRequests.GetDay(id, Guid.Empty.ToString());
 
@@ -151,7 +151,7 @@ namespace ServerUnitTest.Requests
             };
 
 
-            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync([new Day() { Id = id, UpdatedTicks = 9 }]);
+            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync([new Day() { Id = id, UpdatedTicks = 9 }]);
 
 
             var result = await _inventoryDayRequests.SaveDay(day);
@@ -164,7 +164,7 @@ namespace ServerUnitTest.Requests
         {
             Day? day = null;
 
-            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<object>()));
+            _mockGet.Setup(x => x.Days(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>()));
 
             var result = _inventoryDayRequests.SaveDay(day!);
 

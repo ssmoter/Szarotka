@@ -6,6 +6,8 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <PublishAot>true</PublishAot>
 	<IsAotCompatible>true</IsAotCompatible>
+	<!-- Nakazuje kompilatorowi zachować właściwości obiektów anonimowych dla refleksji -->
+	<IlcRootAnonymousTypes>true</IlcRootAnonymousTypes>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <InvariantGlobalization>false</InvariantGlobalization>
     <EnableI18n>true</EnableI18n>

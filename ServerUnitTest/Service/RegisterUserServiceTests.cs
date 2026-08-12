@@ -60,7 +60,7 @@ namespace ServerUnitTest.Service
                 Created = DateTime.MinValue
             };
             _mockTimeService.Setup(t => t.UtcNow()).Returns(DateTime.UtcNow);
-            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(1);
+            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(1);
 
             // Act
             var result = await _service.InsertNewUser(registerUser);
@@ -80,15 +80,15 @@ namespace ServerUnitTest.Service
             // Arrange
             var confirmCode = new ConfirmCode { UserId = Guid.NewGuid(), Code = 1234 };
             _mockTimeService.Setup(t => t.UtcNow()).Returns(DateTime.UtcNow);
-            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(1);
+            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(1);
             _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>()
-                , It.IsAny<object>())).ReturnsAsync(1);
+                , It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(1);
 
             // Act
             await _service.InsertCodeEmailAndRemoveOld(confirmCode);
 
             // Assert
-            _mockDb.Verify(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>()), Times.Exactly(2));
+            _mockDb.Verify(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()), Times.Exactly(2));
         }
 
         [Fact]
@@ -99,12 +99,12 @@ namespace ServerUnitTest.Service
             var confirmCode = new ConfirmCode { UserId = Guid.NewGuid(), Code = code, ExpireDate = DateTime.UtcNow.AddMinutes(10).Ticks };
             var user = new User { Id = confirmCode.UserId, IsEmailConfirm = true };
 
-            _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<ConfirmCode>(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync([confirmCode]);
+            _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<ConfirmCode>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync([confirmCode]);
             _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>()
-                , It.IsAny<object>())).ReturnsAsync([user]);
-            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(1);
+                , It.IsAny<Dictionary<string, object?>>())).ReturnsAsync([user]);
+            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(1);
             _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>()
-                , It.IsAny<object>())).ReturnsAsync(1);
+                , It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(1);
             // Act
             var result = await _service.GetUserEmailFromCodeAndRemoveOld(code);
 

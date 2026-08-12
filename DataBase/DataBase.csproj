@@ -1,9 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net10.0;net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
-    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+	  <!-- Jeśli budujemy serwer w chmurze (w kontenerze Linux), użyj tylko czystego .NET 10 -->
+	  <TargetFrameworks Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">net10.0</TargetFrameworks>
+
+	  <!-- Jeśli budujemy lokalnie na komputerze (w Visual Studio), zostaw wszystkie platformy mobilne -->
+	  <TargetFrameworks Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'">net10.0;net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
+	  <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) and '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
+
+	  <ImplicitUsings>enable</ImplicitUsings>
+      <Nullable>enable</Nullable>
+	  <!-- Nakazuje kompilatorowi zachować właściwości obiektów anonimowych dla refleksji -->
+	  <IlcRootAnonymousTypes>true</IlcRootAnonymousTypes>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
@@ -31,5 +38,8 @@
     <Folder Include="Handler\" />
   </ItemGroup>
 
-
+	<ItemGroup>
+		<TrimmerRootDescriptor Include="Illink.Descriptors.xml" />
+	</ItemGroup>
+	
 </Project>

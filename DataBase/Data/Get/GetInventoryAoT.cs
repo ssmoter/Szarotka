@@ -9,7 +9,7 @@ namespace DataBase.Data.Get
 {
     public interface IGetInventoryAoT
     {
-        Task<IList<Day>> Days<Tparam>(string where, Tparam? args = default);
+        Task<IList<Day>> Days(string where, Dictionary<string, object?>? param = null);
         Task<IList<(ProductName, IList<ProductPrice>)>> EmptyProductsNameAndPrices(bool isDelete = false);
 
         Task<ProductName?> GetProductName(Guid id);
@@ -22,17 +22,17 @@ namespace DataBase.Data.Get
         private readonly IAccessDataBaseAoT _db = db;
 
 
-        public async Task<IList<Day>> Days<Tparam>(string where, Tparam? args = default)
+        public async Task<IList<Day>> Days(string where, Dictionary<string, object?>? param = null)
         {
             var sql = DayQuery.GetFullDaysProcedureWithoutWhere() + where;
             IEnumerable<DayFromQuery> result = [];
-            if (args is null)
+            if (param is null)
             {
                 result = await _db.DbAsyncAoT.QueryAsync<DayFromQuery>(sql);
             }
-            if (args is not null)
+            if (param is not null)
             {
-                result = await _db.DbAsyncAoT.QueryAsync<DayFromQuery>(sql, args!);
+                result = await _db.DbAsyncAoT.QueryAsync<DayFromQuery>(sql, param!);
             }
 
             foreach (DayFromQuery day in result)
@@ -93,7 +93,7 @@ namespace DataBase.Data.Get
 
         public async Task<ProductName?> GetProductName(Guid Id)
         {
-            var result = await _db.DbAsyncAoT.QueryAsync<ProductName>(_sqlGetProductName, new { Id });
+            var result = await _db.DbAsyncAoT.QueryAsync<ProductName>(_sqlGetProductName, new() { [nameof(ProductName.Id)] = Id });
             return result?.FirstOrDefault();
         }
 
@@ -103,7 +103,7 @@ namespace DataBase.Data.Get
         public async Task<IList<ProductPrice>> GetProductPrices(Guid ProductNameId)
         {
 
-            var result = await _db.DbAsyncAoT.QueryAsync<ProductPrice>(_sqlGetProductPrices, new { ProductNameId });
+            var result = await _db.DbAsyncAoT.QueryAsync<ProductPrice>(_sqlGetProductPrices, new() { [nameof(ProductPrice.ProductNameId)] = ProductNameId });
             return [.. result];
         }
 
@@ -112,7 +112,7 @@ namespace DataBase.Data.Get
 
         public async Task<ProductPrice?> GetProductPrice(Guid Id)
         {
-            var result = await _db.DbAsyncAoT.QueryAsync<ProductPrice>(_sqlGetProductPrice, new { Id });
+            var result = await _db.DbAsyncAoT.QueryAsync<ProductPrice>(_sqlGetProductPrice, new() { [nameof(ProductPrice.Id)] = Id });
             return result?.FirstOrDefault();
         }
 

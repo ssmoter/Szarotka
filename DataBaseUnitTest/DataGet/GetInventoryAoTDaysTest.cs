@@ -14,7 +14,7 @@ namespace DataBaseUnitTest.DataGet
 
             var aot = new GetInventoryAoT(db);
 
-            var result = await aot.Days<int>("", default);
+            var result = await aot.Days("");
 
             var expectedJson = System.Text.Json.JsonSerializer.Serialize(expected);
             var resultJson = System.Text.Json.JsonSerializer.Serialize(result);

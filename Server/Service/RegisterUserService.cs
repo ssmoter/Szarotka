@@ -69,19 +69,19 @@ namespace Server.Service
                                                   registerUser.IsEmailConfirm,
                                                   registerUser.Password);
             var task = _db.DbAsyncAoT.ExecuteAsync(query,
-                                                      new
+                                                      new()
                                                       {
-                                                          registerUser.Id,
-                                                          registerUser.CreatedTicks,
-                                                          registerUser.UpdatedTicks,
-                                                          registerUser.Name,
-                                                          registerUser.Description,
-                                                          registerUser.Email,
-                                                          registerUser.PhoneNumber,
-                                                          registerUser.UserType,
-                                                          registerUser.IsDelete,
-                                                          registerUser.IsEmailConfirm,
-                                                          registerUser.Password
+                                                          [nameof(registerUser.Id)] = registerUser.Id,
+                                                          [nameof(registerUser.CreatedTicks)] = registerUser.CreatedTicks,
+                                                          [nameof(registerUser.UpdatedTicks)] = registerUser.UpdatedTicks,
+                                                          [nameof(registerUser.Name)] = registerUser.Name,
+                                                          [nameof(registerUser.Description)] = registerUser.Description,
+                                                          [nameof(registerUser.Email)] = registerUser.Email,
+                                                          [nameof(registerUser.PhoneNumber)] = registerUser.PhoneNumber,
+                                                          [nameof(registerUser.UserType)] = registerUser.UserType,
+                                                          [nameof(registerUser.IsDelete)] = registerUser.IsDelete,
+                                                          [nameof(registerUser.IsEmailConfirm)] = registerUser.IsEmailConfirm,
+                                                          [nameof(registerUser.Password)] = registerUser.Password
                                                       });
 
             await task;
@@ -105,9 +105,16 @@ namespace Server.Service
             var now = _time.UtcNow();
             user.ExpireDate = now.AddMinutes(_emailConfig.ExpireDateMinutes).Ticks;
             var codeOldTaskSql = UserQuery.RemoveExpireCode(now.Ticks);
-            var codeOldTask = _db.DbAsyncAoT.ExecuteAsync(codeOldTaskSql, new { now.AddDays(-7).Ticks });
+            var codeOldTask = _db.DbAsyncAoT.ExecuteAsync(codeOldTaskSql, new() { [nameof(ConfirmCode.ExpireDate)] = now.AddDays(-7).Ticks });
             var codeNewTaskSql = UserQuery.ConfirmCodeInsert(user.CreatedTicks, user.UpdatedTicks, user.UserId, user.Code, user.ExpireDate);
-            var codeNewTask = _db.DbAsyncAoT.ExecuteAsync(codeNewTaskSql, new { user.CreatedTicks, user.UpdatedTicks, user.UserId, user.Code, user.ExpireDate });
+            var codeNewTask = _db.DbAsyncAoT.ExecuteAsync(codeNewTaskSql, new()
+            {
+                [nameof(user.CreatedTicks)] = user.CreatedTicks,
+                [nameof(user.UpdatedTicks)] = user.UpdatedTicks,
+                [nameof(user.UserId)] = user.UserId,
+                [nameof(user.Code)] = user.Code,
+                [nameof(user.ExpireDate)] = user.ExpireDate
+            });
 
             try
             {
@@ -124,7 +131,7 @@ namespace Server.Service
         {
             _logger.LogInformation("GetUserEmailFromCodeAndRemoveOld started for code={Code}", code);
             var sql = UserQuery.CodeConfirmCheck(code);
-            var userEmails = await _db.DbAsyncAoT.QueryAsync<ConfirmCode>(sql, new { Code = code });
+            var userEmails = await _db.DbAsyncAoT.QueryAsync<ConfirmCode>(sql, new() { [nameof(ConfirmCode.Code)] = code });
             var userEmail = userEmails.FirstOrDefault();
 
             _userValidation.CodeNotExist(userEmail);
@@ -144,15 +151,21 @@ namespace Server.Service
                 UserUpdatedId = userEmail.UserId
             };
             var userSql = UserQuery.EmailIsConfirmUpdate(user.IsEmailConfirm, user.UpdatedTicks, user.UserUpdatedId, user.Id);
-            var userTask = _db.DbAsyncAoT.ExecuteAsync(userSql, new { user.IsEmailConfirm, user.UpdatedTicks, user.UserUpdatedId, user.Id });
+            var userTask = _db.DbAsyncAoT.ExecuteAsync(userSql, new()
+            {
+                [nameof(user.IsEmailConfirm)] = user.IsEmailConfirm,
+                [nameof(user.UpdatedTicks)] = user.UpdatedTicks,
+                [nameof(user.UserUpdatedId)] = user.UserUpdatedId,
+                [nameof(user.Id)] = user.Id
+            });
 
             var TicksNow = _time.UtcNow().Ticks;
 
             var codeSql = UserQuery.RemoveExpireCode(TicksNow);
-            var codeTask = _db.DbAsyncAoT.ExecuteAsync(codeSql, new { TicksNow });
+            var codeTask = _db.DbAsyncAoT.ExecuteAsync(codeSql, new() { [nameof(TicksNow)] = TicksNow });
 
             var emailSql = UserQuery.GetEmailFromId(userEmail.UserId);
-            var emailTask = _db.DbAsyncAoT.QueryAsync<User>(emailSql, new { userEmail.UserId });
+            var emailTask = _db.DbAsyncAoT.QueryAsync<User>(emailSql, new() { [nameof(userEmail.UserId)] = userEmail.UserId });
 
             try
             {

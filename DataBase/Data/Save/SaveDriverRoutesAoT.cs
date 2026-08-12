@@ -70,20 +70,20 @@ namespace DataBase.Data.Save
             try
             {
                 _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
-                                                         new
+                                                         new()
                                                          {
-                                                             customerRoutes.Id,
-                                                             customerRoutes.RoutesId,
-                                                             customerRoutes.Name,
-                                                             customerRoutes.Description,
-                                                             customerRoutes.PhoneNumber,
-                                                             customerRoutes.Longitude,
-                                                             customerRoutes.Latitude,
-                                                             customerRoutes.CreatedTicks,
-                                                             customerRoutes.UpdatedTicks,
-                                                             customerRoutes.IsDelete,
-                                                             customerRoutes.UserCreatedId,
-                                                             customerRoutes.UserUpdatedId
+                                                             [nameof(CustomerRoutes.Id)] = customerRoutes.Id,
+                                                             [nameof(CustomerRoutes.RoutesId)] = customerRoutes.RoutesId,
+                                                             [nameof(CustomerRoutes.Name)] = customerRoutes.Name,
+                                                             [nameof(CustomerRoutes.Description)] = customerRoutes.Description,
+                                                             [nameof(CustomerRoutes.PhoneNumber)] = customerRoutes.PhoneNumber,
+                                                             [nameof(CustomerRoutes.Longitude)] = customerRoutes.Longitude,
+                                                             [nameof(CustomerRoutes.Latitude)] = customerRoutes.Latitude,
+                                                             [nameof(CustomerRoutes.CreatedTicks)] = customerRoutes.CreatedTicks,
+                                                             [nameof(CustomerRoutes.UpdatedTicks)] = customerRoutes.UpdatedTicks,
+                                                             [nameof(CustomerRoutes.IsDelete)] = customerRoutes.IsDelete,
+                                                             [nameof(CustomerRoutes.UserCreatedId)] = customerRoutes.UserCreatedId,
+                                                             [nameof(CustomerRoutes.UserUpdatedId)] = customerRoutes.UserUpdatedId
                                                          });
             }
             catch (Exception)
@@ -110,20 +110,20 @@ namespace DataBase.Data.Save
                                       out var userUpdateId,
                                       out var sql);
                     _ = await tx.ExecuteAsync(sql,
-                                         new
+                                         new()
                                          {
-                                             item.Id,
-                                             item.RoutesId,
-                                             item.Name,
-                                             item.Description,
-                                             item.PhoneNumber,
-                                             item.Longitude,
-                                             item.Latitude,
-                                             item.CreatedTicks,
-                                             item.UpdatedTicks,
-                                             item.IsDelete,
-                                             item.UserCreatedId,
-                                             item.UserUpdatedId
+                                             [nameof(CustomerRoutes.Id)] = item.Id,
+                                             [nameof(CustomerRoutes.RoutesId)] = item.RoutesId,
+                                             [nameof(CustomerRoutes.Name)] = item.Name,
+                                             [nameof(CustomerRoutes.Description)] = item.Description,
+                                             [nameof(CustomerRoutes.PhoneNumber)] = item.PhoneNumber,
+                                             [nameof(CustomerRoutes.Longitude)] = item.Longitude,
+                                             [nameof(CustomerRoutes.Latitude)] = item.Latitude,
+                                             [nameof(CustomerRoutes.CreatedTicks)] = item.CreatedTicks,
+                                             [nameof(CustomerRoutes.UpdatedTicks)] = item.UpdatedTicks,
+                                             [nameof(CustomerRoutes.IsDelete)] = item.IsDelete,
+                                             [nameof(CustomerRoutes.UserCreatedId)] = item.UserCreatedId,
+                                             [nameof(CustomerRoutes.UserUpdatedId)] = item.UserUpdatedId
                                          });
                     await SaveResidentialAddressTransaction(item.ResidentialAddress, driverId, isServer);
                     await SaveSelectedDayOfWeekRoutesTransaction(item.DayOfWeek, driverId, isServer);
@@ -148,23 +148,23 @@ namespace DataBase.Data.Save
                 try
                 {
                     _ = await tx.ExecuteAsync(sql,
-                                     new
+                                     new()
                                      {
-                                         residentialAddress.Id,
-                                         residentialAddress.CustomerId,
-                                         residentialAddress.Name,
-                                         residentialAddress.Surname,
-                                         residentialAddress.Street,
-                                         residentialAddress.HouseNumber,
-                                         residentialAddress.ApartmentNumber,
-                                         residentialAddress.PostalCode,
-                                         residentialAddress.City,
-                                         residentialAddress.Country,
-                                         residentialAddress.CreatedTicks,
-                                         residentialAddress.UpdatedTicks,
-                                         residentialAddress.IsDelete,
-                                         residentialAddress.UserCreatedId,
-                                         residentialAddress.UserUpdatedId
+                                         [nameof(ResidentialAddress.Id)] = residentialAddress.Id,
+                                         [nameof(ResidentialAddress.CustomerId)] = residentialAddress.CustomerId,
+                                         [nameof(ResidentialAddress.Name)] = residentialAddress.Name,
+                                         [nameof(ResidentialAddress.Surname)] = residentialAddress.Surname,
+                                         [nameof(ResidentialAddress.Street)] = residentialAddress.Street,
+                                         [nameof(ResidentialAddress.HouseNumber)] = residentialAddress.HouseNumber,
+                                         [nameof(ResidentialAddress.ApartmentNumber)] = residentialAddress.ApartmentNumber,
+                                         [nameof(ResidentialAddress.PostalCode)] = residentialAddress.PostalCode,
+                                         [nameof(ResidentialAddress.City)] = residentialAddress.City,
+                                         [nameof(ResidentialAddress.Country)] = residentialAddress.Country,
+                                         [nameof(ResidentialAddress.CreatedTicks)] = residentialAddress.CreatedTicks,
+                                         [nameof(ResidentialAddress.UpdatedTicks)] = residentialAddress.UpdatedTicks,
+                                         [nameof(ResidentialAddress.IsDelete)] = residentialAddress.IsDelete,
+                                         [nameof(ResidentialAddress.UserCreatedId)] = residentialAddress.UserCreatedId,
+                                         [nameof(ResidentialAddress.UserUpdatedId)] = residentialAddress.UserUpdatedId
                                      });
                 }
                 catch (Exception)
@@ -184,30 +184,30 @@ namespace DataBase.Data.Save
                 try
                 {
                     _ = await tx.ExecuteAsync(sql,
-                                                new
+                                                new()
                                                 {
-                                                    selectedDayOfWeek.Id,
-                                                    selectedDayOfWeek.CustomerId,
-                                                    selectedDayOfWeek.Sunday,
-                                                    selectedDayOfWeek.SundayTicks,
-                                                    selectedDayOfWeek.Monday,
-                                                    selectedDayOfWeek.MondayTicks,
-                                                    selectedDayOfWeek.Tuesday,
-                                                    selectedDayOfWeek.TuesdayTicks,
-                                                    selectedDayOfWeek.Wednesday,
-                                                    selectedDayOfWeek.WednesdayTicks,
-                                                    selectedDayOfWeek.Thursday,
-                                                    selectedDayOfWeek.ThursdayTicks,
-                                                    selectedDayOfWeek.Friday,
-                                                    selectedDayOfWeek.FridayTicks,
-                                                    selectedDayOfWeek.Saturday,
-                                                    selectedDayOfWeek.SaturdayTicks,
-                                                    selectedDayOfWeek.Optional,
-                                                    selectedDayOfWeek.CreatedTicks,
-                                                    selectedDayOfWeek.UpdatedTicks,
-                                                    selectedDayOfWeek.IsDelete,
-                                                    selectedDayOfWeek.UserCreatedId,
-                                                    selectedDayOfWeek.UserUpdatedId
+                                                    [nameof(SelectedDayOfWeekRoutes.Id)] = selectedDayOfWeek.Id,
+                                                    [nameof(SelectedDayOfWeekRoutes.CustomerId)] = selectedDayOfWeek.CustomerId,
+                                                    [nameof(SelectedDayOfWeekRoutes.Sunday)] = selectedDayOfWeek.Sunday,
+                                                    [nameof(SelectedDayOfWeekRoutes.SundayTicks)] = selectedDayOfWeek.SundayTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.Monday)] = selectedDayOfWeek.Monday,
+                                                    [nameof(SelectedDayOfWeekRoutes.MondayTicks)] = selectedDayOfWeek.MondayTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.Tuesday)] = selectedDayOfWeek.Tuesday,
+                                                    [nameof(SelectedDayOfWeekRoutes.TuesdayTicks)] = selectedDayOfWeek.TuesdayTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.Wednesday)] = selectedDayOfWeek.Wednesday,
+                                                    [nameof(SelectedDayOfWeekRoutes.WednesdayTicks)] = selectedDayOfWeek.WednesdayTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.Thursday)] = selectedDayOfWeek.Thursday,
+                                                    [nameof(SelectedDayOfWeekRoutes.ThursdayTicks)] = selectedDayOfWeek.ThursdayTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.Friday)] = selectedDayOfWeek.Friday,
+                                                    [nameof(SelectedDayOfWeekRoutes.FridayTicks)] = selectedDayOfWeek.FridayTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.Saturday)] = selectedDayOfWeek.Saturday,
+                                                    [nameof(SelectedDayOfWeekRoutes.SaturdayTicks)] = selectedDayOfWeek.SaturdayTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.Optional)] = selectedDayOfWeek.Optional,
+                                                    [nameof(SelectedDayOfWeekRoutes.CreatedTicks)] = selectedDayOfWeek.CreatedTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.UpdatedTicks)] = selectedDayOfWeek.UpdatedTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.IsDelete)] = selectedDayOfWeek.IsDelete,
+                                                    [nameof(SelectedDayOfWeekRoutes.UserCreatedId)] = selectedDayOfWeek.UserCreatedId,
+                                                    [nameof(SelectedDayOfWeekRoutes.UserUpdatedId)] = selectedDayOfWeek.UserUpdatedId
                                                 });
                 }
                 catch (Exception)
@@ -227,23 +227,23 @@ namespace DataBase.Data.Save
             try
             {
                 _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
-                                                         new
+                                                         new()
                                                          {
-                                                             residentialAddress.Id,
-                                                             residentialAddress.CustomerId,
-                                                             residentialAddress.Name,
-                                                             residentialAddress.Surname,
-                                                             residentialAddress.Street,
-                                                             residentialAddress.HouseNumber,
-                                                             residentialAddress.ApartmentNumber,
-                                                             residentialAddress.PostalCode,
-                                                             residentialAddress.City,
-                                                             residentialAddress.Country,
-                                                             residentialAddress.CreatedTicks,
-                                                             residentialAddress.UpdatedTicks,
-                                                             residentialAddress.IsDelete,
-                                                             residentialAddress.UserCreatedId,
-                                                             residentialAddress.UserUpdatedId
+                                                             [nameof(ResidentialAddress.Id)] = residentialAddress.Id,
+                                                             [nameof(ResidentialAddress.CustomerId)] = residentialAddress.CustomerId,
+                                                             [nameof(ResidentialAddress.Name)] = residentialAddress.Name,
+                                                             [nameof(ResidentialAddress.Surname)] = residentialAddress.Surname,
+                                                             [nameof(ResidentialAddress.Street)] = residentialAddress.Street,
+                                                             [nameof(ResidentialAddress.HouseNumber)] = residentialAddress.HouseNumber,
+                                                             [nameof(ResidentialAddress.ApartmentNumber)] = residentialAddress.ApartmentNumber,
+                                                             [nameof(ResidentialAddress.PostalCode)] = residentialAddress.PostalCode,
+                                                             [nameof(ResidentialAddress.City)] = residentialAddress.City,
+                                                             [nameof(ResidentialAddress.Country)] = residentialAddress.Country,
+                                                             [nameof(ResidentialAddress.CreatedTicks)] = residentialAddress.CreatedTicks,
+                                                             [nameof(ResidentialAddress.UpdatedTicks)] = residentialAddress.UpdatedTicks,
+                                                             [nameof(ResidentialAddress.IsDelete)] = residentialAddress.IsDelete,
+                                                             [nameof(ResidentialAddress.UserCreatedId)] = residentialAddress.UserCreatedId,
+                                                             [nameof(ResidentialAddress.UserUpdatedId)] = residentialAddress.UserUpdatedId
                                                          });
             }
             catch (Exception)
@@ -259,15 +259,15 @@ namespace DataBase.Data.Save
             try
             {
                 _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
-                                               new
+                                               new()
                                                {
-                                                   routes.Id,
-                                                   routes.Name,
-                                                   routes.CreatedTicks,
-                                                   routes.UpdatedTicks,
-                                                   routes.IsDelete,
-                                                   routes.UserCreatedId,
-                                                   routes.UserUpdatedId
+                                                   [nameof(Routes.Id)] = routes.Id,
+                                                   [nameof(Routes.Name)] = routes.Name,
+                                                   [nameof(Routes.CreatedTicks)] = routes.CreatedTicks,
+                                                   [nameof(Routes.UpdatedTicks)] = routes.UpdatedTicks,
+                                                   [nameof(Routes.IsDelete)] = routes.IsDelete,
+                                                   [nameof(Routes.UserCreatedId)] = routes.UserCreatedId,
+                                                   [nameof(Routes.UserUpdatedId)] = routes.UserUpdatedId
                                                });
             }
             catch (Exception)
@@ -288,30 +288,30 @@ namespace DataBase.Data.Save
             try
             {
                 _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
-                                                         new
+                                                         new()
                                                          {
-                                                             selectedDayOfWeek.Id,
-                                                             selectedDayOfWeek.CustomerId,
-                                                             selectedDayOfWeek.Sunday,
-                                                             selectedDayOfWeek.SundayTicks,
-                                                             selectedDayOfWeek.Monday,
-                                                             selectedDayOfWeek.MondayTicks,
-                                                             selectedDayOfWeek.Tuesday,
-                                                             selectedDayOfWeek.TuesdayTicks,
-                                                             selectedDayOfWeek.Wednesday,
-                                                             selectedDayOfWeek.WednesdayTicks,
-                                                             selectedDayOfWeek.Thursday,
-                                                             selectedDayOfWeek.ThursdayTicks,
-                                                             selectedDayOfWeek.Friday,
-                                                             selectedDayOfWeek.FridayTicks,
-                                                             selectedDayOfWeek.Saturday,
-                                                             selectedDayOfWeek.SaturdayTicks,
-                                                             selectedDayOfWeek.Optional,
-                                                             selectedDayOfWeek.CreatedTicks,
-                                                             selectedDayOfWeek.UpdatedTicks,
-                                                             selectedDayOfWeek.IsDelete,
-                                                             selectedDayOfWeek.UserCreatedId,
-                                                             selectedDayOfWeek.UserUpdatedId
+                                                             [nameof(SelectedDayOfWeekRoutes.Id)] = selectedDayOfWeek.Id,
+                                                             [nameof(SelectedDayOfWeekRoutes.CustomerId)] = selectedDayOfWeek.CustomerId,
+                                                             [nameof(SelectedDayOfWeekRoutes.Sunday)] = selectedDayOfWeek.Sunday,
+                                                             [nameof(SelectedDayOfWeekRoutes.SundayTicks)] = selectedDayOfWeek.SundayTicks,
+                                                             [nameof(SelectedDayOfWeekRoutes.Monday)] = selectedDayOfWeek.Monday,
+                                                             [nameof(SelectedDayOfWeekRoutes.MondayTicks)] = selectedDayOfWeek.MondayTicks,
+                                                             [nameof(SelectedDayOfWeekRoutes.Tuesday)] = selectedDayOfWeek.Tuesday,
+                                                             [nameof(SelectedDayOfWeekRoutes.TuesdayTicks)] = selectedDayOfWeek.TuesdayTicks,
+                                                             [nameof(SelectedDayOfWeekRoutes.Wednesday)] = selectedDayOfWeek.Wednesday,
+                                                             [nameof(SelectedDayOfWeekRoutes.WednesdayTicks)] = selectedDayOfWeek.WednesdayTicks,
+                                                             [nameof(SelectedDayOfWeekRoutes.Thursday)] = selectedDayOfWeek.Thursday,
+                                                             [nameof(SelectedDayOfWeekRoutes.ThursdayTicks)] = selectedDayOfWeek.ThursdayTicks,
+                                                             [nameof(SelectedDayOfWeekRoutes.Friday)] = selectedDayOfWeek.Friday,
+                                                             [nameof(SelectedDayOfWeekRoutes.FridayTicks)] = selectedDayOfWeek.FridayTicks,
+                                                             [nameof(SelectedDayOfWeekRoutes.Saturday)] = selectedDayOfWeek.Saturday,
+                                                             [nameof(SelectedDayOfWeekRoutes.SaturdayTicks)] = selectedDayOfWeek.SaturdayTicks,
+                                                             [nameof(SelectedDayOfWeekRoutes.Optional)] = selectedDayOfWeek.Optional,
+                                                             [nameof(SelectedDayOfWeekRoutes.CreatedTicks)] = selectedDayOfWeek.CreatedTicks,
+                                                             [nameof(SelectedDayOfWeekRoutes.UpdatedTicks)] = selectedDayOfWeek.UpdatedTicks,
+                                                             [nameof(SelectedDayOfWeekRoutes.IsDelete)] = selectedDayOfWeek.IsDelete,
+                                                             [nameof(SelectedDayOfWeekRoutes.UserCreatedId)] = selectedDayOfWeek.UserCreatedId,
+                                                             [nameof(SelectedDayOfWeekRoutes.UserUpdatedId)] = selectedDayOfWeek.UserUpdatedId
                                                          });
             }
             catch (Exception)
@@ -339,30 +339,30 @@ namespace DataBase.Data.Save
                             out var sql);
 
                     _ = await tx.ExecuteAsync(sql,
-                                                new
+                                                new()
                                                 {
-                                                    item.Id,
-                                                    item.CustomerId,
-                                                    item.Sunday,
-                                                    item.SundayTicks,
-                                                    item.Monday,
-                                                    item.MondayTicks,
-                                                    item.Tuesday,
-                                                    item.TuesdayTicks,
-                                                    item.Wednesday,
-                                                    item.WednesdayTicks,
-                                                    item.Thursday,
-                                                    item.ThursdayTicks,
-                                                    item.Friday,
-                                                    item.FridayTicks,
-                                                    item.Saturday,
-                                                    item.SaturdayTicks,
-                                                    item.Optional,
-                                                    item.CreatedTicks,
-                                                    item.UpdatedTicks,
-                                                    item.IsDelete,
-                                                    item.UserCreatedId,
-                                                    item.UserUpdatedId
+                                                    [nameof(SelectedDayOfWeekRoutes.Id)] = item.Id,
+                                                    [nameof(SelectedDayOfWeekRoutes.CustomerId)] = item.CustomerId,
+                                                    [nameof(SelectedDayOfWeekRoutes.Sunday)] = item.Sunday,
+                                                    [nameof(SelectedDayOfWeekRoutes.SundayTicks)] = item.SundayTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.Monday)] = item.Monday,
+                                                    [nameof(SelectedDayOfWeekRoutes.MondayTicks)] = item.MondayTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.Tuesday)] = item.Tuesday,
+                                                    [nameof(SelectedDayOfWeekRoutes.TuesdayTicks)] = item.TuesdayTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.Wednesday)] = item.Wednesday,
+                                                    [nameof(SelectedDayOfWeekRoutes.WednesdayTicks)] = item.WednesdayTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.Thursday)] = item.Thursday,
+                                                    [nameof(SelectedDayOfWeekRoutes.ThursdayTicks)] = item.ThursdayTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.Friday)] = item.Friday,
+                                                    [nameof(SelectedDayOfWeekRoutes.FridayTicks)] = item.FridayTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.Saturday)] = item.Saturday,
+                                                    [nameof(SelectedDayOfWeekRoutes.SaturdayTicks)] = item.SaturdayTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.Optional)] = item.Optional,
+                                                    [nameof(SelectedDayOfWeekRoutes.CreatedTicks)] = item.CreatedTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.UpdatedTicks)] = item.UpdatedTicks,
+                                                    [nameof(SelectedDayOfWeekRoutes.IsDelete)] = item.IsDelete,
+                                                    [nameof(SelectedDayOfWeekRoutes.UserCreatedId)] = item.UserCreatedId,
+                                                    [nameof(SelectedDayOfWeekRoutes.UserUpdatedId)] = item.UserUpdatedId
                                                 });
 
                 }

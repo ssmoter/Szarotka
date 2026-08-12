@@ -27,14 +27,14 @@ namespace ServerUnitTest.Service
             // Arrange
             var user = new User { Name = "OldName" };
             _mockTimeService.Setup(ts => ts.UtcNow()).Returns(DateTime.UtcNow);
-            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(1);
+            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(1);
 
             // Act
             await _editUserService.UpdateName(user);
 
             // Assert
             _mockTimeService.Verify(ts => ts.UtcNow(), Times.Once);
-            _mockDb.Verify(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
+            _mockDb.Verify(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()), Times.Once);
         }
 
         [Fact]
@@ -43,14 +43,14 @@ namespace ServerUnitTest.Service
             // Arrange
             var user = new User { Description = "OldDescription" };
             _mockTimeService.Setup(ts => ts.UtcNow()).Returns(DateTime.UtcNow);
-            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(1);
+            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(1);
 
             // Act
             await _editUserService.UpdateDescription(user);
 
             // Assert
             _mockTimeService.Verify(ts => ts.UtcNow(), Times.Once);
-            _mockDb.Verify(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
+            _mockDb.Verify(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()), Times.Once);
         }
 
         [Fact]
@@ -59,14 +59,14 @@ namespace ServerUnitTest.Service
             // Arrange
             var user = new User { Email = "old@example.com" };
             _mockTimeService.Setup(ts => ts.UtcNow()).Returns(DateTime.UtcNow);
-            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(1);
+            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(1);
 
             // Act
             await _editUserService.UpdateEmail(user);
 
             // Assert
             _mockTimeService.Verify(ts => ts.UtcNow(), Times.Once);
-            _mockDb.Verify(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
+            _mockDb.Verify(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()), Times.Once);
         }
 
         [Fact]
@@ -75,14 +75,14 @@ namespace ServerUnitTest.Service
             // Arrange
             var user = new User { PhoneNumber = "1234567890" };
             _mockTimeService.Setup(ts => ts.UtcNow()).Returns(DateTime.UtcNow);
-            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(1);
+            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(1);
 
             // Act
             await _editUserService.UpdatePhoneNumber(user);
 
             // Assert
             _mockTimeService.Verify(ts => ts.UtcNow(), Times.Once);
-            _mockDb.Verify(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
+            _mockDb.Verify(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()), Times.Once);
         }
 
         [Fact]
@@ -91,14 +91,14 @@ namespace ServerUnitTest.Service
             // Arrange
             var user = new User { UserType = UserType.Driver };
             _mockTimeService.Setup(ts => ts.UtcNow()).Returns(DateTime.UtcNow);
-            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(1);
+            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(1);
 
             // Act
             await _editUserService.UpdateUserType(user);
 
             // Assert
             _mockTimeService.Verify(ts => ts.UtcNow(), Times.Once);
-            _mockDb.Verify(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
+            _mockDb.Verify(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()), Times.Once);
         }
 
     }

@@ -29,7 +29,13 @@ namespace Server.Service
             var sql = SqlQuery.UserQuery.UpdateName(user.Name, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             try
             {
-                await _db.DbAsyncAoT.ExecuteAsync(sql, new { user.Name, user.UpdatedTicks, user.UserUpdatedId, user.Id });
+                await _db.DbAsyncAoT.ExecuteAsync(sql, new()
+                {
+                    [nameof(user.Name)] = user.Name,
+                    [nameof(user.UpdatedTicks)] = user.UpdatedTicks,
+                    [nameof(user.UserUpdatedId)] = user.UserUpdatedId,
+                    [nameof(user.Id)] = user.Id
+                });
                 _logger.LogInformation("UpdateName succeeded for userId={UserId}", user.Id);
             }
             catch (Exception ex)
@@ -46,7 +52,13 @@ namespace Server.Service
             var sql = SqlQuery.UserQuery.UpdateDescription(user.Description, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             try
             {
-                await _db.DbAsyncAoT.ExecuteAsync(sql, new { user.Description, user.UpdatedTicks, user.UserUpdatedId, user.Id });
+                await _db.DbAsyncAoT.ExecuteAsync(sql, new()
+                {
+                    [nameof(user.Description)] = user.Description,
+                    [nameof(user.UpdatedTicks)] = user.UpdatedTicks,
+                    [nameof(user.UserUpdatedId)] = user.UserUpdatedId,
+                    [nameof(user.Id)] = user.Id
+                 });
                 _logger.LogInformation("UpdateDescription succeeded for userId={UserId}", user.Id);
             }
             catch (Exception ex)
@@ -63,7 +75,13 @@ namespace Server.Service
             var sql = SqlQuery.UserQuery.UpdateEmail(user.Email, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             try
             {
-                await _db.DbAsyncAoT.ExecuteAsync(sql, new { user.Email, user.UpdatedTicks, user.UserUpdatedId, user.Id });
+                await _db.DbAsyncAoT.ExecuteAsync(sql, new()
+                {
+                    [nameof(user.Email)] = user.Email,
+                    [nameof(user.UpdatedTicks)] = user.UpdatedTicks,
+                    [nameof(user.UserUpdatedId)] = user.UserUpdatedId,
+                    [nameof(user.Id)] = user.Id
+                });
                 _logger.LogInformation("UpdateEmail succeeded for userId={UserId}", user.Id);
             }
             catch (Exception ex)
@@ -80,7 +98,13 @@ namespace Server.Service
             var sql = SqlQuery.UserQuery.UpdatePhoneNumber(user.PhoneNumber, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             try
             {
-                await _db.DbAsyncAoT.ExecuteAsync(sql, new { user.PhoneNumber, user.UpdatedTicks, user.UserUpdatedId, user.Id });
+                await _db.DbAsyncAoT.ExecuteAsync(sql, new()
+                {
+                    [nameof(user.PhoneNumber)] = user.PhoneNumber,
+                    [nameof(user.UpdatedTicks)] = user.UpdatedTicks,
+                    [nameof(user.UserUpdatedId)] = user.UserUpdatedId,
+                    [nameof(user.Id)] = user.Id
+                });
                 _logger.LogInformation("UpdatePhoneNumber succeeded for userId={UserId}", user.Id);
             }
             catch (Exception ex)
@@ -97,7 +121,13 @@ namespace Server.Service
             var sql = SqlQuery.UserQuery.UpdateUserType(user.UserType, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             try
             {
-                await _db.DbAsyncAoT.ExecuteAsync(sql, new { user.UserType, user.UpdatedTicks, user.UserUpdatedId, user.Id });
+                await _db.DbAsyncAoT.ExecuteAsync(sql, new()
+                {
+                    [nameof(user.UserType)] = user.UserType,
+                    [nameof(user.UpdatedTicks)] = user.UpdatedTicks,
+                    [nameof(user.UserUpdatedId)] = user.UserUpdatedId,
+                    [nameof(user.Id)] = user.Id
+                });
                 _logger.LogInformation("UpdateUserType succeeded for userId={UserId}", user.Id);
             }
             catch (Exception ex)

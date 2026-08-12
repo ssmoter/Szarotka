@@ -17,7 +17,7 @@ namespace DataBase.Data.Get
 
             var where = $"WHERE {nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.Id)} = @{nameof(Id)}";
 
-            var result = await get.Days(where, new { Id });
+            var result = await get.Days(where, new() { [nameof(Id)] = Id });
 
             return result?.FirstOrDefault();
         }
@@ -35,7 +35,11 @@ WHERE
 AND
 {nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.UserCreatedId)} = @{nameof(UserId)}";
 
-            var result = await get.Days(where, new { selectedDateString, UserId });
+            var result = await get.Days(where, new()
+            {
+                [nameof(selectedDateString)] = selectedDateString,
+                [nameof(UserId)] = UserId
+            });
             return result?.FirstOrDefault();
         }
 
@@ -52,7 +56,7 @@ AND
                 where.AppendLine($" {nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.SelectedDateTicks)} >= @{nameof(from)} AND {nameof(Model.EntitiesInventory.Day)}.{nameof(Model.EntitiesInventory.Day.SelectedDateTicks)} <= @{nameof(to)} ");
             }
 
-            string jsonUserIds = JsonSerializer.Serialize(userIds,SzarotkaJsonSerializerContext.Default.IListGuid);
+            string jsonUserIds = JsonSerializer.Serialize(userIds, SzarotkaJsonSerializerContext.Default.IListGuid);
             if (userIds.Count > 0)
             {
                 if (to > 0)
@@ -72,21 +76,20 @@ AND
                 where.Append(')');
             }
 
-            object? args = null!;
+            Dictionary<string, object?>? args = null!;
 
             if (to > 0)
             {
-                args = new { from, to };
+                args = new() { [nameof(from)] = from, [nameof(to)] = to };
             }
             if (userIds.Count > 0)
             {
-                args = new { jsonUserIds };
+                args = new() { [nameof(jsonUserIds)] = jsonUserIds };
             }
             if (to > 0 && userIds.Count > 0)
             {
-                args = new { from, to, jsonUserIds };
+                args = new() { [nameof(from)] = from, [nameof(to)] = to, [nameof(jsonUserIds)] = jsonUserIds };
             }
-
             var result = await get.Days(where.ToString(), args);
             return result;
         }

@@ -29,6 +29,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7BE2E425
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SzarotkaNET10", "SzarotkaNET10\SzarotkaNET10.csproj", "{2F7B54E9-20F8-8DD8-9043-BA06D6C3A00F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementy rozwiązania", "Elementy rozwiązania", "{5AC65FB2-B9BE-4D2D-B953-A3873CFFC600}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		Dockerfile = Dockerfile
+		wdroz.ps1 = wdroz.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -179,12 +186,14 @@ Global
 		{8E871742-9A0A-4795-AAED-C65B9C1EA424}.Release|x86.Build.0 = Release|Any CPU
 		{2F7B54E9-20F8-8DD8-9043-BA06D6C3A00F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2F7B54E9-20F8-8DD8-9043-BA06D6C3A00F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F7B54E9-20F8-8DD8-9043-BA06D6C3A00F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{2F7B54E9-20F8-8DD8-9043-BA06D6C3A00F}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{2F7B54E9-20F8-8DD8-9043-BA06D6C3A00F}.Debug|x64.Build.0 = Debug|Any CPU
 		{2F7B54E9-20F8-8DD8-9043-BA06D6C3A00F}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{2F7B54E9-20F8-8DD8-9043-BA06D6C3A00F}.Debug|x86.Build.0 = Debug|Any CPU
 		{2F7B54E9-20F8-8DD8-9043-BA06D6C3A00F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F7B54E9-20F8-8DD8-9043-BA06D6C3A00F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F7B54E9-20F8-8DD8-9043-BA06D6C3A00F}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{2F7B54E9-20F8-8DD8-9043-BA06D6C3A00F}.Release|x64.ActiveCfg = Release|Any CPU
 		{2F7B54E9-20F8-8DD8-9043-BA06D6C3A00F}.Release|x64.Build.0 = Release|Any CPU
 		{2F7B54E9-20F8-8DD8-9043-BA06D6C3A00F}.Release|x86.ActiveCfg = Release|Any CPU

@@ -8,9 +8,9 @@ namespace DataBase.Data.MySqliteConnection
     {
         void BackupDatabase(SqliteConnection destination);
         IMyDbTransaction BeginTransaction();
-        int Execute(string sql, object? param);
+        int Execute(string sql, Dictionary<string, object?> param);
         int Execute(string sql);
-        IEnumerable<T> Query<T>(string sql, object? param);
+        IEnumerable<T> Query<T>(string sql, Dictionary<string, object?> param);
         IEnumerable<T> Query<T>(string sql);
     }
     public class MyDbConnection : IMyDbConnection
@@ -22,7 +22,7 @@ namespace DataBase.Data.MySqliteConnection
             _connectionFactory = connectionFactory;
         }
         // 1. WERSJA Z PARAMETRAMI (Dla zapytań typu: _db.Query<Model>(sql, new { Id }))
-        public IEnumerable<T> Query<T>(string sql, object? param)
+        public IEnumerable<T> Query<T>(string sql, Dictionary<string, object?> param)
         {
             var results = new List<T>();
             // Pobieramy Twój własny, rozbity na pliki mapper z rejestru DbMappers
@@ -69,7 +69,7 @@ namespace DataBase.Data.MySqliteConnection
             // Przekierowujemy do metody z parametrami, podając pusty obiekt jako TParam
             return Query<T>(sql, null!);
         }
-        public int Execute(string sql, object? param)
+        public int Execute(string sql, Dictionary<string, object?> param)
         {
             using var connection = _connectionFactory.CreateConnection();
             connection.Open();

@@ -46,7 +46,10 @@ namespace Server.Service
             var result = DataBase.Helper.ReadToken.GetUserFromToken(token);
             var id = result.user.Id.ToString();
             var sql = LoginQuery.InFromId(id);
-            var users = await _db.DbAsyncAoT.QueryAsync<User>(sql, new { Id = id });
+            var users = await _db.DbAsyncAoT.QueryAsync<User>(sql, new()
+            {
+                [nameof(id)] = id
+            });
             var user = users.FirstOrDefault();
 
             if (user is null)

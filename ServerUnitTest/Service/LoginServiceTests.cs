@@ -36,7 +36,7 @@ namespace ServerUnitTest.Service
             var hashedPassword = Hash.PasswordSHA256(loginUser.Password);
             var user = new User { Id = Guid.NewGuid(), Email = loginUser.Email, RememberMe = false };
 
-            _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<object>()))
+            _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()))
                    .ReturnsAsync([user]);
 
             _mockUserValidation.Setup(v => v.AccountNotFound(It.IsAny<User>()));
@@ -51,7 +51,7 @@ namespace ServerUnitTest.Service
             // Assert
             Assert.NotNull(result);
             Assert.Equal(loginUser.Email, result.Email);
-            _mockDb.Verify(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
+            _mockDb.Verify(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()), Times.Once);
             _mockUserValidation.Verify(v => v.AccountNotFound(It.IsAny<User>()), Times.Once);
         }
 
@@ -62,7 +62,7 @@ namespace ServerUnitTest.Service
             var loginUser = new LoginUser { Email = "test@example.com", Password = "password" };
             var hashedPassword = Hash.PasswordSHA256(loginUser.Password);
 
-            _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<object>()))
+            _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()))
                    .ReturnsAsync([]);
 
             _mockUserValidation.Setup(v => v.AccountNotFound(null))
@@ -70,7 +70,7 @@ namespace ServerUnitTest.Service
 
             // Act & Assert
             await Assert.ThrowsAsync<Exception>(() => _loginService.LogIn(loginUser));
-            _mockDb.Verify(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
+            _mockDb.Verify(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()), Times.Once);
             _mockUserValidation.Verify(v => v.AccountNotFound(null), Times.Once);
         }
 
@@ -95,7 +95,7 @@ namespace ServerUnitTest.Service
             var user = new User { Id = Guid.NewGuid(), Name = "Test User" };
             var users = new List<User> { user };
 
-            _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(users);
+            _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(users);
 
             // Act
             var result = await _loginService.GetPublicUser(userId);
@@ -113,7 +113,7 @@ namespace ServerUnitTest.Service
             var userId = "test-id";
             var users = new List<User>();
 
-            _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(users);
+            _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(users);
 
             // Act & Assert
             await Assert.ThrowsAsync<ArgumentNullException>(() => _loginService.GetPublicUser(userId));

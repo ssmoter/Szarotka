@@ -6,8 +6,8 @@ namespace DataBase.Data.MySqliteConnection;
 
 public interface IMyDbAsyncTransaction : IAsyncDisposable, IDisposable
 {
-    Task<int> ExecuteAsync(string sql, object? param = null);
-    Task<IEnumerable<T>> QueryAsync<T>(string sql, object? param = null);
+    Task<int> ExecuteAsync(string sql, Dictionary<string, object?> param = null);
+    Task<IEnumerable<T>> QueryAsync<T>(string sql, Dictionary<string, object?> param = null);
     Task CommitAsync();
     Task RollbackAsync();
 }
@@ -24,7 +24,7 @@ public class MyDbAsyncTransaction : IMyDbAsyncTransaction
         _transaction = transaction;
     }
 
-    public async Task<int> ExecuteAsync(string sql, object? param = null)
+    public async Task<int> ExecuteAsync(string sql, Dictionary<string, object?> param)
     {
         if (_transaction == null) throw new InvalidOperationException("Transaction closed.");
 
@@ -37,7 +37,7 @@ public class MyDbAsyncTransaction : IMyDbAsyncTransaction
         return await command.ExecuteNonQueryAsync();
     }
 
-    public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object? param = null)
+    public async Task<IEnumerable<T>> QueryAsync<T>(string sql, Dictionary<string, object?> param)
     {
         if (_transaction == null) throw new InvalidOperationException("Transaction closed.");
 

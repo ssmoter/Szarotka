@@ -8,7 +8,7 @@ namespace DataBase.Data.Get
 {
     public interface IGetDriverRoutesAoT
     {
-        Task<IList<CustomerRoutes>> CustomerRoutes(string where, object? args);
+        Task<IList<CustomerRoutes>> CustomerRoutes(string where, Dictionary<string, object?>? param = null);
         Task<IList<Routes>> Routes();
     }
 
@@ -16,20 +16,20 @@ namespace DataBase.Data.Get
     {
         private readonly IAccessDataBaseAoT _db = db;
 
-        public async Task<IList<CustomerRoutes>> CustomerRoutes(string where, object? args)
+        public async Task<IList<CustomerRoutes>> CustomerRoutes(string where, Dictionary<string, object?>? param = null)
         {
             var sb = new StringBuilder();
             sb.AppendLine(CustomerRoutesQuery.GetFullProcedureWithoutWhere());
             sb.AppendLine(where);
             var sql = sb.ToString();
             IEnumerable<CustomerRoutesFromQuery> result = [];
-            if (args is null)
+            if (param is null)
             {
                 result = await _db.DbAsyncAoT.QueryAsync<CustomerRoutesFromQuery>(sql);
             }
             else
             {
-                result = await _db.DbAsyncAoT.QueryAsync<CustomerRoutesFromQuery>(sql, args);
+                result = await _db.DbAsyncAoT.QueryAsync<CustomerRoutesFromQuery>(sql, param!);
             }
 
             foreach (CustomerRoutesFromQuery item in result)

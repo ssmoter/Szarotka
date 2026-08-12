@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<linker>
+	<!-- Podmień "NazwaTwojejBibliotekiDB" na dokładną nazwę projektu/DLL tej biblioteki -->
+	<assembly fullname="DataBase">
+		<type fullname="*&lt;&gt;f__AnonymousType*" preserve="all" />
+	</assembly>
+	<!-- 2. Chronimy całą bibliotekę SQLite przed agresywnym wycinaniem kodu -->
+	<assembly fullname="Microsoft.Data.Sqlite" preserve="all" />
+</linker>
+

@@ -107,15 +107,15 @@ namespace Shared.Data
                                                                             item.IsDelete,
                                                                             item.UserCreatedId,
                                                                             item.UserUpdatedId);
-                await _db.DbAsyncAoT.ExecuteAsync(sql, new
+                await _db.DbAsyncAoT.ExecuteAsync(sql, new()
                 {
-                    item.Id,
-                    item.Name,
-                    item.CreatedTicks,
-                    item.UpdatedTicks,
-                    item.IsDelete,
-                    item.UserCreatedId,
-                    item.UserUpdatedId
+                    [nameof(item.Id)] = item.Id,
+                    [nameof(item.Name)] = item.Name,
+                    [nameof(item.CreatedTicks)] = item.CreatedTicks,
+                    [nameof(item.UpdatedTicks)] = item.UpdatedTicks,
+                    [nameof(item.IsDelete)] = item.IsDelete,
+                    [nameof(item.UserCreatedId)] = item.UserCreatedId,
+                    [nameof(item.UserUpdatedId)] = item.UserUpdatedId
                 });
             }
         }

@@ -196,7 +196,7 @@ namespace ServerUnitTest.Requests
         private void CreatedNewTokenSetup(User user)
         {
             _mockAuthenticationService.Setup(_mockAuthenticationService => _mockAuthenticationService.AuthenticateAsync(It.IsAny<User>())).ReturnsAsync(new User());
-            _mockDb.Setup(_mockDb => _mockDb.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync([user]);
+            _mockDb.Setup(_mockDb => _mockDb.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync([user]);
         }
     }
 }

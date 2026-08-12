@@ -281,7 +281,10 @@ namespace Server.Requests
         private async Task<User> CreatedNewToken(string id)
         {
             var sql = SqlQuery.LoginQuery.InFromId(id);
-            var users = await _db.DbAsyncAoT.QueryAsync<User>(sql, new { Id = id });
+            var users = await _db.DbAsyncAoT.QueryAsync<User>(sql, new()
+            {
+                [nameof(id)] = id
+            });
 
             User updateUser = users.FirstOrDefault() ?? throw new UnauthorizedAccessException();
 

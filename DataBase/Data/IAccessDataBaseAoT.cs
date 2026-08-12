@@ -33,8 +33,8 @@ namespace DataBase.Data
         public IMyDbAsyncConnection DbAsyncAoT { get; private set; }
         public ITimeService TimeService { get; private set; }
 
-        
 
+            
         public AccessDataBaseAoT(IAccessDataBase db,
                                  IMyDbConnection dbSyncAoT,
                                  IMyDbAsyncConnection dbAsyncAoT,
@@ -60,7 +60,12 @@ namespace DataBase.Data
                 Message = ex.Message,
                 StackTrace = ex.StackTrace is not null ? ex.StackTrace : ""
             };
-            _ = DbSyncAoT.Execute(SetSqlError, new { log.StackTrace, log.Message, log.Created });
+            _ = DbSyncAoT.Execute(SetSqlError, new()
+            {
+                [nameof(Model.LogsModel.StackTrace)] = log.StackTrace,
+                [nameof(Model.LogsModel.Message)] = log.Message,
+                [nameof(Model.LogsModel.Created)] = log.Created
+            });
 
             Console.WriteLine($@"
             Error {log.CreatedDateTime}{Environment.NewLine}
@@ -76,7 +81,12 @@ namespace DataBase.Data
                 Message = ex.Message,
                 StackTrace = ex.StackTrace is not null ? ex.StackTrace : ""
             };
-            _ = await DbAsyncAoT.ExecuteAsync(SetSqlError, new { log.StackTrace, log.Message, log.Created });
+            _ = await DbAsyncAoT.ExecuteAsync(SetSqlError, new()
+            {
+                [nameof(Model.LogsModel.StackTrace)] = log.StackTrace,
+                [nameof(Model.LogsModel.Message)] = log.Message,
+                [nameof(Model.LogsModel.Created)] = log.Created
+            });
 
             Console.WriteLine($@"
             Error {log.CreatedDateTime}{Environment.NewLine}

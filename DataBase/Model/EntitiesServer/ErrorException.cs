@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace DataBase.Model.EntitiesServer
@@ -105,14 +104,11 @@ namespace DataBase.Model.EntitiesServer
                 {
                     var errors = JsonSerializer.Deserialize(ex.Detail, ValidJsonSerializerContext.Default.ValidArray);
                     ex.ValidationErrors = errors is not null ? errors : [];
+                    return ex;
                 }
             }
             catch (Exception)
             { }
-            if (ex is not null)
-            {
-                return ex;
-            }
             return new Exception(json);
         }
     }

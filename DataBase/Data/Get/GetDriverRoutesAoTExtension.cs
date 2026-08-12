@@ -24,7 +24,7 @@ namespace DataBase.Data.Get
             sb.Append(nameof(jsonIds));
             sb.Append(")) ");
 
-            var result = await get.CustomerRoutes(sb.ToString(), new { jsonIds });
+            var result = await get.CustomerRoutes(sb.ToString(), new() { [nameof(jsonIds)] = jsonIds });
             return result;
         }
 
@@ -41,7 +41,7 @@ namespace DataBase.Data.Get
             sb.Append(nameof(Model.EntitiesRoutes.CustomerRoutes.Id));
             sb.Append(" = @");
             sb.Append(nameof(id));
-            var result = await get.CustomerRoutes(sb.ToString(), new { id });
+            var result = await get.CustomerRoutes(sb.ToString(), new() { [nameof(id)] = id });
 
             return result.FirstOrDefault();
         }
@@ -97,7 +97,11 @@ namespace DataBase.Data.Get
             sb.Append(')');
 
 
-            var result = await get.CustomerRoutes(sb.ToString(), new { routeId, selected_day });
+            var result = await get.CustomerRoutes(sb.ToString(), new()
+            {
+                [nameof(routeId)] = routeId,
+                [nameof(selected_day)] = selected_day
+            });
 
             return result;
         }

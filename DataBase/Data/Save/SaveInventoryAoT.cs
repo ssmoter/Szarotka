@@ -82,25 +82,25 @@ namespace DataBase.Data.Save
             try
             {
                 _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
-                                                        new
+                                                        new()
                                                         {
-                                                            day.Id,
-                                                            day.Description,
-                                                            day.DriverGuid,
-                                                            day.SelectedDateString,
-                                                            day.SelectedDateTicks,
-                                                            day.TotalPriceProducts,
-                                                            day.TotalPriceCake,
-                                                            day.TotalPrice,
-                                                            day.TotalPriceCorrect,
-                                                            day.TotalPriceAfterCorrect,
-                                                            day.TotalPriceMoney,
-                                                            day.TotalPriceDifference,
-                                                            day.CreatedTicks,
-                                                            day.UpdatedTicks,
-                                                            day.IsDelete,
-                                                            day.UserCreatedId,
-                                                            day.UserUpdatedId
+                                                            [nameof(Day.Id)] = day.Id,
+                                                            [nameof(Day.Description)] = day.Description,
+                                                            [nameof(Day.DriverGuid)] = day.DriverGuid,
+                                                            [nameof(Day.SelectedDateString)] = day.SelectedDateString,
+                                                            [nameof(Day.SelectedDateTicks)] = day.SelectedDateTicks,
+                                                            [nameof(Day.TotalPriceProducts)] = day.TotalPriceProducts,
+                                                            [nameof(Day.TotalPriceCake)] = day.TotalPriceCake,
+                                                            [nameof(Day.TotalPrice)] = day.TotalPrice,
+                                                            [nameof(Day.TotalPriceCorrect)] = day.TotalPriceCorrect,
+                                                            [nameof(Day.TotalPriceAfterCorrect)] = day.TotalPriceAfterCorrect,
+                                                            [nameof(Day.TotalPriceMoney)] = day.TotalPriceMoney,
+                                                            [nameof(Day.TotalPriceDifference)] = day.TotalPriceDifference,
+                                                            [nameof(Day.CreatedTicks)] = day.CreatedTicks,
+                                                            [nameof(Day.UpdatedTicks)] = day.UpdatedTicks,
+                                                            [nameof(Day.IsDelete)] = day.IsDelete,
+                                                            [nameof(Day.UserCreatedId)] = day.UserCreatedId,
+                                                            [nameof(Day.UserUpdatedId)] = day.UserUpdatedId
                                                         });
             }
             catch (Exception)
@@ -175,25 +175,25 @@ namespace DataBase.Data.Save
                            out string sql);
 
                     await tx.ExecuteAsync(sql,
-                                             new
+                                             new()
                                              {
-                                                 day.Id,
-                                                 day.Description,
-                                                 day.DriverGuid,
-                                                 day.SelectedDateString,
-                                                 day.SelectedDateTicks,
-                                                 day.TotalPriceProducts,
-                                                 day.TotalPriceCake,
-                                                 day.TotalPrice,
-                                                 day.TotalPriceCorrect,
-                                                 day.TotalPriceAfterCorrect,
-                                                 day.TotalPriceMoney,
-                                                 day.TotalPriceDifference,
-                                                 day.CreatedTicks,
-                                                 day.UpdatedTicks,
-                                                 day.IsDelete,
-                                                 day.UserCreatedId,
-                                                 day.UserUpdatedId
+                                                 [nameof(Day.Id)] = day.Id,
+                                                 [nameof(Day.Description)] = day.Description,
+                                                 [nameof(Day.DriverGuid)] = day.DriverGuid,
+                                                 [nameof(Day.SelectedDateString)] = day.SelectedDateString,
+                                                 [nameof(Day.SelectedDateTicks)] = day.SelectedDateTicks,
+                                                 [nameof(Day.TotalPriceProducts)] = day.TotalPriceProducts,
+                                                 [nameof(Day.TotalPriceCake)] = day.TotalPriceCake,
+                                                 [nameof(Day.TotalPrice)] = day.TotalPrice,
+                                                 [nameof(Day.TotalPriceCorrect)] = day.TotalPriceCorrect,
+                                                 [nameof(Day.TotalPriceAfterCorrect)] = day.TotalPriceAfterCorrect,
+                                                 [nameof(Day.TotalPriceMoney)] = day.TotalPriceMoney,
+                                                 [nameof(Day.TotalPriceDifference)] = day.TotalPriceDifference,
+                                                 [nameof(Day.CreatedTicks)] = day.CreatedTicks,
+                                                 [nameof(Day.UpdatedTicks)] = day.UpdatedTicks,
+                                                 [nameof(Day.IsDelete)] = day.IsDelete,
+                                                 [nameof(Day.UserCreatedId)] = day.UserCreatedId,
+                                                 [nameof(Day.UserUpdatedId)] = day.UserUpdatedId
                                              });
 
                     await SaveProductsTransaction(day.Products, driverId, isServer);
@@ -225,24 +225,24 @@ namespace DataBase.Data.Save
                     try
                     {
                         await tx.ExecuteAsync(sql,
-                                                new
+                                                new()
                                                 {
-                                                    product.Id,
-                                                    product.DayId,
-                                                    product.ProductNameId,
-                                                    product.ProductPriceId,
-                                                    product.Description,
-                                                    product.PriceTotal,
-                                                    product.PriceTotalCorrect,
-                                                    product.PriceTotalAfterCorrect,
-                                                    product.Number,
-                                                    product.NumberEdit,
-                                                    product.NumberReturn,
-                                                    product.CreatedTicks,
-                                                    product.UpdatedTicks,
-                                                    product.IsDelete,
-                                                    product.UserCreatedId,
-                                                    product.UserUpdatedId
+                                                    [nameof(Product.Id)] = product.Id,
+                                                    [nameof(Product.DayId)] = product.DayId,
+                                                    [nameof(Product.ProductNameId)] = product.ProductNameId,
+                                                    [nameof(Product.ProductPriceId)] = product.ProductPriceId,
+                                                    [nameof(Product.Description)] = product.Description,
+                                                    [nameof(Product.PriceTotal)] = product.PriceTotal,
+                                                    [nameof(Product.PriceTotalCorrect)] = product.PriceTotalCorrect,
+                                                    [nameof(Product.PriceTotalAfterCorrect)] = product.PriceTotalAfterCorrect,
+                                                    [nameof(Product.Number)] = product.Number,
+                                                    [nameof(Product.NumberEdit)] = product.NumberEdit,
+                                                    [nameof(Product.NumberReturn)] = product.NumberReturn,
+                                                    [nameof(Product.CreatedTicks)] = product.CreatedTicks,
+                                                    [nameof(Product.UpdatedTicks)] = product.UpdatedTicks,
+                                                    [nameof(Product.IsDelete)] = product.IsDelete,
+                                                    [nameof(Product.UserCreatedId)] = product.UserCreatedId,
+                                                    [nameof(Product.UserUpdatedId)] = product.UserUpdatedId
                                                 });
                     }
                     catch (Exception)
@@ -265,17 +265,17 @@ namespace DataBase.Data.Save
                     try
                     {
                         await tx.ExecuteAsync(sql,
-                                                new
+                                                new()
                                                 {
-                                                    cake.Id,
-                                                    cake.DayId,
-                                                    cake.IsSell,
-                                                    cake.Price,
-                                                    cake.CreatedTicks,
-                                                    cake.UpdatedTicks,
-                                                    cake.IsDelete,
-                                                    cake.UserCreatedId,
-                                                    cake.UserUpdatedId
+                                                    [nameof(Cake.Id)] = cake.Id,
+                                                    [nameof(Cake.DayId)] = cake.DayId,
+                                                    [nameof(Cake.IsSell)] = cake.IsSell,
+                                                    [nameof(Cake.Price)] = cake.Price,
+                                                    [nameof(Cake.CreatedTicks)] = cake.CreatedTicks,
+                                                    [nameof(Cake.UpdatedTicks)] = cake.UpdatedTicks,
+                                                    [nameof(Cake.IsDelete)] = cake.IsDelete,
+                                                    [nameof(Cake.UserCreatedId)] = cake.UserCreatedId,
+                                                    [nameof(Cake.UserUpdatedId)] =  cake.UserUpdatedId
                                                 });
                     }
                     catch (Exception)
@@ -298,24 +298,24 @@ namespace DataBase.Data.Save
             try
             {
                 _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
-                                                  new
+                                                  new()
                                                   {
-                                                      product.Id,
-                                                      product.DayId,
-                                                      product.ProductNameId,
-                                                      product.ProductPriceId,
-                                                      product.Description,
-                                                      product.PriceTotal,
-                                                      product.PriceTotalCorrect,
-                                                      product.PriceTotalAfterCorrect,
-                                                      product.Number,
-                                                      product.NumberEdit,
-                                                      product.NumberReturn,
-                                                      product.CreatedTicks,
-                                                      product.UpdatedTicks,
-                                                      product.IsDelete,
-                                                      product.UserCreatedId,
-                                                      product.UserUpdatedId
+                                                      [nameof(Product.Id)] = product.Id,
+                                                      [nameof(Product.DayId)] = product.DayId,
+                                                      [nameof(Product.ProductNameId)] = product.ProductNameId,
+                                                      [nameof(Product.ProductPriceId)] = product.ProductPriceId,
+                                                      [nameof(Product.Description)] = product.Description,
+                                                      [nameof(Product.PriceTotal)] = product.PriceTotal,
+                                                      [nameof(Product.PriceTotalCorrect)] = product.PriceTotalCorrect,
+                                                      [nameof(Product.PriceTotalAfterCorrect)] = product.PriceTotalAfterCorrect,
+                                                      [nameof(Product.Number)] = product.Number,
+                                                      [nameof(Product.NumberEdit)] = product.NumberEdit,
+                                                      [nameof(Product.NumberReturn)] = product.NumberReturn,
+                                                      [nameof(Product.CreatedTicks)] = product.CreatedTicks,
+                                                      [nameof(Product.UpdatedTicks)] = product.UpdatedTicks,
+                                                      [nameof(Product.IsDelete)] = product.IsDelete,
+                                                      [nameof(Product.UserCreatedId)] = product.UserCreatedId,
+                                                      [nameof(Product.UserUpdatedId)] = product.UserUpdatedId
                                                   });
             }
             catch (Exception)
@@ -398,17 +398,17 @@ namespace DataBase.Data.Save
             try
             {
                 _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
-                                                       new
+                                                       new()
                                                        {
-                                                           cake.Id,
-                                                           cake.DayId,
-                                                           cake.IsSell,
-                                                           cake.Price,
-                                                           cake.CreatedTicks,
-                                                           cake.UpdatedTicks,
-                                                           cake.IsDelete,
-                                                           cake.UserCreatedId,
-                                                           cake.UserUpdatedId
+                                                           [nameof(Cake.Id)] = cake.Id,
+                                                           [nameof(Cake.DayId)] = cake.DayId,
+                                                           [nameof(Cake.IsSell)] = cake.IsSell,
+                                                           [nameof(Cake.Price)] = cake.Price,
+                                                           [nameof(Cake.CreatedTicks)] = cake.CreatedTicks,
+                                                           [nameof(Cake.UpdatedTicks)] = cake.UpdatedTicks,
+                                                           [nameof(Cake.IsDelete)] = cake.IsDelete,
+                                                           [nameof(Cake.UserCreatedId)] = cake.UserCreatedId,
+                                                           [nameof(Cake.UserUpdatedId)] = cake.UserUpdatedId
                                                        });
             }
             catch (Exception)
@@ -474,19 +474,19 @@ namespace DataBase.Data.Save
             try
             {
                 _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
-                                                         new
+                                                         new()
                                                          {
-                                                             productName.Id,
-                                                             productName.Arrangement,
-                                                             productName.Name,
-                                                             productName.Description,
-                                                             productName.Img,
-                                                             productName.IsVisible,
-                                                             productName.CreatedTicks,
-                                                             productName.UpdatedTicks,
-                                                             productName.UserCreatedId,
-                                                             productName.UserUpdatedId,
-                                                             productName.IsDelete
+                                                             [nameof(ProductName.Id)] = productName.Id,
+                                                             [nameof(ProductName.Arrangement)] = productName.Arrangement,
+                                                             [nameof(ProductName.Name)] = productName.Name,
+                                                             [nameof(ProductName.Description)] = productName.Description,
+                                                             [nameof(ProductName.Img)] = productName.Img,
+                                                             [nameof(ProductName.IsVisible)] = productName.IsVisible,
+                                                             [nameof(ProductName.CreatedTicks)] = productName.CreatedTicks,
+                                                             [nameof(ProductName.UpdatedTicks)] = productName.UpdatedTicks,
+                                                             [nameof(ProductName.UserCreatedId)] = productName.UserCreatedId,
+                                                             [nameof(ProductName.UserUpdatedId)] = productName.UserUpdatedId,
+                                                             [nameof(ProductName.IsDelete)] = productName.IsDelete
                                                          });
             }
             catch (Exception)
@@ -550,16 +550,16 @@ namespace DataBase.Data.Save
             try
             {
                 _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
-                                                     new
+                                                     new()
                                                      {
-                                                         productPrice.Id,
-                                                         productPrice.Price,
-                                                         productPrice.CreatedTicks,
-                                                         productPrice.UpdatedTicks,
-                                                         productPrice.UserCreatedId,
-                                                         productPrice.UserUpdatedId,
-                                                         productPrice.ProductNameId,
-                                                         productPrice.IsDelete
+                                                         [nameof(ProductPrice.Id)] = productPrice.Id,
+                                                         [nameof(ProductPrice.Price)] = productPrice.Price,
+                                                         [nameof(ProductPrice.CreatedTicks)] = productPrice.CreatedTicks,
+                                                         [nameof(ProductPrice.UpdatedTicks)] = productPrice.UpdatedTicks,
+                                                         [nameof(ProductPrice.UserCreatedId)] = productPrice.UserCreatedId,
+                                                         [nameof(ProductPrice.UserUpdatedId)] = productPrice.UserUpdatedId,
+                                                         [nameof(ProductPrice.ProductNameId)] = productPrice.ProductNameId,
+                                                         [nameof(ProductPrice.IsDelete)] = productPrice.IsDelete
                                                      });
             }
             catch (Exception)

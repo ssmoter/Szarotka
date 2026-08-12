@@ -5,9 +5,9 @@ namespace DataBase.Data.MySqliteConnection
     public interface IMyDbAsyncConnection
     {
         Task<IMyDbAsyncTransaction> BeginTransactionAsync();
-        Task<int> ExecuteAsync(string sql, object? param);
+        Task<int> ExecuteAsync(string sql, Dictionary<string, object?> param);
         Task<int> ExecuteAsync(string sql);
-        Task<IEnumerable<T>> QueryAsync<T>(string sql, object? param);
+        Task<IEnumerable<T>> QueryAsync<T>(string sql, Dictionary<string, object?> param);
         Task<IEnumerable<T>> QueryAsync<T>(string sql);
     }
     public class MyDbAsyncConnection : IMyDbAsyncConnection
@@ -20,7 +20,7 @@ namespace DataBase.Data.MySqliteConnection
         }
 
         // Wersja Z parametrami (TParam) - dla operacji typu: _db.ExecuteAsync(sql, new { Id })
-        public async Task<int> ExecuteAsync(string sql, object? param)
+        public async Task<int> ExecuteAsync(string sql, Dictionary<string, object?> param)
         {
             await using var connection = _connectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -49,7 +49,7 @@ namespace DataBase.Data.MySqliteConnection
             return await ExecuteAsync(sql, null!);
         }
 
-        public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object? param)
+        public async Task<IEnumerable<T>> QueryAsync<T>(string sql, Dictionary<string, object?> param)
         {
             var results = new List<T>();
             // Pobieramy napisany przez Ciebie mapper dla typu T

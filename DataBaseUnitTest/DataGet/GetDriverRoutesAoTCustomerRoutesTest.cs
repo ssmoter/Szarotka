@@ -13,7 +13,7 @@ namespace DataBaseUnitTest.DataGet
 
             var aot = new GetDriverRoutesAoT(db);
 
-            var result = await aot.CustomerRoutes("", false);
+            var result = await aot.CustomerRoutes("");
 
             var expectedJson = System.Text.Json.JsonSerializer.Serialize(expected);
             var resultJson = System.Text.Json.JsonSerializer.Serialize(result.OrderBy(x => x.CreatedTicks));

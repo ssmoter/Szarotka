@@ -27,11 +27,15 @@ namespace Server.Service
         public async Task<User> LogIn(LoginUser user)
         {
             _logger.LogInformation("LogIn started for email={Email}", user?.Email);
-            user.Password = Hash.PasswordSHA256(user.Password);
+            user!.Password = Hash.PasswordSHA256(user.Password);
 
             var sql = LoginQuery.In(user.Email, user.Password);
 
-            var dbUser = await _db.DbAsyncAoT.QueryAsync<User>(sql, new { user.Email, user.Password });
+            var dbUser = await _db.DbAsyncAoT.QueryAsync<User>(sql, new()
+            {
+                [nameof(user.Email)] = user.Email,
+                [nameof(user.Password)] = user.Password
+            });
 
             var firstUser = dbUser.FirstOrDefault();
 
@@ -45,7 +49,13 @@ namespace Server.Service
                 firstUser.RememberMe = user.RememberMe;
                 firstUser.Updated = _timeService.UtcNow();
                 sql = LoginQuery.UpdateRememberMe(firstUser.RememberMe, firstUser.UpdatedTicks, firstUser.UserUpdatedId, firstUser.Id);
-                _ = await _db.DbAsyncAoT.ExecuteAsync(sql, new { firstUser.RememberMe, firstUser.UpdatedTicks, firstUser.UserUpdatedId, firstUser.Id });
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql, new()
+                {
+                    [nameof(firstUser.RememberMe)] = firstUser.RememberMe,
+                    [nameof(firstUser.UpdatedTicks)] = firstUser.UpdatedTicks,
+                    [nameof(firstUser.UserUpdatedId)] = firstUser.UserUpdatedId,
+                    [nameof(firstUser.Id)] = firstUser.Id
+                });
                 _logger.LogInformation("LogIn: updated RememberMe for userId={UserId} to {RememberMe}", firstUser.Id, firstUser.RememberMe);
             }
 
@@ -66,7 +76,10 @@ namespace Server.Service
         {
             _logger.LogInformation("GetPublicUser started for id={Id}", id);
             var sql = LoginQuery.PublicUser(id);
-            IEnumerable<User> users = await _db.DbAsyncAoT.QueryAsync<User>(sql, new { Id = id });
+            IEnumerable<User> users = await _db.DbAsyncAoT.QueryAsync<User>(sql, new()
+            {
+                [nameof(id)] = id
+            });
             var user = users.FirstOrDefault();
 
             ArgumentNullException.ThrowIfNull(user, nameof(user));

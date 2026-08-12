@@ -31,7 +31,7 @@ namespace ServerUnitTest.Service
             // Arrange
             var email = "test@example.com";
             var user = new User { Email = email };
-            _dbMock.Setup(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<object>()))
+            _dbMock.Setup(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()))
                    .ReturnsAsync([user]);
 
             _userValidationMock.Setup(x => x.Validation).Returns(new ValidationException());
@@ -49,7 +49,7 @@ namespace ServerUnitTest.Service
         {
             // Arrange
             var email = "test@example.com";
-            _dbMock.Setup(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<object>()))
+            _dbMock.Setup(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()))
                    .ReturnsAsync([]);
 
             _userValidationMock.Setup(v => v.AccountNotFound(It.IsAny<User>())).Callback(() => throw new Exception("User not found"));
@@ -64,7 +64,7 @@ namespace ServerUnitTest.Service
             // Arrange
             var code = 123456;
             var confirmCode = new ConfirmCode { Code = code };
-            _dbMock.Setup(db => db.DbAsyncAoT.QueryAsync<ConfirmCode>(It.IsAny<string>(), It.IsAny<object>()))
+            _dbMock.Setup(db => db.DbAsyncAoT.QueryAsync<ConfirmCode>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()))
                    .ReturnsAsync([confirmCode]);
 
             // Act
@@ -80,7 +80,7 @@ namespace ServerUnitTest.Service
         {
             // Arrange
             var code = 123456;
-            _dbMock.Setup(db => db.DbAsyncAoT.QueryAsync<ConfirmCode>(It.IsAny<string>(), It.IsAny<object>()))
+            _dbMock.Setup(db => db.DbAsyncAoT.QueryAsync<ConfirmCode>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()))
                    .ReturnsAsync([]);
 
             // Act
@@ -100,14 +100,14 @@ namespace ServerUnitTest.Service
             var updateTicks = 123456789L;
 
             _timeServiceMock.Setup(t => t.UtcNow()).Returns(new DateTime(updateTicks));
-            _dbMock.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>()))
+            _dbMock.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()))
                    .Returns(Task.FromResult(1));
 
             // Act
             await _resetPasswordService.ChangePassword(id, password);
 
             // Assert
-            _dbMock.Verify(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>()), Times.Once);
+            _dbMock.Verify(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()), Times.Once);
         }
     }
 }

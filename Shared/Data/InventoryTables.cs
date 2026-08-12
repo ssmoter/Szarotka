@@ -115,19 +115,19 @@ namespace Shared.Data
                                                                                                         product.Name.UpdatedTicks,
                                                                                                         product.Name.UserCreatedId,
                                                                                                         product.Name.UserUpdatedId,
-                                                                                                        product.Name.IsDelete), new
+                                                                                                        product.Name.IsDelete), new()
                                                                                                         {
-                                                                                                            product.Name.Id,
-                                                                                                            product.Name.Arrangement,
-                                                                                                            product.Name.Name,
-                                                                                                            product.Name.Description,
-                                                                                                            product.Name.Img,
-                                                                                                            product.Name.IsVisible,
-                                                                                                            product.Name.CreatedTicks,
-                                                                                                            product.Name.UpdatedTicks,
-                                                                                                            product.Name.UserCreatedId,
-                                                                                                            product.Name.UserUpdatedId,
-                                                                                                            product.Name.IsDelete
+                                                                                                            [nameof(product.Name.Id)] = product.Name.Id,
+                                                                                                            [nameof(product.Name.Arrangement)] = product.Name.Arrangement,
+                                                                                                            [nameof(product.Name.Name)] = product.Name.Name,
+                                                                                                            [nameof(product.Name.Description)] = product.Name.Description,
+                                                                                                            [nameof(product.Name.Img)] = product.Name.Img,
+                                                                                                            [nameof(product.Name.IsVisible)] = product.Name.IsVisible,
+                                                                                                            [nameof(product.Name.CreatedTicks)] = product.Name.CreatedTicks,
+                                                                                                            [nameof(product.Name.UpdatedTicks)] = product.Name.UpdatedTicks,
+                                                                                                            [nameof(product.Name.UserCreatedId)] = product.Name.UserCreatedId,
+                                                                                                            [nameof(product.Name.UserUpdatedId)] = product.Name.UserUpdatedId,
+                                                                                                            [nameof(product.Name.IsDelete)] = product.Name.IsDelete
                                                                                                         }),
                 price = _db.DbAsyncAoT.ExecuteAsync(DataBase.Data.SqlQuery.ProductPriceQuery.SaveOrUpdate(product.Price.Id,
                                                                                                           product.Price.Price,
@@ -136,16 +136,16 @@ namespace Shared.Data
                                                                                                           product.Price.UserCreatedId,
                                                                                                           product.Price.UserUpdatedId,
                                                                                                           product.Price.ProductNameId,
-                                                                                                          product.Price.IsDelete), new
+                                                                                                          product.Price.IsDelete), new()
                                                                                                           {
-                                                                                                              product.Price.Id,
-                                                                                                              product.Price.Price,
-                                                                                                              product.Price.CreatedTicks,
-                                                                                                              product.Price.UpdatedTicks,
-                                                                                                              product.Price.UserCreatedId,
-                                                                                                              product.Price.UserUpdatedId,
-                                                                                                              product.Price.ProductNameId,
-                                                                                                              product.Price.IsDelete
+                                                                                                              [nameof(product.Price.Id)] = product.Price.Id,
+                                                                                                              [nameof(product.Price.Price)] = product.Price.Price,
+                                                                                                              [nameof(product.Price.CreatedTicks)] = product.Price.CreatedTicks,
+                                                                                                              [nameof(product.Price.UpdatedTicks)] = product.Price.UpdatedTicks,
+                                                                                                              [nameof(product.Price.UserCreatedId)] = product.Price.UserCreatedId,
+                                                                                                              [nameof(product.Price.UserUpdatedId)] = product.Price.UserUpdatedId,
+                                                                                                              [nameof(product.Price.ProductNameId)] = product.Price.ProductNameId,
+                                                                                                              [nameof(product.Price.IsDelete)] = product.Price.IsDelete
                                                                                                           })
             };
             return task;
