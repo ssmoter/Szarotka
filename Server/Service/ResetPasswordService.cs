@@ -13,7 +13,7 @@ namespace Server.Service
     public interface IResetPasswordService
     {
         Task ChangePassword(Guid id, string password);
-        Task<ConfirmCode?> GetConfirmCode(int code);
+        ConfirmCode? GetConfirmCode(int code, bool remove = false);
         Task<User> GetUserIdFromEmail(string email);
     }
 
@@ -40,12 +40,19 @@ namespace Server.Service
             return id!;
         }
 
-        public async Task<ConfirmCode?> GetConfirmCode(int code)
+        public ConfirmCode? GetConfirmCode(int code, bool remove = false)
         {
             _logger.LogInformation("GetConfirmCode started for code={Code}", code);
-            var sql = UserQuery.CodeConfirmCheck(code);
-            var result = await _db.DbAsyncAoT.QueryAsync<ConfirmCode>(sql, new() { [nameof(code)] = code });
-            var codeResult = result.FirstOrDefault();
+
+            ConfirmCode? codeResult;
+            if (remove)
+            {
+                DictionaryList.ResetPasswordCodes.TryGetValue(code, out codeResult);
+            }
+            else
+            {
+                DictionaryList.ResetPasswordCodes.TryRemove(code, out codeResult);
+            }
             _logger.LogInformation("GetConfirmCode returned {Found} result for code={Code}", codeResult is not null, code);
             return codeResult;
         }

@@ -72,7 +72,7 @@ public static class ReadToken
                     user.IsEmailConfirm = bool.Parse(item.Value);
                 }
             }
-            user.Token = token;
+            user.AccessToken = token;
             return (user, jwtToken.ValidTo);
         }
         catch (Exception)

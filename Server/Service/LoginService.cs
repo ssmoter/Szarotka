@@ -2,11 +2,11 @@
 using DataBase.Model.EntitiesServer;
 using DataBase.Service;
 
+using Microsoft.Extensions.Logging.Abstractions;
+
 using Server.Helper;
 using Server.SqlQuery;
 using Server.Validation;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Server.Service
 {
@@ -14,7 +14,7 @@ namespace Server.Service
     {
         Task<User> GetPublicUser(string id);
         Task<User> LogIn(LoginUser user);
-        Task<IResult> LogOut(LoginUser user);
+        Task<IResult> LogOut(string refreshToken);
     }
 
     public class LoginService(IAccessDataBaseAoT db, ITimeService timeService, IUserValidation userValidation, ILogger<LoginService>? logger = null) : ILoginService
@@ -63,11 +63,14 @@ namespace Server.Service
             return firstUser;
         }
 
-        public async Task<IResult> LogOut(LoginUser user)
+        public async Task<IResult> LogOut(string refreshToken)
         {
-            _logger.LogInformation("LogOut started for email={Email}", user?.Email);
-            await Task.Delay(1);
-            _logger.LogInformation("LogOut completed for email={Email}", user?.Email);
+            _logger.LogInformation("LogOut started for token={Token}", refreshToken);
+
+            var deleteSql = $"DELETE FROM RefreshTokens WHERE {nameof(RefreshToken.Value)} = @Value";
+            await _db.DbAsyncAoT.ExecuteAsync(deleteSql, new() { ["Value"] = refreshToken });
+
+            _logger.LogInformation("LogOut completed for token={Token}", refreshToken);
             return Results.Ok();
         }
 

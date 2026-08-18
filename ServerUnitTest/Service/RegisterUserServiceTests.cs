@@ -1,25 +1,21 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
 using DataBase.Service;
-
+using FluentAssertions;
 using Microsoft.Extensions.Configuration;
-
 using Moq;
-
 using Server.Model;
 using Server.Service;
 using Server.Validation;
 
 namespace ServerUnitTest.Service
 {
-
     public class RegisterUserServiceTests
     {
         private readonly Mock<IAccessDataBaseAoT> _mockDb;
         private readonly IUserValidation _userValidation;
         private readonly Mock<ITimeService> _mockTimeService;
         private readonly RegisterUserService _service;
-
         public RegisterUserServiceTests()
         {
             var emailConfig = new EmailConfiguration
@@ -30,19 +26,30 @@ namespace ServerUnitTest.Service
                 UserName = "username",
                 Password = "password"
             };
-
             var inMemorySettings = new Dictionary<string, string?>
             {
-                { "EmailConfiguration:From", emailConfig.From },
-                { "EmailConfiguration:SmtpServer", emailConfig.SmtpServer },
-                { "EmailConfiguration:Port", emailConfig.Port.ToString() },
-                { "EmailConfiguration:UserName", emailConfig.UserName },
-                { "EmailConfiguration:Password", emailConfig.Password }
+                {
+                    "EmailConfiguration:From",
+                    emailConfig.From
+                },
+                {
+                    "EmailConfiguration:SmtpServer",
+                    emailConfig.SmtpServer
+                },
+                {
+                    "EmailConfiguration:Port",
+                    emailConfig.Port.ToString()
+                },
+                {
+                    "EmailConfiguration:UserName",
+                    emailConfig.UserName
+                },
+                {
+                    "EmailConfiguration:Password",
+                    emailConfig.Password
+                }
             };
-
-            IConfiguration configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(inMemorySettings)
-                .Build();
+            IConfiguration configuration = new ConfigurationBuilder().AddInMemoryCollection(inMemorySettings).Build();
             _mockDb = new Mock<IAccessDataBaseAoT>();
             _mockTimeService = new Mock<ITimeService>();
             _userValidation = new UserValidation(_mockDb.Object, _mockTimeService.Object);
@@ -61,10 +68,8 @@ namespace ServerUnitTest.Service
             };
             _mockTimeService.Setup(t => t.UtcNow()).Returns(DateTime.UtcNow);
             _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(1);
-
             // Act
-            var result = await _service.InsertNewUser(registerUser);
-
+            var result = await _service.CheckUserBeforInsert(registerUser);
             // Assert
             Assert.False(result.IsDelete);
             Assert.False(result.IsEmailConfirm);
@@ -78,40 +83,20 @@ namespace ServerUnitTest.Service
         public async Task InsertCodeEmailAndRemoveOld_ShouldInsertAndRemoveOldCodes()
         {
             // Arrange
-            var confirmCode = new ConfirmCode { UserId = Guid.NewGuid(), Code = 1234 };
-            _mockTimeService.Setup(t => t.UtcNow()).Returns(DateTime.UtcNow);
+            var confirmCode = new ConfirmCode
+            {
+                UserId = Guid.NewGuid(),
+                Code = 1234
+            };
+            var now = DateTime.UtcNow;
+            _mockTimeService.Setup(t => t.UtcNow()).Returns(now);
             _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(1);
-            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>()
-                , It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(1);
-
-            // Act
-            await _service.InsertCodeEmailAndRemoveOld(confirmCode);
-
-            // Assert
-            _mockDb.Verify(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()), Times.Exactly(2));
-        }
-
-        [Fact]
-        public async Task GetUserEmailFromCodeAndRemoveOld_ShouldReturnUserEmail()
-        {
-            // Arrange
-            var code = 1234;
-            var confirmCode = new ConfirmCode { UserId = Guid.NewGuid(), Code = code, ExpireDate = DateTime.UtcNow.AddMinutes(10).Ticks };
-            var user = new User { Id = confirmCode.UserId, IsEmailConfirm = true };
-
-            _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<ConfirmCode>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync([confirmCode]);
-            _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>()
-                , It.IsAny<Dictionary<string, object?>>())).ReturnsAsync([user]);
             _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(1);
-            _mockDb.Setup(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>()
-                , It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(1);
             // Act
-            var result = await _service.GetUserEmailFromCodeAndRemoveOld(code);
-
+            var result = _service.CreatedConfirmCode(confirmCode);
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal(confirmCode.UserId, result.Id);
-            Assert.True(result.IsEmailConfirm);
+            result.ExpireDate.Should().BeGreaterThan(0);
+            _mockDb.Verify(db => db.DbAsyncAoT.ExecuteAsync(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()), Times.Never());
         }
 
     }

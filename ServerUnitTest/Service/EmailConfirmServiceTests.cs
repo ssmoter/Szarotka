@@ -17,7 +17,7 @@ namespace ServerUnitTest.Service
 
         public EmailConfirmServiceTests()
         {
-           var emailConfig = new EmailConfiguration
+            var emailConfig = new EmailConfiguration
             {
                 From = "from@example.com",
                 SmtpServer = "smtp.example.com",
@@ -41,7 +41,7 @@ namespace ServerUnitTest.Service
 
             _mockEmailService = new Mock<IEmailService>();
             _mockRegisterUserService = new Mock<IRegisterUserService>();
-            _emailConfirmService = new EmailConfirmService(_mockEmailService.Object, _mockRegisterUserService.Object,configuration);
+            _emailConfirmService = new EmailConfirmService(_mockEmailService.Object, _mockRegisterUserService.Object, configuration);
         }
 
         [Fact]
@@ -55,8 +55,8 @@ namespace ServerUnitTest.Service
             };
 
             _mockRegisterUserService
-                .Setup(s => s.InsertCodeEmailAndRemoveOld(It.IsAny<ConfirmCode>()))
-                .Returns(Task.CompletedTask);
+                .Setup(s => s.CreatedConfirmCode(It.IsAny<ConfirmCode>()))
+                .Returns(It.IsAny<ConfirmCode>());
 
             _mockEmailService
                 .Setup(s => s.SendMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), default))
@@ -66,7 +66,7 @@ namespace ServerUnitTest.Service
             await _emailConfirmService.SendVerificationEmailCode(user);
 
             // Assert
-            _mockRegisterUserService.Verify(s => s.InsertCodeEmailAndRemoveOld(It.Is<ConfirmCode>(c => c.UserId == user.Id)), Times.Once);
+            _mockRegisterUserService.Verify(s => s.CreatedConfirmCode(It.Is<ConfirmCode>(c => c.UserId == user.Id)), Times.Once);
             _mockEmailService.Verify(s => s.SendMessage(user.Email, "Potwierdź swój email", It.IsAny<string>(), default), Times.Once);
         }
     }

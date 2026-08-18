@@ -27,33 +27,20 @@ namespace Server.Endpoints
             {
                 return await loginUserRequests.LogInUser(user, token);
             });
-            user.MapGet("logout", ( /*ILoginUserEndpoint loginUserEndpoint*/) =>
+            user.MapGet("logout", async (string refreshToken, ILoginUserRequests loginUserEndpoint, CancellationToken token = default) =>
             {
-                throw new NotImplementedException();
-                //return await loginUserEndpoint.LogOutUser("user");
-            }).RequireAuthorization();
-            user.MapGet("refresh-token", async (HttpContext context, ILoginUserRequests loginUserRequests, CancellationToken token = default)
+                return await loginUserEndpoint.LogOutUser(refreshToken, token);
+            });
+            user.MapGet("access-token", async (string refreshToken, ILoginUserRequests loginUserRequests, CancellationToken token = default)
                 =>
             {
-                // Pobierz wartość nagłówka Authorization
-                var authorizationHeader = context.Request.Headers.Authorization.ToString();
-                if (string.IsNullOrEmpty(authorizationHeader))
-                {
-                    return Results.Unauthorized();
-                }
-                // Sprawdź, czy nagłówek zaczyna się od "Bearer "
-                if (!authorizationHeader.StartsWith("Bearer "))
-                {
-                    return Results.Unauthorized();
-                }
-                // Pobierz token
-                var userToken = DataBase.Helper.ReadToken.RemoveBearer(authorizationHeader);
-                if (userToken is null)
-                {
-                    return Results.Unauthorized();
-                }
-                return await loginUserRequests.RefreshToken(userToken, token);
-            }).RequireAuthorization();
+                return await loginUserRequests.NewAccessToken(refreshToken, token);
+            });
+            user.MapGet("refresh-token", async (string refreshToken, ILoginUserRequests loginUserRequests, CancellationToken token = default)
+                =>
+            {
+                return await loginUserRequests.NewRefreshToken(refreshToken, token);
+            });
             user.MapPost("edit", async ([FromBody] User user, IEditUserRequests editUserRequests, HttpContext context, CancellationToken token = default) =>
             {
                 var authorizationHeader = context.Request.Headers.Authorization.ToString();

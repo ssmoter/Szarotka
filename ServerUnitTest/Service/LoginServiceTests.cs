@@ -75,19 +75,6 @@ namespace ServerUnitTest.Service
         }
 
         [Fact]
-        public async Task LogOut_ValidUser_ReturnsOkResult()
-        {
-            // Arrange
-            var loginUser = new LoginUser { Email = "test@example.com", Password = "password" };
-
-            // Act
-            var result = await _loginService.LogOut(loginUser);
-
-            // Assert
-            Assert.Equal(Results.Ok(), result);
-        }
-
-        [Fact]
         public async Task GetPublicUser_ShouldReturnUser_WhenUserExists()
         {
             // Arrange

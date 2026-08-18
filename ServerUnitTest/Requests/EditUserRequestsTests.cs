@@ -40,7 +40,7 @@ namespace ServerUnitTest.Requests
             // Arrange
             var editUser = new EditUser { New = new User(), Old = new User() };
             _userValidation.Setup(v => v.Validation.ValidationErrors.Count).Returns(0);
-            _mockAuthenticationService.Setup(a => a.AuthenticateAsync(It.IsAny<User>())).ReturnsAsync(new User());
+            _mockAuthenticationService.Setup(a => a.AuthenticateAsyncAccess(It.IsAny<User>())).ReturnsAsync(new User());
             CreatedNewTokenSetup(editUser.New);
 
             // Act
@@ -195,7 +195,7 @@ namespace ServerUnitTest.Requests
 
         private void CreatedNewTokenSetup(User user)
         {
-            _mockAuthenticationService.Setup(_mockAuthenticationService => _mockAuthenticationService.AuthenticateAsync(It.IsAny<User>())).ReturnsAsync(new User());
+            _mockAuthenticationService.Setup(_mockAuthenticationService => _mockAuthenticationService.AuthenticateAsyncAccess(It.IsAny<User>())).ReturnsAsync(new User());
             _mockDb.Setup(_mockDb => _mockDb.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>?>())).ReturnsAsync([user]);
         }
     }

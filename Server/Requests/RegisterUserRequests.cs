@@ -2,11 +2,12 @@
 using DataBase.Model.EntitiesServer;
 using DataBase.Service;
 
+using Microsoft.Extensions.Logging.Abstractions;
+
+using Server.Helper;
 using Server.Model;
 using Server.Service;
 using Server.Validation;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Server.Requests
 {
@@ -23,7 +24,8 @@ namespace Server.Requests
                                     , IEmailService emailService
                                     , IEmailConfirmService emailConfirmService
                                     , ITimeService time
-                                    , ILogger<RegisterUserRequests>? logger = null) : IRegisterUserRequests
+                                    , ILogger<RegisterUserRequests>? logger = null,
+Service.IAuthenticationService authenticationService = null) : IRegisterUserRequests
     {
         private readonly IAccessDataBaseAoT _db = db;
         private readonly IRegisterUserService _registerService = register;
@@ -31,6 +33,7 @@ namespace Server.Requests
         private readonly IEmailService _emailService = emailService;
         private readonly IEmailConfirmService _emailConfirmService = emailConfirmService;
         private readonly ITimeService _time = time;
+        private readonly Service.IAuthenticationService _authenticationService = authenticationService;
         private readonly ILogger<RegisterUserRequests> _logger = logger ?? NullLogger<RegisterUserRequests>.Instance;
 
         public async Task<IResult> InsertUser(RegisterUser registerUser, CancellationToken token = default)
@@ -63,9 +66,11 @@ namespace Server.Requests
                 _userValidation.Validation.Throw();
 
                 token.ThrowIfCancellationRequested();
-                RegisterUser result = await _registerService.InsertNewUser(registerUser);
 
-                await _emailConfirmService.SendVerificationEmailCode(result, token);
+                RegisterUser result = await _registerService.CheckUserBeforInsert(registerUser);
+
+                var code = await _emailConfirmService.SendVerificationEmailCode(result, token);
+                DictionaryList.RegisterUser.TryAdd(code.Code, (registerUser, code));
 
                 _logger.LogInformation("InsertUser succeeded for email={Email} userId={UserId}", registerUser.Email, result.Id);
                 return Results.Ok();
@@ -93,7 +98,11 @@ namespace Server.Requests
             {
                 _logger.LogInformation("ConfirmEmail started for code={Code}", code);
                 token.ThrowIfCancellationRequested();
-                var user = await _registerService.GetUserEmailFromCodeAndRemoveOld(code);
+                var user = await _registerService.InsertUserAfterConfirmEmail(code);
+
+                user = await _authenticationService.AuthenticateAsyncAccess(user);
+                user = await _authenticationService.AuthenticateAsyncRefresh(user);
+
                 _logger.LogInformation("ConfirmEmail succeeded for code={Code} userId={UserId}", code, user?.Id);
                 return Results.Ok(user);
             }

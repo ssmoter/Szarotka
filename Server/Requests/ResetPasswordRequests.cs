@@ -1,11 +1,11 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
 
+using Microsoft.Extensions.Logging.Abstractions;
+
 using Server.Model;
 using Server.Service;
 using Server.Validation;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 
 namespace Server.Requests
@@ -69,7 +69,7 @@ namespace Server.Requests
                 _logger.LogInformation("ResetPasswordCode started for code={Code}", code);
                 token.ThrowIfCancellationRequested();
 
-                _ = await CheckCode(code);
+                CheckCode(code);
 
                 _logger.LogInformation("ResetPasswordCode succeeded for code={Code}", code);
                 return Results.Ok();
@@ -98,7 +98,7 @@ namespace Server.Requests
                 _logger.LogInformation("ResetPasswordNew started for code={Code}", code);
                 token.ThrowIfCancellationRequested();
 
-                var confirmCode = await CheckCode(code);
+                var confirmCode = CheckCode(code, remove: true);
 
                 if (_userValidation.PasswordIsNull(password) == ServerEnums.Result.Success)
                 {
@@ -139,9 +139,9 @@ namespace Server.Requests
 
 
 
-        private async Task<ConfirmCode> CheckCode(int code)
+        private ConfirmCode CheckCode(int code, bool remove = false)
         {
-            var confirm = await _resetPasswordService.GetConfirmCode(code);
+            var confirm = _resetPasswordService.GetConfirmCode(code, remove);
 
             if (_userValidation.CodeNotExist(confirm) == ServerEnums.Result.Success)
             {

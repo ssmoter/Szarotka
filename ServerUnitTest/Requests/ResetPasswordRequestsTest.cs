@@ -58,7 +58,7 @@ public class ResetPasswordRequestsTests
         // Arrange
         var code = 123456;
         var confirmCode = new ConfirmCode { Code = code };
-        _mockResetPasswordService.Setup(s => s.GetConfirmCode(code)).ReturnsAsync(confirmCode);
+        _mockResetPasswordService.Setup(s => s.GetConfirmCode(code)).Returns(confirmCode);
         _mockUserValidation.Setup(v => v.CodeNotExist(confirmCode)).Returns(ServerEnums.Result.Success);
         _mockUserValidation.Setup(x => x.Validation).Returns(new ValidationException());
 
@@ -76,7 +76,7 @@ public class ResetPasswordRequestsTests
         var code = 123456;
         var password = "NewPassword123!";
         var confirmCode = new ConfirmCode { Code = code, UserId = Guid.NewGuid() };
-        _mockResetPasswordService.Setup(s => s.GetConfirmCode(code)).ReturnsAsync(confirmCode);
+        _mockResetPasswordService.Setup(s => s.GetConfirmCode(code, It.IsAny<bool>())).Returns(confirmCode);
         _mockUserValidation.Setup(v => v.CodeNotExist(confirmCode)).Returns(ServerEnums.Result.Success);
         _mockUserValidation.Setup(x => x.Validation).Returns(new ValidationException());
 
@@ -123,7 +123,7 @@ public class ResetPasswordRequestsTests
         var errors = new ValidationException();
         errors.ValidationErrors.Add(error[0]);
 
-        _mockResetPasswordService.Setup(s => s.GetConfirmCode(code)).ReturnsAsync((ConfirmCode)null!);
+        _mockResetPasswordService.Setup(s => s.GetConfirmCode(code)).Returns((ConfirmCode)null!);
         _mockUserValidation.Setup(v => v.CodeNotExist(null)).Returns(ServerEnums.Result.Error);
         _mockUserValidation.Setup(x => x.Validation).Returns(new ValidationException());
         _mockUserValidation.Setup(v => v.Validation.GetError()).Returns("Invalid code");
@@ -150,7 +150,7 @@ public class ResetPasswordRequestsTests
 
         _mockUserValidation.Setup(x => x.Validation).Returns(new ValidationException());
         _mockUserValidation.Setup(x => x.Validation.ValidationErrors).Returns([]);
-        _mockResetPasswordService.Setup(s => s.GetConfirmCode(code)).ReturnsAsync((ConfirmCode)null!);
+        _mockResetPasswordService.Setup(s => s.GetConfirmCode(code)).Returns((ConfirmCode)null!);
         _mockUserValidation.Setup(v => v.CodeNotExist(null)).Returns(ServerEnums.Result.Error);
         _mockUserValidation.Setup(v => v.Validation.ValidationErrors).Returns(error);
         _mockUserValidation.Setup(x => x.Validation.Throw()).Throws(errors);

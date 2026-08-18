@@ -23,7 +23,7 @@ namespace Server.Service
 
         public async Task UpdateName(User user)
         {
-            _logger.LogInformation("UpdateName started for userId={UserId}", user?.Id);
+            _logger.LogInformation("UpdateName started for userId={UserId}", user.Id);
             user.Updated = _timeService.UtcNow();
 
             var sql = SqlQuery.UserQuery.UpdateName(user.Name, user.UpdatedTicks, user.UserUpdatedId, user.Id);
@@ -46,7 +46,7 @@ namespace Server.Service
         }
         public async Task UpdateDescription(User user)
         {
-            _logger.LogInformation("UpdateDescription started for userId={UserId}", user?.Id);
+            _logger.LogInformation("UpdateDescription started for userId={UserId}", user.Id);
             user.Updated = _timeService.UtcNow();
 
             var sql = SqlQuery.UserQuery.UpdateDescription(user.Description, user.UpdatedTicks, user.UserUpdatedId, user.Id);
@@ -69,7 +69,7 @@ namespace Server.Service
         }
         public async Task UpdateEmail(User user)
         {
-            _logger.LogInformation("UpdateEmail started for userId={UserId}", user?.Id);
+            _logger.LogInformation("UpdateEmail started for userId={UserId}", user.Id);
             user.Updated = _timeService.UtcNow();
 
             var sql = SqlQuery.UserQuery.UpdateEmail(user.Email, user.UpdatedTicks, user.UserUpdatedId, user.Id);
@@ -92,7 +92,7 @@ namespace Server.Service
         }
         public async Task UpdatePhoneNumber(User user)
         {
-            _logger.LogInformation("UpdatePhoneNumber started for userId={UserId}", user?.Id);
+            _logger.LogInformation("UpdatePhoneNumber started for userId={UserId}", user.Id);
             user.Updated = _timeService.UtcNow();
 
             var sql = SqlQuery.UserQuery.UpdatePhoneNumber(user.PhoneNumber, user.UpdatedTicks, user.UserUpdatedId, user.Id);
@@ -115,7 +115,7 @@ namespace Server.Service
         }
         public async Task UpdateUserType(User user)
         {
-            _logger.LogInformation("UpdateUserType started for userId={UserId}", user?.Id);
+            _logger.LogInformation("UpdateUserType started for userId={UserId}", user.Id);
             user.Updated = _timeService.UtcNow();
 
             var sql = SqlQuery.UserQuery.UpdateUserType(user.UserType, user.UpdatedTicks, user.UserUpdatedId, user.Id);

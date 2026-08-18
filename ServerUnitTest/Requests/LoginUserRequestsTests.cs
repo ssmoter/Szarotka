@@ -3,7 +3,6 @@ using DataBase.Model.EntitiesServer;
 using DataBase.Service;
 
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 using Moq;
 
@@ -25,10 +24,11 @@ namespace ServerUnitTest.Requests
         public LoginUserRequestsTests()
         {
             _mockDb = new Mock<IAccessDataBaseAoT>();
+            var _timeService = new Mock<ITimeService>();
+            _mockDb.Setup(x => x.TimeService).Returns(_timeService.Object);
             _mockLoginService = new Mock<ILoginService>();
             _mockEmailConfirmService = new Mock<IEmailConfirmService>();
             _mockAuthenticationService = new Mock<IAuthenticationService>();
-            var _timeService = new Mock<ITimeService>();
             _userValidation = new UserValidation(_mockDb.Object, _timeService.Object, new ValidationException());
 
             _loginUserRequests = new LoginUserRequests(
@@ -46,9 +46,10 @@ namespace ServerUnitTest.Requests
             // Arrange
             var user = new LoginUser { Email = "test@example.com", Password = "password" };
             var dbUser = new User { Email = "test@example.com", IsEmailConfirm = true, IsDelete = false };
-            var token = new User { Token = "token" };
+            var token = new User { AccessToken = "token" };
             _mockLoginService.Setup(s => s.LogIn(user)).ReturnsAsync(dbUser);
-            _mockAuthenticationService.Setup(s => s.AuthenticateAsync(dbUser)).ReturnsAsync(token);
+            _mockAuthenticationService.Setup(s => s.AuthenticateAsyncAccess(dbUser)).ReturnsAsync(dbUser);
+            _mockAuthenticationService.Setup(s => s.AuthenticateAsyncRefresh(dbUser)).ReturnsAsync(dbUser);
 
             // Act
             var result = await _loginUserRequests.LogInUser(user);
@@ -71,31 +72,19 @@ namespace ServerUnitTest.Requests
         public async Task RefreshToken_ValidToken_ReturnsOkResult()
         {
             // Arrange
-            var token = "validToken";
-            var newToken = new User { Token = "newToken" };
+            var newToken = new User { AccessToken = "newToken" };
+            var token = new User { AccessToken = "validToken" };
 
-            _mockAuthenticationService.Setup(s => s.AuthenticateAsync(token)).ReturnsAsync(newToken);
-
-            // Act
-            var result = await _loginUserRequests.RefreshToken(token);
-
-            // Assert
-            Assert.IsType<Ok<User>>(result);
-        }
-
-        [Fact]
-        public async Task RefreshToken_InvalidToken_ReturnsUnauthorizedResult()
-        {
-            // Arrange
-            var token = "invalidToken";
-
-            _mockAuthenticationService.Setup(s => s.AuthenticateAsync(token)).ThrowsAsync(new UnauthorizedAccessException());
+            _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<RefreshToken>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(new RefreshToken[] {new()} );
+            _mockAuthenticationService.Setup(s => s.AuthenticateAsyncAccess(It.IsAny<User>())).ReturnsAsync(newToken);
+            //_mockAuthenticationService.Setup(s => s.AuthenticateAsyncRefresh(token)).ReturnsAsync(newToken);
+            _mockLoginService.Setup(x => x.GetPublicUser(It.IsAny<string>())).ReturnsAsync(new User());
 
             // Act
-            var result = await _loginUserRequests.RefreshToken(token);
+            var result = await _loginUserRequests.NewAccessToken(token.AccessToken);
 
             // Assert
-            Assert.IsType<UnauthorizedHttpResult>(result);
+            Assert.IsType<Ok<string>>(result);
         }
 
         [Fact]

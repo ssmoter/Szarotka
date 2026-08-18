@@ -2,7 +2,12 @@
 {
     public class JSONWebTokensSettings
     {
-        public JSONWebTokensSettings(string? key, string? issuer, string? audience, string? durationInMinutes, string? durationInDays)
+        public JSONWebTokensSettings(string? key,
+                                     string? issuer,
+                                     string? audience,
+                                     string? durationInAccessToken,
+                                     string? durationInRefreshTokenLong,
+                                     string? durationInRefreshTokenShort)
         {
             if (key is not null)
             {
@@ -16,37 +21,53 @@
             {
                 Audience = audience;
             }
-            if (double.TryParse(durationInMinutes, out double minutes))
+            if (double.TryParse(durationInAccessToken, out double minutes))
             {
-                DurationInMinutes = minutes;
+                DurationInAccessToken = minutes;
             }
             else
             {
-                DurationInMinutes = 5;
+                DurationInAccessToken = 30;
             }
-            if (double.TryParse(durationInDays, out double days))
+            if (double.TryParse(durationInRefreshTokenLong, out double days))
             {
-                DurationInDays = days;
+                DurationInRefreshTokenLong = days;
             }
             else
             {
-                DurationInDays = 5;
+                DurationInRefreshTokenLong = 90;
+            }
+
+            if (double.TryParse(durationInRefreshTokenShort, out double shortDuration))
+            {
+                DurationInRefreshTokenShort = shortDuration;
+            }
+            else
+            {
+                DurationInRefreshTokenShort = 1;
             }
         }
-        public JSONWebTokensSettings(string key, string issuer, string audience, double durationInMinutes, double durationInDays)
+        public JSONWebTokensSettings(string key,
+                                     string issuer,
+                                     string audience,
+                                     double durationInAccessToken,
+                                     double durationInRefreshTokenLong,
+                                     double durationInRefreshTokenShort)
         {
             Key = key;
             Issuer = issuer;
             Audience = audience;
-            DurationInMinutes = durationInMinutes;
-            DurationInDays = durationInDays;
+            DurationInAccessToken = durationInAccessToken;
+            DurationInRefreshTokenLong = durationInRefreshTokenLong;
+            DurationInRefreshTokenShort = durationInRefreshTokenShort;
         }
         public JSONWebTokensSettings()
         { }
         public string Key { get; set; } = "";
         public string Issuer { get; set; } = "";
         public string Audience { get; set; } = "";
-        public double DurationInMinutes { get; set; }
-        public double DurationInDays { get; set; }
+        public double DurationInAccessToken { get; set; }
+        public double DurationInRefreshTokenLong { get; set; }
+        public double DurationInRefreshTokenShort { get; set; }
     }
 }

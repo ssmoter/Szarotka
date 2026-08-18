@@ -93,12 +93,12 @@ namespace DataBaseUnitTest
                 Key = TestJwtSecret,
                 Issuer = "localhost",
                 Audience = "localhostUsers",
-                DurationInMinutes = 100,
-                DurationInDays = 1
+                DurationInAccessToken = 100,
+                DurationInRefreshTokenLong = 1
             }, TestDatabase!);
 
             // 3. Autoryzujemy i ustawiamy sesję (tutaj bezpiecznie robimy await)
-            var token = await JwtToken.AuthenticateAsync(User);
+            var token = await JwtToken.AuthenticateAsyncAccess(User);
             ref IAccessDataBaseAoT? privateDbField = ref SetDB(null);
             privateDbField = db;
             UserAfterLogin.SetLoginUser(token);

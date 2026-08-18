@@ -1,10 +1,10 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
 
+using Microsoft.Extensions.Logging.Abstractions;
+
 using Server.Service;
 using Server.Validation;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Server.Requests
 {
@@ -12,8 +12,9 @@ namespace Server.Requests
     {
         Task<IResult> GetPublicUser(string id, CancellationToken token = default);
         Task<IResult> LogInUser(LoginUser user, CancellationToken token = default);
-        Task<IResult> LogOutUser(string user, CancellationToken token = default);
-        Task<IResult> RefreshToken(string userToken, CancellationToken token = default);
+        Task<IResult> LogOutUser(string refreshToken, CancellationToken token = default);
+        Task<IResult> NewAccessToken(string userToken, CancellationToken token = default);
+        Task<IResult> NewRefreshToken(string userToken, CancellationToken token = default);
     }
 
     public class LoginUserRequests(IAccessDataBaseAoT db,
@@ -56,14 +57,13 @@ namespace Server.Requests
                     await _emailConfirmService.SendVerificationEmailCode(dbUser, token);
                 }
 
-
                 _userValidation.Validation.Throw();
 
-
-                var userToken = await _authenticationService.AuthenticateAsync(dbUser);
+                dbUser = await _authenticationService.AuthenticateAsyncAccess(dbUser);
+                dbUser = await _authenticationService.AuthenticateAsyncRefresh(dbUser);
 
                 _logger.LogInformation("LogInUser completed for email={Email}", user?.Email);
-                return Results.Ok(new User() { Token = userToken.Token });
+                return Results.Ok(dbUser);
             }
             catch (ValidationException)
             {
@@ -83,40 +83,130 @@ namespace Server.Requests
             }
         }
 
-        public async Task<IResult> RefreshToken(string userToken, CancellationToken token = default)
+        public async Task<IResult> NewAccessToken(string userToken, CancellationToken token = default)
         {
             try
             {
+                _logger.LogInformation("NewAccessToken invoked.");
+
                 ArgumentException.ThrowIfNullOrWhiteSpace(userToken, nameof(userToken));
                 token.ThrowIfCancellationRequested();
-                var newToken = await _authenticationService.AuthenticateAsync(userToken);
 
-                return Results.Ok(newToken);
+                var maskedToken = userToken.Length > 8 ? $"{userToken[..4]}...{userToken[^4..]}" : userToken;
+                _logger.LogDebug("Looking up refresh token for token={Token}", maskedToken);
+
+                string userIdFromToken = $"SELECT * FROM {nameof(RefreshToken)} WHERE {nameof(RefreshToken.Value)} = @Value";
+                var userIds = await _db.DbAsyncAoT.QueryAsync<RefreshToken>(userIdFromToken, new() { ["Value"] = userToken });
+                _logger.LogDebug("Refresh token query returned {Count} rows for token={Token}", userIds?.Count() ?? 0, maskedToken);
+
+                var userId = userIds!.FirstOrDefault();
+                if (userId is null)
+                {
+                    _logger.LogWarning("NewAccessToken failed: Refresh token not found for token={Token}", maskedToken);
+                    return Results.Unauthorized();
+                }
+                if (userId.ExpireDate < _db.TimeService.UtcNow().Ticks)
+                {
+                    _logger.LogWarning("NewAccessToken failed: Refresh token expired for token={Token}", maskedToken);
+                    return Results.Unauthorized();
+                }
+
+                _logger.LogDebug("Refresh token valid for UserId={UserId}", userId.UserId);
+                var user = await _loginService.GetPublicUser(userId.UserId);
+
+                var newToken = await _authenticationService.AuthenticateAsyncAccess(user);
+
+                _logger.LogInformation("New access token issued for UserId={UserId}", userId.UserId);
+                return Results.Ok(newToken.AccessToken);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException ex)
             {
+                _logger.LogWarning(ex, "NewAccessToken unauthorized access.");
                 return Results.Unauthorized();
             }
             catch (OperationCanceledException ex)
             {
-                Console.WriteLine(ex.Message);
+                _logger.LogInformation(ex, "NewAccessToken operation canceled.");
                 throw;
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "NewAccessToken failed with exception.");
                 _db.SaveLog(ex);
                 throw;
             }
         }
 
-        public async Task<IResult> LogOutUser(string user, CancellationToken token = default)
+        public async Task<IResult> NewRefreshToken(string userToken, CancellationToken token = default)
         {
             try
             {
-                _logger.LogInformation("LogOutUser started for user={User}", user);
-                await Task.Delay(1);
+                var tokenPreview = string.IsNullOrWhiteSpace(userToken) ? "<null>" : (userToken.Length > 8 ? userToken[..8] + "..." : userToken);
+                _logger.LogDebug("NewRefreshToken called. TokenPreview={TokenPreview}", tokenPreview);
+
+                ArgumentException.ThrowIfNullOrWhiteSpace(userToken, nameof(userToken));
                 token.ThrowIfCancellationRequested();
-                _logger.LogInformation("LogOutUser completed for user={User}", user);
+
+                string userIdFromToken = $"SELECT * FROM {nameof(RefreshToken)} WHERE {nameof(RefreshToken.Value)} = @Value";
+                var userIds = await _db.DbAsyncAoT.QueryAsync<RefreshToken>(userIdFromToken, new() { ["Value"] = userToken });
+                _logger.LogDebug("Query for refresh token returned {Count} items", userIds?.Count() ?? 0);
+
+                var userId = userIds!.FirstOrDefault();
+                if (userId is null)
+                {
+                    _logger.LogWarning("NewRefreshToken failed: Refresh token not found for tokenPreview={TokenPreview}", tokenPreview);
+                    return Results.Unauthorized();
+                }
+                if (userId.ExpireDate < _db.TimeService.UtcNow().Ticks)
+                {
+                    _logger.LogWarning("NewRefreshToken failed: Refresh token expired for userId={UserId}", userId.UserId);
+                    return Results.Unauthorized();
+                }
+
+                _logger.LogInformation("Invalidating existing refresh token for userId={UserId}", userId.UserId);
+                await _loginService.LogOut(userToken);
+
+                var user = await _loginService.GetPublicUser(userId.UserId);
+                if (user is null)
+                {
+                    _logger.LogWarning("NewRefreshToken failed: Public user not found for userId={UserId}", userId.UserId);
+                    return Results.Unauthorized();
+                }
+
+                var newToken = await _authenticationService.AuthenticateAsyncRefresh(user);
+                _logger.LogInformation("New refresh token issued for userId={UserId}", userId.UserId);
+
+                return Results.Ok(newToken.RefreshToken);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogWarning(ex, "NewRefreshToken unauthorized access");
+                return Results.Unauthorized();
+            }
+            catch (OperationCanceledException ex)
+            {
+                _logger.LogInformation(ex, "Operation canceled during NewRefreshToken");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception in NewRefreshToken");
+                _db.SaveLog(ex);
+                throw;
+            }
+        }
+
+
+        public async Task<IResult> LogOutUser(string refreshToken, CancellationToken token = default)
+        {
+            try
+            {
+                _logger.LogInformation("LogOutUser started for token={Token}", refreshToken);
+                token.ThrowIfCancellationRequested();
+
+                await _loginService.LogOut(refreshToken);
+
+                _logger.LogInformation("LogOutUser completed for token={Token}", refreshToken);
                 return Results.Ok();
             }
             catch (OperationCanceledException ex)

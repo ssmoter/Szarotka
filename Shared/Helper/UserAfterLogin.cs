@@ -30,7 +30,7 @@ namespace Shared.Helper
 
         public static void SetLoginUser(User token)
         {
-            SetLoginUser(token.Token);
+            SetLoginUser(token.AccessToken);
         }
         public static void SetLoginUser(string token)
         {
@@ -46,7 +46,7 @@ namespace Shared.Helper
 
                 OnLogin?.Invoke(User, IsLogin);
 
-                var helperTable = new HelperTable(nameof(UserAfterLogin.User.Token), token)
+                var helperTable = new HelperTable(nameof(UserAfterLogin.User.AccessToken), token)
                 {
                     UserCreatedId = user.Id,
                     UserUpdatedId = user.Id,
@@ -73,7 +73,7 @@ namespace Shared.Helper
             Expires = new();
             IsLogin = false;
             User = new();
-            var helperTable = new HelperTable(nameof(UserAfterLogin.User.Token), "");
+            var helperTable = new HelperTable(nameof(UserAfterLogin.User.AccessToken), "");
             helperTable.Set(_db);
             OnLogin?.Invoke(User, IsLogin);
         }
@@ -82,7 +82,7 @@ namespace Shared.Helper
 
         public static void SetAuthorization(this HttpClient client)
         {
-            var token = User.Token;
+            var token = User.AccessToken;
             if (!string.IsNullOrEmpty(token))
             {
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);

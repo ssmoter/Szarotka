@@ -10,3 +10,9 @@ gcloud run deploy serwer-aot --image="gcr.io/szarotka-505112/serwer-aot:latest" 
 Przydatna komenda dodatkowa (Podgląd logów "na żywo")
 
 gcloud beta run services logs tail serwer-aot --project=szarotka-505112 --region=europe-west1
+
+
+Za pierwszym razem 
+powershell -ExecutionPolicy Bypass -File .\wdroz.ps1
+Potem
+.\wdroz.ps1

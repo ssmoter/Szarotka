@@ -64,11 +64,13 @@ namespace ServerUnitTest.Service
             // Arrange
             var code = 123456;
             var confirmCode = new ConfirmCode { Code = code };
+            // ResetPasswordService reads from DictionaryList.ResetPasswordCodes, ensure the dictionary contains the code
+            DictionaryList.ResetPasswordCodes.TryAdd(code, confirmCode);
             _dbMock.Setup(db => db.DbAsyncAoT.QueryAsync<ConfirmCode>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>()))
-                   .ReturnsAsync([confirmCode]);
+                   .ReturnsAsync(new[] { confirmCode });
 
             // Act
-            var result = await _resetPasswordService.GetConfirmCode(code);
+            var result = _resetPasswordService.GetConfirmCode(code);
 
             // Assert
             Assert.NotNull(result);
@@ -84,7 +86,7 @@ namespace ServerUnitTest.Service
                    .ReturnsAsync([]);
 
             // Act
-            var result = await _resetPasswordService.GetConfirmCode(code);
+            var result = _resetPasswordService.GetConfirmCode(code);
 
             // Assert
             Assert.Null(result);

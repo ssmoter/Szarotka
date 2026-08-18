@@ -56,7 +56,7 @@ namespace SzarotkaNET10
         {
             try
             {
-                var user = await nameof(UserAfterLogin.User.Token).GetHelperTableAsync(_db);
+                var user = await nameof(UserAfterLogin.User.AccessToken).GetHelperTableAsync(_db);
                 if (user is not null)
                 {
                     try

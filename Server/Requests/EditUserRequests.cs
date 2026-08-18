@@ -58,7 +58,7 @@ namespace Server.Requests
             {
                 var userToken = await CreatedNewToken(edit.New.Id.ToString());
                 _logger.LogWarning("Validation failed in Update: {Error}", _userValidation.Validation.GetError());
-                _userValidation.AddToken(userToken.Token);
+                _userValidation.AddToken(userToken.AccessToken);
                 throw;
             }
             catch (OperationCanceledException ex)
@@ -288,7 +288,7 @@ namespace Server.Requests
 
             User updateUser = users.FirstOrDefault() ?? throw new UnauthorizedAccessException();
 
-            var userToken = await _authenticationService.AuthenticateAsync(updateUser);
+            var userToken = await _authenticationService.AuthenticateAsyncAccess(updateUser);
             return userToken;
         }
     }

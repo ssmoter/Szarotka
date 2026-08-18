@@ -99,8 +99,8 @@ public partial class User : BaseEntities<Guid>
         }
     }
 
-    [SQLite.Ignore]
-    public string Token { get; set; } = "";
+    public string AccessToken { get; set; } = "";
+    public RefreshToken RefreshToken { get; set; } = new();
 
     public User()
     { }
@@ -112,8 +112,9 @@ public partial class User : BaseEntities<Guid>
         Name = copy.Name;
         PhoneNumber = copy.PhoneNumber;
         RememberMe = copy.RememberMe;
-        Token = copy.Token;
+        AccessToken = copy.AccessToken;
         UserType = copy.UserType;
+        RefreshToken = new(copy.RefreshToken);
     }
 }
 

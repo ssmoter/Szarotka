@@ -21,8 +21,9 @@ namespace ServerUnitTest.Requests
         private readonly Mock<IEmailService> _mockEmailService;
         private readonly Mock<IEmailConfirmService> _mockEmailConfirmService;
         private readonly Mock<ITimeService> _mockTimeService;
+        private readonly Mock<IAuthenticationService> _mockAuthenticationService;
         private readonly RegisterUserRequests _endpoint;
-
+        
         public RegisterUserRequestsTests()
         {
             _mockDb = new Mock<IAccessDataBaseAoT>();
@@ -31,6 +32,7 @@ namespace ServerUnitTest.Requests
             _mockEmailService = new Mock<IEmailService>();
             _mockEmailConfirmService = new Mock<IEmailConfirmService>();
             _mockTimeService = new Mock<ITimeService>();
+            _mockAuthenticationService = new Mock<IAuthenticationService>();
 
             _endpoint = new RegisterUserRequests(
                 _mockDb.Object,
@@ -38,7 +40,9 @@ namespace ServerUnitTest.Requests
                 _mockUserValidation.Object,
                 _mockEmailService.Object,
                 _mockEmailConfirmService.Object,
-                _mockTimeService.Object
+                _mockTimeService.Object,
+                null,
+                _mockAuthenticationService.Object
             );
         }
 
@@ -51,8 +55,11 @@ namespace ServerUnitTest.Requests
             _mockUserValidation.Setup(v => v.Validation).Returns(new ValidationException());
             _mockUserValidation.Setup(v => v.RegisterUserNull(registerUser)).Returns(ServerEnums.Result.Success);
             _mockUserValidation.Setup(v => v.EmailIsNull(registerUser.Email)).Returns(ServerEnums.Result.Success);
+            _mockUserValidation.Setup(v => v.EmailValidFormat(registerUser.Email)).Returns(ServerEnums.Result.Success);
+            _mockUserValidation.Setup(v => v.EmailExist(registerUser.Email)).ReturnsAsync(ServerEnums.Result.Success);
             _mockUserValidation.Setup(v => v.PasswordIsNull(registerUser.Password)).Returns(ServerEnums.Result.Success);
-            _mockRegisterService.Setup(s => s.InsertNewUser(registerUser)).ReturnsAsync(registerUser);
+            _mockRegisterService.Setup(s => s.CheckUserBeforInsert(registerUser)).ReturnsAsync(registerUser);
+            _mockEmailConfirmService.Setup(s => s.SendVerificationEmailCode(registerUser, It.IsAny<CancellationToken>())).ReturnsAsync(new DataBase.Model.EntitiesServer.ConfirmCode { Code = 1 });
 
             // Act
             var result = await _endpoint.InsertUser(registerUser);
@@ -64,10 +71,13 @@ namespace ServerUnitTest.Requests
         [Fact]
         public async Task ConfirmEmail_ShouldReturnOk_WhenCodeIsValid()
         {
-            // Arrange
+
+            //Arrangea
             var code = 123456;
             var user = new User { Email = "test@example.com" };
-            _mockRegisterService.Setup(s => s.GetUserEmailFromCodeAndRemoveOld(code)).ReturnsAsync(user);
+            _mockRegisterService.Setup(s => s.InsertUserAfterConfirmEmail(code)).ReturnsAsync(user);
+            _mockAuthenticationService.Setup(a => a.AuthenticateAsyncAccess(It.IsAny<User>())).ReturnsAsync((User u) => u);
+            _mockAuthenticationService.Setup(a => a.AuthenticateAsyncRefresh(It.IsAny<User>())).ReturnsAsync((User u) => u);
 
             // Act
             var result = await _endpoint.ConfirmEmail(code);

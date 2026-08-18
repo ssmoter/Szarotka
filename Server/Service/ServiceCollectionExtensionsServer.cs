@@ -21,27 +21,6 @@ namespace Server.Service
                 services.Remove(descriptor);
                 descriptor = null;
             }
-//            services.AddSingleton<IAccessDataBase>(options =>
-//            {
-//                string dbPath;
-//#if DEBUG
-//                var env = options.GetRequiredService<IWebHostEnvironment>();
-//                dbPath = Path.Combine(env.ContentRootPath,
-//                                env.EnvironmentName, DataBase.Helper.Constants.DatabaseName);
-//                var db = new AccessDataBase(dbPath);
-//                db.DataBase.ExecuteScalar<string>("PRAGMA journal_mode=WAL;");
-//                db.DataBaseAsync.ExecuteScalarAsync<string>("PRAGMA journal_mode=WAL;").GetAwaiter().GetResult();
-//#else
-//                string appData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-//                dbPath = Path.Combine(appData, DataBase.Helper.Constants.DatabaseName);
-//                Directory.CreateDirectory(Path.GetDirectoryName(dbPath)!);
-
-//                 var db = new AccessDataBase(dbPath);
-//                db.DataBase.ExecuteScalar<string>("PRAGMA journal_mode=WAL;");
-//                db.DataBaseAsync.ExecuteScalarAsync<string>("PRAGMA journal_mode=WAL;").GetAwaiter().GetResult();
-//#endif
-//                return db;
-//            });
 
             descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DataBase.Data.MySqliteConnection.SqliteConnectionFactory));
             if (descriptor != null)
@@ -73,14 +52,13 @@ namespace Server.Service
             services.AddScoped<IEmailConfirmService, EmailConfirmService>();
             services.AddScoped<JSONWebTokensSettings>(options =>
             {
-                //services.Configure<JSONWebTokensSettings>
-                // (configuration.GetSection("JSONWebTokensSettings"));
                 return new JSONWebTokensSettings(
                     configuration["JSONWebTokensSettings:Key"],
                     configuration["JSONWebTokensSettings:Issuer"],
                     configuration["JSONWebTokensSettings:Audience"],
-                    configuration["JSONWebTokensSettings:DurationInMinutes"],
-                    configuration["JSONWebTokensSettings:DurationInDays"]
+                    configuration["JSONWebTokensSettings:DurationInAccessToken"],
+                    configuration["JSONWebTokensSettings:DurationInRefreshTokenLong"],
+                    configuration["JSONWebTokensSettings:DurationInRefreshTokenShort"]
                     );
             });
             services.AddScoped<IEditUserService, EditUserService>();

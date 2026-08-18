@@ -23,8 +23,9 @@ namespace Server.Service
                     configuration["JSONWebTokensSettings:Key"],
                     configuration["JSONWebTokensSettings:Issuer"],
                     configuration["JSONWebTokensSettings:Audience"],
-                    configuration["JSONWebTokensSettings:DurationInMinutes"],
-                    configuration["JSONWebTokensSettings:DurationInDays"]
+                    configuration["JSONWebTokensSettings:DurationInAccessToken"],
+                    configuration["JSONWebTokensSettings:DurationInRefreshTokenLong"],
+                    configuration["JSONWebTokensSettings:DurationInRefreshTokenShort"]
                     );
 
                 var bytes = Encoding.UTF8.GetBytes(config.Key);

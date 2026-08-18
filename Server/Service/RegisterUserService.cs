@@ -13,9 +13,9 @@ namespace Server.Service
 {
     public interface IRegisterUserService
     {
-        Task<User> GetUserEmailFromCodeAndRemoveOld(int code);
-        Task InsertCodeEmailAndRemoveOld(ConfirmCode user);
-        Task<RegisterUser> InsertNewUser(RegisterUser registerUser);
+        Task<User> InsertUserAfterConfirmEmail(int code);
+        ConfirmCode CreatedConfirmCode(ConfirmCode user);
+        Task<RegisterUser> CheckUserBeforInsert(RegisterUser registerUser);
     }
 
     public class RegisterUserService : IRegisterUserService
@@ -40,9 +40,9 @@ namespace Server.Service
             }
         }
 
-        public async Task<RegisterUser> InsertNewUser(RegisterUser registerUser)
+        public async Task<RegisterUser> CheckUserBeforInsert(RegisterUser registerUser)
         {
-            _logger.LogInformation("InsertNewUser started for email={Email}", registerUser?.Email);
+            _logger.LogInformation("CheckUserBeforInsert started for email={Email}", registerUser.Email);
             registerUser.IsDelete = false;
             registerUser.IsEmailConfirm = false;
             var time = _time.UtcNow();
@@ -55,136 +55,74 @@ namespace Server.Service
             {
                 registerUser.Id = Guid.CreateVersion7();
             }
+            registerUser.UserCreatedId = registerUser.Id;
+            registerUser.UserUpdatedId = registerUser.Id;
+
             registerUser.Password = Hash.PasswordSHA256(registerUser.Password);
-
-            var query = UserQuery.RegisterNewUser(registerUser.Id,
-                                                  registerUser.CreatedTicks,
-                                                  registerUser.UpdatedTicks,
-                                                  registerUser.Name,
-                                                  registerUser.Description,
-                                                  registerUser.Email,
-                                                  registerUser.PhoneNumber,
-                                                  registerUser.UserType,
-                                                  registerUser.IsDelete,
-                                                  registerUser.IsEmailConfirm,
-                                                  registerUser.Password);
-            var task = _db.DbAsyncAoT.ExecuteAsync(query,
-                                                      new()
-                                                      {
-                                                          [nameof(registerUser.Id)] = registerUser.Id,
-                                                          [nameof(registerUser.CreatedTicks)] = registerUser.CreatedTicks,
-                                                          [nameof(registerUser.UpdatedTicks)] = registerUser.UpdatedTicks,
-                                                          [nameof(registerUser.Name)] = registerUser.Name,
-                                                          [nameof(registerUser.Description)] = registerUser.Description,
-                                                          [nameof(registerUser.Email)] = registerUser.Email,
-                                                          [nameof(registerUser.PhoneNumber)] = registerUser.PhoneNumber,
-                                                          [nameof(registerUser.UserType)] = registerUser.UserType,
-                                                          [nameof(registerUser.IsDelete)] = registerUser.IsDelete,
-                                                          [nameof(registerUser.IsEmailConfirm)] = registerUser.IsEmailConfirm,
-                                                          [nameof(registerUser.Password)] = registerUser.Password
-                                                      });
-
-            await task;
-
-            if (task.IsCompletedSuccessfully)
-            {
-                _logger.LogInformation("InsertNewUser succeeded for email={Email} userId={UserId}", registerUser.Email, registerUser.Id);
-                return registerUser;
-            }
-            if (task.IsFaulted)
-            {
-                _logger.LogError(task.Exception, "InsertNewUser failed for email={Email}", registerUser.Email);
-                throw task.Exception!;
-            }
-            _logger.LogError("InsertNewUser unexpected failure for email={Email}", registerUser.Email);
-            throw new ArgumentException("Nie uało się dodać użytkownika");
+            _logger.LogInformation("CheckUserBeforInsert succeeded for email={Email} userId={UserId}", registerUser.Email, registerUser.Id);
+            return registerUser;
         }
-        public async Task InsertCodeEmailAndRemoveOld(ConfirmCode user)
+        public ConfirmCode CreatedConfirmCode(ConfirmCode user)
         {
-            _logger.LogInformation("InsertCodeEmailAndRemoveOld started for userId={UserId}", user?.UserId);
+            _logger.LogInformation("CreatedConfirmCode started for userId={UserId}", user.UserId);
             var now = _time.UtcNow();
             user.ExpireDate = now.AddMinutes(_emailConfig.ExpireDateMinutes).Ticks;
-            var codeOldTaskSql = UserQuery.RemoveExpireCode(now.Ticks);
-            var codeOldTask = _db.DbAsyncAoT.ExecuteAsync(codeOldTaskSql, new() { [nameof(ConfirmCode.ExpireDate)] = now.AddDays(-7).Ticks });
-            var codeNewTaskSql = UserQuery.ConfirmCodeInsert(user.CreatedTicks, user.UpdatedTicks, user.UserId, user.Code, user.ExpireDate);
-            var codeNewTask = _db.DbAsyncAoT.ExecuteAsync(codeNewTaskSql, new()
-            {
-                [nameof(user.CreatedTicks)] = user.CreatedTicks,
-                [nameof(user.UpdatedTicks)] = user.UpdatedTicks,
-                [nameof(user.UserId)] = user.UserId,
-                [nameof(user.Code)] = user.Code,
-                [nameof(user.ExpireDate)] = user.ExpireDate
-            });
-
-            try
-            {
-                await Task.WhenAll(codeOldTask, codeNewTask);
-                _logger.LogInformation("InsertCodeEmailAndRemoveOld succeeded for userId={UserId}", user.UserId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "InsertCodeEmailAndRemoveOld failed for userId={UserId}", user.UserId);
-                throw;
-            }
+            return user;
         }
-        public async Task<User> GetUserEmailFromCodeAndRemoveOld(int code)
+        public async Task<User> InsertUserAfterConfirmEmail(int code)
         {
-            _logger.LogInformation("GetUserEmailFromCodeAndRemoveOld started for code={Code}", code);
-            var sql = UserQuery.CodeConfirmCheck(code);
-            var userEmails = await _db.DbAsyncAoT.QueryAsync<ConfirmCode>(sql, new() { [nameof(ConfirmCode.Code)] = code });
-            var userEmail = userEmails.FirstOrDefault();
+            _logger.LogInformation("InsertUserAfterConfirmEmail started for code={Code}", code);
+            DictionaryList.RegisterUser.TryRemove(code, out var storedUser);
 
-            _userValidation.CodeNotExist(userEmail);
+            _userValidation.CodeNotExist(storedUser.code);
 
             _userValidation.Validation.Throw();
 
-            _userValidation.CodeIsExpire(userEmail!);
+            _userValidation.CodeIsExpire(storedUser.code);
 
             _userValidation.Validation.Throw();
 
+            storedUser.user.IsEmailConfirm = true;
+            storedUser.user.IsDelete = false;
 
-            var user = new User()
-            {
-                Id = userEmail!.UserId,
-                IsEmailConfirm = true,
-                Updated = _time.UtcNow(),
-                UserUpdatedId = userEmail.UserId
-            };
-            var userSql = UserQuery.EmailIsConfirmUpdate(user.IsEmailConfirm, user.UpdatedTicks, user.UserUpdatedId, user.Id);
-            var userTask = _db.DbAsyncAoT.ExecuteAsync(userSql, new()
-            {
-                [nameof(user.IsEmailConfirm)] = user.IsEmailConfirm,
-                [nameof(user.UpdatedTicks)] = user.UpdatedTicks,
-                [nameof(user.UserUpdatedId)] = user.UserUpdatedId,
-                [nameof(user.Id)] = user.Id
-            });
+            var query = UserQuery.RegisterNewUser(storedUser.user.Id,
+                                                  storedUser.user.CreatedTicks,
+                                                  storedUser.user.UpdatedTicks,
+                                                  storedUser.user.Name,
+                                                  storedUser.user.Description,
+                                                  storedUser.user.Email,
+                                                  storedUser.user.PhoneNumber,
+                                                  storedUser.user.UserType,
+                                                  storedUser.user.IsDelete,
+                                                  storedUser.user.IsEmailConfirm,
+                                                  storedUser.user.Password);
+            await _db.DbAsyncAoT.ExecuteAsync(query,
+                                                      new()
+                                                      {
+                                                          [nameof(storedUser.user.Id)] = storedUser.user.Id,
+                                                          [nameof(storedUser.user.CreatedTicks)] = storedUser.user.CreatedTicks,
+                                                          [nameof(storedUser.user.UpdatedTicks)] = storedUser.user.UpdatedTicks,
+                                                          [nameof(storedUser.user.Name)] = storedUser.user.Name,
+                                                          [nameof(storedUser.user.Description)] = storedUser.user.Description,
+                                                          [nameof(storedUser.user.Email)] = storedUser.user.Email,
+                                                          [nameof(storedUser.user.PhoneNumber)] = storedUser.user.PhoneNumber,
+                                                          [nameof(storedUser.user.UserType)] = storedUser.user.UserType,
+                                                          [nameof(storedUser.user.IsDelete)] = storedUser.user.IsDelete,
+                                                          [nameof(storedUser.user.IsEmailConfirm)] = storedUser.user.IsEmailConfirm,
+                                                          [nameof(storedUser.user.Password)] = storedUser.user.Password
+                                                      });
 
-            var TicksNow = _time.UtcNow().Ticks;
-
-            var codeSql = UserQuery.RemoveExpireCode(TicksNow);
-            var codeTask = _db.DbAsyncAoT.ExecuteAsync(codeSql, new() { [nameof(TicksNow)] = TicksNow });
-
-            var emailSql = UserQuery.GetEmailFromId(userEmail.UserId);
-            var emailTask = _db.DbAsyncAoT.QueryAsync<User>(emailSql, new() { [nameof(userEmail.UserId)] = userEmail.UserId });
-
-            try
-            {
-                await Task.WhenAll(userTask, codeTask, emailTask);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "GetUserEmailFromCodeAndRemoveOld: database operations failed for code={Code}", code);
-                throw;
-            }
-
-            var email = emailTask.Result.FirstOrDefault();
+            var email = storedUser.user;
 
             _userValidation.AccountNotFound(email);
 
             _userValidation.Validation.Throw();
 
-            _logger.LogInformation("GetUserEmailFromCodeAndRemoveOld succeeded for code={Code} userId={UserId}", code, email?.Id);
-            return email!;
+            _logger.LogInformation("InsertUserAfterConfirmEmail succeeded for code={Code} userId={UserId}", code, email.Id);
+
+            email.Password = ""; // Clear the password before returning the user object
+
+            return email;
         }
     }
 }
