@@ -30,7 +30,7 @@ namespace Shared.Data.ServerHttpClients
 
             var url = "user/register";
 
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             var response = await httpClient.PostAsync(url, content);
 
@@ -52,8 +52,8 @@ namespace Shared.Data.ServerHttpClients
 
             ArgumentNullException.ThrowIfNull(code);
 
-            var ulr =  "user/confirm-email/" + code;
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var ulr = "user/confirm-email/" + code;
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             var response = await httpClient.GetAsync(ulr);
             response.EnsureSuccessStatusCode();

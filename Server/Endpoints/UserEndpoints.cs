@@ -27,19 +27,14 @@ namespace Server.Endpoints
             {
                 return await loginUserRequests.LogInUser(user, token);
             });
-            user.MapGet("logout", async (string refreshToken, ILoginUserRequests loginUserEndpoint, CancellationToken token = default) =>
+            user.MapPost("logout", async ([FromBody] RefreshToken refreshToken, ILoginUserRequests loginUserEndpoint, CancellationToken token = default) =>
             {
-                return await loginUserEndpoint.LogOutUser(refreshToken, token);
+                return await loginUserEndpoint.LogOutUser(refreshToken.Value, token);
             });
-            user.MapGet("access-token", async (string refreshToken, ILoginUserRequests loginUserRequests, CancellationToken token = default)
+            user.MapPost("refresh-token", async ([FromBody] RefreshToken refreshToken, ILoginUserRequests loginUserRequests, CancellationToken token = default)
                 =>
             {
-                return await loginUserRequests.NewAccessToken(refreshToken, token);
-            });
-            user.MapGet("refresh-token", async (string refreshToken, ILoginUserRequests loginUserRequests, CancellationToken token = default)
-                =>
-            {
-                return await loginUserRequests.NewRefreshToken(refreshToken, token);
+                return await loginUserRequests.NewRefreshToken(refreshToken.Value, token);
             });
             user.MapPost("edit", async ([FromBody] User user, IEditUserRequests editUserRequests, HttpContext context, CancellationToken token = default) =>
             {

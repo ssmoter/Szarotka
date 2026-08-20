@@ -3,9 +3,7 @@ using DataBase.Model.EntitiesInventory;
 using DataBase.Model.SourceGenerator;
 
 using Shared.CustomControls.FromCode;
-using Shared.Data;
 using Shared.Data.ServerHttpClients;
-using Shared.Helper;
 
 using System.Text.Json;
 
@@ -27,9 +25,8 @@ namespace Inventory.Data.InventoryApi
         {
             Shared.Service.AndroidPermissionService.InternetCheck();
             string url = $"/inventory/day/{id}";
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
-            httpClient.SetAuthorization();
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent?.Grid);
 
@@ -47,9 +44,8 @@ namespace Inventory.Data.InventoryApi
         {
             Shared.Service.AndroidPermissionService.InternetCheck();
             string url = $"/inventory/day?selectedDateString={selectedDateString}&userId={userId}";
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
-            httpClient.SetAuthorization();
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent?.Grid);
 
@@ -74,9 +70,8 @@ namespace Inventory.Data.InventoryApi
                 url += $"&userId={id}";
             }
 
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
-            httpClient.SetAuthorization();
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent?.Grid);
 

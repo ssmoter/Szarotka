@@ -17,7 +17,10 @@ SELECT
 {nameof(User.Description)},
 {nameof(User.PhoneNumber)},
 {nameof(User.IsDelete)},
-{nameof(User.IsEmailConfirm)}
+{nameof(User.IsEmailConfirm)},
+{nameof(User.RememberMe)},
+{nameof(User.UserUpdatedId)},
+{nameof(User.UserCreatedId)}
 FROM {nameof(User)}
 WHERE
 {nameof(User.Email)} = @{nameof(Email)}

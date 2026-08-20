@@ -2,6 +2,10 @@
 using DataBase.Data.MySqliteConnection;
 using DataBase.Service;
 
+using Microsoft.Extensions.Logging;
+
+using Moq;
+
 namespace DataBaseUnitTest.DataSave
 {
     public static class Helper
@@ -69,8 +73,9 @@ namespace DataBaseUnitTest.DataSave
             var sync = new MyDbConnection(factory);
             var async = new MyDbAsyncConnection(factory);
             var adb = new AccessDataBase(dbName, new CurrentUtc());
+            var log = new Mock<ILogger<AccessDataBaseAoT>>();
 
-            var db = new AccessDataBaseAoT(adb, sync, async, new CurrentUtc());
+            var db = new AccessDataBaseAoT(adb, sync, async, new CurrentUtc(), log.Object);
             var update = new Shared.Data.CreatedDataBase(db);
             await update.UpdateDataBase(data, data, data);
             static void data(double a, int b) { }

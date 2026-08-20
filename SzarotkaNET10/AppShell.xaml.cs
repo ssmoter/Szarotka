@@ -6,7 +6,6 @@ using DataBase.Model.EntitiesServer;
 
 using Shared.Data;
 using Shared.Helper;
-using Shared.Model;
 using Shared.Service;
 
 namespace SzarotkaNET10
@@ -56,17 +55,7 @@ namespace SzarotkaNET10
         {
             try
             {
-                var user = await nameof(UserAfterLogin.User.AccessToken).GetHelperTableAsync(_db);
-                if (user is not null)
-                {
-                    try
-                    {
-                        UserAfterLogin.SetLoginUser(user.Value);
-                    }
-                    catch (Exception)
-                    { }
-                }
-
+                await UserAfterLogin.SetLoginUser();
                 if (!UserAfterLogin.IsLogin)
                 {
                     await Shell.Current.GoToAsync($"{nameof(Shared.Pages.LogIn.LogInV)}");

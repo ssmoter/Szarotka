@@ -64,7 +64,7 @@ namespace Shared.Pages.FlyoutFooter
                 {
                 }
             }
-            UserAfterLogin.RemoveLoginUser();
+            await UserAfterLogin.RemoveLoginUser();
             await toast.Show();
             await Shell.Current.GoToAsync($"{nameof(LogIn.LogInV)}");
         }

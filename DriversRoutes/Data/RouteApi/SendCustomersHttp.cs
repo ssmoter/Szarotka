@@ -2,9 +2,7 @@
 using DataBase.Model.EntitiesRoutes;
 
 using Shared.CustomControls.FromCode;
-using Shared.Data;
 using Shared.Data.ServerHttpClients;
-using Shared.Helper;
 
 using System.Text.Json;
 
@@ -24,9 +22,8 @@ namespace DriversRoutes.Data.RouteApi
         public async Task<HttpResponseMessage> SendCustomerRoute(CustomerRoutes customers, UpdateProgressBar progressBar = null, bool forceUpdate = false, CancellationToken token = default)
         {
             string url = $"/driver-routes/update{(forceUpdate ? "?forceUpdate=true" : "")}";
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
-            httpClient.SetAuthorization();
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressBar?.Grid);
 
@@ -47,9 +44,8 @@ namespace DriversRoutes.Data.RouteApi
         public async Task<HttpResponseMessage> SendCustomerRoutes(IList<CustomerRoutes> customers, UpdateProgressBar progressBar = null, bool forceUpdate = false, CancellationToken token = default)
         {
             string url = $"/driver-routes/updates{(forceUpdate ? "?forceUpdate=true" : "")}";
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
-            httpClient.SetAuthorization();
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressBar?.Grid);
 

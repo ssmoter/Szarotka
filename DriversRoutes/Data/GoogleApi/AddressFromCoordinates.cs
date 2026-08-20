@@ -26,7 +26,7 @@ namespace DriversRoutes.Data.GoogleApi
                 var lat = latitude.ToString().Replace(',', '.');
                 var lon = longitude.ToString().Replace(',', '.');
 
-                using var client = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.GoogleApis);
+                var client = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.GoogleApis);
 
                 var uri = new Uri($"maps/api/geocode/json?latlng={lat},{lon}&key={key}");
 

@@ -1,6 +1,7 @@
 CREATE TABLE RefreshToken (
-	"Id"	INTEGER,
+	"Id" INTEGER,
+	"UserId" TEXT,
 	"Value"	TEXT,
-	"ExpireDate"	integer,
+	"ExpireDate" integer,
 	PRIMARY KEY("Id" AUTOINCREMENT)
 )

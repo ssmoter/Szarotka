@@ -81,10 +81,10 @@ namespace ServerUnitTest.Requests
             _mockLoginService.Setup(x => x.GetPublicUser(It.IsAny<string>())).ReturnsAsync(new User());
 
             // Act
-            var result = await _loginUserRequests.NewAccessToken(token.AccessToken);
+            var result = await _loginUserRequests.NewRefreshToken(token.AccessToken);
 
             // Assert
-            Assert.IsType<Ok<string>>(result);
+            Assert.IsType<Ok<User>>(result);
         }
 
         [Fact]

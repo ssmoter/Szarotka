@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 
+using Shared.Data.ServerHttpClients;
+
 namespace Shared.Service
 {
     public static class SharedHttpClients
@@ -20,7 +22,8 @@ namespace Shared.Service
 
                 client.BaseAddress = new Uri(urlSzarotka);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
-            });
+            }).AddHttpMessageHandler<AuthHeaderHandler>();
+
             services.AddHttpClient(MyHttpClientsType.GoogleRoutes, client =>
             {
                 string urlGoogleMaps = configuration[$"HttpClients:{MyHttpClientsType.GoogleRoutes}"];

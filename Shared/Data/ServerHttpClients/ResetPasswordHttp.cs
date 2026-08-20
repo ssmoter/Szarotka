@@ -19,9 +19,9 @@ namespace Shared.Data.ServerHttpClients
         {
             Shared.Service.AndroidPermissionService.InternetCheck();
 
-            string url =  "user/reset-password-email/" + email;
+            string url = "user/reset-password-email/" + email;
 
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             var response = await httpClient.GetAsync(url);
 
@@ -41,7 +41,7 @@ namespace Shared.Data.ServerHttpClients
 
             string url = "user/reset-password/" + code;
 
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             var response = await httpClient.GetAsync(url);
 
@@ -60,7 +60,7 @@ namespace Shared.Data.ServerHttpClients
 
             string url = $"user/reset-password/{code}/{password}";
 
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             var response = await httpClient.GetAsync(url);
 

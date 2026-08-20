@@ -122,7 +122,7 @@ namespace Shared.Pages.LogIn
             {
                 var result = await _loginHttp.In(User);
 
-                Helper.UserAfterLogin.SetLoginUser(result);
+                await Helper.UserAfterLogin.SetLoginUser(result);
 
                 var toast = Toast.Make($"Zalogowano {UserAfterLogin.User.Name}", duration: CommunityToolkit.Maui.Core.ToastDuration.Short);
                 await toast.Show();

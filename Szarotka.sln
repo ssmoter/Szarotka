@@ -35,6 +35,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementy rozwiązania", "El
 		Dockerfile = Dockerfile
 		Server\GoogleClouRun.txt = Server\GoogleClouRun.txt
 		wdroz.ps1 = wdroz.ps1
+		wlacz-serwer.ps1 = wlacz-serwer.ps1
+		wylacz-serwer.ps1 = wylacz-serwer.ps1
 	EndProjectSection
 EndProject
 Global

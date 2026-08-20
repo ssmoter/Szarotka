@@ -2,6 +2,8 @@
 using DataBase.Data.MySqliteConnection;
 using DataBase.Service;
 
+using Microsoft.Extensions.Logging;
+
 using Moq;
 
 namespace DataBaseUnitTest
@@ -14,10 +16,12 @@ namespace DataBaseUnitTest
             var mockTimeService = new Mock<ITimeService>();
             var mockDbSync = new Mock<IMyDbConnection>();
             var mockDbAsync = new Mock<IMyDbAsyncConnection>();
+            var log = new Mock<ILogger<AccessDataBaseAoT>>();
+
             // Setup mock behaviors as needed
             mockTimeService.Setup(ts => ts.UtcNow()).Returns(DateTime.UtcNow);
             // Add more setups for mockDbSync and mockDbAsync if necessary
-            return new AccessDataBaseAoT(mockDb.Object, mockDbSync.Object, mockDbAsync.Object, mockTimeService.Object);
+            return new AccessDataBaseAoT(mockDb.Object, mockDbSync.Object, mockDbAsync.Object, mockTimeService.Object, log.Object);
         }
     }
 }

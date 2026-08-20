@@ -95,7 +95,7 @@ namespace Inventory.Pages.SingleDay
 
         private void AddPropertyChangedEvent()
         {
-            ExecuteSafe_AddPropertyChangedEvent().FireAndForget();
+            ExecuteSafe_AddPropertyChangedEvent().Forget();
         }
         private async Task ExecuteSafe_AddPropertyChangedEvent()
         {
@@ -147,7 +147,7 @@ namespace Inventory.Pages.SingleDay
         private bool isPropertyChanged;
         private void SingleDayVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            ExecuteSafe_SingleDayVM_PropertyChanged(sender, e).FireAndForget();
+            ExecuteSafe_SingleDayVM_PropertyChanged(sender, e).Forget();
         }
         private async Task ExecuteSafe_SingleDayVM_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -213,7 +213,7 @@ namespace Inventory.Pages.SingleDay
         private CancellationTokenSource _sendHttpCancellationToken;
         private void DayHttpUpdate_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            ExecuteSafe_DayHttpUpdate_PropertyChanged(sender, e).FireAndForget();
+            ExecuteSafe_DayHttpUpdate_PropertyChanged(sender, e).Forget();
         }
         private async Task ExecuteSafe_DayHttpUpdate_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {

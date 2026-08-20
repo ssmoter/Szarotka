@@ -108,7 +108,7 @@ namespace Shared.Pages.UserDisplay.UserEdit
                 var result = await _editUserHttp.EditUser(user);
                 Old = result;
                 Edit = new(result);
-                UserAfterLogin.SetLoginUser(result);
+                await UserAfterLogin.SetLoginUser(result);
 
                 await Toast.Make("Edytowano").Show();
             }

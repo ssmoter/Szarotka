@@ -23,8 +23,7 @@ namespace DataBase.Data.SqlQuery
                     {nameof(ProductPrice.UserCreatedId)}, 
                     {nameof(ProductPrice.UserUpdatedId)},
                     {nameof(ProductPrice.ProductNameId)},
-                    {nameof(ProductPrice.IsDelete)},
-                    {nameof(ProductPrice.ProductNameId)}
+                    {nameof(ProductPrice.IsDelete)}
                 )
                 VALUES (
                     @{nameof(Id)}, 
@@ -34,16 +33,14 @@ namespace DataBase.Data.SqlQuery
                     @{nameof(UserCreatedId)}, 
                     @{nameof(UserUpdatedId)},
                     @{nameof(ProductNameId)},
-                    @{nameof(IsDelete)},
-                    @{nameof(ProductNameId)}
+                    @{nameof(IsDelete)}
                 )
                 ON CONFLICT({nameof(ProductPrice.Id)}) DO UPDATE SET
                     {nameof(ProductPrice.Price)} = @{nameof(Price)},
                     {nameof(ProductPrice.UpdatedTicks)} = @{nameof(UpdatedTicks)},
                     {nameof(ProductPrice.UserUpdatedId)} = @{nameof(UserUpdatedId)},
                     {nameof(ProductPrice.ProductNameId)} = @{nameof(ProductNameId)},
-                    {nameof(ProductPrice.IsDelete)} = @{nameof(IsDelete)},
-                    {nameof(ProductPrice.ProductNameId)} = @{nameof(ProductNameId)};
+                    {nameof(ProductPrice.IsDelete)} = @{nameof(IsDelete)};
             ";
             return sql;
         }

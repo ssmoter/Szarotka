@@ -2,9 +2,7 @@
 using DataBase.Model.EntitiesInventory;
 
 using Shared.CustomControls.FromCode;
-using Shared.Data;
 using Shared.Data.ServerHttpClients;
-using Shared.Helper;
 
 using System.Text.Json;
 
@@ -24,9 +22,7 @@ namespace Inventory.Data.InventoryApi
         public async Task<(HttpResponseMessage httpMessage, string content)> SendProduct(EmptyProduct product, UpdateProgressBar progressBar = null, bool forceUpdate = false, CancellationToken token = default)
         {
             string url = $"/inventory/product/update{(forceUpdate ? "?forceUpdate=true" : "")}";
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
-
-            httpClient.SetAuthorization();
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressBar?.Grid);
 
@@ -49,9 +45,8 @@ namespace Inventory.Data.InventoryApi
         public async Task<(HttpResponseMessage httpMessage, string content)> SendProducts(EmptyProducts products, UpdateProgressBar progressBar = null, bool forceUpdate = false, CancellationToken token = default)
         {
             string url = $"/inventory/products/update{(forceUpdate ? "?forceUpdate=true" : "")}";
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
-            httpClient.SetAuthorization();
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressBar?.Grid);
 

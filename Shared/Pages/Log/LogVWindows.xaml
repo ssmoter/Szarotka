@@ -62,7 +62,7 @@
                                 <Label
                                     Grid.Row="0"
                                     Grid.Column="2"
-                                    LineBreakMode="WordWrap"
+                                    LineBreakMode="TailTruncation"
                                     Text="{Binding Message}"
                                     VerticalOptions="Center" />
                                 <HorizontalStackLayout Grid.Column="3">

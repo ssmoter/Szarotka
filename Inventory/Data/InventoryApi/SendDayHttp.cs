@@ -3,7 +3,6 @@ using DataBase.Model.EntitiesInventory;
 
 using Shared.CustomControls.FromCode;
 using Shared.Data.ServerHttpClients;
-using Shared.Helper;
 
 using System.Text.Json;
 
@@ -24,9 +23,8 @@ namespace Inventory.Data.InventoryApi
         public async Task<HttpResponseMessage> SendDay(Day day, bool forceUpdate = false, UpdateProgressBar progressBar = null, CancellationToken token = default)
         {
             string url = $"/inventory/day/update{(forceUpdate ? "?forceUpdate=true" : "")}";
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
-            httpClient.SetAuthorization();
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressBar?.Grid);
 
@@ -46,9 +44,8 @@ namespace Inventory.Data.InventoryApi
         public async Task<HttpResponseMessage> SendDays(IList<Day> days, bool forceUpdate = false, UpdateProgressBar progressBar = null, CancellationToken token = default)
         {
             string url = $"/inventory/days/update{(forceUpdate ? "?forceUpdate=true" : "")}";
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
-            httpClient.SetAuthorization();
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressBar?.Grid);
 

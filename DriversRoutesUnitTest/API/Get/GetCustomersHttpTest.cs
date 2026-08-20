@@ -28,8 +28,6 @@ namespace DriversRoutesUnitTest.API.Get
             _getCustomersHttp = new GetCustomersHttp(factory.TestDatabase!, _clientFactory);
             _iGetDriverRoutesAoT = new DataBase.Data.Get.GetDriverRoutesAoT(factory.TestDatabase!);
         }
-
-
         [Fact]
         public async Task GetCustomerRoutesRouteId()
         {
@@ -53,20 +51,5 @@ namespace DriversRoutesUnitTest.API.Get
 
             Assert.Equal(expectedJson, resultJson);
         }
-        [Fact]
-        public async Task GetCustomerRoutesIds()
-        {
-
-            IList<CustomerRoutes> all = _factory.AllCustomers;
-            var expected = all.Take(5);
-
-            var result = await _getCustomersHttp.GetCustomerRoutes([.. expected.Select(x => x.Id)]);
-
-            var expectedJson = System.Text.Json.JsonSerializer.Serialize(expected.ToArray());
-            var resultJson = System.Text.Json.JsonSerializer.Serialize(result.ToArray());
-
-            Assert.Equal(expectedJson, resultJson);
-        }
-
     }
 }

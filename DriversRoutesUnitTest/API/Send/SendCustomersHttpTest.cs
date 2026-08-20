@@ -47,7 +47,6 @@ namespace DriversRoutesUnitTest.API.Send
             Assert.True(result.IsSuccessStatusCode);
             Assert.Equal(expectedJson, resultJson);
         }
-
         [Fact]
         public async Task SendCustomerRoutes()
         {

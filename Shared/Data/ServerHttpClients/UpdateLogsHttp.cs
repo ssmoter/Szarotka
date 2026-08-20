@@ -24,9 +24,8 @@ namespace Shared.Data.ServerHttpClients
             Shared.Service.AndroidPermissionService.InternetCheck();
 
             string url = $"update-logs/{logId}";
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
-            httpClient.SetAuthorization();
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent.Grid);
 

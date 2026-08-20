@@ -7,6 +7,9 @@ using System.Text.Json.Serialization;
 
 namespace DataBase.Model.SourceGenerator;
 
+
+
+[JsonSerializable(typeof(RefreshToken))]
 [JsonSerializable(typeof(IList<Guid>))]
 
 [JsonSerializable(typeof(UpdateLog))]

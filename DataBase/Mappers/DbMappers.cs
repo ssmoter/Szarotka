@@ -37,6 +37,7 @@ public partial class DbMappers
         InitConfirmCodeMappers();
         InitUpdateLogMappers();
         InitTableInfoMappers();
+        InitRefreshTokenMappers();
     }
 
     public static Func<SqliteDataReader, object, T> Get<T>()

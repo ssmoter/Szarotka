@@ -28,4 +28,7 @@
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Validation\User\" />
+  </ItemGroup>
 </Project>

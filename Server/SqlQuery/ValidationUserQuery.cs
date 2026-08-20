@@ -10,7 +10,7 @@ namespace Server.SqlQuery
 SELECT {nameof(User.Email)}
 FROM {nameof(User)}
 WHERE 
-{nameof(User.Email)} == '@{nameof(email)}'
+{nameof(User.Email)} = @{nameof(email)}
 ";
             return sql;
         }

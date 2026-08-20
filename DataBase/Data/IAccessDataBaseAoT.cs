@@ -3,6 +3,9 @@
 using DataBase.Data.MySqliteConnection;
 using DataBase.Service;
 
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+
 using SQLite;
 
 
@@ -32,18 +35,21 @@ namespace DataBase.Data
         public IMyDbConnection DbSyncAoT { get; private set; }
         public IMyDbAsyncConnection DbAsyncAoT { get; private set; }
         public ITimeService TimeService { get; private set; }
+        private readonly ILogger<AccessDataBaseAoT> _logger;
 
 
-            
+
         public AccessDataBaseAoT(IAccessDataBase db,
                                  IMyDbConnection dbSyncAoT,
                                  IMyDbAsyncConnection dbAsyncAoT,
-                                 ITimeService timeService)
+                                 ITimeService timeService,
+                                 ILogger<AccessDataBaseAoT>? logger)
         {
             this.db = db;
             DbSyncAoT = dbSyncAoT;
             DbAsyncAoT = dbAsyncAoT;
             TimeService = timeService;
+            _logger = logger ?? NullLogger<AccessDataBaseAoT>.Instance;
         }
 
         public void Dispose()
@@ -67,10 +73,7 @@ namespace DataBase.Data
                 [nameof(Model.LogsModel.Created)] = log.Created
             });
 
-            Console.WriteLine($@"
-            Error {log.CreatedDateTime}{Environment.NewLine}
-            {ex.Message}{Environment.NewLine}
-            {ex.StackTrace}");
+            _logger.LogError(ex, "Error occurred at {CreatedDateTime}: {Message}", log.CreatedDateTime, ex.Message);
         }
 
         public async Task SaveLogAsync(Exception ex)
@@ -87,11 +90,7 @@ namespace DataBase.Data
                 [nameof(Model.LogsModel.Message)] = log.Message,
                 [nameof(Model.LogsModel.Created)] = log.Created
             });
-
-            Console.WriteLine($@"
-            Error {log.CreatedDateTime}{Environment.NewLine}
-            {ex.Message}{Environment.NewLine}
-            {ex.StackTrace}");
+            _logger.LogError(ex, "Error occurred at {CreatedDateTime}: {Message}", log.CreatedDateTime, ex.Message);
         }
         private const string SetSqlError =
                  $@"

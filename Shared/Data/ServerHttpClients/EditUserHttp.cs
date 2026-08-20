@@ -24,9 +24,8 @@ namespace Shared.Data.ServerHttpClients
             Shared.Service.AndroidPermissionService.InternetCheck();
 
             string url = $"user/edit";
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
-            httpClient.SetAuthorization();
 
             var response = await httpClient.PostAsJsonAsync(url, user, SzarotkaJsonSerializerContext.Default.User);
             var json = await response.Content.ReadAsStringAsync();

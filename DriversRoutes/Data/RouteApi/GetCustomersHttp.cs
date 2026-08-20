@@ -3,9 +3,7 @@ using DataBase.Model.EntitiesRoutes;
 using DataBase.Model.SourceGenerator;
 
 using Shared.CustomControls.FromCode;
-using Shared.Data;
 using Shared.Data.ServerHttpClients;
-using Shared.Helper;
 
 using System.Collections.ObjectModel;
 using System.Text;
@@ -39,9 +37,8 @@ namespace DriversRoutes.Data.RouteApi
                 url.Append(ids[i]);
             }
 
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
-            httpClient.SetAuthorization();
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent?.Grid);
 
             var response = await httpClient.DownloadAsync(url.ToString()
@@ -57,9 +54,7 @@ namespace DriversRoutes.Data.RouteApi
         public async Task<ObservableCollection<CustomerRoutes>> GetCustomerRoutes(Guid routeId, SelectedDayOfWeekRoutes day, UpdateProgressBar progressContent, CancellationToken token = default)
         {
             string url = $"/driver-routes/customer-routes/{routeId}";
-            using var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
-
-            httpClient.SetAuthorization();
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
 
             var days = day.GetDayOfWeeks();
 

@@ -13,7 +13,6 @@ namespace Server.Requests
         Task<IResult> GetPublicUser(string id, CancellationToken token = default);
         Task<IResult> LogInUser(LoginUser user, CancellationToken token = default);
         Task<IResult> LogOutUser(string refreshToken, CancellationToken token = default);
-        Task<IResult> NewAccessToken(string userToken, CancellationToken token = default);
         Task<IResult> NewRefreshToken(string userToken, CancellationToken token = default);
     }
 
@@ -83,60 +82,6 @@ namespace Server.Requests
             }
         }
 
-        public async Task<IResult> NewAccessToken(string userToken, CancellationToken token = default)
-        {
-            try
-            {
-                _logger.LogInformation("NewAccessToken invoked.");
-
-                ArgumentException.ThrowIfNullOrWhiteSpace(userToken, nameof(userToken));
-                token.ThrowIfCancellationRequested();
-
-                var maskedToken = userToken.Length > 8 ? $"{userToken[..4]}...{userToken[^4..]}" : userToken;
-                _logger.LogDebug("Looking up refresh token for token={Token}", maskedToken);
-
-                string userIdFromToken = $"SELECT * FROM {nameof(RefreshToken)} WHERE {nameof(RefreshToken.Value)} = @Value";
-                var userIds = await _db.DbAsyncAoT.QueryAsync<RefreshToken>(userIdFromToken, new() { ["Value"] = userToken });
-                _logger.LogDebug("Refresh token query returned {Count} rows for token={Token}", userIds?.Count() ?? 0, maskedToken);
-
-                var userId = userIds!.FirstOrDefault();
-                if (userId is null)
-                {
-                    _logger.LogWarning("NewAccessToken failed: Refresh token not found for token={Token}", maskedToken);
-                    return Results.Unauthorized();
-                }
-                if (userId.ExpireDate < _db.TimeService.UtcNow().Ticks)
-                {
-                    _logger.LogWarning("NewAccessToken failed: Refresh token expired for token={Token}", maskedToken);
-                    return Results.Unauthorized();
-                }
-
-                _logger.LogDebug("Refresh token valid for UserId={UserId}", userId.UserId);
-                var user = await _loginService.GetPublicUser(userId.UserId);
-
-                var newToken = await _authenticationService.AuthenticateAsyncAccess(user);
-
-                _logger.LogInformation("New access token issued for UserId={UserId}", userId.UserId);
-                return Results.Ok(newToken.AccessToken);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                _logger.LogWarning(ex, "NewAccessToken unauthorized access.");
-                return Results.Unauthorized();
-            }
-            catch (OperationCanceledException ex)
-            {
-                _logger.LogInformation(ex, "NewAccessToken operation canceled.");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "NewAccessToken failed with exception.");
-                _db.SaveLog(ex);
-                throw;
-            }
-        }
-
         public async Task<IResult> NewRefreshToken(string userToken, CancellationToken token = default)
         {
             try
@@ -174,9 +119,10 @@ namespace Server.Requests
                 }
 
                 var newToken = await _authenticationService.AuthenticateAsyncRefresh(user);
+                newToken = await _authenticationService.AuthenticateAsyncAccess(user);
                 _logger.LogInformation("New refresh token issued for userId={UserId}", userId.UserId);
 
-                return Results.Ok(newToken.RefreshToken);
+                return Results.Ok(newToken);
             }
             catch (UnauthorizedAccessException ex)
             {

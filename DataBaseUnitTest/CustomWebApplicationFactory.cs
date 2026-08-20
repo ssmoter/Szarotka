@@ -11,11 +11,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Maui.Platform;
+
+using Moq;
 
 using Server.Model;
 
 using Shared.CustomControls.FromCode;
+using Shared.Data.ServerHttpClients;
 using Shared.Helper;
 
 using System.Runtime.CompilerServices;
@@ -62,7 +64,7 @@ namespace DataBaseUnitTest
                 services.AddSingleton<ITimeService, CurrentUtc>();
 
                 services.AddSingleton<ISqliteConnectionFactory>(opt =>
-                {                
+                {
                     string dbName = Helper.GetPath + "1TestDB.db3";
                     return new SqliteConnectionFactory(dbName);
                 });
@@ -71,6 +73,37 @@ namespace DataBaseUnitTest
                 services.AddScoped<IMyDbAsyncConnection, MyDbAsyncConnection>();
 
                 services.AddScoped<IAccessDataBaseAoT, AccessDataBaseAoT>();
+
+
+                JwtToken = new Server.Service.AuthenticationService(new JSONWebTokensSettings
+                {
+                    Key = TestJwtSecret,
+                    Issuer = "localhost",
+                    Audience = "localhostUsers",
+                    DurationInAccessToken = 100,
+                    DurationInRefreshTokenLong = 1
+                }, TestDatabase!);
+
+                // 3. Autoryzujemy i ustawiamy sesję (tutaj bezpiecznie robimy await)
+
+                var mockAuthService = new Mock<IAuthService>();
+                //_mockTimeService.Setup(ts => ts.UtcNow()).Returns(DateTime.UtcNow);
+
+                services.AddSingleton<IAuthService>(opt =>
+                {
+                    User = SetAutorizedUser();
+                    var token = JwtToken.AuthenticateAsyncAccess(User).GetAwaiter().GetResult();
+                    token = JwtToken.AuthenticateAsyncRefresh(User).GetAwaiter().GetResult();
+                    mockAuthService.Setup(x => x.GetAccessTokenAsync()).ReturnsAsync(token.AccessToken);
+                    mockAuthService.Setup(x => x.GetRefreshTokenAsync()).ReturnsAsync(token.RefreshToken);
+                    mockAuthService.Setup(x => x.SaveTokensAsync(It.IsAny<string>(), It.IsAny<RefreshToken>())).Returns(Task.CompletedTask);
+                    mockAuthService.Setup(x => x.SaveTokens(It.IsAny<string>(), It.IsAny<RefreshToken>()));
+                    UserAfterLogin.SetLoginUser(token).GetAwaiter().GetResult();
+
+                    return mockAuthService.Object;
+                });
+
+                services.AddTransient<AuthHeaderHandler>();
 
                 services.AddSingleton<IHttpClientFactory>(new LocalHttpClientFactory(this));
             });
@@ -101,7 +134,6 @@ namespace DataBaseUnitTest
             var token = await JwtToken.AuthenticateAsyncAccess(User);
             ref IAccessDataBaseAoT? privateDbField = ref SetDB(null);
             privateDbField = db;
-            UserAfterLogin.SetLoginUser(token);
 
             AllDays = await DataBaseUnitTest.DataGet.Helper.SetExampleDays(10, db);
             AllCustomers = DataBaseUnitTest.DataGet.Helper.SetExampleCustomerRoutes(10, db);
@@ -117,6 +149,7 @@ namespace DataBaseUnitTest
                 string dbName = Helper.GetPath + "1TestDB.db3";
                 dbName = Helper.AddDBIfDontHave(dbName);
                 db = DataSave.Helper.CreatedDataBaseUpdateLogForTest(dbName).GetAwaiter().GetResult();
+                db.DataBase.CreateTable<RefreshToken>();
             }
             return db!;
         }
@@ -189,7 +222,11 @@ namespace DataBaseUnitTest
 
         public HttpClient CreateClient(string name)
         {
-            return _factory.CreateDefaultClient();
+            var authService = _factory.Services.GetRequiredService<IAuthService>();
+            var serviceProvider = _factory.Services.GetRequiredService<IServiceProvider>();
+            var httpclientfaktory = _factory.Services.GetRequiredService<IHttpClientFactory>();
+            var auth = new AuthHeaderHandler(authService, serviceProvider, httpclientfaktory);
+            return _factory.CreateDefaultClient(auth);
         }
     }
 
