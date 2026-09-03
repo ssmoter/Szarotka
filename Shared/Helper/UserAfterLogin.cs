@@ -99,14 +99,14 @@ namespace Shared.Helper
 
         static bool _tryToLogin = true;
 
-        public static async Task SetLoginUser(User token)
+        public static async Task SetLoginUser(User token, bool validateLifetime = true)
         {
             try
             {
                 ArgumentNullException.ThrowIfNull(token);
                 await _auth.SaveTokensAsync(token.AccessToken, token.RefreshToken);
 
-                var (user, expires) = DataBase.Helper.ReadToken.GetUserFromToken(token.AccessToken);
+                var (user, expires) = DataBase.Helper.ReadToken.GetUserFromToken(token.AccessToken, validateLifetime);
                 User = user;
                 Expires = expires;
                 IsLogin = true;
@@ -149,11 +149,37 @@ namespace Shared.Helper
 
         public static async Task SetLoginUser()
         {
-            var refreshToken = await _auth.GetRefreshTokenAsync();
-            if (!string.IsNullOrWhiteSpace(refreshToken.Value))
+            try
             {
-                var user = await _loginHttp.RefreshToken(refreshToken);
-                await SetLoginUser(user);
+                var refreshToken = await _auth.GetRefreshTokenAsync();
+                var accessToken = await _auth.GetAccessTokenAsync();
+                User user = new();
+                if (!string.IsNullOrWhiteSpace(accessToken))
+                {
+                    (user, _) = DataBase.Helper.ReadToken.GetUserFromToken(accessToken, false);
+                }
+                if (!string.IsNullOrWhiteSpace(refreshToken.Value))
+                {
+                    if (refreshToken.ExpireDate > _db.TimeService.UtcNow().Ticks)
+                    {
+                        user.RefreshToken = refreshToken;
+                        await SetLoginUser(user, false);
+                    }
+                    else
+                    {
+                        user = await _loginHttp.RefreshToken(refreshToken);
+                        await SetLoginUser(user);
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    await Toast.Make(ex.Message, CommunityToolkit.Maui.Core.ToastDuration.Long).Show();
+                });
+                _db.SaveLogExtension(ex);
             }
         }
 

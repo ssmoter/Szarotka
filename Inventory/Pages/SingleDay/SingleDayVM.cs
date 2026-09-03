@@ -616,6 +616,7 @@ namespace Inventory.Pages.SingleDay
                     {
                         product.ProductPriceId = price.Id;
                         product.Price = price;
+                        await _saveInventoryAoT.SaveProduct(product, Shared.Helper.UserAfterLogin.User.Id.ToByteArray());
                         await Toast.Make($"Cena {product.Name.Name} została zmieniona na {price.PriceDecimal}", CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
                     }
                 }
@@ -637,7 +638,6 @@ namespace Inventory.Pages.SingleDay
                     return;
 
                 product.IsDelete = true;
-                Day.Products.Remove(product);
                 await Shell.Current.DisplayAlertAsync("Usuwanie", $"Produkt {product.Name.Name} został usunięty", "Ok");
                 await _saveInventoryAoT.SaveProduct(product, Shared.Helper.UserAfterLogin.User.Id.ToByteArray());
                 RefreshListOfProduct();
@@ -646,7 +646,6 @@ namespace Inventory.Pages.SingleDay
             {
                 _db.SaveLogExtension(ex);
             }
-
         }
 
         [RelayCommand]
@@ -656,7 +655,7 @@ namespace Inventory.Pages.SingleDay
             {
                 IList<(ProductName Name, IList<ProductPrice> Prices)> allProducts = await _get.EmptyProductsNameAndPrices();
 
-                var exceptNames = Day.Products.Select(x => x.Name);
+                var exceptNames = Day.Products.Where(z => !z.IsDelete).Select(x => x.Name);
                 var selectedProducts = allProducts.Select(x => x.Name).Except(exceptNames);
 
                 string[] products = [.. selectedProducts.Select(x => x.Name), "Dodaj nowy"];
@@ -684,6 +683,14 @@ namespace Inventory.Pages.SingleDay
 
                 if (selectedProduct is not null)
                 {
+                    var existingProduct = Day.Products.FirstOrDefault(x => x.Name.Id == selectedProduct.Value.Name.Id);
+                    if (existingProduct is not null)
+                    {
+                        existingProduct.IsDelete = false;
+                        RefreshListOfProduct();
+                        return;
+                    }
+
                     var lastUpdateDay = await _get.Day(Day.Id);
 
                     var lastSavedProduct = lastUpdateDay.Products.FirstOrDefault(x => x.Name.Id == selectedProduct.Value.Name.Id);

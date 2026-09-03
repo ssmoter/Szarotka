@@ -1,6 +1,5 @@
 using CommunityToolkit.Maui.Core.Platform;
 using CommunityToolkit.Maui.Extensions;
-using CommunityToolkit.Maui.Views;
 
 using DataBase.Model.EntitiesInventory;
 
@@ -27,12 +26,24 @@ public partial class SingleDayPreviewSmallV : ContentView, IDisposable
     {
         if (day is not null)
         {
-            view.SingleDayPreviewSmallM.Products = [.. day.Products];
+            view.SingleDayPreviewSmallM.Products = [.. day.Products.OrderBy(x => x.IsDelete).ThenBy(z => z.Name.Arrangement)];
             if (day.Cakes.Count > 0)
             {
-                view.SingleDayPreviewSmallM.Cakes = [.. day.Cakes.OrderByDescending(x => x.IsSell).ThenBy(x => x.Index).Select(x => new CakeIsExpanded(x))];
-                view.SingleDayPreviewSmallM.CountSellCakes = day.Cakes.Count(x => x.IsSell);
-                view.SingleDayPreviewSmallM.CountReturnCakes = day.Cakes.Count - view.SingleDayPreviewSmallM.CountSellCakes;
+                var count = day.Cakes.Where(z => !z.IsDelete);
+                view.SingleDayPreviewSmallM.Cakes = [.. day.Cakes.OrderByDescending(x => x.IsSell).OrderBy(z => z.IsDelete).ThenBy(x => x.Index).Select(x => new CakeIsExpanded(x))];
+                view.SingleDayPreviewSmallM.CountSellCakes = count.Count(x => x.IsSell);
+                view.SingleDayPreviewSmallM.CountReturnCakes = count.Count(x => !x.IsSell);
+
+
+                int n = 0;
+                foreach (var item in view.SingleDayPreviewSmallM.Cakes)
+                {
+                    if (!item.IsDelete)
+                    {
+                        n++;
+                        item.Index = n;
+                    }
+                }
             }
         }
     }

@@ -61,7 +61,7 @@ public partial class ListProductV : ContentPage
 
         if (grid.BindingContext is not ListProductM product) { return; }
 
-        vm.DragCommand.Execute(product);
+        vm.DragProductCommand.Execute(product);
     }
 
 
@@ -73,6 +73,6 @@ public partial class ListProductV : ContentPage
 
         if (grid.BindingContext is not ListProductM product) { return; }
 
-        vm.DropCommand.Execute(product);
+        vm.DropProductCommand.Execute(product);
     }
 }

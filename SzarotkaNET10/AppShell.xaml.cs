@@ -1,14 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-using DataBase.Data;
-using DataBase.Model;
 using DataBase.Model.EntitiesServer;
 
-using Shared.Data;
 using Shared.Helper;
-using Shared.Service;
-
-using System.Net;
 
 namespace SzarotkaNET10
 {
@@ -19,77 +13,11 @@ namespace SzarotkaNET10
             InitializeComponent();
             var vm = new AppShellVM();
             BindingContext = vm;
-            _createdDataBase = Shared.Service.AppServiceProvider.GetService<ICreatedDataBase>();
-            _db = Shared.Service.AppServiceProvider.GetService<IAccessDataBaseAoT>();
-
 
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.ActionToolbarItemSet += SetToolbarItem;
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.ActionToolbarItemRemove += RemoveToolbarItem;
         }
 
-        private readonly ICreatedDataBase _createdDataBase;
-        private readonly IAccessDataBaseAoT _db;
-        protected override async void OnAppearing()
-        {
-            base.OnAppearing();
-            var update = UpdateDataBase();
-            await update;
-            if (update.Result)
-            {
-                await GotToLogin();
-            }
-        }
-
-        protected override async void OnNavigatedTo(NavigatedToEventArgs args)
-        {
-            base.OnNavigatedTo(args);
-            //var update = UpdateDataBase();
-            //await update;
-            //if (update.Result)
-            //{
-            //    await GotToLogin();
-            //}
-        }
-
-
-
-        private async Task GotToLogin()
-        {
-            try
-            {
-                await UserAfterLogin.SetLoginUser();
-                if (!UserAfterLogin.IsLogin)
-                {
-                    await Shell.Current.GoToAsync($"{nameof(Shared.Pages.LogIn.LogInV)}");
-                }
-            }
-            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
-            {
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
-        }
-        private async Task<bool> UpdateDataBase()
-        {
-            var result = true;
-            try
-            {
-                var old = _createdDataBase.GetCurrentVersion();
-                if (!old.Equals(new DataBaseVersion()))
-                {
-                    result = false;
-                    await Shell.Current.GoToAsync(nameof(Shared.Pages.UpdateDataBase.UpdateDataBaseV));
-                }
-                await _createdDataBase.CreateBackUp();
-            }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
-            return result;
-        }
 
         private async void TapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
         {
@@ -150,6 +78,17 @@ namespace SzarotkaNET10
                 }
             }
         }
+        private bool isInitialized;
+        public bool IsInitialized
+        {
+            get => isInitialized;
+            set
+            {
+                if (SetProperty(ref isInitialized, value, nameof(IsInitialized)))
+                {
+                }
+            }
+        }
         private User user = new();
         public User User
         {
@@ -177,6 +116,8 @@ namespace SzarotkaNET10
         public AppShellVM()
         {
             UserAfterLogin.OnLogin += UserAfterLogin_OnLogin;
+            IsInitialized = true;
+
         }
 
         private void UserAfterLogin_OnLogin(User user, bool isLogin)
@@ -184,6 +125,7 @@ namespace SzarotkaNET10
             User = user;
             IsLogin = isLogin;
             UserName = $"Konto {user.Name}";
+            IsInitialized = false;
         }
 
         public void Dispose()

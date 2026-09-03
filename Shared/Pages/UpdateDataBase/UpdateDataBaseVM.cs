@@ -5,6 +5,7 @@ using DataBase.Data;
 
 using Shared.Data;
 using Shared.Helper;
+using Shared.Pages.LoadingPage;
 using Shared.Pages.LogIn;
 using Shared.Service;
 
@@ -86,15 +87,7 @@ namespace Shared.Pages.UpdateDataBase
         [RelayCommand]
         async Task Back()
         {
-            if (UserAfterLogin.IsLogin)
-            {
-                await Shell.Current.GoToAsync($"../MainPage");
-            }
-            else
-            {
-                await Shell.Current.GoToAsync($"../{nameof(LogInV)}");
-            }
-            //await Shell.Current.GoToAsync("..");
+            await Shell.Current.GoToAsync($"..");
         }
 
     }

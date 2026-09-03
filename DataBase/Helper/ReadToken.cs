@@ -11,7 +11,7 @@ namespace DataBase.Helper;
 public static class ReadToken
 {
     private static readonly JwtSecurityTokenHandler _handler = new();
-    public static (User user, DateTime expires) GetUserFromToken(string token)
+    public static (User user, DateTime expires) GetUserFromToken(string token, bool validateLifetime = true)
     {
         var user = new User();
         try
@@ -19,11 +19,11 @@ public static class ReadToken
             _handler.ValidateToken(token
                 , new TokenValidationParameters
                 {
-                    ValidateIssuerSigningKey = true,                   
+                    ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("81234CFB77034ECCDDD547F5SADFAASADSFGAFGDFAEWFCVZXVB")),
                     ValidateIssuer = false,
                     ValidateAudience = false,
-                    
+                    ValidateLifetime = validateLifetime,
                     ClockSkew = TimeSpan.Zero
                 }, out SecurityToken validatedToken);
 

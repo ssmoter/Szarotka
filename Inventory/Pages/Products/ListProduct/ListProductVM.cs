@@ -251,7 +251,7 @@ namespace Inventory.Pages.Products.ListProduct
 
 
         [RelayCommand]
-        void OnDrag(ListProductM value)
+        void DragProduct(ListProductM value)
         {
             try
             {
@@ -267,7 +267,7 @@ namespace Inventory.Pages.Products.ListProduct
         }
 
         [RelayCommand]
-        async Task OnDrop(ListProductM value)
+        async Task DropProduct(ListProductM value)
         {
             try
             {
@@ -276,6 +276,7 @@ namespace Inventory.Pages.Products.ListProduct
 
                 var index = ProductMs.IndexOf(value);
 
+                if (DragAndDropProduct == null || value == null || DragAndDropProduct == value) return;
                 await SetPositions(index, DragAndDropProduct);
 
                 DragAndDropProduct = null;
@@ -432,8 +433,8 @@ namespace Inventory.Pages.Products.ListProduct
                                     await Toast.Make("Anulowano pobieranie listy produktów").Show();
                                     Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
                                 });
-                var result = await _getHttp.GetProducts(progress, sourceToken.Token);
                 await Toast.Make("Pobieranie zakończone").Show();
+                var result = await _getHttp.GetProducts(progress, sourceToken.Token);
                 await Toast.Make("Rozpoczęto zapisywanie").Show();
 
                 IList<UpdateDifference> exists = [];
@@ -510,6 +511,68 @@ namespace Inventory.Pages.Products.ListProduct
                 sourceToken.Dispose();
             }
         }
+
+        [RelayCommand]
+        async Task DownloadPriceAndNew()
+        {
+            await Toast.Make("Rozpoczęto Pobieranie").Show();
+            using var sourceToken = new CancellationTokenSource();
+            try
+            {
+                using var progress = UpdateProgressBar.CreatedUpdateProgressBar(
+                                title: "Anuluj"
+                                , description: "Pobieranie listy produktów"
+                                , icon: UpdateProgressBar.GetSyncImage()
+                                , rotateIcon: true
+                                , action: async () =>
+                                {
+                                    sourceToken.Cancel();
+                                    await Toast.Make("Anulowano pobieranie listy produktów").Show();
+                                    Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+                                });
+                await Toast.Make("Pobieranie zakończone").Show();
+                var result = await _getHttp.GetProducts(progress, sourceToken.Token);
+                await Toast.Make("Rozpoczęto zapisywanie").Show();
+
+
+                foreach (EmptyProduct item in result.Products)
+                {
+                    var canUpdate = ProductMs.Any(x => x.Name.Id == item.Name.Id);
+                    if (!canUpdate)
+                    {
+                        await _save.SaveProductName(item.Name, item.Name.UserUpdatedId.ToByteArray(), true);
+                        var log = await _updateLogService.Insert(new DataBase.Model.UpdateLog()
+                        {
+                            IsServer = false,
+                        }, item.Name);
+
+                    }
+                    foreach (var price in item.Prices)
+                    {
+                        canUpdate = false;
+                        var product = ProductMs.FirstOrDefault(x => x.Name.Id == item.Name.Id);
+                        canUpdate = product is not null && product.Prices.Any(z => z.Id == price.Id);
+                        if (!canUpdate)
+                        {
+                            await _save.SaveProductPrice(price, price.UserUpdatedId.ToByteArray(), true);
+                        }
+                    }
+                }
+                await Toast.Make("Zapisywanie zakończone").Show();
+                Shell.Current.FlyoutIsPresented = false;
+                await SelectAllProductsAsync();
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLogExtension(ex);
+            }
+            finally
+            {
+                Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+                sourceToken.Dispose();
+            }
+        }
+
 
     }
 }

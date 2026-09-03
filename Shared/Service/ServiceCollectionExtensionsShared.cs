@@ -4,6 +4,7 @@ using Shared.Data;
 using Shared.Data.ServerHttpClients;
 using Shared.Helper;
 using Shared.Pages.ConfirmEmail;
+using Shared.Pages.LoadingPage;
 using Shared.Pages.LogIn;
 using Shared.Pages.LogIn.ForgetPassword;
 using Shared.Pages.UpdateDifference;
@@ -62,6 +63,8 @@ namespace Shared.Service
 
             services.AddScoped<IResetPasswordHttp, ResetPasswordHttp>();
             services.AddScoped<IUpdateLogsHttp, UpdateLogsHttp>();
+
+            services.AddScoped<LoadingPageV>();
 
             // 1. Rejestrujesz swój serwis do zarządzania tokenami (np. SecureStorage)
             services.AddSingleton<IAuthService, AuthService>();

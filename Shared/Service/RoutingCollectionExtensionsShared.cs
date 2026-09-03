@@ -1,5 +1,6 @@
 ﻿using Shared.Pages.ConfirmEmail;
 using Shared.Pages.ExistingFiles;
+using Shared.Pages.LoadingPage;
 using Shared.Pages.Log;
 using Shared.Pages.Log.LogData;
 using Shared.Pages.LogIn;
@@ -31,6 +32,7 @@ namespace Shared.Service
             Routing.RegisterRoute(nameof(UserEditV), typeof(UserEditV));
             Routing.RegisterRoute(nameof(ForgetPasswordV), typeof(ForgetPasswordV));
             Routing.RegisterRoute(nameof(UpdateDifferenceV), typeof(UpdateDifferenceV));
+            Routing.RegisterRoute(nameof(LoadingPageV), typeof(LoadingPageV));
 
 
         }

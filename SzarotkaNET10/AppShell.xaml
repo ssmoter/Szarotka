@@ -8,6 +8,7 @@
     xmlns:header="clr-namespace:Shared.Pages.FlyoutHeader;assembly=Shared"
     xmlns:img="clr-namespace:Shared.Helper.Img;assembly=Shared"
     xmlns:inventory="clr-namespace:Inventory.Pages.Main;assembly=Inventory"
+    xmlns:loadingPage="clr-namespace:Shared.Pages.LoadingPage;assembly=Shared"
     xmlns:local="clr-namespace:SzarotkaNET10"
     xmlns:login="clr-namespace:Shared.Pages.LogIn;assembly=Shared"
     xmlns:options="clr-namespace:SzarotkaNET10.Pages.Options.Main"
@@ -38,11 +39,9 @@
         <footer:FlyoutFooterV />
     </Shell.FlyoutFooter>
 
-    <!--<ShellContent
-            Title="Home"
-            ContentTemplate="{DataTemplate local:MainPage}"
-            Icon="{AppThemeBinding Light={Static img:TabBarImg.MainBlack},
-                                   Dark={Static img:TabBarImg.MainWhite}}" />-->
+    <FlyoutItem FlyoutItemIsVisible="False" IsVisible="{Binding IsInitialized}">
+        <ShellContent ContentTemplate="{DataTemplate loadingPage:LoadingPageV}" />
+    </FlyoutItem>
 
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems" IsVisible="{Binding IsLogin}">
 

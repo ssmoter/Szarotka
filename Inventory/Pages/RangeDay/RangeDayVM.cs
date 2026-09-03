@@ -7,6 +7,7 @@ using DataBase.Data;
 using DataBase.Data.CheckUpdateDifferences;
 using DataBase.Data.Get;
 using DataBase.Data.Save;
+using DataBase.Helper;
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesServer;
 using DataBase.Model.SourceGenerator;
@@ -43,6 +44,10 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
             {
                 FilesPath = _filesPath;
             }
+        }
+        else
+        {
+            SelectData(new(0, DateTime.Today.Ticks, [])).Forget();
         }
     }
 
@@ -186,6 +191,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
         _save = save;
         _popupService = popupService;
     }
+
     private bool _isScheduledFilterTyp = false;
     private bool _isScheduledOrderBy = false;
     private async void FilterTyp_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -374,19 +380,24 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
 
             if (result.Result is PopupDateModel popupResult)
             {
-                var model = popupResult;
-                PopupDate = model;
-                var list = await _get.Days(model.From, model.To, model.DriverId);
-                AllDays = [.. list.OrderByDescending(x => x.SelectedDateTicks)];
-                OptionsM.EnableSave = false;
-
-                FilterDaysMethod(FilterTyp);
+                await SelectData(popupResult);
             }
         }
         catch (Exception ex)
         {
             _db.SaveLogExtension(ex);
         }
+    }
+
+    private async Task SelectData(PopupDateModel popupResult)
+    {
+        var model = popupResult;
+        PopupDate = model;
+        var list = await _get.Days(model.From, model.To, model.DriverId);
+        AllDays = [.. list.OrderByDescending(x => x.SelectedDateTicks)];
+        OptionsM.EnableSave = false;
+
+        FilterDaysMethod(FilterTyp);
     }
 
     private void FilterDaysMethod(FilterTyp filterTyp)

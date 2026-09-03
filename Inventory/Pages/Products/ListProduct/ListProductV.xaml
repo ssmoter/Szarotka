@@ -9,16 +9,16 @@
     xmlns:VM="clr-namespace:Inventory.Pages.Products.ListProduct"
     xmlns:system="clr-namespace:System;assembly=netstandard"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Name="page"
     Title="Lista produktów"
     x:DataType="VM:ListProductVM">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding AddProductCommand}" Text="Dodaj" />
         <ToolbarItem
-            Command="{Binding DownloadCommand}"
-            IsEnabled="False"
+            Command="{Binding DownloadPriceAndNewCommand}"
             Order="Secondary"
-            Text="Pobierz (zalecane)" />
+            Text="Aktualizuj (zalecane)" />
         <ToolbarItem
             Command="{Binding DownloadCommand}"
             Order="Secondary"
@@ -47,6 +47,7 @@
                     IsEnabled="{Binding Name.IsDelete, Converter={x:StaticResource InvertedBoolConverter}}"
                     IsGradient="True"
                     SelectedColor="{Binding Name.IsVisible}">
+
                     <CustomControls:BorderColorsFromBool.StrokeShape>
                         <RoundRectangle CornerRadius="10" />
                     </CustomControls:BorderColorsFromBool.StrokeShape>
@@ -91,18 +92,22 @@
                         </SwipeView.RightItems>
 
                         <Grid ColumnDefinitions="*,*,*" RowDefinitions="*,*,*">
-                            <Grid.GestureRecognizers>
-                                <DragGestureRecognizer DragStarting="DragGestureRecognizer_DragStarting" />
-                                <DropGestureRecognizer Drop="DropGestureRecognizer_Drop" />
-
-                            </Grid.GestureRecognizers>
 
                             <CustomControls:StringImage
                                 Grid.Row="0"
                                 Grid.RowSpan="4"
                                 Grid.Column="0"
                                 x:DataType="VM:ListProductM"
-                                String64Base="{Binding Name.Img}" />
+                                String64Base="{Binding Name.Img}">
+                                <CustomControls:StringImage.GestureRecognizers>
+
+                                    <DragGestureRecognizer DragStartingCommand="{Binding BindingContext.DragProductCommand, Source={x:Reference page}}" DragStartingCommandParameter="{Binding .}" />
+                                    <DropGestureRecognizer DropCommand="{Binding BindingContext.DropProductCommand, Source={x:Reference page}}" DropCommandParameter="{Binding .}" />
+
+                                    <!--<DragGestureRecognizer DragStarting="DragGestureRecognizer_DragStarting" />
+                                    <DropGestureRecognizer Drop="DropGestureRecognizer_Drop" />-->
+                                </CustomControls:StringImage.GestureRecognizers>
+                            </CustomControls:StringImage>
 
                             <Label
                                 Grid.Row="0"

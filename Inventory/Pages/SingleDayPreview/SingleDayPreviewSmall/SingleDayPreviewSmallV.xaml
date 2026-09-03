@@ -421,287 +421,306 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="Product:Product">
-                            <Grid
-                                Padding="2"
-                                ColumnDefinitions="0,*,*"
-                                RowDefinitions="auto,*,auto">
 
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped_Product" />
-                                </Grid.GestureRecognizers>
+                            <CustomControls:BorderOpacityFromBool SelectedOpacity="{Binding IsDelete}" ValueOpacity="0.3">
 
                                 <Grid
-                                    Grid.Row="0"
-                                    Grid.Column="1"
-                                    Grid.ColumnSpan="2"
-                                    ColumnDefinitions="*,5*">
+                                    Padding="2"
+                                    ColumnDefinitions="0,*,*"
+                                    RowDefinitions="auto,*,auto">
 
-                                    <CustomControls:StringImage Grid.Column="0" String64Base="{Binding Name.Img, x:DataType=Product:Product}" />
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped_Product" />
+                                    </Grid.GestureRecognizers>
 
-                                    <Label
-                                        Grid.Column="1"
-                                        FontSize="Title"
-                                        HorizontalOptions="Center"
-                                        Text="{Binding Name.Name, x:DataType=Product:Product}" />
-                                </Grid>
-
-                                <Grid
-                                    Grid.Row="1"
-                                    Grid.Column="1"
-                                    ColumnDefinitions="auto,*"
-                                    ColumnSpacing="5"
-                                    RowDefinitions="0,*,auto,*,auto,*,auto,*">
-
-
-                                    <Label
-                                        Grid.Row="1"
-                                        Grid.Column="0"
-                                        Text="Ilość: "
-                                        VerticalOptions="End" />
-                                    <Label
-                                        Grid.Row="1"
-                                        Grid.Column="1"
-                                        VerticalOptions="End">
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="{Binding Number}" />
-                                                <Span Text=" szt." />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Border
-                                        Grid.Row="2"
-                                        Grid.Column="0"
-                                        Grid.ColumnSpan="2" />
-
-                                    <Label
-                                        Grid.Row="3"
-                                        Grid.Column="0"
-                                        Text="Edycja: "
-                                        VerticalOptions="End" />
-                                    <Label
-                                        Grid.Row="3"
-                                        Grid.Column="1"
-                                        VerticalOptions="End">
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="{Binding NumberEdit}" />
-                                                <Span Text=" szt." />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Border
-                                        Grid.Row="4"
-                                        Grid.Column="0"
-                                        Grid.ColumnSpan="2" />
-
-                                    <Label
-                                        Grid.Row="5"
-                                        Grid.Column="0"
-                                        Text="Zwrot: "
-                                        VerticalOptions="End" />
-                                    <Label
-                                        Grid.Row="5"
-                                        Grid.Column="1"
-                                        VerticalOptions="End">
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="{Binding NumberReturn}" />
-                                                <Span Text=" szt." />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Border
-                                        Grid.Row="6"
-                                        Grid.Column="0"
-                                        Grid.ColumnSpan="2" />
-
-                                    <Label
-                                        Grid.Row="7"
-                                        Grid.Column="0"
-                                        Text="Sprzedaż: " />
-                                    <Label
-                                        Grid.Row="7"
-                                        Grid.Column="1"
-                                        VerticalOptions="End">
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span>
-                                                    <Span.Text>
-                                                        <MultiBinding Converter="{StaticResource MultiMathExpressionConverter}" ConverterParameter="x0 + x1 - x2">
-                                                            <Binding Path="Number" />
-                                                            <Binding Path="NumberEdit" />
-                                                            <Binding Path="NumberReturn" />
-                                                        </MultiBinding>
-                                                    </Span.Text>
-                                                </Span>
-                                                <Span Text=" szt." />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-
-                                </Grid>
-                                <Grid
-                                    Grid.Row="1"
-                                    Grid.Column="2"
-                                    ColumnDefinitions="auto,*"
-                                    ColumnSpacing="5"
-                                    RowDefinitions="0,*,auto,*,auto,*,auto,*">
-
-
-                                    <Label
-                                        Grid.Row="1"
-                                        Grid.Column="0"
-                                        Text="Cena: "
-                                        VerticalOptions="End" />
-                                    <Label
-                                        Grid.Row="1"
-                                        Grid.Column="1"
-                                        VerticalOptions="End">
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="{Binding Price.PriceDecimal}" />
-                                                <Span Text=" zł" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Border
-                                        Grid.Row="2"
-                                        Grid.Column="0"
-                                        Grid.ColumnSpan="2" />
-
-                                    <Label
-                                        Grid.Row="3"
-                                        Grid.Column="0"
-                                        Text="Utarg: "
-                                        VerticalOptions="End" />
-                                    <Label
-                                        Grid.Row="3"
-                                        Grid.Column="1"
-                                        VerticalOptions="End">
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="{Binding PriceTotalDecimal}" />
-                                                <Span Text=" zł" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Border
-                                        Grid.Row="4"
-                                        Grid.Column="0"
-                                        Grid.ColumnSpan="2" />
-
-                                    <Label
-                                        Grid.Row="5"
-                                        Grid.Column="0"
-                                        Text="Korekta: "
-                                        VerticalOptions="End" />
-                                    <Label
-                                        Grid.Row="5"
-                                        Grid.Column="1"
-                                        VerticalOptions="End">
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="{Binding PriceTotalCorrectDecimal}" />
-                                                <Span Text=" zł" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-                                    <Border
-                                        Grid.Row="6"
-                                        Grid.Column="0"
-                                        Grid.ColumnSpan="2" />
-
-                                    <Label
-                                        Grid.Row="7"
-                                        Grid.Column="0"
-                                        Text="Po korekcie: "
-                                        VerticalOptions="End" />
-                                    <Label
-                                        Grid.Row="7"
-                                        Grid.Column="1"
-                                        VerticalOptions="End">
-                                        <Label.FormattedText>
-                                            <FormattedString>
-                                                <Span Text="{Binding PriceTotalAfterCorrectDecimal}" />
-                                                <Span Text=" zł" />
-                                            </FormattedString>
-                                        </Label.FormattedText>
-                                    </Label>
-
-                                </Grid>
-
-                                <Grid
-                                    Grid.Row="2"
-                                    Grid.ColumnSpan="3"
-                                    Padding="5"
-                                    ColumnDefinitions="auto,*"
-                                    ColumnSpacing="5"
-                                    IsVisible="{Binding IsExpanded}"
-                                    RowDefinitions="*,*,*,*,auto">
-
-                                    <Label
-                                        Grid.Row="0"
-                                        Grid.Column="0"
-                                        Text="Czas Utworzenia:" />
-                                    <Label
+                                    <Grid
                                         Grid.Row="0"
                                         Grid.Column="1"
-                                        Text="{Binding Created}" />
-                                    <Label
-                                        Grid.Row="1"
-                                        Grid.Column="0"
-                                        Text="Czas Edycji:" />
-                                    <Label
-                                        Grid.Row="1"
-                                        Grid.Column="1"
-                                        Text="{Binding Updated}" />
+                                        Grid.ColumnSpan="2"
+                                        ColumnDefinitions="*,5*"
+                                        RowDefinitions="*,*">
 
-                                    <Label
-                                        Grid.Row="2"
-                                        Grid.Column="0"
-                                        Text="Utworzył: " />
-                                    <Label
-                                        Grid.Row="2"
-                                        Grid.Column="1"
-                                        Text="{Binding UserCreatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8}">
-                                        <Label.GestureRecognizers>
-                                            <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
-                                        </Label.GestureRecognizers>
-                                    </Label>
-                                    <Label
-                                        Grid.Row="3"
-                                        Grid.Column="0"
-                                        Text="Edytował: " />
-                                    <Label
-                                        Grid.Row="3"
-                                        Grid.Column="1"
-                                        Text="{Binding UserUpdatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8}">
-                                        <Label.GestureRecognizers>
-                                            <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
-                                        </Label.GestureRecognizers>
-                                    </Label>
+                                        <CustomControls:StringImage
+                                            Grid.RowSpan="2"
+                                            Grid.Column="0"
+                                            String64Base="{Binding Name.Img, x:DataType=Product:Product}" />
 
-                                    <Label
-                                        Grid.Row="4"
-                                        Grid.Column="0"
-                                        Text="Opis: " />
-                                    <Label
-                                        Grid.Row="4"
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.RowSpan="2"
+                                            Grid.Column="1"
+                                            FontSize="Title"
+                                            HorizontalOptions="Center"
+                                            Text="{Binding Name.Name, x:DataType=Product:Product}" />
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            FontSize="Title"
+                                            HorizontalOptions="Center"
+                                            IsVisible="{Binding IsDelete}"
+                                            Text="Usunięte" />
+
+                                    </Grid>
+
+                                    <Grid
+                                        Grid.Row="1"
                                         Grid.Column="1"
-                                        Text="{Binding Description}" />
+                                        ColumnDefinitions="auto,*"
+                                        ColumnSpacing="5"
+                                        RowDefinitions="0,*,auto,*,auto,*,auto,*">
+
+
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="0"
+                                            Text="Ilość: "
+                                            VerticalOptions="End" />
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            VerticalOptions="End">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding Number}" />
+                                                    <Span Text=" szt." />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Border
+                                            Grid.Row="2"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="2" />
+
+                                        <Label
+                                            Grid.Row="3"
+                                            Grid.Column="0"
+                                            Text="Edycja: "
+                                            VerticalOptions="End" />
+                                        <Label
+                                            Grid.Row="3"
+                                            Grid.Column="1"
+                                            VerticalOptions="End">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding NumberEdit}" />
+                                                    <Span Text=" szt." />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Border
+                                            Grid.Row="4"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="2" />
+
+                                        <Label
+                                            Grid.Row="5"
+                                            Grid.Column="0"
+                                            Text="Zwrot: "
+                                            VerticalOptions="End" />
+                                        <Label
+                                            Grid.Row="5"
+                                            Grid.Column="1"
+                                            VerticalOptions="End">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding NumberReturn}" />
+                                                    <Span Text=" szt." />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Border
+                                            Grid.Row="6"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="2" />
+
+                                        <Label
+                                            Grid.Row="7"
+                                            Grid.Column="0"
+                                            Text="Sprzedaż: " />
+                                        <Label
+                                            Grid.Row="7"
+                                            Grid.Column="1"
+                                            VerticalOptions="End">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span>
+                                                        <Span.Text>
+                                                            <MultiBinding Converter="{StaticResource MultiMathExpressionConverter}" ConverterParameter="x0 + x1 - x2">
+                                                                <Binding Path="Number" />
+                                                                <Binding Path="NumberEdit" />
+                                                                <Binding Path="NumberReturn" />
+                                                            </MultiBinding>
+                                                        </Span.Text>
+                                                    </Span>
+                                                    <Span Text=" szt." />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+
+                                    </Grid>
+                                    <Grid
+                                        Grid.Row="1"
+                                        Grid.Column="2"
+                                        ColumnDefinitions="auto,*"
+                                        ColumnSpacing="5"
+                                        RowDefinitions="0,*,auto,*,auto,*,auto,*">
+
+
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="0"
+                                            Text="Cena: "
+                                            VerticalOptions="End" />
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            VerticalOptions="End">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding Price.PriceDecimal}" />
+                                                    <Span Text=" zł" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Border
+                                            Grid.Row="2"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="2" />
+
+                                        <Label
+                                            Grid.Row="3"
+                                            Grid.Column="0"
+                                            Text="Utarg: "
+                                            VerticalOptions="End" />
+                                        <Label
+                                            Grid.Row="3"
+                                            Grid.Column="1"
+                                            VerticalOptions="End">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding PriceTotalDecimal}" />
+                                                    <Span Text=" zł" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Border
+                                            Grid.Row="4"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="2" />
+
+                                        <Label
+                                            Grid.Row="5"
+                                            Grid.Column="0"
+                                            Text="Korekta: "
+                                            VerticalOptions="End" />
+                                        <Label
+                                            Grid.Row="5"
+                                            Grid.Column="1"
+                                            VerticalOptions="End">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding PriceTotalCorrectDecimal}" />
+                                                    <Span Text=" zł" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Border
+                                            Grid.Row="6"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="2" />
+
+                                        <Label
+                                            Grid.Row="7"
+                                            Grid.Column="0"
+                                            Text="Po korekcie: "
+                                            VerticalOptions="End" />
+                                        <Label
+                                            Grid.Row="7"
+                                            Grid.Column="1"
+                                            VerticalOptions="End">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding PriceTotalAfterCorrectDecimal}" />
+                                                    <Span Text=" zł" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+
+                                    </Grid>
+
+                                    <Grid
+                                        Grid.Row="2"
+                                        Grid.ColumnSpan="3"
+                                        Padding="5"
+                                        ColumnDefinitions="auto,*"
+                                        ColumnSpacing="5"
+                                        IsVisible="{Binding IsExpanded}"
+                                        RowDefinitions="*,*,*,*,auto">
+
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            Text="Czas Utworzenia:" />
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            Text="{Binding Created}" />
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="0"
+                                            Text="Czas Edycji:" />
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Text="{Binding Updated}" />
+
+                                        <Label
+                                            Grid.Row="2"
+                                            Grid.Column="0"
+                                            Text="Utworzył: " />
+                                        <Label
+                                            Grid.Row="2"
+                                            Grid.Column="1"
+                                            Text="{Binding UserCreatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8}">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                        <Label
+                                            Grid.Row="3"
+                                            Grid.Column="0"
+                                            Text="Edytował: " />
+                                        <Label
+                                            Grid.Row="3"
+                                            Grid.Column="1"
+                                            Text="{Binding UserUpdatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8}">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+
+                                        <Label
+                                            Grid.Row="4"
+                                            Grid.Column="0"
+                                            Text="Opis: " />
+                                        <Label
+                                            Grid.Row="4"
+                                            Grid.Column="1"
+                                            Text="{Binding Description}" />
+                                    </Grid>
+
+                                    <Border
+                                        Grid.Row="2"
+                                        Grid.ColumnSpan="3"
+                                        VerticalOptions="Start" />
+                                    <Border
+                                        Grid.Row="2"
+                                        Grid.ColumnSpan="3"
+                                        VerticalOptions="End" />
+
                                 </Grid>
 
-                                <Border
-                                    Grid.Row="2"
-                                    Grid.ColumnSpan="3"
-                                    VerticalOptions="Start" />
-                                <Border
-                                    Grid.Row="2"
-                                    Grid.ColumnSpan="3"
-                                    VerticalOptions="End" />
-
-                            </Grid>
+                            </CustomControls:BorderOpacityFromBool>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
 
@@ -759,133 +778,148 @@
                     <CollectionView ItemsSource="{Binding SingleDayPreviewSmallM.Cakes, x:DataType=vm:SingleDayPreviewSmallV}">
 
                         <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="Product:Cake">
-                                <Grid Margin="0,5,0,5" RowDefinitions="*,auto">
+                            <DataTemplate>
+
+                                <CustomControls:BorderOpacityFromBool
+                                    x:DataType="Product:Cake"
+                                    SelectedOpacity="{Binding IsDelete}"
+                                    ValueOpacity="0.3">
+
+                                    <Grid Margin="0,5,0,5" RowDefinitions="*,auto">
 
 
-                                    <Grid.GestureRecognizers>
-                                        <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped_CakeIsExpanded" />
-                                    </Grid.GestureRecognizers>
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped_CakeIsExpanded" />
+                                        </Grid.GestureRecognizers>
 
-                                    <Grid
-                                        Margin="5"
-                                        Padding="5"
-                                        ColumnDefinitions="30,auto,auto,*">
+                                        <Grid
+                                            Margin="5"
+                                            Padding="5"
+                                            ColumnDefinitions="30,auto,auto,*">
 
-                                        <Label Grid.Column="0" VerticalOptions="Center">
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="{Binding Index}" />
-                                                    <Span Text=": " />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                        <Label
-                                            Grid.Column="1"
-                                            Margin="5,0,5,0"
-                                            VerticalOptions="Center">
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="{Binding PriceDecimal}" />
-                                                    <Span Text=" zł" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                        <Label
-                                            Grid.Column="2"
-                                            Margin="5,0,5,0"
-                                            FontAttributes="Bold"
-                                            IsVisible="{Binding IsSell}"
-                                            Text="Sprzedane" />
-                                        <Label
-                                            Grid.Column="2"
-                                            Margin="5,0,5,0"
-                                            FontAttributes="Bold"
-                                            IsVisible="{Binding IsSell, Converter={StaticResource InvertedBoolConverter}}"
-                                            Text="zwrot" />
+                                            <Label Grid.Column="0" VerticalOptions="Center">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="{Binding Index}" />
+                                                        <Span Text=": " />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                            <Label
+                                                Grid.Column="1"
+                                                Margin="5,0,5,0"
+                                                VerticalOptions="Center">
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="{Binding PriceDecimal}" />
+                                                        <Span Text=" zł" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                            <Label
+                                                Grid.Column="2"
+                                                Margin="5,0,5,0"
+                                                FontAttributes="Bold"
+                                                IsVisible="{Binding IsSell}"
+                                                Text="Sprzedane" />
+                                            <Label
+                                                Grid.Column="2"
+                                                Margin="5,0,5,0"
+                                                FontAttributes="Bold"
+                                                IsVisible="{Binding IsSell, Converter={StaticResource InvertedBoolConverter}}"
+                                                Text="zwrot" />
+                                            <Label
+                                                Grid.Column="3"
+                                                Margin="5,0,5,0"
+                                                FontAttributes="Bold"
+                                                IsVisible="{Binding IsDelete}"
+                                                Text="Usunięte" />
 
-                                        <local:TransparentToColorGraphicsView
-                                            Grid.Column="2"
-                                            Grid.ColumnSpan="2"
-                                            Margin="-9"
-                                            InputTransparent="True"
-                                            IsVisible="{Binding IsSell}"
-                                            ToColor="Green" />
+                                            <local:TransparentToColorGraphicsView
+                                                Grid.Column="2"
+                                                Grid.ColumnSpan="2"
+                                                Margin="-9"
+                                                InputTransparent="True"
+                                                IsVisible="{Binding IsSell}"
+                                                ToColor="Green" />
 
-                                        <local:TransparentToColorGraphicsView
-                                            Grid.Column="2"
-                                            Grid.ColumnSpan="2"
-                                            Margin="-9"
-                                            InputTransparent="True"
-                                            IsVisible="{Binding IsSell, Converter={StaticResource InvertedBoolConverter}}"
-                                            ToColor="Red" />
+                                            <local:TransparentToColorGraphicsView
+                                                Grid.Column="2"
+                                                Grid.ColumnSpan="2"
+                                                Margin="-9"
+                                                InputTransparent="True"
+                                                IsVisible="{Binding IsSell, Converter={StaticResource InvertedBoolConverter}}"
+                                                ToColor="Red" />
 
+                                        </Grid>
+
+                                        <Grid
+                                            Grid.Row="1"
+                                            Padding="5"
+                                            x:DataType="vm:CakeIsExpanded"
+                                            ColumnDefinitions="auto,*"
+                                            ColumnSpacing="5"
+                                            IsVisible="{Binding IsExpanded, x:DataType=vm:CakeIsExpanded}"
+                                            RowDefinitions="*,*,*,*">
+
+                                            <Label
+                                                Grid.Row="0"
+                                                Grid.Column="0"
+                                                Text="Czas Utworzenia:" />
+                                            <Label
+                                                Grid.Row="0"
+                                                Grid.Column="1"
+                                                Text="{Binding Created, x:DataType=vm:CakeIsExpanded}" />
+                                            <Label
+                                                Grid.Row="1"
+                                                Grid.Column="0"
+                                                Text="Czas Edycji:" />
+                                            <Label
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                                Text="{Binding Updated, x:DataType=vm:CakeIsExpanded}" />
+
+                                            <Label
+                                                Grid.Row="2"
+                                                Grid.Column="0"
+                                                Text="Utworzył: " />
+                                            <Label
+                                                Grid.Row="2"
+                                                Grid.Column="1"
+                                                Text="{Binding UserCreatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8, x:DataType=vm:CakeIsExpanded}">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
+                                                </Label.GestureRecognizers>
+                                            </Label>
+                                            <Label
+                                                Grid.Row="3"
+                                                Grid.Column="0"
+                                                Text="Edytował: " />
+                                            <Label
+                                                Grid.Row="3"
+                                                Grid.Column="1"
+                                                Text="{Binding UserUpdatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8, x:DataType=vm:CakeIsExpanded}">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
+                                                </Label.GestureRecognizers>
+                                            </Label>
+
+                                        </Grid>
+
+                                        <Border
+                                            Grid.RowSpan="2"
+                                            Padding="5"
+                                            IsVisible="{Binding IsSell, x:DataType=vm:CakeIsExpanded}"
+                                            Stroke="Green" />
+                                        <Border
+                                            Grid.RowSpan="2"
+                                            Padding="5"
+                                            IsVisible="{Binding IsSell, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:CakeIsExpanded}"
+                                            Stroke="Red" />
                                     </Grid>
 
-                                    <Grid
-                                        Grid.Row="1"
-                                        Padding="5"
-                                        x:DataType="vm:CakeIsExpanded"
-                                        ColumnDefinitions="auto,*"
-                                        ColumnSpacing="5"
-                                        IsVisible="{Binding IsExpanded, x:DataType=vm:CakeIsExpanded}"
-                                        RowDefinitions="*,*,*,*">
+                                </CustomControls:BorderOpacityFromBool>
 
-                                        <Label
-                                            Grid.Row="0"
-                                            Grid.Column="0"
-                                            Text="Czas Utworzenia:" />
-                                        <Label
-                                            Grid.Row="0"
-                                            Grid.Column="1"
-                                            Text="{Binding Created, x:DataType=vm:CakeIsExpanded}" />
-                                        <Label
-                                            Grid.Row="1"
-                                            Grid.Column="0"
-                                            Text="Czas Edycji:" />
-                                        <Label
-                                            Grid.Row="1"
-                                            Grid.Column="1"
-                                            Text="{Binding Updated, x:DataType=vm:CakeIsExpanded}" />
-
-                                        <Label
-                                            Grid.Row="2"
-                                            Grid.Column="0"
-                                            Text="Utworzył: " />
-                                        <Label
-                                            Grid.Row="2"
-                                            Grid.Column="1"
-                                            Text="{Binding UserCreatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8, x:DataType=vm:CakeIsExpanded}">
-                                            <Label.GestureRecognizers>
-                                                <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
-                                            </Label.GestureRecognizers>
-                                        </Label>
-                                        <Label
-                                            Grid.Row="3"
-                                            Grid.Column="0"
-                                            Text="Edytował: " />
-                                        <Label
-                                            Grid.Row="3"
-                                            Grid.Column="1"
-                                            Text="{Binding UserUpdatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8, x:DataType=vm:CakeIsExpanded}">
-                                            <Label.GestureRecognizers>
-                                                <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
-                                            </Label.GestureRecognizers>
-                                        </Label>
-
-                                    </Grid>
-
-                                    <Border
-                                        Grid.RowSpan="2"
-                                        Padding="5"
-                                        IsVisible="{Binding IsSell, x:DataType=vm:CakeIsExpanded}"
-                                        Stroke="Green" />
-                                    <Border
-                                        Grid.RowSpan="2"
-                                        Padding="5"
-                                        IsVisible="{Binding IsSell, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:CakeIsExpanded}"
-                                        Stroke="Red" />
-                                </Grid>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
 

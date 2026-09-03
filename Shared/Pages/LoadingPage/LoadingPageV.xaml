@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Shared.Pages.LoadingPage.LoadingPageV"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="LoadingPageV"
+    Shell.FlyoutBehavior="Disabled"
+    Shell.NavBarIsVisible="false"
+    Shell.PresentationMode="ModalAnimated">
+
+    <ContentPage.Resources>
+        <Color x:Key="AppAccentColor">#FF5733</Color>
+    </ContentPage.Resources>
+
+
+    <VerticalStackLayout
+        HorizontalOptions="Center"
+        Spacing="20"
+        VerticalOptions="Center">
+        <ActivityIndicator IsRunning="true" Color="{StaticResource AppAccentColor}" />
+        <Label
+            x:Name="StatusLabel"
+            HorizontalOptions="Center"
+            Text="Inicjalizacja aplikacji..." />
+    </VerticalStackLayout>
+
+</ContentPage>

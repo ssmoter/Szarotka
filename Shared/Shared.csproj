@@ -63,6 +63,9 @@
     <MauiXaml Update="Pages\FlyoutHeader\FlyoutHeaderV.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
+    <MauiXaml Update="Pages\LoadingPage\LoadingPageV.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
     <MauiXaml Update="Pages\LogIn\ForgetPassword\ForgetPasswordV.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>

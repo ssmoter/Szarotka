@@ -385,6 +385,7 @@
                                 <Border
                                     Margin="0,1,0,1"
                                     Padding="2"
+                                    IsVisible="{Binding IsDelete, Converter={StaticResource InvertedBoolConverter}}"
                                     x:DataType="Product:Product">
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="10" />
