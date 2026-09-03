@@ -17,13 +17,13 @@ public partial class DbMappers
 
         public CustomerRoutesOrdinals(SqliteDataReader reader) : base(reader)
         {
-            // Tutaj GetOrdinal uruchamia się TYLKO RAZ przed pętlą!
-            RoutesId = reader.GetOrdinal(nameof(CustomerRoutes.RoutesId));
-            Name = reader.GetOrdinal(nameof(CustomerRoutes.Name));
-            Description = reader.GetOrdinal(nameof(CustomerRoutes.Description));
-            PhoneNumber = reader.GetOrdinal(nameof(CustomerRoutes.PhoneNumber));
-            Longitude = reader.GetOrdinal(nameof(CustomerRoutes.Longitude));
-            Latitude = reader.GetOrdinal(nameof(CustomerRoutes.Latitude));
+            // Tutaj GetOptionalOrdinal uruchamia się TYLKO RAZ przed pętlą!
+            RoutesId = reader.GetOptionalOrdinal(nameof(CustomerRoutes.RoutesId));
+            Name = reader.GetOptionalOrdinal(nameof(CustomerRoutes.Name));
+            Description = reader.GetOptionalOrdinal(nameof(CustomerRoutes.Description));
+            PhoneNumber = reader.GetOptionalOrdinal(nameof(CustomerRoutes.PhoneNumber));
+            Longitude = reader.GetOptionalOrdinal(nameof(CustomerRoutes.Longitude));
+            Latitude = reader.GetOptionalOrdinal(nameof(CustomerRoutes.Latitude));
         }
     }
 
@@ -42,7 +42,7 @@ public partial class DbMappers
 
             var cr = new CustomerRoutes();
 
-            if (!reader.IsDBNull(ords.RoutesId))
+            if (ords.RoutesId >= 0 && !reader.IsDBNull(ords.RoutesId))
             {
                 var rId = reader.GetString(ords.RoutesId);
                 cr.RoutesId = string.IsNullOrEmpty(rId) ? Guid.Empty : new Guid(rId);
@@ -52,27 +52,27 @@ public partial class DbMappers
                 cr.RoutesId = Guid.Empty;
             }
 
-            if (!reader.IsDBNull(ords.Name))
+            if (ords.Name >= 0 && !reader.IsDBNull(ords.Name))
                 cr.Name = reader.GetString(ords.Name);
             else
                 cr.Name = string.Empty;
 
-            if (!reader.IsDBNull(ords.Description))
+            if (ords.Description >= 0 && !reader.IsDBNull(ords.Description))
                 cr.Description = reader.GetString(ords.Description);
             else
                 cr.Description = string.Empty;
 
-            if (!reader.IsDBNull(ords.PhoneNumber))
+            if (ords.PhoneNumber >= 0 && !reader.IsDBNull(ords.PhoneNumber))
                 cr.PhoneNumber = reader.GetString(ords.PhoneNumber);
             else
                 cr.PhoneNumber = string.Empty;
 
-            if (!reader.IsDBNull(ords.Longitude))
+            if (ords.Longitude >= 0 && !reader.IsDBNull(ords.Longitude))
                 cr.Longitude = reader.GetDouble(ords.Longitude);
             else
                 cr.Longitude = 0d;
 
-            if (!reader.IsDBNull(ords.Latitude))
+            if (ords.Latitude >= 0 && !reader.IsDBNull(ords.Latitude))
                 cr.Latitude = reader.GetDouble(ords.Latitude);
             else
                 cr.Latitude = 0d;

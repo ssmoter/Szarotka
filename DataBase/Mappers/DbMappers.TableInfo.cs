@@ -17,12 +17,12 @@ public partial class DbMappers
 
         public TableInfoOrdinals(SqliteDataReader reader)
         {
-            Cid = reader.GetOrdinal(nameof(TableInfo.Cid));
-            Name = reader.GetOrdinal(nameof(TableInfo.Name));
-            Type = reader.GetOrdinal(nameof(TableInfo.Type));
-            NotNull = reader.GetOrdinal(nameof(TableInfo.NotNull));
-            DefaultValue = reader.GetOrdinal(nameof(TableInfo.dflt_value));
-            PrimaryKey = reader.GetOrdinal(nameof(TableInfo.pk));
+            Cid = reader.GetOptionalOrdinal(nameof(TableInfo.Cid));
+            Name = reader.GetOptionalOrdinal(nameof(TableInfo.Name));
+            Type = reader.GetOptionalOrdinal(nameof(TableInfo.Type));
+            NotNull = reader.GetOptionalOrdinal(nameof(TableInfo.NotNull));
+            DefaultValue = reader.GetOptionalOrdinal(nameof(TableInfo.dflt_value));
+            PrimaryKey = reader.GetOptionalOrdinal(nameof(TableInfo.pk));
         }
     }
 
@@ -38,12 +38,12 @@ public partial class DbMappers
 
             var ti = new TableInfo();
 
-            if (!reader.IsDBNull(ords.Cid)) ti.Cid = reader.GetInt32(ords.Cid); else ti.Cid = 0;
-            if (!reader.IsDBNull(ords.Name)) ti.Name = reader.GetString(ords.Name); else ti.Name = string.Empty;
-            if (!reader.IsDBNull(ords.Type)) ti.Type = reader.GetString(ords.Type); else ti.Type = string.Empty;
-            if (!reader.IsDBNull(ords.NotNull)) ti.NotNull = reader.GetInt32(ords.NotNull); else ti.NotNull = 0;
-            if (!reader.IsDBNull(ords.DefaultValue)) ti.dflt_value = reader.GetString(ords.DefaultValue); else ti.dflt_value = string.Empty;
-            if (!reader.IsDBNull(ords.PrimaryKey)) ti.pk = reader.GetInt32(ords.PrimaryKey); else ti.pk = 0;
+            if (ords.Cid >= 0 && !reader.IsDBNull(ords.Cid)) ti.Cid = reader.GetInt32(ords.Cid); else ti.Cid = 0;
+            if (ords.Name >= 0 && !reader.IsDBNull(ords.Name)) ti.Name = reader.GetString(ords.Name); else ti.Name = string.Empty;
+            if (ords.Type >= 0 && !reader.IsDBNull(ords.Type)) ti.Type = reader.GetString(ords.Type); else ti.Type = string.Empty;
+            if (ords.NotNull >= 0 && !reader.IsDBNull(ords.NotNull)) ti.NotNull = reader.GetInt32(ords.NotNull); else ti.NotNull = 0;
+            if (ords.DefaultValue >= 0 && !reader.IsDBNull(ords.DefaultValue)) ti.dflt_value = reader.GetString(ords.DefaultValue); else ti.dflt_value = string.Empty;
+            if (ords.PrimaryKey >= 0 && !reader.IsDBNull(ords.PrimaryKey)) ti.pk = reader.GetInt32(ords.PrimaryKey); else ti.pk = 0;
 
             return ti;
         }));

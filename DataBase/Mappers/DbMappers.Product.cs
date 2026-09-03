@@ -21,17 +21,17 @@ public partial class DbMappers
 
         public ProductOrdinals(SqliteDataReader reader) : base(reader)
         {
-            // Tutaj GetOrdinal uruchamia się TYLKO RAZ przed pętlą!
-            DayId = reader.GetOrdinal(nameof(Product.DayId));
-            ProductNameId = reader.GetOrdinal(nameof(Product.ProductNameId));
-            ProductPriceId = reader.GetOrdinal(nameof(Product.ProductPriceId));
-            Description = reader.GetOrdinal(nameof(Product.Description));
-            PriceTotal = reader.GetOrdinal(nameof(Product.PriceTotal));
-            PriceTotalCorrect = reader.GetOrdinal(nameof(Product.PriceTotalCorrect));
-            PriceTotalAfterCorrect = reader.GetOrdinal(nameof(Product.PriceTotalAfterCorrect));
-            Number = reader.GetOrdinal(nameof(Product.Number));
-            NumberEdit = reader.GetOrdinal(nameof(Product.NumberEdit));
-            NumberReturn = reader.GetOrdinal(nameof(Product.NumberReturn));
+            // Tutaj GetOptionalOrdinal uruchamia się TYLKO RAZ przed pętlą!
+            DayId = reader.GetOptionalOrdinal(nameof(Product.DayId));
+            ProductNameId = reader.GetOptionalOrdinal(nameof(Product.ProductNameId));
+            ProductPriceId = reader.GetOptionalOrdinal(nameof(Product.ProductPriceId));
+            Description = reader.GetOptionalOrdinal(nameof(Product.Description));
+            PriceTotal = reader.GetOptionalOrdinal(nameof(Product.PriceTotal));
+            PriceTotalCorrect = reader.GetOptionalOrdinal(nameof(Product.PriceTotalCorrect));
+            PriceTotalAfterCorrect = reader.GetOptionalOrdinal(nameof(Product.PriceTotalAfterCorrect));
+            Number = reader.GetOptionalOrdinal(nameof(Product.Number));
+            NumberEdit = reader.GetOptionalOrdinal(nameof(Product.NumberEdit));
+            NumberReturn = reader.GetOptionalOrdinal(nameof(Product.NumberReturn));
         }
     }
 
@@ -50,7 +50,7 @@ public partial class DbMappers
 
             var product = new Product();
 
-            if (!reader.IsDBNull(ords.DayId))
+            if (ords.DayId >= 0 && !reader.IsDBNull(ords.DayId))
             {
                 var dayIdStr = reader.GetString(ords.DayId);
                 product.DayId = string.IsNullOrEmpty(dayIdStr) ? Guid.Empty : new Guid(dayIdStr);
@@ -60,7 +60,7 @@ public partial class DbMappers
                 product.DayId = Guid.Empty;
             }
 
-            if (!reader.IsDBNull(ords.ProductNameId))
+            if (ords.ProductNameId >= 0 && !reader.IsDBNull(ords.ProductNameId))
             {
                 var pnIdStr = reader.GetString(ords.ProductNameId);
                 product.ProductNameId = string.IsNullOrEmpty(pnIdStr) ? Guid.Empty : new Guid(pnIdStr);
@@ -70,7 +70,7 @@ public partial class DbMappers
                 product.ProductNameId = Guid.Empty;
             }
 
-            if (!reader.IsDBNull(ords.ProductPriceId))
+            if (ords.ProductPriceId >= 0 && !reader.IsDBNull(ords.ProductPriceId))
             {
                 var ppIdStr = reader.GetString(ords.ProductPriceId);
                 product.ProductPriceId = string.IsNullOrEmpty(ppIdStr) ? Guid.Empty : new Guid(ppIdStr);
@@ -80,7 +80,7 @@ public partial class DbMappers
                 product.ProductPriceId = Guid.Empty;
             }
 
-            if (!reader.IsDBNull(ords.Description))
+            if (ords.Description >= 0 && !reader.IsDBNull(ords.Description))
             {
                 product.Description = reader.GetString(ords.Description);
             }
@@ -89,32 +89,32 @@ public partial class DbMappers
                 product.Description = string.Empty;
             }
 
-            if (!reader.IsDBNull(ords.PriceTotal))
+            if (ords.PriceTotal >= 0 && !reader.IsDBNull(ords.PriceTotal))
                 product.PriceTotal = reader.GetInt32(ords.PriceTotal);
             else
                 product.PriceTotal = 0;
 
-            if (!reader.IsDBNull(ords.PriceTotalCorrect))
+            if (ords.PriceTotalCorrect >= 0 && !reader.IsDBNull(ords.PriceTotalCorrect))
                 product.PriceTotalCorrect = reader.GetInt32(ords.PriceTotalCorrect);
             else
                 product.PriceTotalCorrect = 0;
 
-            if (!reader.IsDBNull(ords.PriceTotalAfterCorrect))
+            if (ords.PriceTotalAfterCorrect >= 0 && !reader.IsDBNull(ords.PriceTotalAfterCorrect))
                 product.PriceTotalAfterCorrect = reader.GetInt32(ords.PriceTotalAfterCorrect);
             else
                 product.PriceTotalAfterCorrect = 0;
 
-            if (!reader.IsDBNull(ords.Number))
+            if (ords.Number >= 0 && !reader.IsDBNull(ords.Number))
                 product.Number = reader.GetInt32(ords.Number);
             else
                 product.Number = 0;
 
-            if (!reader.IsDBNull(ords.NumberEdit))
+            if (ords.NumberEdit >= 0 && !reader.IsDBNull(ords.NumberEdit))
                 product.NumberEdit = reader.GetInt32(ords.NumberEdit);
             else
                 product.NumberEdit = 0;
 
-            if (!reader.IsDBNull(ords.NumberReturn))
+            if (ords.NumberReturn >= 0 && !reader.IsDBNull(ords.NumberReturn))
                 product.NumberReturn = reader.GetInt32(ords.NumberReturn);
             else
                 product.NumberReturn = 0;

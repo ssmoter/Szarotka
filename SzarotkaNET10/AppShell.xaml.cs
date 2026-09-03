@@ -8,6 +8,8 @@ using Shared.Data;
 using Shared.Helper;
 using Shared.Service;
 
+using System.Net;
+
 namespace SzarotkaNET10
 {
     public partial class AppShell : Shell, IDisposable
@@ -41,12 +43,12 @@ namespace SzarotkaNET10
         protected override async void OnNavigatedTo(NavigatedToEventArgs args)
         {
             base.OnNavigatedTo(args);
-            var update = UpdateDataBase();
-            await update;
-            if (update.Result)
-            {
-                await GotToLogin();
-            }
+            //var update = UpdateDataBase();
+            //await update;
+            //if (update.Result)
+            //{
+            //    await GotToLogin();
+            //}
         }
 
 
@@ -60,6 +62,9 @@ namespace SzarotkaNET10
                 {
                     await Shell.Current.GoToAsync($"{nameof(Shared.Pages.LogIn.LogInV)}");
                 }
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+            {
             }
             catch (Exception ex)
             {

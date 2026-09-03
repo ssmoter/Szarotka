@@ -16,11 +16,11 @@ public partial class DbMappers
 
         public DataBaseVersionOrdinals(SqliteDataReader reader)
         {
-            Id = reader.GetOrdinal(nameof(DataBaseVersion.Id));
-            DataBase = reader.GetOrdinal(nameof(DataBaseVersion.DataBase));
-            Inventory = reader.GetOrdinal(nameof(DataBaseVersion.Inventory));
-            DriversRoutes = reader.GetOrdinal(nameof(DataBaseVersion.DriversRoutes));
-            LastBackup = reader.GetOrdinal(nameof(DataBaseVersion.LastBackup));
+            Id = reader.GetOptionalOrdinal(nameof(DataBaseVersion.Id));
+            DataBase = reader.GetOptionalOrdinal(nameof(DataBaseVersion.DataBase));
+            Inventory = reader.GetOptionalOrdinal(nameof(DataBaseVersion.Inventory));
+            DriversRoutes = reader.GetOptionalOrdinal(nameof(DataBaseVersion.DriversRoutes));
+            LastBackup = reader.GetOptionalOrdinal(nameof(DataBaseVersion.LastBackup));
         }
     }
 
@@ -36,11 +36,11 @@ public partial class DbMappers
 
             var dv = new DataBaseVersion();
 
-            if (!reader.IsDBNull(ords.Id)) dv.Id = reader.GetInt32(ords.Id); else dv.Id = 0;
-            if (!reader.IsDBNull(ords.DataBase)) dv.DataBase = reader.GetInt32(ords.DataBase); else dv.DataBase = 0;
-            if (!reader.IsDBNull(ords.Inventory)) dv.Inventory = reader.GetInt32(ords.Inventory); else dv.Inventory = 0;
-            if (!reader.IsDBNull(ords.DriversRoutes)) dv.DriversRoutes = reader.GetInt32(ords.DriversRoutes); else dv.DriversRoutes = 0;
-            if (!reader.IsDBNull(ords.LastBackup)) dv.LastBackup = reader.GetInt64(ords.LastBackup); else dv.LastBackup = 0L;
+            if (ords.Id >= 0 &&!reader.IsDBNull(ords.Id)) dv.Id = reader.GetInt32(ords.Id); else dv.Id = 0;
+            if (ords.DataBase >= 0 &&!reader.IsDBNull(ords.DataBase)) dv.DataBase = reader.GetInt32(ords.DataBase); else dv.DataBase = 0;
+            if (ords.Inventory >= 0 &&!reader.IsDBNull(ords.Inventory)) dv.Inventory = reader.GetInt32(ords.Inventory); else dv.Inventory = 0;
+            if (ords.DriversRoutes >= 0 &&!reader.IsDBNull(ords.DriversRoutes)) dv.DriversRoutes = reader.GetInt32(ords.DriversRoutes); else dv.DriversRoutes = 0;
+            if (ords.LastBackup >= 0 && !reader.IsDBNull(ords.LastBackup)) dv.LastBackup = reader.GetInt64(ords.LastBackup); else dv.LastBackup = 0L;
 
             return dv;
         }));

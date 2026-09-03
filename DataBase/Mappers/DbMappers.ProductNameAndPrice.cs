@@ -13,7 +13,7 @@ public partial class DbMappers
 
         public ProductNameAndPriceOrdinals(SqliteDataReader reader) : base(reader)
         {
-            JsonPrice = reader.GetOrdinal(nameof(GetInventoryAoT.ProductNameAndPrice.JsonPrice));
+            JsonPrice = reader.GetOptionalOrdinal(nameof(GetInventoryAoT.ProductNameAndPrice.JsonPrice));
         }
     }
 
@@ -30,14 +30,14 @@ public partial class DbMappers
             var pn = new GetInventoryAoT.ProductNameAndPrice();
 
             // map ProductName fields
-            if (!reader.IsDBNull(ords.Arrangement)) pn.Arrangement = reader.GetInt32(ords.Arrangement); else pn.Arrangement = 0;
-            if (!reader.IsDBNull(ords.Name)) pn.Name = reader.GetString(ords.Name); else pn.Name = string.Empty;
-            if (!reader.IsDBNull(ords.Description)) pn.Description = reader.GetString(ords.Description); else pn.Description = string.Empty;
-            if (!reader.IsDBNull(ords.Img)) pn.Img = reader.GetString(ords.Img); else pn.Img = string.Empty;
-            if (!reader.IsDBNull(ords.IsVisible)) pn.IsVisible = reader.GetInt32(ords.IsVisible) == 1; else pn.IsVisible = true;
+            if (ords.Arrangement >= 0 && !reader.IsDBNull(ords.Arrangement)) pn.Arrangement = reader.GetInt32(ords.Arrangement); else pn.Arrangement = 0;
+            if (ords.Name >= 0 && !reader.IsDBNull(ords.Name)) pn.Name = reader.GetString(ords.Name); else pn.Name = string.Empty;
+            if (ords.Description >= 0 && !reader.IsDBNull(ords.Description)) pn.Description = reader.GetString(ords.Description); else pn.Description = string.Empty;
+            if (ords.Img >= 0 && !reader.IsDBNull(ords.Img)) pn.Img = reader.GetString(ords.Img); else pn.Img = string.Empty;
+            if (ords.IsVisible >= 0 && !reader.IsDBNull(ords.IsVisible)) pn.IsVisible = reader.GetInt32(ords.IsVisible) == 1; else pn.IsVisible = true;
 
             // map JsonPrice
-            if (!reader.IsDBNull(ords.JsonPrice)) pn.JsonPrice = reader.GetString(ords.JsonPrice); else pn.JsonPrice = string.Empty;
+            if (ords.JsonPrice >= 0 && !reader.IsDBNull(ords.JsonPrice)) pn.JsonPrice = reader.GetString(ords.JsonPrice); else pn.JsonPrice = string.Empty;
 
             MapBaseFields(reader, pn, ords);
 

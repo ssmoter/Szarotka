@@ -14,10 +14,10 @@ public partial class DbMappers
 
         public UpdateLogOrdinals(SqliteDataReader reader) : base(reader)
         {
-            UpdateEnum = reader.GetOrdinal(nameof(UpdateLog.UpdateEnum));
-            UpdateId = reader.GetOrdinal(nameof(UpdateLog.UpdateId));
-            JsonUpdate = reader.GetOrdinal(nameof(UpdateLog.JsonUpdate));
-            IsServer = reader.GetOrdinal(nameof(UpdateLog.IsServer));
+            UpdateEnum = reader.GetOptionalOrdinal(nameof(UpdateLog.UpdateEnum));
+            UpdateId = reader.GetOptionalOrdinal(nameof(UpdateLog.UpdateId));
+            JsonUpdate = reader.GetOptionalOrdinal(nameof(UpdateLog.JsonUpdate));
+            IsServer = reader.GetOptionalOrdinal(nameof(UpdateLog.IsServer));
         }
     }
 
@@ -33,14 +33,14 @@ public partial class DbMappers
 
             var ul = new UpdateLog();
 
-            if (!reader.IsDBNull(ords.UpdateEnum)) ul.UpdateEnum = (UpdateEnum)reader.GetInt32(ords.UpdateEnum);
+            if (ords.UpdateEnum >= 0 && !reader.IsDBNull(ords.UpdateEnum)) ul.UpdateEnum = (UpdateEnum)reader.GetInt32(ords.UpdateEnum);
             else ul.UpdateEnum = default;
 
-            if (!reader.IsDBNull(ords.UpdateId)) ul.UpdateId = reader.GetString(ords.UpdateId); else ul.UpdateId = string.Empty;
+            if (ords.UpdateId >= 0 && !reader.IsDBNull(ords.UpdateId)) ul.UpdateId = reader.GetString(ords.UpdateId); else ul.UpdateId = string.Empty;
 
-            if (!reader.IsDBNull(ords.JsonUpdate)) ul.JsonUpdate = reader.GetString(ords.JsonUpdate); else ul.JsonUpdate = string.Empty;
+            if (ords.JsonUpdate >= 0 && !reader.IsDBNull(ords.JsonUpdate)) ul.JsonUpdate = reader.GetString(ords.JsonUpdate); else ul.JsonUpdate = string.Empty;
 
-            if (!reader.IsDBNull(ords.IsServer)) ul.IsServer = reader.GetInt32(ords.IsServer) == 1; else ul.IsServer = null;
+            if (ords.IsServer >= 0 && !reader.IsDBNull(ords.IsServer)) ul.IsServer = reader.GetInt32(ords.IsServer) == 1; else ul.IsServer = null;
 
             MapBaseFields(reader, ul, ords);
 

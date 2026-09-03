@@ -13,9 +13,9 @@ public partial class DbMappers
 
         public ProductPriceOrdinals(SqliteDataReader reader) : base(reader)
         {
-            // Tutaj GetOrdinal uruchamia się TYLKO RAZ przed pętlą!
-            ProductNameId = reader.GetOrdinal(nameof(ProductPrice.ProductNameId));
-            Price = reader.GetOrdinal(nameof(ProductPrice.Price));
+            // Tutaj GetOptionalOrdinal uruchamia się TYLKO RAZ przed pętlą!
+            ProductNameId = reader.GetOptionalOrdinal(nameof(ProductPrice.ProductNameId));
+            Price = reader.GetOptionalOrdinal(nameof(ProductPrice.Price));
         }
     }
 
@@ -34,7 +34,7 @@ public partial class DbMappers
 
             var pp = new ProductPrice();
 
-            if (!reader.IsDBNull(ords.ProductNameId))
+            if (ords.ProductNameId >= 0 && !reader.IsDBNull(ords.ProductNameId))
             {
                 var pnIdStr = reader.GetString(ords.ProductNameId);
                 pp.ProductNameId = string.IsNullOrEmpty(pnIdStr) ? Guid.Empty : new Guid(pnIdStr);
@@ -44,7 +44,7 @@ public partial class DbMappers
                 pp.ProductNameId = Guid.Empty;
             }
 
-            if (!reader.IsDBNull(ords.Price))
+            if (ords.Price >= 0 && !reader.IsDBNull(ords.Price))
                 pp.Price = reader.GetInt32(ords.Price);
             else
                 pp.Price = 0;

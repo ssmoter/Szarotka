@@ -6,7 +6,7 @@ namespace DataBase.Mappers;
 public partial class DbMappers
 {
     // Słownik przechowuje funkcje przyjmujące: (reader, obiekt_indeksów_kolumn)
-    private static readonly Dictionary<Type, Delegate> _registry = new();
+    private static readonly Dictionary<Type, Delegate> _registry = [];
 
     static DbMappers()
     {
@@ -50,9 +50,7 @@ public partial class DbMappers
     }
 
 
-
-
-    // 1. INDEKSY DLA KLASY BAZOWEJ - wywołają GetOrdinal tylko raz (kolumny zgodne z BaseEntities)
+    // 1. INDEKSY DLA KLASY BAZOWEJ - wywołają GetOptionalOrdinal tylko raz (kolumny zgodne z BaseEntities)
     public class BaseOrdinals
     {
         public int Id { get; }
@@ -64,13 +62,13 @@ public partial class DbMappers
 
         public BaseOrdinals(SqliteDataReader reader)
         {
-            // Tutaj GetOrdinal uruchamia się TYLKO RAZ przed pętlą!
-            Id = reader.GetOrdinal(nameof(BaseEntities<>.Id));
-            CreatedTicks = reader.GetOrdinal(nameof(BaseEntities<>.CreatedTicks));
-            UpdatedTicks = reader.GetOrdinal(nameof(BaseEntities<>.UpdatedTicks));
-            IsDelete = reader.GetOrdinal(nameof(BaseEntities<>.IsDelete));
-            UserCreatedId = reader.GetOrdinal(nameof(BaseEntities<>.UserCreatedId));
-            UserUpdatedId = reader.GetOrdinal(nameof(BaseEntities<>.UserUpdatedId));
+            // Tutaj GetOptionalOrdinal uruchamia się TYLKO RAZ przed pętlą!
+            Id = reader.GetOptionalOrdinal(nameof(BaseEntities<>.Id));
+            CreatedTicks = reader.GetOptionalOrdinal(nameof(BaseEntities<>.CreatedTicks));
+            UpdatedTicks = reader.GetOptionalOrdinal(nameof(BaseEntities<>.UpdatedTicks));
+            IsDelete = reader.GetOptionalOrdinal(nameof(BaseEntities<>.IsDelete));
+            UserCreatedId = reader.GetOptionalOrdinal(nameof(BaseEntities<>.UserCreatedId));
+            UserUpdatedId = reader.GetOptionalOrdinal(nameof(BaseEntities<>.UserUpdatedId));
         }
     }
 
@@ -82,7 +80,7 @@ public partial class DbMappers
         ArgumentNullException.ThrowIfNull(ords);
 
         // Id - mapowanie podobne do Cake: rozpoznajemy kilka popularnych typów Id
-        if (!reader.IsDBNull(ords.Id))
+        if (ords.Id >= 0 && !reader.IsDBNull(ords.Id))
         {
             if (typeof(TId) == typeof(Guid))
             {
@@ -119,22 +117,22 @@ public partial class DbMappers
         }
 
         // Pozostałe pola BaseEntities - bez kombinowania, jak w Cake: bezrefleksyjnie
-        if (!reader.IsDBNull(ords.CreatedTicks))
+        if (ords.CreatedTicks >= 0 && !reader.IsDBNull(ords.CreatedTicks))
             entity.CreatedTicks = reader.GetInt64(ords.CreatedTicks);
         else
             entity.CreatedTicks = 0L;
 
-        if (!reader.IsDBNull(ords.UpdatedTicks))
+        if (ords.UpdatedTicks >= 0 && !reader.IsDBNull(ords.UpdatedTicks))
             entity.UpdatedTicks = reader.GetInt64(ords.UpdatedTicks);
         else
             entity.UpdatedTicks = 0L;
 
-        if (!reader.IsDBNull(ords.IsDelete))
+        if (ords.IsDelete >= 0 && !reader.IsDBNull(ords.IsDelete))
             entity.IsDelete = reader.GetInt32(ords.IsDelete) == 1;
         else
             entity.IsDelete = false;
 
-        if (!reader.IsDBNull(ords.UserCreatedId))
+        if (ords.UserCreatedId >= 0 && !reader.IsDBNull(ords.UserCreatedId))
         {
             var uc = reader.GetString(ords.UserCreatedId);
             entity.UserCreatedId = string.IsNullOrEmpty(uc) ? Guid.Empty : new Guid(uc);
@@ -142,7 +140,7 @@ public partial class DbMappers
         else
             entity.UserCreatedId = Guid.Empty;
 
-        if (!reader.IsDBNull(ords.UserUpdatedId))
+        if (ords.UserUpdatedId >= 0 && !reader.IsDBNull(ords.UserUpdatedId))
         {
             var uu = reader.GetString(ords.UserUpdatedId);
             entity.UserUpdatedId = string.IsNullOrEmpty(uu) ? Guid.Empty : new Guid(uu);
@@ -151,5 +149,21 @@ public partial class DbMappers
             entity.UserUpdatedId = Guid.Empty;
 
         return entity;
+    }
+}
+
+
+public static class SqliteDataReaderExtensions
+{
+    public static int GetOptionalOrdinal(this SqliteDataReader reader, string columnName)
+    {
+        for (int i = 0; i < reader.FieldCount; i++)
+        {
+            if (string.Equals(reader.GetName(i), columnName, StringComparison.OrdinalIgnoreCase))
+            {
+                return i;
+            }
+        }
+        return -1; // Zwraca -1, jeśli kolumna nie istnieje
     }
 }

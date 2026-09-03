@@ -106,7 +106,10 @@ namespace Shared.Data
             _db.DbSyncAoT.BackupDatabase(backupConnection);
 
             UpdateCurrentVersion(lastUpdate);
-            await Toast.Make("Utworzono kopie bazy danych", duration: CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                await Toast.Make("Utworzono kopie bazy danych", duration: CommunityToolkit.Maui.Core.ToastDuration.Short).Show();
+            });
         }
 
         public async Task<bool> UpdateDataBase(Action<double, int> updateDataBase, Action<double, int> updateInventory, Action<double, int> updateDriverRoutes)

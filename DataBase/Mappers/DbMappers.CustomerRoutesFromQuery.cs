@@ -14,8 +14,8 @@ public partial class DbMappers
 
         public CustomerRoutesFromQueryOrdinals(SqliteDataReader reader) : base(reader)
         {
-            JsonDayOfWeek = reader.GetOrdinal(nameof(GetDriverRoutesAoT.CustomerRoutesFromQuery.JsonDayOfWeek));
-            JsonAddress = reader.GetOrdinal(nameof(GetDriverRoutesAoT.CustomerRoutesFromQuery.JsonAddress));
+            JsonDayOfWeek = reader.GetOptionalOrdinal(nameof(GetDriverRoutesAoT.CustomerRoutesFromQuery.JsonDayOfWeek));
+            JsonAddress = reader.GetOptionalOrdinal(nameof(GetDriverRoutesAoT.CustomerRoutesFromQuery.JsonAddress));
         }
     }
 
@@ -32,7 +32,7 @@ public partial class DbMappers
             var cr = new GetDriverRoutesAoT.CustomerRoutesFromQuery();
 
             // map fields from CustomerRoutesOrdinals
-            if (!reader.IsDBNull(ords.RoutesId))
+            if (ords.RoutesId >= 0 && !reader.IsDBNull(ords.RoutesId))
             {
                 var rId = reader.GetString(ords.RoutesId);
                 cr.RoutesId = string.IsNullOrEmpty(rId) ? Guid.Empty : new Guid(rId);
@@ -42,15 +42,15 @@ public partial class DbMappers
                 cr.RoutesId = Guid.Empty;
             }
 
-            if (!reader.IsDBNull(ords.Name)) cr.Name = reader.GetString(ords.Name); else cr.Name = string.Empty;
-            if (!reader.IsDBNull(ords.Description)) cr.Description = reader.GetString(ords.Description); else cr.Description = string.Empty;
-            if (!reader.IsDBNull(ords.PhoneNumber)) cr.PhoneNumber = reader.GetString(ords.PhoneNumber); else cr.PhoneNumber = string.Empty;
-            if (!reader.IsDBNull(ords.Longitude)) cr.Longitude = reader.GetDouble(ords.Longitude); else cr.Longitude = 0d;
-            if (!reader.IsDBNull(ords.Latitude)) cr.Latitude = reader.GetDouble(ords.Latitude); else cr.Latitude = 0d;
+            if (ords.Name >= 0 && !reader.IsDBNull(ords.Name)) cr.Name = reader.GetString(ords.Name); else cr.Name = string.Empty;
+            if (ords.Description >= 0 && !reader.IsDBNull(ords.Description)) cr.Description = reader.GetString(ords.Description); else cr.Description = string.Empty;
+            if (ords.PhoneNumber >= 0 && !reader.IsDBNull(ords.PhoneNumber)) cr.PhoneNumber = reader.GetString(ords.PhoneNumber); else cr.PhoneNumber = string.Empty;
+            if (ords.Longitude >= 0 && !reader.IsDBNull(ords.Longitude)) cr.Longitude = reader.GetDouble(ords.Longitude); else cr.Longitude = 0d;
+            if (ords.Latitude >= 0 && !reader.IsDBNull(ords.Latitude)) cr.Latitude = reader.GetDouble(ords.Latitude); else cr.Latitude = 0d;
 
             // Map JSON fields
-            if (!reader.IsDBNull(ords.JsonDayOfWeek)) cr.JsonDayOfWeek = reader.GetString(ords.JsonDayOfWeek); else cr.JsonDayOfWeek = string.Empty;
-            if (!reader.IsDBNull(ords.JsonAddress)) cr.JsonAddress = reader.GetString(ords.JsonAddress); else cr.JsonAddress = string.Empty;
+            if (ords.JsonDayOfWeek >= 0 && !reader.IsDBNull(ords.JsonDayOfWeek)) cr.JsonDayOfWeek = reader.GetString(ords.JsonDayOfWeek); else cr.JsonDayOfWeek = string.Empty;
+            if (ords.JsonAddress >= 0 && !reader.IsDBNull(ords.JsonAddress)) cr.JsonAddress = reader.GetString(ords.JsonAddress); else cr.JsonAddress = string.Empty;
 
             MapBaseFields(reader, cr, ords);
 

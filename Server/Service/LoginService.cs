@@ -67,7 +67,7 @@ namespace Server.Service
         {
             _logger.LogInformation("LogOut started for token={Token}", refreshToken);
 
-            var deleteSql = $"DELETE FROM RefreshTokens WHERE {nameof(RefreshToken.Value)} = @Value";
+            var deleteSql = $"DELETE FROM {nameof(RefreshToken)} WHERE {nameof(RefreshToken.Value)} = @Value";
             await _db.DbAsyncAoT.ExecuteAsync(deleteSql, new() { ["Value"] = refreshToken });
 
             _logger.LogInformation("LogOut completed for token={Token}", refreshToken);

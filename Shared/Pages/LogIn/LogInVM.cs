@@ -78,9 +78,9 @@ namespace Shared.Pages.LogIn
             _db = db;
             _loginHttp = loginHttp;
 
-#if DEBUG
             User.Email = "user@example.com";
             User.Password = "Password1!";
+#if DEBUG
 #endif
         }
 

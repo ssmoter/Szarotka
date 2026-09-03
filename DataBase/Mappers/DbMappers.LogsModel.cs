@@ -15,10 +15,10 @@ public partial class DbMappers
 
         public LogsModelOrdinals(SqliteDataReader reader)
         {
-            Id = reader.GetOrdinal(nameof(LogsModel.Id));
-            StackTrace = reader.GetOrdinal(nameof(LogsModel.StackTrace));
-            Message = reader.GetOrdinal(nameof(LogsModel.Message));
-            Created = reader.GetOrdinal(nameof(LogsModel.Created));
+            Id = reader.GetOptionalOrdinal(nameof(LogsModel.Id));
+            StackTrace = reader.GetOptionalOrdinal(nameof(LogsModel.StackTrace));
+            Message = reader.GetOptionalOrdinal(nameof(LogsModel.Message));
+            Created = reader.GetOptionalOrdinal(nameof(LogsModel.Created));
         }
     }
 
@@ -34,10 +34,10 @@ public partial class DbMappers
 
             var lm = new LogsModel();
 
-            if (!reader.IsDBNull(ords.Id)) lm.Id = reader.GetInt32(ords.Id); else lm.Id = 0;
-            if (!reader.IsDBNull(ords.StackTrace)) lm.StackTrace = reader.GetString(ords.StackTrace); else lm.StackTrace = string.Empty;
-            if (!reader.IsDBNull(ords.Message)) lm.Message = reader.GetString(ords.Message); else lm.Message = string.Empty;
-            if (!reader.IsDBNull(ords.Created)) lm.Created = reader.GetString(ords.Created); else lm.Created = string.Empty;
+            if (ords.Id >= 0 &&!reader.IsDBNull(ords.Id)) lm.Id = reader.GetInt32(ords.Id); else lm.Id = 0;
+            if (ords.StackTrace >= 0 &&!reader.IsDBNull(ords.StackTrace)) lm.StackTrace = reader.GetString(ords.StackTrace); else lm.StackTrace = string.Empty;
+            if (ords.Message >= 0 &&!reader.IsDBNull(ords.Message)) lm.Message = reader.GetString(ords.Message); else lm.Message = string.Empty;
+            if (ords.Created >= 0 && !reader.IsDBNull(ords.Created)) lm.Created = reader.GetString(ords.Created); else lm.Created = string.Empty;
 
             return lm;
         }));

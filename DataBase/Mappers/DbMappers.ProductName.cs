@@ -16,12 +16,12 @@ public partial class DbMappers
 
         public ProductNameOrdinals(SqliteDataReader reader) : base(reader)
         {
-            // Tutaj GetOrdinal uruchamia się TYLKO RAZ przed pętlą!
-            Arrangement = reader.GetOrdinal(nameof(ProductName.Arrangement));
-            Name = reader.GetOrdinal(nameof(ProductName.Name));
-            Description = reader.GetOrdinal(nameof(ProductName.Description));
-            Img = reader.GetOrdinal(nameof(ProductName.Img));
-            IsVisible = reader.GetOrdinal(nameof(ProductName.IsVisible));
+            // Tutaj GetOptionalOrdinal uruchamia się TYLKO RAZ przed pętlą!
+            Arrangement = reader.GetOptionalOrdinal(nameof(ProductName.Arrangement));
+            Name = reader.GetOptionalOrdinal(nameof(ProductName.Name));
+            Description = reader.GetOptionalOrdinal(nameof(ProductName.Description));
+            Img = reader.GetOptionalOrdinal(nameof(ProductName.Img));
+            IsVisible = reader.GetOptionalOrdinal(nameof(ProductName.IsVisible));
         }
     }
 
@@ -40,27 +40,27 @@ public partial class DbMappers
 
             var pn = new ProductName();
 
-            if (!reader.IsDBNull(ords.Arrangement))
+            if (ords.Arrangement >= 0 && !reader.IsDBNull(ords.Arrangement))
                 pn.Arrangement = reader.GetInt32(ords.Arrangement);
             else
                 pn.Arrangement = 0;
 
-            if (!reader.IsDBNull(ords.Name))
+            if (ords.Name >= 0 && !reader.IsDBNull(ords.Name))
                 pn.Name = reader.GetString(ords.Name);
             else
                 pn.Name = string.Empty;
 
-            if (!reader.IsDBNull(ords.Description))
+            if (ords.Description >= 0 && !reader.IsDBNull(ords.Description))
                 pn.Description = reader.GetString(ords.Description);
             else
                 pn.Description = string.Empty;
 
-            if (!reader.IsDBNull(ords.Img))
+            if (ords.Img >= 0 && !reader.IsDBNull(ords.Img))
                 pn.Img = reader.GetString(ords.Img);
             else
                 pn.Img = string.Empty;
 
-            if (!reader.IsDBNull(ords.IsVisible))
+            if (ords.IsVisible >= 0 && !reader.IsDBNull(ords.IsVisible))
                 pn.IsVisible = reader.GetInt32(ords.IsVisible) == 1;
             else
                 pn.IsVisible = true;

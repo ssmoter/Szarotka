@@ -11,6 +11,7 @@
         }
         public RefreshToken(RefreshToken copy)
         {
+            Id = copy.Id;
             UserId = copy.UserId;
             Value = copy.Value;
             ExpireDate = copy.ExpireDate;

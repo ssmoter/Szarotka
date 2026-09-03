@@ -67,7 +67,7 @@ LIMIT 1
 ";
             return sql;
         }
-        public static string PublicUser(string Id)
+        public static string PublicUser(string id)
         {
             string sql = @$"
 SELECT
@@ -84,7 +84,7 @@ SELECT
 {nameof(User.UserCreatedId)}
 FROM {nameof(User)}
 WHERE
-{nameof(User.Id)} = @{nameof(Id)}
+{nameof(User.Id)} = @{nameof(id)}
 LIMIT 1
 ";
             return sql;

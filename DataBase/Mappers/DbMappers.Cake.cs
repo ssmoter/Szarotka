@@ -14,10 +14,10 @@ public partial class DbMappers
 
         public CakeOrdinals(SqliteDataReader reader) : base(reader)
         {
-            // Tutaj GetOrdinal uruchamia się TYLKO RAZ przed pętlą!
-            DayId = reader.GetOrdinal(nameof(Cake.DayId));
-            IsSell = reader.GetOrdinal(nameof(Cake.IsSell));
-            Price = reader.GetOrdinal(nameof(Cake.Price));
+            // Tutaj GetOptionalOrdinal uruchamia się TYLKO RAZ przed pętlą!
+            DayId = reader.GetOptionalOrdinal(nameof(Cake.DayId));
+            IsSell = reader.GetOptionalOrdinal(nameof(Cake.IsSell));
+            Price = reader.GetOptionalOrdinal(nameof(Cake.Price));
         }
     }
 
@@ -49,7 +49,7 @@ public partial class DbMappers
                 cake.Id = Guid.Empty;
             }
 
-            if (!reader.IsDBNull(ords.DayId))
+            if (ords.DayId >= 0 && !reader.IsDBNull(ords.DayId))
             {
                 var dayIdStr = reader.GetString(ords.DayId);
                 cake.DayId = string.IsNullOrEmpty(dayIdStr) ? Guid.Empty : new Guid(dayIdStr);
@@ -59,7 +59,7 @@ public partial class DbMappers
                 cake.DayId = Guid.Empty;
             }
 
-            if (!reader.IsDBNull(ords.IsSell))
+            if (ords.IsSell >= 0 && !reader.IsDBNull(ords.IsSell))
             {
                 cake.IsSell = reader.GetInt32(ords.IsSell) == 1;
             }
@@ -68,7 +68,7 @@ public partial class DbMappers
                 cake.IsSell = false;
             }
 
-            if (!reader.IsDBNull(ords.Price))
+            if (ords.Price >= 0 && !reader.IsDBNull(ords.Price))
             {
                 cake.Price = reader.GetInt32(ords.Price);
             }

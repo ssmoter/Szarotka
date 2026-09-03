@@ -13,7 +13,7 @@ public partial class DbMappers
         public RoutesOrdinals(SqliteDataReader reader) : base(reader)
         {
             // Tutaj GetOrdinal uruchamia się TYLKO RAZ przed pętlą!
-            Name = reader.GetOrdinal(nameof(Routes.Name));
+            Name = reader.GetOptionalOrdinal(nameof(Routes.Name));
         }
     }
 
@@ -32,7 +32,7 @@ public partial class DbMappers
 
             var r = new Routes();
 
-            if (!reader.IsDBNull(ords.Name))
+            if (ords.Name >= 0 && !reader.IsDBNull(ords.Name))
                 r.Name = reader.GetString(ords.Name);
             else
                 r.Name = string.Empty;

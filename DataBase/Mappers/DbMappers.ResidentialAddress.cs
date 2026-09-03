@@ -20,16 +20,16 @@ public partial class DbMappers
 
         public ResidentialAddressOrdinals(SqliteDataReader reader) : base(reader)
         {
-            // Tutaj GetOrdinal uruchamia się TYLKO RAZ przed pętlą!
-            CustomerId = reader.GetOrdinal(nameof(ResidentialAddress.CustomerId));
-            Name = reader.GetOrdinal(nameof(ResidentialAddress.Name));
-            Surname = reader.GetOrdinal(nameof(ResidentialAddress.Surname));
-            Street = reader.GetOrdinal(nameof(ResidentialAddress.Street));
-            HouseNumber = reader.GetOrdinal(nameof(ResidentialAddress.HouseNumber));
-            ApartmentNumber = reader.GetOrdinal(nameof(ResidentialAddress.ApartmentNumber));
-            PostalCode = reader.GetOrdinal(nameof(ResidentialAddress.PostalCode));
-            City = reader.GetOrdinal(nameof(ResidentialAddress.City));
-            Country = reader.GetOrdinal(nameof(ResidentialAddress.Country));
+            // Tutaj GetOptionalOrdinal uruchamia się TYLKO RAZ przed pętlą!
+            CustomerId = reader.GetOptionalOrdinal(nameof(ResidentialAddress.CustomerId));
+            Name = reader.GetOptionalOrdinal(nameof(ResidentialAddress.Name));
+            Surname = reader.GetOptionalOrdinal(nameof(ResidentialAddress.Surname));
+            Street = reader.GetOptionalOrdinal(nameof(ResidentialAddress.Street));
+            HouseNumber = reader.GetOptionalOrdinal(nameof(ResidentialAddress.HouseNumber));
+            ApartmentNumber = reader.GetOptionalOrdinal(nameof(ResidentialAddress.ApartmentNumber));
+            PostalCode = reader.GetOptionalOrdinal(nameof(ResidentialAddress.PostalCode));
+            City = reader.GetOptionalOrdinal(nameof(ResidentialAddress.City));
+            Country = reader.GetOptionalOrdinal(nameof(ResidentialAddress.Country));
         }
     }
 
@@ -48,7 +48,7 @@ public partial class DbMappers
 
             var ra = new ResidentialAddress();
 
-            if (!reader.IsDBNull(ords.CustomerId))
+            if (ords.CustomerId >= 0 && !reader.IsDBNull(ords.CustomerId))
             {
                 var cId = reader.GetString(ords.CustomerId);
                 ra.CustomerId = string.IsNullOrEmpty(cId) ? Guid.Empty : new Guid(cId);
@@ -58,14 +58,14 @@ public partial class DbMappers
                 ra.CustomerId = Guid.Empty;
             }
 
-            if (!reader.IsDBNull(ords.Name)) ra.Name = reader.GetString(ords.Name); else ra.Name = string.Empty;
-            if (!reader.IsDBNull(ords.Surname)) ra.Surname = reader.GetString(ords.Surname); else ra.Surname = string.Empty;
-            if (!reader.IsDBNull(ords.Street)) ra.Street = reader.GetString(ords.Street); else ra.Street = string.Empty;
-            if (!reader.IsDBNull(ords.HouseNumber)) ra.HouseNumber = reader.GetString(ords.HouseNumber); else ra.HouseNumber = string.Empty;
-            if (!reader.IsDBNull(ords.ApartmentNumber)) ra.ApartmentNumber = reader.GetString(ords.ApartmentNumber); else ra.ApartmentNumber = string.Empty;
-            if (!reader.IsDBNull(ords.PostalCode)) ra.PostalCode = reader.GetString(ords.PostalCode); else ra.PostalCode = string.Empty;
-            if (!reader.IsDBNull(ords.City)) ra.City = reader.GetString(ords.City); else ra.City = string.Empty;
-            if (!reader.IsDBNull(ords.Country)) ra.Country = reader.GetString(ords.Country); else ra.Country = string.Empty;
+            if (ords.Name >= 0 && !reader.IsDBNull(ords.Name)) ra.Name = reader.GetString(ords.Name); else ra.Name = string.Empty;
+            if (ords.Surname >= 0 && !reader.IsDBNull(ords.Surname)) ra.Surname = reader.GetString(ords.Surname); else ra.Surname = string.Empty;
+            if (ords.Street >= 0 && !reader.IsDBNull(ords.Street)) ra.Street = reader.GetString(ords.Street); else ra.Street = string.Empty;
+            if (ords.HouseNumber >= 0 && !reader.IsDBNull(ords.HouseNumber)) ra.HouseNumber = reader.GetString(ords.HouseNumber); else ra.HouseNumber = string.Empty;
+            if (ords.ApartmentNumber >= 0 && !reader.IsDBNull(ords.ApartmentNumber)) ra.ApartmentNumber = reader.GetString(ords.ApartmentNumber); else ra.ApartmentNumber = string.Empty;
+            if (ords.PostalCode >= 0 && !reader.IsDBNull(ords.PostalCode)) ra.PostalCode = reader.GetString(ords.PostalCode); else ra.PostalCode = string.Empty;
+            if (ords.City >= 0 && !reader.IsDBNull(ords.City)) ra.City = reader.GetString(ords.City); else ra.City = string.Empty;
+            if (ords.Country >= 0 && !reader.IsDBNull(ords.Country)) ra.Country = reader.GetString(ords.Country); else ra.Country = string.Empty;
 
             MapBaseFields(reader, ra, ords);
 

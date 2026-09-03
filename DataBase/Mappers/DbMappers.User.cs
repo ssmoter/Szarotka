@@ -18,13 +18,13 @@ public partial class DbMappers
 
         public UserOrdinals(SqliteDataReader reader) : base(reader)
         {
-            Name = reader.GetOrdinal(nameof(User.Name));
-            Description = reader.GetOrdinal(nameof(User.Description));
-            Email = reader.GetOrdinal(nameof(User.Email));
-            PhoneNumber = reader.GetOrdinal(nameof(User.PhoneNumber));
-            UserType = reader.GetOrdinal(nameof(User.UserType));
-            IsEmailConfirm = reader.GetOrdinal(nameof(User.IsEmailConfirm));
-            RememberMe = reader.GetOrdinal(nameof(User.RememberMe));
+            Name = reader.GetOptionalOrdinal(nameof(User.Name));
+            Description = reader.GetOptionalOrdinal(nameof(User.Description));
+            Email = reader.GetOptionalOrdinal(nameof(User.Email));
+            PhoneNumber = reader.GetOptionalOrdinal(nameof(User.PhoneNumber));
+            UserType = reader.GetOptionalOrdinal(nameof(User.UserType));
+            IsEmailConfirm = reader.GetOptionalOrdinal(nameof(User.IsEmailConfirm));
+            RememberMe = reader.GetOptionalOrdinal(nameof(User.RememberMe));
         }
     }
 
@@ -40,13 +40,13 @@ public partial class DbMappers
 
             var u = new User();
 
-            if (!reader.IsDBNull(ords.Name)) u.Name = reader.GetString(ords.Name); else u.Name = string.Empty;
-            if (!reader.IsDBNull(ords.Description)) u.Description = reader.GetString(ords.Description); else u.Description = string.Empty;
-            if (!reader.IsDBNull(ords.Email)) u.Email = reader.GetString(ords.Email); else u.Email = string.Empty;
-            if (!reader.IsDBNull(ords.PhoneNumber)) u.PhoneNumber = reader.GetString(ords.PhoneNumber); else u.PhoneNumber = string.Empty;
-            if (!reader.IsDBNull(ords.UserType)) u.UserType = (UserType)reader.GetInt32(ords.UserType); else u.UserType = default;
-            if (!reader.IsDBNull(ords.IsEmailConfirm)) u.IsEmailConfirm = reader.GetInt32(ords.IsEmailConfirm) == 1; else u.IsEmailConfirm = false;
-            if (!reader.IsDBNull(ords.RememberMe)) u.RememberMe = reader.GetInt32(ords.RememberMe) == 1; else u.RememberMe = false;
+            if (ords.Name >= 0 && !reader.IsDBNull(ords.Name)) u.Name = reader.GetString(ords.Name); else u.Name = string.Empty;
+            if (ords.Description >= 0 && !reader.IsDBNull(ords.Description)) u.Description = reader.GetString(ords.Description); else u.Description = string.Empty;
+            if (ords.Email >= 0 && !reader.IsDBNull(ords.Email)) u.Email = reader.GetString(ords.Email); else u.Email = string.Empty;
+            if (ords.PhoneNumber >= 0 && !reader.IsDBNull(ords.PhoneNumber)) u.PhoneNumber = reader.GetString(ords.PhoneNumber); else u.PhoneNumber = string.Empty;
+            if (ords.UserType >= 0 && !reader.IsDBNull(ords.UserType)) u.UserType = (UserType)reader.GetInt32(ords.UserType); else u.UserType = default;
+            if (ords.IsEmailConfirm >= 0 && !reader.IsDBNull(ords.IsEmailConfirm)) u.IsEmailConfirm = reader.GetInt32(ords.IsEmailConfirm) == 1; else u.IsEmailConfirm = false;
+            if (ords.RememberMe >= 0 && !reader.IsDBNull(ords.RememberMe)) u.RememberMe = reader.GetInt32(ords.RememberMe) == 1; else u.RememberMe = false;
 
             MapBaseFields(reader, u, ords);
 
@@ -60,7 +60,7 @@ public partial class DbMappers
         public int Password { get; }
         public RegisterUserOrdinals(SqliteDataReader reader) : base(reader)
         {
-            Password = reader.GetOrdinal(nameof(RegisterUser.Password));
+            Password = reader.GetOptionalOrdinal(nameof(RegisterUser.Password));
         }
     }
 
@@ -77,13 +77,13 @@ public partial class DbMappers
             var ru = new RegisterUser();
 
             // map base User fields via existing logic
-            if (!reader.IsDBNull(ords.Name)) ru.Name = reader.GetString(ords.Name); else ru.Name = string.Empty;
-            if (!reader.IsDBNull(ords.Description)) ru.Description = reader.GetString(ords.Description); else ru.Description = string.Empty;
-            if (!reader.IsDBNull(ords.Email)) ru.Email = reader.GetString(ords.Email); else ru.Email = string.Empty;
-            if (!reader.IsDBNull(ords.PhoneNumber)) ru.PhoneNumber = reader.GetString(ords.PhoneNumber); else ru.PhoneNumber = string.Empty;
-            if (!reader.IsDBNull(ords.UserType)) ru.UserType = (UserType)reader.GetInt32(ords.UserType); else ru.UserType = default;
-            if (!reader.IsDBNull(ords.IsEmailConfirm)) ru.IsEmailConfirm = reader.GetInt32(ords.IsEmailConfirm) == 1; else ru.IsEmailConfirm = false;
-            if (!reader.IsDBNull(ords.RememberMe)) ru.RememberMe = reader.GetInt32(ords.RememberMe) == 1; else ru.RememberMe = false;
+            if (ords.Name >= 0 && !reader.IsDBNull(ords.Name)) ru.Name = reader.GetString(ords.Name); else ru.Name = string.Empty;
+            if (ords.Description >= 0 && !reader.IsDBNull(ords.Description)) ru.Description = reader.GetString(ords.Description); else ru.Description = string.Empty;
+            if (ords.Email >= 0 && !reader.IsDBNull(ords.Email)) ru.Email = reader.GetString(ords.Email); else ru.Email = string.Empty;
+            if (ords.PhoneNumber >= 0 && !reader.IsDBNull(ords.PhoneNumber)) ru.PhoneNumber = reader.GetString(ords.PhoneNumber); else ru.PhoneNumber = string.Empty;
+            if (ords.UserType >= 0 && !reader.IsDBNull(ords.UserType)) ru.UserType = (UserType)reader.GetInt32(ords.UserType); else ru.UserType = default;
+            if (ords.IsEmailConfirm >= 0 && !reader.IsDBNull(ords.IsEmailConfirm)) ru.IsEmailConfirm = reader.GetInt32(ords.IsEmailConfirm) == 1; else ru.IsEmailConfirm = false;
+            if (ords.RememberMe >= 0 && !reader.IsDBNull(ords.RememberMe)) ru.RememberMe = reader.GetInt32(ords.RememberMe) == 1; else ru.RememberMe = false;
 
             if (!reader.IsDBNull(ords.Password)) ru.Password = reader.GetString(ords.Password); else ru.Password = string.Empty;
 
@@ -101,9 +101,9 @@ public partial class DbMappers
         public int RememberMe { get; }
         public LoginUserOrdinals(SqliteDataReader reader)
         {
-            Email = reader.GetOrdinal(nameof(LoginUser.Email));
-            Password = reader.GetOrdinal(nameof(LoginUser.Password));
-            RememberMe = reader.GetOrdinal(nameof(LoginUser.RememberMe));
+            Email = reader.GetOptionalOrdinal(nameof(LoginUser.Email));
+            Password = reader.GetOptionalOrdinal(nameof(LoginUser.Password));
+            RememberMe = reader.GetOptionalOrdinal(nameof(LoginUser.RememberMe));
         }
     }
 
@@ -118,9 +118,9 @@ public partial class DbMappers
                 throw new ArgumentException("Invalid ordinals object for LoginUser mapper", nameof(ordinalsObj));
 
             var lu = new LoginUser();
-            if (!reader.IsDBNull(ords.Email)) lu.Email = reader.GetString(ords.Email); else lu.Email = string.Empty;
-            if (!reader.IsDBNull(ords.Password)) lu.Password = reader.GetString(ords.Password); else lu.Password = string.Empty;
-            if (!reader.IsDBNull(ords.RememberMe)) lu.RememberMe = reader.GetInt32(ords.RememberMe) == 1; else lu.RememberMe = false;
+            if (ords.Email >= 0 && !reader.IsDBNull(ords.Email)) lu.Email = reader.GetString(ords.Email); else lu.Email = string.Empty;
+            if (ords.Password >= 0 && !reader.IsDBNull(ords.Password)) lu.Password = reader.GetString(ords.Password); else lu.Password = string.Empty;
+            if (ords.RememberMe >= 0 && !reader.IsDBNull(ords.RememberMe)) lu.RememberMe = reader.GetInt32(ords.RememberMe) == 1; else lu.RememberMe = false;
 
             return lu;
         }));
@@ -135,9 +135,9 @@ public partial class DbMappers
 
         public ConfirmCodeOrdinals(SqliteDataReader reader) : base(reader)
         {
-            UserId = reader.GetOrdinal(nameof(ConfirmCode.UserId));
-            Code = reader.GetOrdinal(nameof(ConfirmCode.Code));
-            ExpireDate = reader.GetOrdinal(nameof(ConfirmCode.ExpireDate));
+            UserId = reader.GetOptionalOrdinal(nameof(ConfirmCode.UserId));
+            Code = reader.GetOptionalOrdinal(nameof(ConfirmCode.Code));
+            ExpireDate = reader.GetOptionalOrdinal(nameof(ConfirmCode.ExpireDate));
         }
     }
 
@@ -153,15 +153,15 @@ public partial class DbMappers
 
             var cc = new ConfirmCode();
 
-            if (!reader.IsDBNull(ords.UserId))
+            if (ords.UserId >= 0 && !reader.IsDBNull(ords.UserId))
             {
                 var s = reader.GetString(ords.UserId);
                 cc.UserId = string.IsNullOrEmpty(s) ? Guid.Empty : new Guid(s);
             }
             else cc.UserId = Guid.Empty;
 
-            if (!reader.IsDBNull(ords.Code)) cc.Code = reader.GetInt32(ords.Code); else cc.Code = 0;
-            if (!reader.IsDBNull(ords.ExpireDate)) cc.ExpireDate = reader.GetInt64(ords.ExpireDate); else cc.ExpireDate = 0L;
+            if (ords.Code >= 0 && !reader.IsDBNull(ords.Code)) cc.Code = reader.GetInt32(ords.Code); else cc.Code = 0;
+            if (ords.ExpireDate >= 0 && !reader.IsDBNull(ords.ExpireDate)) cc.ExpireDate = reader.GetInt64(ords.ExpireDate); else cc.ExpireDate = 0L;
 
             MapBaseFields(reader, cc, ords);
 

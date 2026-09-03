@@ -16,10 +16,10 @@ public partial class DbMappers
         public RefreshTokenOrdinals(SqliteDataReader reader)
         {
             // Tutaj GetOrdinal uruchamia się TYLKO RAZ przed pętlą!
-            Id = reader.GetOrdinal(nameof(RefreshToken.Id));
-            UserId = reader.GetOrdinal(nameof(RefreshToken.UserId));
-            Value = reader.GetOrdinal(nameof(RefreshToken.Value));
-            ExpireDate = reader.GetOrdinal(nameof(RefreshToken.ExpireDate));
+            Id = reader.GetOptionalOrdinal(nameof(RefreshToken.Id));
+            UserId = reader.GetOptionalOrdinal(nameof(RefreshToken.UserId));
+            Value = reader.GetOptionalOrdinal(nameof(RefreshToken.Value));
+            ExpireDate = reader.GetOptionalOrdinal(nameof(RefreshToken.ExpireDate));
         }
     }
 
@@ -41,7 +41,7 @@ public partial class DbMappers
 
             // Mapowanie z gotowych indeksów liczbowych - ZERO wywołań GetOrdinal w pętli!
             // Zabezpieczenia przed NULL (IsDBNull) — przypisujemy wartości domyślne gdy kolumna jest NULL.
-            if (!reader.IsDBNull(ords.Id))
+            if (ords.Id >= 0 && !reader.IsDBNull(ords.Id))
             {
                 refreshToken.Id = reader.GetInt32(ords.Id);
             }
@@ -50,7 +50,7 @@ public partial class DbMappers
                 refreshToken.Id = 0;
             }
 
-            if (!reader.IsDBNull(ords.UserId))
+            if (ords.UserId >= 0 && !reader.IsDBNull(ords.UserId))
             {
                 refreshToken.UserId = reader.GetString(ords.UserId);
             }
@@ -59,7 +59,7 @@ public partial class DbMappers
                 refreshToken.UserId = "";
             }
 
-            if (!reader.IsDBNull(ords.Value))
+            if (ords.Value >= 0 && !reader.IsDBNull(ords.Value))
             {
                 refreshToken.Value = reader.GetString(ords.Value);
             }
@@ -68,7 +68,7 @@ public partial class DbMappers
                 refreshToken.Value = "";
             }
 
-            if (!reader.IsDBNull(ords.ExpireDate))
+            if (ords.ExpireDate >= 0 && !reader.IsDBNull(ords.ExpireDate))
             {
                 refreshToken.ExpireDate = reader.GetInt64(ords.ExpireDate);
             }

@@ -50,23 +50,30 @@ namespace Shared.Pages.FlyoutFooter
         [RelayCommand]
         async Task LogOut()
         {
-            var toast = Toast.Make("Wylogowywanie...");
-
-            var pages = Shell.Current.Navigation.NavigationStack.Where(x => x is not null);
-
-            foreach (Page item in pages)
+            try
             {
-                try
                 {
-                    Shell.Current.Navigation.RemovePage(item);
-                }
-                catch (Exception)
-                {
+                    var toast = Toast.Make("Wylogowywanie...");
+
+                    var pages = Shell.Current.Navigation.NavigationStack.Where(x => x is not null);
+
+                    foreach (Page item in pages)
+                    {
+                        try
+                        {
+                            Shell.Current.Navigation.RemovePage(item);
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                    await UserAfterLogin.RemoveLoginUser();
+                    await toast.Show();
+                    await Shell.Current.GoToAsync($"{nameof(LogIn.LogInV)}");
                 }
             }
-            await UserAfterLogin.RemoveLoginUser();
-            await toast.Show();
-            await Shell.Current.GoToAsync($"{nameof(LogIn.LogInV)}");
+            catch (Exception)
+            { }
         }
 
         public void Dispose()

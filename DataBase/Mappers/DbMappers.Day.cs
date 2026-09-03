@@ -21,17 +21,17 @@ public partial class DbMappers
 
         public DayOrdinals(SqliteDataReader reader) : base(reader)
         {
-            // Tutaj GetOrdinal uruchamia się TYLKO RAZ przed pętlą!
-            Description = reader.GetOrdinal(nameof(Day.Description));
-            SelectedDateString = reader.GetOrdinal(nameof(Day.SelectedDateString));
-            SelectedDateTicks = reader.GetOrdinal(nameof(Day.SelectedDateTicks));
-            TotalPriceProducts = reader.GetOrdinal(nameof(Day.TotalPriceProducts));
-            TotalPriceCake = reader.GetOrdinal(nameof(Day.TotalPriceCake));
-            TotalPrice = reader.GetOrdinal(nameof(Day.TotalPrice));
-            TotalPriceCorrect = reader.GetOrdinal(nameof(Day.TotalPriceCorrect));
-            TotalPriceAfterCorrect = reader.GetOrdinal(nameof(Day.TotalPriceAfterCorrect));
-            TotalPriceMoney = reader.GetOrdinal(nameof(Day.TotalPriceMoney));
-            TotalPriceDifference = reader.GetOrdinal(nameof(Day.TotalPriceDifference));
+            // Tutaj GetOptionalOrdinal uruchamia się TYLKO RAZ przed pętlą!
+            Description = reader.GetOptionalOrdinal(nameof(Day.Description));
+            SelectedDateString = reader.GetOptionalOrdinal(nameof(Day.SelectedDateString));
+            SelectedDateTicks = reader.GetOptionalOrdinal(nameof(Day.SelectedDateTicks));
+            TotalPriceProducts = reader.GetOptionalOrdinal(nameof(Day.TotalPriceProducts));
+            TotalPriceCake = reader.GetOptionalOrdinal(nameof(Day.TotalPriceCake));
+            TotalPrice = reader.GetOptionalOrdinal(nameof(Day.TotalPrice));
+            TotalPriceCorrect = reader.GetOptionalOrdinal(nameof(Day.TotalPriceCorrect));
+            TotalPriceAfterCorrect = reader.GetOptionalOrdinal(nameof(Day.TotalPriceAfterCorrect));
+            TotalPriceMoney = reader.GetOptionalOrdinal(nameof(Day.TotalPriceMoney));
+            TotalPriceDifference = reader.GetOptionalOrdinal(nameof(Day.TotalPriceDifference));
         }
     }
 
@@ -50,7 +50,7 @@ public partial class DbMappers
 
             var day = new Day();
 
-            if (!reader.IsDBNull(ords.Description))
+            if (ords.Description >= 0 && !reader.IsDBNull(ords.Description))
             {
                 day.Description = reader.GetString(ords.Description);
             }
@@ -59,7 +59,7 @@ public partial class DbMappers
                 day.Description = string.Empty;
             }
 
-            if (!reader.IsDBNull(ords.SelectedDateString))
+            if (ords.SelectedDateString >= 0 && !reader.IsDBNull(ords.SelectedDateString))
             {
                 day.SelectedDateString = reader.GetString(ords.SelectedDateString);
             }
@@ -68,7 +68,7 @@ public partial class DbMappers
                 day.SelectedDateString = string.Empty;
             }
 
-            if (!reader.IsDBNull(ords.SelectedDateTicks))
+            if (ords.SelectedDateTicks >= 0 && !reader.IsDBNull(ords.SelectedDateTicks))
             {
                 day.SelectedDateTicks = reader.GetInt64(ords.SelectedDateTicks);
             }
@@ -77,7 +77,7 @@ public partial class DbMappers
                 day.SelectedDateTicks = 0L;
             }
 
-            if (!reader.IsDBNull(ords.TotalPriceProducts))
+            if (ords.TotalPriceProducts >= 0 && !reader.IsDBNull(ords.TotalPriceProducts))
             {
                 day.TotalPriceProducts = reader.GetInt32(ords.TotalPriceProducts);
             }
@@ -86,7 +86,7 @@ public partial class DbMappers
                 day.TotalPriceProducts = 0;
             }
 
-            if (!reader.IsDBNull(ords.TotalPriceCake))
+            if (ords.TotalPriceCake >= 0 && !reader.IsDBNull(ords.TotalPriceCake))
             {
                 day.TotalPriceCake = reader.GetInt32(ords.TotalPriceCake);
             }
@@ -95,7 +95,7 @@ public partial class DbMappers
                 day.TotalPriceCake = 0;
             }
 
-            if (!reader.IsDBNull(ords.TotalPrice))
+            if (ords.TotalPrice >= 0 && !reader.IsDBNull(ords.TotalPrice))
             {
                 day.TotalPrice = reader.GetInt32(ords.TotalPrice);
             }
@@ -104,7 +104,7 @@ public partial class DbMappers
                 day.TotalPrice = 0;
             }
 
-            if (!reader.IsDBNull(ords.TotalPriceCorrect))
+            if (ords.TotalPriceCorrect >= 0 && !reader.IsDBNull(ords.TotalPriceCorrect))
             {
                 day.TotalPriceCorrect = reader.GetInt32(ords.TotalPriceCorrect);
             }
@@ -113,7 +113,7 @@ public partial class DbMappers
                 day.TotalPriceCorrect = 0;
             }
 
-            if (!reader.IsDBNull(ords.TotalPriceAfterCorrect))
+            if (ords.TotalPriceAfterCorrect >= 0 && !reader.IsDBNull(ords.TotalPriceAfterCorrect))
             {
                 day.TotalPriceAfterCorrect = reader.GetInt32(ords.TotalPriceAfterCorrect);
             }
@@ -122,7 +122,7 @@ public partial class DbMappers
                 day.TotalPriceAfterCorrect = 0;
             }
 
-            if (!reader.IsDBNull(ords.TotalPriceMoney))
+            if (ords.TotalPriceMoney >= 0 && !reader.IsDBNull(ords.TotalPriceMoney))
             {
                 day.TotalPriceMoney = reader.GetInt32(ords.TotalPriceMoney);
             }
@@ -131,7 +131,7 @@ public partial class DbMappers
                 day.TotalPriceMoney = 0;
             }
 
-            if (!reader.IsDBNull(ords.TotalPriceDifference))
+            if (ords.TotalPriceDifference >= 0 && !reader.IsDBNull(ords.TotalPriceDifference))
             {
                 day.TotalPriceDifference = reader.GetInt32(ords.TotalPriceDifference);
             }

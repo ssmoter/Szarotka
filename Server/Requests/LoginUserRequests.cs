@@ -12,8 +12,8 @@ namespace Server.Requests
     {
         Task<IResult> GetPublicUser(string id, CancellationToken token = default);
         Task<IResult> LogInUser(LoginUser user, CancellationToken token = default);
-        Task<IResult> LogOutUser(string refreshToken, CancellationToken token = default);
-        Task<IResult> NewRefreshToken(string userToken, CancellationToken token = default);
+        Task<IResult> LogOutUser(RefreshToken refreshToken, CancellationToken token = default);
+        Task<IResult> NewRefreshToken(RefreshToken refreshToken, CancellationToken token = default);
     }
 
     public class LoginUserRequests(IAccessDataBaseAoT db,
@@ -82,10 +82,16 @@ namespace Server.Requests
             }
         }
 
-        public async Task<IResult> NewRefreshToken(string userToken, CancellationToken token = default)
+        public async Task<IResult> NewRefreshToken(RefreshToken refreshToken, CancellationToken token = default)
         {
             try
             {
+                ArgumentNullException.ThrowIfNull(refreshToken);
+                var userToken = refreshToken.Value;
+                if (string.IsNullOrWhiteSpace(userToken))
+                {
+                    return Results.Unauthorized();
+                }
                 var tokenPreview = string.IsNullOrWhiteSpace(userToken) ? "<null>" : (userToken.Length > 8 ? userToken[..8] + "..." : userToken);
                 _logger.LogDebug("NewRefreshToken called. TokenPreview={TokenPreview}", tokenPreview);
 
@@ -100,18 +106,25 @@ namespace Server.Requests
                 if (userId is null)
                 {
                     _logger.LogWarning("NewRefreshToken failed: Refresh token not found for tokenPreview={TokenPreview}", tokenPreview);
+                    await _loginService.LogOut(userToken);
                     return Results.Unauthorized();
                 }
                 if (userId.ExpireDate < _db.TimeService.UtcNow().Ticks)
                 {
                     _logger.LogWarning("NewRefreshToken failed: Refresh token expired for userId={UserId}", userId.UserId);
+                    await _loginService.LogOut(userToken);
                     return Results.Unauthorized();
                 }
 
                 _logger.LogInformation("Invalidating existing refresh token for userId={UserId}", userId.UserId);
                 await _loginService.LogOut(userToken);
 
-                var user = await _loginService.GetPublicUser(userId.UserId);
+                var sql = SqlQuery.LoginQuery.InFromId(userId.UserId);
+                var users = await _db.DbAsyncAoT.QueryAsync<User>(sql, new()
+                {
+                    ["Id"] = userId.UserId
+                });
+                var user = users.FirstOrDefault();
                 if (user is null)
                 {
                     _logger.LogWarning("NewRefreshToken failed: Public user not found for userId={UserId}", userId.UserId);
@@ -143,16 +156,24 @@ namespace Server.Requests
         }
 
 
-        public async Task<IResult> LogOutUser(string refreshToken, CancellationToken token = default)
+        public async Task<IResult> LogOutUser(RefreshToken refreshToken, CancellationToken token = default)
         {
             try
             {
-                _logger.LogInformation("LogOutUser started for token={Token}", refreshToken);
+                ArgumentNullException.ThrowIfNull(refreshToken);
+                var userToken = refreshToken.Value;
+                if (string.IsNullOrWhiteSpace(userToken))
+                {
+                    return Results.Unauthorized();
+                }
+                var tokenPreview = string.IsNullOrWhiteSpace(userToken) ? "<null>" : (userToken.Length > 8 ? userToken[..8] + "..." : userToken);
+
+                _logger.LogInformation("LogOutUser started for token={Token}", tokenPreview);
                 token.ThrowIfCancellationRequested();
 
-                await _loginService.LogOut(refreshToken);
+                await _loginService.LogOut(userToken);
 
-                _logger.LogInformation("LogOutUser completed for token={Token}", refreshToken);
+                _logger.LogInformation("LogOutUser completed for token={Token}", tokenPreview);
                 return Results.Ok();
             }
             catch (OperationCanceledException ex)

@@ -31,13 +31,6 @@ namespace Server.Service
             string connectionString = ConfigureDatabaseInRAM(services);
             services.AddSingleton<ISqliteConnectionFactory>(opt =>
             {
-                //// Pobiera ścieżkę z systemu Google Cloud, jeśli nie istnieje - używa folderu aplikacji
-                //string mountPath = Environment.GetEnvironmentVariable("PERSISTENT_DB_PATH") ?? AppContext.BaseDirectory;
-                //Directory.CreateDirectory(mountPath);
-
-                //string dbPath = Path.Combine(mountPath, "baza_produkcyjna.db");
-
-                //string connectionString = $"Data Source={dbPath};VFS=unix-dotfile;";
                 return new SqliteConnectionFactory(connectionString);
             });
 

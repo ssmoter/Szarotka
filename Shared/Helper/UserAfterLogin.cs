@@ -8,6 +8,7 @@ using DataBase.Model.SourceGenerator;
 using Shared.Data;
 using Shared.Data.ServerHttpClients;
 
+using System.Net;
 using System.Text.Json;
 
 namespace Shared.Helper
@@ -26,8 +27,14 @@ namespace Shared.Helper
         {
             ClearTokens();
             var jsonRefreshToken = JsonSerializer.Serialize(refreshToken, SzarotkaJsonSerializerContext.Default.RefreshToken);
-            await SecureStorage.Default.SetAsync("access_token", accessToken);
-            await SecureStorage.Default.SetAsync("refresh_token", jsonRefreshToken);
+            if (!string.IsNullOrWhiteSpace(jsonRefreshToken))
+            {
+                await SecureStorage.Default.SetAsync("refresh_token", jsonRefreshToken);
+            }
+            if (!string.IsNullOrWhiteSpace(accessToken))
+            {
+                await SecureStorage.Default.SetAsync("access_token", accessToken);
+            }
         }
 
         public void SaveTokens(string accessToken, RefreshToken refreshToken)
@@ -97,14 +104,14 @@ namespace Shared.Helper
             try
             {
                 ArgumentNullException.ThrowIfNull(token);
+                await _auth.SaveTokensAsync(token.AccessToken, token.RefreshToken);
 
                 var (user, expires) = DataBase.Helper.ReadToken.GetUserFromToken(token.AccessToken);
                 User = user;
                 Expires = expires;
                 IsLogin = true;
-                OnLogin?.Invoke(User, IsLogin);
 
-                await _auth.SaveTokensAsync(user.AccessToken, user.RefreshToken);
+                OnLogin?.Invoke(User, IsLogin);
                 _tryToLogin = true;
             }
             catch (Microsoft.IdentityModel.Tokens.SecurityTokenException)
@@ -120,13 +127,22 @@ namespace Shared.Helper
                     await RemoveLoginUser();
                 }
             }
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
+            {
+            }
             catch (ArgumentException ex)
             {
-                await Toast.Make(ex.Message, CommunityToolkit.Maui.Core.ToastDuration.Long).Show();
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    await Toast.Make(ex.Message, CommunityToolkit.Maui.Core.ToastDuration.Long).Show();
+                });
             }
             catch (Exception ex)
             {
-                await Toast.Make(ex.Message, CommunityToolkit.Maui.Core.ToastDuration.Long).Show();
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    await Toast.Make(ex.Message, CommunityToolkit.Maui.Core.ToastDuration.Long).Show();
+                });
                 _db.SaveLogExtension(ex);
             }
         }
@@ -134,7 +150,7 @@ namespace Shared.Helper
         public static async Task SetLoginUser()
         {
             var refreshToken = await _auth.GetRefreshTokenAsync();
-            if (User is not null)
+            if (!string.IsNullOrWhiteSpace(refreshToken.Value))
             {
                 var user = await _loginHttp.RefreshToken(refreshToken);
                 await SetLoginUser(user);
@@ -157,7 +173,10 @@ namespace Shared.Helper
             }
             else
             {
-                await Toast.Make("Nie udało się wylogować", CommunityToolkit.Maui.Core.ToastDuration.Long).Show();
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    await Toast.Make("Nie udało się wylogować", CommunityToolkit.Maui.Core.ToastDuration.Long).Show();
+                });
             }
         }
     }

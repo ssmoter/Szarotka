@@ -26,7 +26,7 @@ namespace SzarotkaNET10
                     options.SetShouldSuppressExceptionsInConverters(true);
 
 #if WINDOWS
-                    options.SetShouldEnableSnackbarOnWindows(true);
+                    options.SetShouldEnableSnackbarOnWindows(false);
 #endif
                 })
                 .ConfigureFonts(fonts =>

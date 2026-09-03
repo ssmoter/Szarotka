@@ -51,13 +51,11 @@ builder.Services.AddCors(options =>
                    .AllowAnyHeader();
         });
 });
-#endif
+#else
 builder.WebHost.UseUrls($"http://0.0.0:{port}");
-var app = builder.Build();
-
-#if DEBUG
-app.UseCors("AllowAll");
 #endif
+
+var app = builder.Build();
 
 app.UseExceptionHandler();
 
