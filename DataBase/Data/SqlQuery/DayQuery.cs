@@ -8,7 +8,6 @@ namespace DataBase.Data.SqlQuery
         public static string SaveOrUpdate(
             Guid Id,
             string Description,
-            Guid DriverGuid,
             string SelectedDateString,
             long SelectedDateTicks,
             int TotalPriceProducts,
@@ -28,7 +27,6 @@ namespace DataBase.Data.SqlQuery
                 INSERT INTO {nameof(Day)} (
                     {nameof(Day.Id)}, 
                     {nameof(Day.Description)}, 
-                    {nameof(Day.DriverGuid)}, 
                     {nameof(Day.SelectedDateString)}, 
                     {nameof(Day.SelectedDateTicks)}, 
                     {nameof(Day.TotalPriceProducts)}, 
@@ -47,7 +45,6 @@ namespace DataBase.Data.SqlQuery
                 VALUES (
                     @{nameof(Id)}, 
                     @{nameof(Description)}, 
-                    @{nameof(DriverGuid)}, 
                     @{nameof(SelectedDateString)}, 
                     @{nameof(SelectedDateTicks)}, 
                     @{nameof(TotalPriceProducts)}, 
@@ -65,7 +62,6 @@ namespace DataBase.Data.SqlQuery
                 )
                 ON CONFLICT({nameof(Day.Id)}) DO UPDATE SET
                     {nameof(Day.Description)} = @{nameof(Description)},
-                    {nameof(Day.DriverGuid)} = @{nameof(DriverGuid)},
                     {nameof(Day.SelectedDateString)} = @{nameof(SelectedDateString)},
                     {nameof(Day.SelectedDateTicks)} = @{nameof(SelectedDateTicks)},
                     {nameof(Day.TotalPriceProducts)} = @{nameof(TotalPriceProducts)},

@@ -234,7 +234,7 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             ToDate = new DateTime(to);
 
         }
-        static (long, long) SelectLastWeek()
+       public static (long, long) SelectLastWeek()
         {
             DateTime now = DateTime.Today;
             DayOfWeek startDayOfWeek = DayOfWeek.Monday;
@@ -252,7 +252,7 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
 
             return (from.Ticks, to.Ticks);
         }
-        static (long, long) SelectToday()
+       public static (long, long) SelectToday()
         {
             var now = DateTime.Today;
             var from = new DateTime(now.Ticks).AddHours(2).ToUniversalTime();
@@ -260,7 +260,7 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
 
             return (from.Ticks, to.Ticks);
         }
-        static (long, long) SelectWeek()
+       public static (long, long) SelectWeek()
         {
             DateTime now = DateTime.Today;
             DayOfWeek startDayOfWeek = DayOfWeek.Monday;
@@ -278,18 +278,18 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
 
             return (from.Ticks, to.Ticks);
         }
-        static (long, long) SelectYear()
+       public static (long, long) SelectYear()
         {
             var from = new DateTime(DateTime.Today.Year, 1, 1, 1, 0, 0).ToUniversalTime();
             var to = new DateTime(DateTime.Today.AddYears(1).Year, 1, 1, 0, 0, 0).ToUniversalTime();
 
             return (from.Ticks, to.Ticks);
         }
-        static (long, long) FullRange()
+       public static (long, long) FullRange()
         {
             return (0, DateTime.Today.Ticks);
         }
-        static (long, long) SelectMonth(int month = 0)
+       public static (long, long) SelectMonth(int month = 0)
         {
             DateTime to;
             var from = new DateTime(DateTime.Today.Year, month, 1, 0, 0, 0);

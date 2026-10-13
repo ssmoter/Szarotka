@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="Shared.Pages.UpdateDifference.Templates.DayUpdate"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:Shared.CustomControls"
+    xmlns:convert="clr-namespace:Shared.Converters"
+    xmlns:models="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:user="clr-namespace:Shared.Pages.UserDisplay.Small"
+    xmlns:vm="clr-namespace:Shared.Pages.UpdateDifference.Templates"
+    x:Name="this">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+
+            <!--  Product DataTemplate  -->
+            <DataTemplate x:Key="product" x:DataType="models:Product">
+                <Grid
+                    Margin="0,0,0,5"
+                    Padding="8"
+                    ColumnDefinitions="auto,*"
+                    RowDefinitions="*,*,*,*,*,*,*,*,*">
+                    <Grid.GestureRecognizers>
+                        <!--
+                            1. Używamy RelativeSource AncestorType, aby bezpiecznie wyjść poza zasoby do kontrolki.
+                            2. Używamy x:DataType="{x:Null}", aby kompilator AOT pozwolił na bindowanie do kontrolki,
+                            a nie szukał komendy w obiekcie Product.
+                        -->
+                        <TapGestureRecognizer
+                            x:DataType="{x:Null}"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type controls:ExpandableCollectionView}}, Path=ToggleExpandCommand}"
+                            CommandParameter="{Binding .}" />
+                    </Grid.GestureRecognizers>
+
+                    <Label
+                        Grid.Row="0"
+                        Grid.ColumnSpan="2"
+                        FontAttributes="Bold"
+                        Text="{Binding Name.Name}" />
+                    <Label
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        Text="{Binding Description, StringFormat='Opis: {0}'}" />
+                    <Label
+                        Grid.Row="2"
+                        Grid.ColumnSpan="2"
+                        Text="{Binding Number, StringFormat='Ilość: {0}'}" />
+                    <Label
+                        Grid.Row="3"
+                        Grid.ColumnSpan="2"
+                        Text="{Binding NumberEdit, StringFormat='Edycja: {0}'}" />
+                    <Label
+                        Grid.Row="4"
+                        Grid.ColumnSpan="2"
+                        Text="{Binding NumberReturn, StringFormat='Zwrot: {0}'}" />
+                    <Label
+                        Grid.Row="5"
+                        Grid.ColumnSpan="2"
+                        Text="{Binding Price.PriceDecimal, StringFormat='Cena: {0:N1} zł'}" />
+                    <Label
+                        Grid.Row="6"
+                        Grid.ColumnSpan="2"
+                        Text="{Binding PriceTotalDecimal, StringFormat='Suma: {0:N1} zł'}" />
+                    <Label
+                        Grid.Row="7"
+                        Grid.Column="0"
+                        Text="{Binding PriceTotalCorrectDecimal, StringFormat='Korekta: {0:N1} zł'}" />
+                    <Label
+                        Grid.Row="7"
+                        Grid.Column="2"
+                        Text="{Binding PriceTotalAfterCorrectDecimal, StringFormat='Po : {0:N1} zł'}" />
+                </Grid>
+            </DataTemplate>
+
+            <!--  Cake DataTemplate  -->
+            <DataTemplate x:Key="cake" x:DataType="models:Cake">
+                <Grid
+                    Margin="0,0,0,5"
+                    Padding="8"
+                    RowDefinitions="*,*,*">
+                    <Grid.GestureRecognizers>
+                        <!--
+                            1. Używamy RelativeSource AncestorType, aby bezpiecznie wyjść poza zasoby do kontrolki.
+                            2. Używamy x:DataType="{x:Null}", aby kompilator AOT pozwolił na bindowanie do kontrolki,
+                            a nie szukał komendy w obiekcie Product.
+                        -->
+                        <TapGestureRecognizer
+                            x:DataType="{x:Null}"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type controls:ExpandableCollectionView}}, Path=ToggleExpandCommand}"
+                            CommandParameter="{Binding .}" />
+                    </Grid.GestureRecognizers>
+
+                    <Label
+                        Grid.Row="0"
+                        FontAttributes="Bold"
+                        Text="{Binding Index, StringFormat='🎂 Ciasto #{0}'}" />
+                    <Label Grid.Row="1">
+                        <Label.Triggers>
+                            <!--  Obserwujemy zmienną bool  -->
+                            <DataTrigger
+                                Binding="{Binding IsSell}"
+                                TargetType="Label"
+                                Value="True">
+                                <!--  Gdy True: wyświetli "Status: Tak"  -->
+                                <Setter Property="Text" Value="{Binding Path=., StringFormat='Sprzedane: Tak'}" />
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding IsSell}"
+                                TargetType="Label"
+                                Value="False">
+                                <!--  Gdy False: wyświetli "Status: Nie"  -->
+                                <Setter Property="Text" Value="{Binding Path=., StringFormat='Sprzedane: Nie'}" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                    <Label Grid.Row="2" Text="{Binding PriceDecimal, StringFormat='Cena: {0:N1} zł'}" />
+                </Grid>
+            </DataTemplate>
+
+            <!--  Day Prices Summary ControlTemplate  -->
+            <ControlTemplate x:Key="prices" x:DataType="models:Day">
+                <Grid
+                    Padding="5"
+                    BindingContext="{TemplateBinding BindingContext}"
+                    ColumnDefinitions="*,*"
+                    RowDefinitions="*,*,*,*,*,*">
+                    <Label
+                        Grid.Row="0"
+                        Grid.ColumnSpan="2"
+                        FontAttributes="Bold"
+                        Text="{Binding TotalPriceAfterCorrectDecimal, StringFormat='Suma: {0:N1} zł'}" />
+                    <Label
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        Text="{Binding TotalPriceProductsDecimal, StringFormat='Produkty: {0:N1} zł'}" />
+                    <Label
+                        Grid.Row="2"
+                        Grid.ColumnSpan="2"
+                        Text="{Binding TotalPriceCakeDecimal, StringFormat='Ciasto: {0:N1} zł'}" />
+                    <Label
+                        Grid.Row="3"
+                        Grid.ColumnSpan="2"
+                        Text="{Binding TotalPriceMoneyDecimal, StringFormat='Zapłacono: {0:N1} zł'}" />
+                    <Label
+                        Grid.Row="4"
+                        Grid.ColumnSpan="1"
+                        Text="{Binding TotalPriceCorrectDecimal, StringFormat='Korekta: {0:N1} zł'}" />
+                    <Label
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        Text="{Binding TotalPriceAfterCorrectDecimal, StringFormat='Po: {0:N1} zł'}" />
+                    <Label
+                        Grid.Row="5"
+                        Grid.ColumnSpan="2"
+                        Text="{Binding TotalPriceDifferenceDecimal, StringFormat='Różnica: {0:N1} zł'}" />
+                </Grid>
+            </ControlTemplate>
+
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+    <Grid
+        BindingContext="{x:Reference this}"
+        ColumnDefinitions="auto,*,10,auto,*"
+        RowSpacing="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border
+            Grid.RowSpan="20"
+            Grid.Column="2"
+            HorizontalOptions="Center"
+            VerticalOptions="Fill" />
+
+        <!--  Row 0: Metadata  -->
+        <controls:BorderColorsFromBool
+            Grid.Row="0"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            IsVisible="False"
+            SelectedColor="{Binding UpdateBool.BoolUpdate, x:DataType=vm:DayUpdate, Converter={StaticResource InvertedBoolConverter}}" />
+        <controls:BorderColorsFromBool
+            Grid.Row="0"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            IsVisible="False"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolUpdate, x:DataType=vm:DayUpdate}" />
+
+        <CheckBox
+            Grid.Row="0"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolUpdate, x:DataType=vm:DayUpdate, Converter={StaticResource InvertedBoolConverter}}"
+            IsEnabled="True"
+            VerticalOptions="Center" />
+        <CheckBox
+            Grid.Row="0"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolUpdate, x:DataType=vm:DayUpdate}"
+            IsEnabled="False"
+            VerticalOptions="Center" />
+
+        <Grid
+            Grid.Row="0"
+            Grid.Column="1"
+            RowDefinitions="*,*,*,*,*">
+            <controls:NameOrIdUser UserId="{Binding DayServer.UserCreatedId, x:DataType=vm:DayUpdate}" />
+            <controls:LabelAndTitle
+                Title="Utworzono"
+                Grid.Row="1"
+                Content="{Binding DayServer.Created, x:DataType=vm:DayUpdate}" />
+            <controls:NameOrIdUser Grid.Row="2" UserId="{Binding DayServer.UserUpdatedId, x:DataType=vm:DayUpdate}" />
+            <controls:LabelAndTitle
+                Title="Edytowano"
+                Grid.Row="3"
+                Content="{Binding DayServer.Updated, x:DataType=vm:DayUpdate}" />
+            <controls:LabelAndTitle Title="Usuniety" Grid.Row="4">
+                <controls:LabelAndTitle.Content>
+                    <CheckBox IsChecked="{Binding DayServer.IsDelete, x:DataType=vm:DayUpdate}" IsEnabled="False" />
+                </controls:LabelAndTitle.Content>
+            </controls:LabelAndTitle>
+        </Grid>
+
+        <Grid
+            Grid.Row="0"
+            Grid.Column="4"
+            RowDefinitions="*,*,*,*,*">
+            <controls:NameOrIdUser UserId="{Binding DayUpdateValue.UserCreatedId, x:DataType=vm:DayUpdate}" />
+            <controls:LabelAndTitle
+                Title="Utworzono"
+                Grid.Row="1"
+                Content="{Binding DayUpdateValue.Created, x:DataType=vm:DayUpdate}" />
+            <controls:NameOrIdUser Grid.Row="2" UserId="{Binding DayUpdateValue.UserUpdatedId, x:DataType=vm:DayUpdate}" />
+            <controls:LabelAndTitle
+                Title="Edytowano"
+                Grid.Row="3"
+                Content="{Binding DayUpdateValue.Updated, x:DataType=vm:DayUpdate}" />
+            <controls:LabelAndTitle Title="Usuniety" Grid.Row="4">
+                <controls:LabelAndTitle.Content>
+                    <CheckBox IsChecked="{Binding DayUpdateValue.IsDelete, x:DataType=vm:DayUpdate}" IsEnabled="False" />
+                </controls:LabelAndTitle.Content>
+            </controls:LabelAndTitle>
+        </Grid>
+
+        <Border
+            Grid.Row="0"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+        <!--  Row 1: Description  -->
+        <controls:BorderColorsFromBool
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            SelectedColor="{Binding UpdateBool.BoolDescription, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:DayUpdate}" />
+        <controls:BorderColorsFromBool
+            Grid.Row="1"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolDescription, x:DataType=vm:DayUpdate}" />
+
+        <CheckBox
+            Grid.Row="1"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolDescription, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:DayUpdate}" />
+        <controls:LabelAndTitle
+            Title="Opis"
+            Grid.Row="1"
+            Grid.Column="1"
+            Content="{Binding DayServer.Description, x:DataType=vm:DayUpdate}"
+            VerticalOptions="Center" />
+        <CheckBox
+            Grid.Row="1"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolDescription, x:DataType=vm:DayUpdate}" />
+        <controls:LabelAndTitle
+            Title="Opis"
+            Grid.Row="1"
+            Grid.Column="4"
+            Content="{Binding DayUpdateValue.Description, x:DataType=vm:DayUpdate}"
+            VerticalOptions="Center" />
+
+        <Border
+            Grid.Row="1"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+        <!--  Row 2: SelectedDate  -->
+        <controls:BorderColorsFromBool
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            SelectedColor="{Binding UpdateBool.BoolRest, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:DayUpdate}" />
+        <controls:BorderColorsFromBool
+            Grid.Row="2"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolRest, x:DataType=vm:DayUpdate}" />
+
+        <CheckBox
+            Grid.Row="2"
+            Grid.Column="0"
+            IsChecked="{Binding UpdateBool.BoolRest, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:DayUpdate}" />
+        <controls:LabelAndTitle
+            Title="Data"
+            Grid.Row="2"
+            Grid.Column="1"
+            Content="{Binding DayServer.SelectedDateString, x:DataType=vm:DayUpdate}"
+            VerticalOptions="Center" />
+        <CheckBox
+            Grid.Row="2"
+            Grid.Column="3"
+            IsChecked="{Binding UpdateBool.BoolRest, x:DataType=vm:DayUpdate}" />
+        <controls:LabelAndTitle
+            Title="Data"
+            Grid.Row="2"
+            Grid.Column="4"
+            Content="{Binding DayUpdateValue.SelectedDateString, x:DataType=vm:DayUpdate}"
+            VerticalOptions="Center" />
+
+        <Border
+            Grid.Row="2"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+        <!--  Row 3: Prices Summary  -->
+        <controls:BorderColorsFromBool
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            SelectedColor="{Binding UpdateBool.BoolRest, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:DayUpdate}" />
+        <controls:BorderColorsFromBool
+            Grid.Row="3"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolRest, x:DataType=vm:DayUpdate}" />
+
+        <ContentView
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BindingContext="{Binding DayServer, x:DataType=vm:DayUpdate}"
+            ControlTemplate="{StaticResource prices}" />
+
+
+        <ContentView
+            Grid.Row="3"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BindingContext="{Binding DayUpdateValue, x:DataType=vm:DayUpdate}"
+            ControlTemplate="{StaticResource prices}" />
+
+        <Border
+            Grid.Row="3"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+        <!--  Row 4: Products  -->
+        <controls:BorderColorsFromBool
+            Grid.Row="4"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            SelectedColor="{Binding UpdateBool.BoolRest, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:DayUpdate}" />
+        <controls:BorderColorsFromBool
+            Grid.Row="4"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolRest, x:DataType=vm:DayUpdate}" />
+
+
+
+        <VerticalStackLayout
+            Grid.Row="4"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Padding="5">
+            <Label
+                FontAttributes="Bold"
+                FontSize="14"
+                Text="Produkty" />
+            <controls:ExpandableCollectionView
+                IsExpanded="{Binding DayCollectionViewExpanded.Product, x:DataType=vm:DayUpdate}"
+                ItemTemplate="{StaticResource product}"
+                ItemsSource="{Binding DayServer.Products, x:DataType=vm:DayUpdate}" />
+        </VerticalStackLayout>
+
+
+
+        <VerticalStackLayout
+            Grid.Row="4"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            Padding="5">
+            <Label
+                FontAttributes="Bold"
+                FontSize="14"
+                Text="Produkty" />
+            <controls:ExpandableCollectionView
+                IsExpanded="{Binding DayCollectionViewExpanded.Product, x:DataType=vm:DayUpdate}"
+                ItemTemplate="{StaticResource product}"
+                ItemsSource="{Binding DayUpdateValue.Products, x:DataType=vm:DayUpdate}" />
+        </VerticalStackLayout>
+
+        <Border
+            Grid.Row="4"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+        <!--  Row 5: Cakes  -->
+        <controls:BorderColorsFromBool
+            Grid.Row="5"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            SelectedColor="{Binding UpdateBool.BoolRest, Converter={StaticResource InvertedBoolConverter}, x:DataType=vm:DayUpdate}" />
+        <controls:BorderColorsFromBool
+            Grid.Row="5"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            BackgroundColorFirst="Green"
+            BackgroundColorSecond="Red"
+            IsGradient="True"
+            Opacity="1"
+            SelectedColor="{Binding UpdateBool.BoolRest, x:DataType=vm:DayUpdate}" />
+
+
+
+        <VerticalStackLayout
+            Grid.Row="5"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Padding="5">
+            <Label
+                FontAttributes="Bold"
+                FontSize="14"
+                Text="Ciasta" />
+            <controls:ExpandableCollectionView
+                IsExpanded="{Binding DayCollectionViewExpanded.Cake, x:DataType=vm:DayUpdate}"
+                ItemTemplate="{StaticResource cake}"
+                ItemsSource="{Binding DayServer.Cakes, x:DataType=vm:DayUpdate}" />
+        </VerticalStackLayout>
+
+
+        <VerticalStackLayout
+            Grid.Row="5"
+            Grid.Column="3"
+            Grid.ColumnSpan="2"
+            Padding="5">
+            <Label
+                FontAttributes="Bold"
+                FontSize="14"
+                Text="Ciasta" />
+            <controls:ExpandableCollectionView
+                IsExpanded="{Binding DayCollectionViewExpanded.Cake, x:DataType=vm:DayUpdate}"
+                ItemTemplate="{StaticResource cake}"
+                ItemsSource="{Binding DayUpdateValue.Cakes, x:DataType=vm:DayUpdate}" />
+        </VerticalStackLayout>
+
+        <Border
+            Grid.Row="5"
+            Grid.ColumnSpan="6"
+            HorizontalOptions="Fill"
+            StrokeDashArray="4,2"
+            VerticalOptions="End" />
+
+    </Grid>
+</ContentView>

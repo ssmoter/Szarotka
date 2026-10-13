@@ -6,6 +6,7 @@ using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesRoutes;
 
 using Shared.Data;
+using Shared.Pages.UpdateDifference.Templates;
 
 using System.Collections;
 
@@ -58,9 +59,13 @@ namespace Shared.Pages.UpdateDifference
                         {
                             DriverRoutesUpdate.SetUpdateBool(routes, value);
                         }
-                        if (item.UpdateSelect is BoolPNameUpdate name)
+                        else if (item.UpdateSelect is BoolPNameUpdate name)
                         {
                             ProductNameUpdate.SetUpdateBool(name, value);
+                        }
+                        else if (item.UpdateSelect is BoolDayUpdate day)
+                        {
+                            DayUpdate.SetUpdateBool(day, value);
                         }
                     }
                 }
@@ -97,13 +102,17 @@ namespace Shared.Pages.UpdateDifference
             foreach (var item in UpdateDifferences)
             {
                 item.Index = n;
-                if (item.Server is CustomerRoutes)
+                switch (item.Server)
                 {
-                    item.UpdateSelect = new CustomerRoutesUpdate();
-                }
-                if (item.Server is ProductName)
-                {
-                    item.UpdateSelect = new BoolPNameUpdate();
+                    case CustomerRoutes:
+                        item.UpdateSelect = new CustomerRoutesUpdate();
+                        break;
+                    case ProductName:
+                        item.UpdateSelect = new BoolPNameUpdate();
+                        break;
+                    case Day:
+                        item.UpdateSelect = new BoolDayUpdate();
+                        break;
                 }
 
                 n++;
@@ -139,8 +148,51 @@ namespace Shared.Pages.UpdateDifference
                 {
                     return;
                 }
-                InvokeAsCustomerRoutes();
-                InvokeAsProductName();
+
+                IList<CustomerRoutes> customers = [];
+                IList<ProductName> pNames = [];
+                IList<Day> days = [];
+
+
+                foreach (DataBase.Model.EntitiesServer.UpdateDifference item in UpdateDifferences)
+                {
+                    if (item.UpdateSelect is CustomerRoutesUpdate)
+                    {
+                        customers.Add((DriverRoutesUpdate.ApplyUpdateBoolTo(
+                                 (CustomerRoutes)item.Server,
+                                 (CustomerRoutes)item.Update,
+                                 item.UpdateSelect)));
+                    }
+                    else if (item.UpdateSelect is BoolPNameUpdate)
+                    {
+                        pNames.Add(ProductNameUpdate.ApplyUpdateBoolTo(
+                             (ProductName)item.Server,
+                             (ProductName)item.Update,
+                             item.UpdateSelect));
+                    }
+                    else if (item.UpdateSelect is BoolDayUpdate)
+                    {
+                        days.Add(DayUpdate.ApplyUpdateBoolTo(
+                            (Day)item.Server,
+                            (Day)item.Update,
+                            item.UpdateSelect));
+                    }
+                }
+
+                if (customers.Any())
+                {
+                    _saveAction?.Invoke(customers);
+                }
+                if (pNames.Any())
+                {
+                    _saveAction?.Invoke(pNames);
+                }
+                if (days.Any())
+                {
+                    _saveAction?.Invoke(days);
+                }
+
+
 
                 UpdateDifferences = null;
                 if (Shell.Current.Navigation.NavigationStack.Count > 1)
@@ -160,42 +212,6 @@ namespace Shared.Pages.UpdateDifference
             }
         }
 
-        private void InvokeAsCustomerRoutes()
-        {
-            if (UpdateDifferences?.FirstOrDefault().Server is CustomerRoutes)
-            {
-                IList<CustomerRoutes> entities = [];
-                foreach (DataBase.Model.EntitiesServer.UpdateDifference item in UpdateDifferences)
-                {
-                    entities.Add(DriverRoutesUpdate.ApplyUpdateBoolTo(
-                             (CustomerRoutes)item.Server,
-                             (CustomerRoutes)item.Update,
-                             item.UpdateSelect));
-                }
-                if (entities is not null)
-                {
-                    _saveAction?.Invoke(entities);
-                }
-            }
-        }
-        private void InvokeAsProductName()
-        {
-            if (UpdateDifferences?.FirstOrDefault().Server is ProductName)
-            {
-                IList<ProductName> entities = [];
-                foreach (DataBase.Model.EntitiesServer.UpdateDifference item in UpdateDifferences)
-                {
-                    entities.Add(ProductNameUpdate.ApplyUpdateBoolTo(
-                             (ProductName)item.Server,
-                             (ProductName)item.Update,
-                             item.UpdateSelect));
-                }
-                if (entities is not null)
-                {
-                    _saveAction?.Invoke(entities);
-                }
-            }
-        }
 
     }
 }

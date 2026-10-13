@@ -35,7 +35,6 @@
         <!--  IsEnabled="{Binding SaveData, Converter={StaticResource InvertedBoolConverter}}"  -->
         <ToolbarItem
             Command="{Binding SyncDataCommand}"
-            IsEnabled="False"
             Order="Secondary"
             Text="Synchronizuj" />
         <ToolbarItem
@@ -63,7 +62,7 @@
             Command="{Binding DiscardFromFileCommand}"
             IsEnabled="{Binding SaveData}"
             Order="Secondary"
-            Text="Cofnij" />
+            Text="Cofnij wczytany plik" />
         <ToolbarItem
             Command="{Binding SaveFromFileCommand}"
             IsEnabled="{Binding SaveData}"
@@ -163,9 +162,8 @@
 
             </Controls:CollectionViewPagination>
 
-
-
         </RefreshView>
+
     </Grid>
 
 

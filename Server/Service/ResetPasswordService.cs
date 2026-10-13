@@ -29,7 +29,7 @@ namespace Server.Service
             _logger.LogInformation("GetUserIdFromEmail started for email={Email}", email);
             string sql = UserQuery.GetIdFromEmail(email);
             var Email = email;
-            var ids = await _db.DbAsyncAoT.QueryAsync<User>(sql, new() { [nameof(Email)] = Email });
+            var ids = await _db.DbAsyncAoT.QueryAsync<User>(sql, param: new() { [nameof(Email)] = Email });
             var id = ids.FirstOrDefault();
 
             _userValidation.AccountNotFound(id);
@@ -67,7 +67,7 @@ namespace Server.Service
             var slq = UserQuery.UpdatePassword(Password, UpdateTicks, UserUpdatedId, Id);
             try
             {
-                await _db.DbAsyncAoT.ExecuteAsync(slq, new()
+                await _db.DbAsyncAoT.ExecuteAsync(slq, param: new()
                 {
                     [nameof(Password)] = Password,
                     [nameof(UpdateTicks)] = UpdateTicks,

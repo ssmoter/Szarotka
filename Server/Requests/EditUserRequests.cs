@@ -281,7 +281,7 @@ namespace Server.Requests
         private async Task<User> CreatedNewToken(string id)
         {
             var sql = SqlQuery.LoginQuery.InFromId(id);
-            var users = await _db.DbAsyncAoT.QueryAsync<User>(sql, new()
+            var users = await _db.DbAsyncAoT.QueryAsync<User>(sql, param: new()
             {
                 [nameof(id)] = id
             });

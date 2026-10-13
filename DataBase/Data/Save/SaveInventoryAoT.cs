@@ -1,5 +1,7 @@
 ﻿using DataBase.Data.SqlQuery;
+using DataBase.Model;
 using DataBase.Model.EntitiesInventory;
+using DataBase.Service;
 
 using System.Text.Json;
 
@@ -65,11 +67,13 @@ namespace DataBase.Data.Save
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         Task SaveProductPrice(ProductPrice productPrice, byte[] driverId, bool isServer = false);
+        Task<UpdateLog> SaveDaysTransaction(IList<Day> days, bool isServer = false);
     }
 
     public class SaveInventoryAoT(IAccessDataBaseAoT db) : ISaveInventoryAoT
     {
         private readonly IAccessDataBaseAoT _db = db;
+        private readonly IUpdateLogService _updateLog = new UpdateLogService(db, db.TimeService);
 
         public async Task SaveDay(Day day, byte[] driverId, bool isServer = false)
         {
@@ -81,12 +85,11 @@ namespace DataBase.Data.Save
                    out string sql);
             try
             {
-                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql, param:
                                                         new()
                                                         {
                                                             [nameof(Day.Id)] = day.Id,
                                                             [nameof(Day.Description)] = day.Description,
-                                                            [nameof(Day.DriverGuid)] = day.DriverGuid,
                                                             [nameof(Day.SelectedDateString)] = day.SelectedDateString,
                                                             [nameof(Day.SelectedDateTicks)] = day.SelectedDateTicks,
                                                             [nameof(Day.TotalPriceProducts)] = day.TotalPriceProducts,
@@ -132,9 +135,8 @@ namespace DataBase.Data.Save
             {
                 throw new ArgumentNullException(nameof(driverId), $"{nameof(SaveDay)} is not valid as guid");
             }
-            if (day.DriverGuid == Guid.Empty)
+            if (day.UserCreatedId == Guid.Empty)
             {
-                day.DriverGuid = new Guid(driverId);
                 day.UserCreatedId = new Guid(driverId);
             }
             userUpdateId = day.UserUpdatedId.ToByteArray();
@@ -142,7 +144,6 @@ namespace DataBase.Data.Save
 
             sql = DayQuery.SaveOrUpdate(day.Id,
                                             day.Description,
-                                            day.DriverGuid,
                                             day.SelectedDateString,
                                             day.SelectedDateTicks,
                                             day.TotalPriceProducts,
@@ -158,17 +159,19 @@ namespace DataBase.Data.Save
                                             day.UserCreatedId,
                                             day.UserUpdatedId);
         }
-        public async Task SaveDaysTransaction(IList<Day> days, byte[] driverId, bool isServer = false)
+        public async Task<UpdateLog> SaveDaysTransaction(IList<Day> days, bool isServer = false)
         {
             byte[] copy = JsonSerializer.SerializeToUtf8Bytes(days, DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.IListDay);
-
+            UpdateLog? firstLog = null;
             await using var tx = await _db.DbAsyncAoT.BeginTransactionAsync();
             try
             {
-                foreach (var day in days)
+                for (int i = 0; i < days.Count; i++)
                 {
+                    Day? day = days[i];
+                    var userUpdatedId = day.UserUpdatedId.ToByteArray();
                     SetDay(day,
-                           driverId,
+                           userUpdatedId,
                            isServer,
                            out DateTime lastUpdate,
                            out byte[] userUpdateId,
@@ -196,13 +199,16 @@ namespace DataBase.Data.Save
                                                  [nameof(Day.UserUpdatedId)] = day.UserUpdatedId
                                              });
 
-                    await SaveProductsTransaction(day.Products, driverId, isServer);
-                    await SaveCakesTransaction(day.Cakes, driverId, isServer);
+                    await SaveProductsTransaction(day.Products, userUpdatedId, isServer);
+                    await SaveCakesTransaction(day.Cakes, userUpdatedId, isServer);
 
+                    var log = await _updateLog.Insert(tx, new UpdateLog() { IsServer = isServer }, day);
+                    firstLog ??= log;
                 }
 
-
                 await tx.CommitAsync();
+
+                return firstLog!;
             }
             catch (Exception)
             {
@@ -224,7 +230,7 @@ namespace DataBase.Data.Save
                              out string sql);
                     try
                     {
-                        await tx.ExecuteAsync(sql,
+                        await tx.ExecuteAsync(sql, param:
                                                 new()
                                                 {
                                                     [nameof(Product.Id)] = product.Id,
@@ -264,7 +270,7 @@ namespace DataBase.Data.Save
 
                     try
                     {
-                        await tx.ExecuteAsync(sql,
+                        await tx.ExecuteAsync(sql, param:
                                                 new()
                                                 {
                                                     [nameof(Cake.Id)] = cake.Id,
@@ -275,7 +281,7 @@ namespace DataBase.Data.Save
                                                     [nameof(Cake.UpdatedTicks)] = cake.UpdatedTicks,
                                                     [nameof(Cake.IsDelete)] = cake.IsDelete,
                                                     [nameof(Cake.UserCreatedId)] = cake.UserCreatedId,
-                                                    [nameof(Cake.UserUpdatedId)] =  cake.UserUpdatedId
+                                                    [nameof(Cake.UserUpdatedId)] = cake.UserUpdatedId
                                                 });
                     }
                     catch (Exception)
@@ -297,7 +303,7 @@ namespace DataBase.Data.Save
                        out string sql);
             try
             {
-                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql, param:
                                                   new()
                                                   {
                                                       [nameof(Product.Id)] = product.Id,
@@ -397,7 +403,7 @@ namespace DataBase.Data.Save
                     out string sql);
             try
             {
-                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql, param:
                                                        new()
                                                        {
                                                            [nameof(Cake.Id)] = cake.Id,
@@ -473,7 +479,7 @@ namespace DataBase.Data.Save
                            out string sql);
             try
             {
-                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql, param:
                                                          new()
                                                          {
                                                              [nameof(ProductName.Id)] = productName.Id,
@@ -549,7 +555,7 @@ namespace DataBase.Data.Save
                           out string sql);
             try
             {
-                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql, param:
                                                      new()
                                                      {
                                                          [nameof(ProductPrice.Id)] = productPrice.Id,

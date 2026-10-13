@@ -93,7 +93,7 @@ namespace DataBase.Data.Get
 
         public async Task<ProductName?> GetProductName(Guid Id)
         {
-            var result = await _db.DbAsyncAoT.QueryAsync<ProductName>(_sqlGetProductName, new() { [nameof(ProductName.Id)] = Id });
+            var result = await _db.DbAsyncAoT.QueryAsync<ProductName>(_sqlGetProductName,param: new() { [nameof(ProductName.Id)] = Id });
             return result?.FirstOrDefault();
         }
 
@@ -103,7 +103,7 @@ namespace DataBase.Data.Get
         public async Task<IList<ProductPrice>> GetProductPrices(Guid ProductNameId)
         {
 
-            var result = await _db.DbAsyncAoT.QueryAsync<ProductPrice>(_sqlGetProductPrices, new() { [nameof(ProductPrice.ProductNameId)] = ProductNameId });
+            var result = await _db.DbAsyncAoT.QueryAsync<ProductPrice>(_sqlGetProductPrices, param: new() { [nameof(ProductPrice.ProductNameId)] = ProductNameId });
             return [.. result];
         }
 
@@ -112,7 +112,7 @@ namespace DataBase.Data.Get
 
         public async Task<ProductPrice?> GetProductPrice(Guid Id)
         {
-            var result = await _db.DbAsyncAoT.QueryAsync<ProductPrice>(_sqlGetProductPrice, new() { [nameof(ProductPrice.Id)] = Id });
+            var result = await _db.DbAsyncAoT.QueryAsync<ProductPrice>(_sqlGetProductPrice, param: new() { [nameof(ProductPrice.Id)] = Id });
             return result?.FirstOrDefault();
         }
 

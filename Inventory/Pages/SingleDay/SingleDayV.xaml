@@ -155,6 +155,11 @@
             Text="Anuluj wysyłanie" />
         <ToolbarItem
             x:DataType="VM:SingleDayVM"
+            Command="{Binding ForcedSendDayCommand}"
+            Order="Secondary"
+            Text="Wymuś wysłanie" />
+        <ToolbarItem
+            x:DataType="VM:SingleDayVM"
             Command="{Binding SaveDayCommand}"
             Order="Secondary"
             Text="Wymuś zapis" />
@@ -385,8 +390,8 @@
                                 <Border
                                     Margin="0,1,0,1"
                                     Padding="2"
-                                    IsVisible="{Binding IsDelete, Converter={StaticResource InvertedBoolConverter}}"
-                                    x:DataType="Product:Product">
+                                    x:DataType="Product:Product"
+                                    IsVisible="{Binding IsDelete, Converter={StaticResource InvertedBoolConverter}}">
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="10" />
                                     </Border.StrokeShape>

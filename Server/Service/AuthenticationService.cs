@@ -54,10 +54,10 @@ namespace Server.Service
 
             var deleteTime = _db.TimeService.UtcNow().AddHours(-1).Ticks;
             var deleteSql = $"DELETE FROM {nameof(RefreshToken)} WHERE {nameof(RefreshToken.ExpireDate)} < @Now";
-            await _db.DbAsyncAoT.ExecuteAsync(deleteSql, new() { ["Now"] = deleteTime });
+            await _db.DbAsyncAoT.ExecuteAsync(deleteSql, param: new() { ["Now"] = deleteTime });
 
             var insertSql = $"INSERT INTO {nameof(RefreshToken)} ({nameof(RefreshToken.Value)}, {nameof(RefreshToken.ExpireDate)},{nameof(RefreshToken.UserId)}) VALUES (@{nameof(RefreshToken.Value)}, @{nameof(RefreshToken.ExpireDate)}, @{nameof(RefreshToken.UserId)})";
-            await _db.DbAsyncAoT.ExecuteAsync(insertSql, new()
+            await _db.DbAsyncAoT.ExecuteAsync(insertSql, param: new()
             {
                 [nameof(RefreshToken.Value)] = request.RefreshToken.Value,
                 [nameof(RefreshToken.ExpireDate)] = request.RefreshToken.ExpireDate,

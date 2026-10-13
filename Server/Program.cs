@@ -8,7 +8,6 @@ using Server.Service;
 using System.Text.Json.Serialization;
 
 SQLitePCL.Batteries_V2.Init();
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 
 
 var builder = WebApplication.CreateSlimBuilder(args);
@@ -40,6 +39,8 @@ builder.Logging.AddSimpleConsole(options =>
     options.SingleLine = true;                // Cały log zmieści się w jednej linijce
 });
 
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+
 #if DEBUG
 builder.Services.AddCors(options =>
 {
@@ -54,6 +55,24 @@ builder.Services.AddCors(options =>
 #else
 builder.WebHost.UseUrls($"http://0.0.0:{port}");
 #endif
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    // Opcja globalna: Ustawiamy maksymalny rozmiar zapytania (np. 100 MB = 104,857,600 bajtów)
+    // Jeśli chcesz całkowicie wyłączyć limit, ustaw na null: options.Limits.MaxRequestBodySize = null;
+    options.Limits.MaxRequestBodySize = 104857600;
+
+    var portEnv = Environment.GetEnvironmentVariable("PORT");
+    if (!string.IsNullOrEmpty(portEnv))
+    {
+        int port = int.Parse(portEnv);
+        options.ListenAnyIP(port, listenOptions =>
+        {
+            listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
+        });
+    }
+});
+
 
 var app = builder.Build();
 

@@ -94,6 +94,17 @@ AND
             return result;
         }
 
+        public static async Task<IList<Day>> DaysFromIds(this IGetInventoryAoT get, IList<Guid> ids)
+        {
+            if (ids is null || ids.Count == 0)
+            {
+                return [];
+            }
+
+            string jsonIds = JsonSerializer.Serialize(ids, SzarotkaJsonSerializerContext.Default.IListGuid);
+            var result = await get.Days("WHERE Id IN (SELECT value FROM json_each(@jsonIds))", new() { [nameof(jsonIds)] = jsonIds });
+            return result;
+        }
 
         public static async Task<IList<Product>> EmptyProducts(this IGetInventoryAoT get, bool isDelete = false)
         {

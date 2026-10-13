@@ -66,7 +66,7 @@ namespace DataBase.Data
                 Message = ex.Message,
                 StackTrace = ex.StackTrace is not null ? ex.StackTrace : ""
             };
-            _ = DbSyncAoT.Execute(SetSqlError, new()
+            _ = DbSyncAoT.Execute(SetSqlError, param: new()
             {
                 [nameof(Model.LogsModel.StackTrace)] = log.StackTrace,
                 [nameof(Model.LogsModel.Message)] = log.Message,
@@ -84,7 +84,7 @@ namespace DataBase.Data
                 Message = ex.Message,
                 StackTrace = ex.StackTrace is not null ? ex.StackTrace : ""
             };
-            _ = await DbAsyncAoT.ExecuteAsync(SetSqlError, new()
+            _ = await DbAsyncAoT.ExecuteAsync(SetSqlError, param: new()
             {
                 [nameof(Model.LogsModel.StackTrace)] = log.StackTrace,
                 [nameof(Model.LogsModel.Message)] = log.Message,

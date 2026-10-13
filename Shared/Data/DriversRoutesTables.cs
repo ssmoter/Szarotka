@@ -107,7 +107,7 @@ namespace Shared.Data
                                                                             item.IsDelete,
                                                                             item.UserCreatedId,
                                                                             item.UserUpdatedId);
-                await _db.DbAsyncAoT.ExecuteAsync(sql, new()
+                await _db.DbAsyncAoT.ExecuteAsync(sql, param: new()
                 {
                     [nameof(item.Id)] = item.Id,
                     [nameof(item.Name)] = item.Name,

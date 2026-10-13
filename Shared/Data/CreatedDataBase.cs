@@ -100,6 +100,7 @@ namespace Shared.Data
             }
             lastUpdate.LastBackup = _db.TimeService.UtcNow().Ticks;
 
+
             string backupConnectionString = $"Data Source={DataBase.Helper.Constants.BackupPath}";
             using var backupConnection = new SqliteConnection(backupConnectionString);
             backupConnection.Open();
@@ -170,18 +171,11 @@ namespace Shared.Data
             }
             if (oldVersion < 2)
             {
+                UpdateLog.FirstDefaultUpdateLogForSync(_db);
                 progressBar += updateProgressBar;
                 oldVersion = 2;
                 updateAction?.Invoke(progressBar, oldVersion);
             }
-            if (oldVersion < 3)
-            {
-                progressBar += updateProgressBar;
-                oldVersion = 3;
-                updateAction?.Invoke(progressBar, oldVersion);
-            }
-
-
             updateAction?.Invoke(1, oldVersion);
         }
 
@@ -190,10 +184,9 @@ namespace Shared.Data
 
         private void ConfiguredDatabase()
         {
-            var sql = "PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA cache_size=-2000;";
+            var sql = "PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL; PRAGMA cache_size=-2000";
             _db.DbSyncAoT.Execute(sql);
         }
-
 
 
         public static DataBaseVersion GetDataBaseVersion(IAccessDataBaseAoT db)

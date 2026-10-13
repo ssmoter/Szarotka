@@ -7,7 +7,7 @@ namespace Shared.Model
         public static async Task SetAsync(this HelperTable helperTable, IAccessDataBaseAoT accessDataBase)
         {
             var sql = HelperTable.SetQuery(helperTable);
-            await accessDataBase.DbAsyncAoT.ExecuteAsync(sql, new()
+            await accessDataBase.DbAsyncAoT.ExecuteAsync(sql, param: new()
             {
                 [nameof(helperTable.Id)] = helperTable.Id,
                 [nameof(helperTable.Name)] = helperTable.Name,
@@ -44,7 +44,7 @@ namespace Shared.Model
         public static async Task<HelperTable> GetHelperTableAsync(this string name, IAccessDataBaseAoT accessDataBase)
         {
             var query = HelperTable.GetQuery(name);
-            var result = await accessDataBase.DbAsyncAoT.QueryAsync<HelperTable>(query, new() { [nameof(name)] = name });
+            var result = await accessDataBase.DbAsyncAoT.QueryAsync<HelperTable>(query, param: new() { [nameof(name)] = name });
             return result?.FirstOrDefault();
         }
 

@@ -25,12 +25,15 @@ public partial class LoadingPageV : ContentPage
         base.OnAppearing();
         try
         {
-            var update = UpdateDataBase();
-            await update;
-            if (update.Result)
+            await Task.Yield();
+            await Task.Run(async () =>
             {
-                await GotToLogin();
-            }
+                var update = await UpdateDataBase();
+                if (update)
+                {
+                    await GotToLogin();
+                }
+            });
         }
         catch (Exception ex)
         {
@@ -43,10 +46,12 @@ public partial class LoadingPageV : ContentPage
     {
         try
         {
+            //nie działa
+            //_db.DbSyncAoT.Execute("PRAGMA wal_checkpoint(PASSIVE);"); 
             await UserAfterLogin.SetLoginUser();
             if (!UserAfterLogin.IsLogin)
             {
-                await Shell.Current.GoToAsync($"{nameof(Shared.Pages.LogIn.LogInV)}");
+                await SaveTaskGoTo($"{nameof(Shared.Pages.LogIn.LogInV)}");
             }
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
@@ -65,7 +70,7 @@ public partial class LoadingPageV : ContentPage
             var old = _createdDataBase.GetCurrentVersion();
             if (!old.Equals(new DataBaseVersion()))
             {
-                await Shell.Current.GoToAsync(nameof(Shared.Pages.UpdateDataBase.UpdateDataBaseV));
+                await SaveTaskGoTo(nameof(Shared.Pages.UpdateDataBase.UpdateDataBaseV));
                 result = false;
             }
             await _createdDataBase.CreateBackUp();
@@ -76,4 +81,19 @@ public partial class LoadingPageV : ContentPage
         }
         return result;
     }
+    private static async Task SaveTaskGoTo(string page)
+    {
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            try
+            {
+                await Shell.Current.GoToAsync(page);
+            }
+            catch (Exception navEx)
+            {
+                System.Diagnostics.Debug.WriteLine($"Błąd nawigacji: {navEx.Message}");
+            }
+        });
+    }
+
 }

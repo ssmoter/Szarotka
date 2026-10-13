@@ -559,7 +559,6 @@ namespace Inventory.Pages.Products.ListProduct
                     }
                 }
                 await Toast.Make("Zapisywanie zakończone").Show();
-                Shell.Current.FlyoutIsPresented = false;
                 await SelectAllProductsAsync();
             }
             catch (Exception ex)
@@ -570,6 +569,7 @@ namespace Inventory.Pages.Products.ListProduct
             {
                 Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
                 sourceToken.Dispose();
+                Shell.Current.FlyoutIsPresented = false;
             }
         }
 

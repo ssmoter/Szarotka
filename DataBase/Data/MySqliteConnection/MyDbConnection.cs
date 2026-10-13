@@ -98,6 +98,10 @@ namespace DataBase.Data.MySqliteConnection
             using var connection = _connectionFactory.CreateConnection();
             connection.Open();
             connection.BackupDatabase(destination);
+
+            using var command = destination.CreateCommand();
+            command.CommandText = "PRAGMA journal_mode = DELETE;";
+            command.ExecuteNonQuery();
         }
 
 

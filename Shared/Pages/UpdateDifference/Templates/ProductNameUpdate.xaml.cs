@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 using DataBase.Model.EntitiesInventory;
 
-namespace Shared.Pages.UpdateDifference;
+namespace Shared.Pages.UpdateDifference.Templates;
 
 public partial class ProductNameUpdate : ContentView, IDisposable
 {

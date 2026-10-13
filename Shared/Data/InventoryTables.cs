@@ -115,7 +115,7 @@ namespace Shared.Data
                                                                                                         product.Name.UpdatedTicks,
                                                                                                         product.Name.UserCreatedId,
                                                                                                         product.Name.UserUpdatedId,
-                                                                                                        product.Name.IsDelete), new()
+                                                                                                        product.Name.IsDelete), param: new()
                                                                                                         {
                                                                                                             [nameof(product.Name.Id)] = product.Name.Id,
                                                                                                             [nameof(product.Name.Arrangement)] = product.Name.Arrangement,
@@ -136,7 +136,7 @@ namespace Shared.Data
                                                                                                           product.Price.UserCreatedId,
                                                                                                           product.Price.UserUpdatedId,
                                                                                                           product.Price.ProductNameId,
-                                                                                                          product.Price.IsDelete), new()
+                                                                                                          product.Price.IsDelete), param: new()
                                                                                                           {
                                                                                                               [nameof(product.Price.Id)] = product.Price.Id,
                                                                                                               [nameof(product.Price.Price)] = product.Price.Price,
@@ -154,7 +154,6 @@ namespace Shared.Data
         const string SQlCreatedDay = $@"CREATE TABLE IF NOT EXISTS [{nameof(Day)}] (
             [{nameof(Day.Id)}] TEXT PRIMARY KEY,
             [{nameof(Day.Description)}] TEXT,
-            [{nameof(Day.DriverGuid)}] TEXT,
             [{nameof(Day.SelectedDateString)}] TEXT,
             [{nameof(Day.SelectedDateTicks)}] INTEGER,
             [{nameof(Day.TotalPriceProducts)}] INTEGER,

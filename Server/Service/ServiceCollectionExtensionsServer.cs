@@ -1,5 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Data.MySqliteConnection;
+using DataBase.Service;
 
 using MailKit.Net.Smtp;
 
@@ -32,6 +33,10 @@ namespace Server.Service
             services.AddSingleton<ISqliteConnectionFactory>(opt =>
             {
                 return new SqliteConnectionFactory(connectionString);
+            });
+            services.AddSingleton<IAccessDataBase>(opt =>
+            {
+                return new AccessDataBase(connectionString, opt.GetRequiredService<ITimeService>());
             });
 
 
@@ -106,7 +111,8 @@ namespace Server.Service
                 persistentDb = Path.Combine(localDir, "szarotka_produkcyjna.db3");
 
                 // Lokalnie robocza baza też może być w tym samym folderze Temp, ale z nazwą .db3
-                runtimeDb = Path.Combine(Path.GetTempPath(), "szarotka_produkcyjna.db3");
+                //runtimeDb = Path.Combine(Path.GetTempPath(), "szarotka_produkcyjna.db3");
+                runtimeDb = Path.Combine(localDir, "szarotka_produkcyjna_RAM.db3");
             }
 
             // 3. Kopiowanie bazy z chmury (Storage) do szybkiego RAMu (/tmp) przy starcie
@@ -132,8 +138,7 @@ namespace Server.Service
                 new DatabaseBackupService(
                     runtimeConnectionString,
                     persistentDb,
-                    sp.GetRequiredService<ILogger<DatabaseBackupService>>()
-                )
+                    sp.GetRequiredService<ILogger<DatabaseBackupService>>())
             );
             return runtimeDb;
         }

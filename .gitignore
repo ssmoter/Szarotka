@@ -371,3 +371,8 @@ FodyWeavers.xsd
 /Server/Development/Szarotka/DataBaseSzarotkaSQLite.db3-wal
 /Server/Development/szarotka_produkcyjna.db3
 /Server/Development/szarotka_produkcyjna (1).db3
+/Server/Development/szarotka_produkcyjna_RAM.db3
+/Server/Development/szarotka_produkcyjna_RAM.db3-shm
+/Server/Development/szarotka_produkcyjna_RAM.db3-wal
+/Server/Development/szarotka_produkcyjna_RAM.db3
+/Server/Development/UpdateLog.csv

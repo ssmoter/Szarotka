@@ -318,18 +318,13 @@
                             Text="Kierowca:"
                             VerticalOptions="Center" />
 
-                        <Label
+                        <CustomControls:NameOrIdUser
                             Grid.Row="16"
                             Grid.Column="1"
                             FontSize="Medium"
                             LineBreakMode="CharacterWrap"
-                            Style="{StaticResource LabelPointerOver}"
-                            Text="{Binding Day.DriverGuid, x:DataType=vm:SingleDayPreviewSmallV, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8}"
-                            VerticalOptions="Center">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
-                            </Label.GestureRecognizers>
-                        </Label>
+                            UserId="{Binding Day.UserCreatedId}" />
+
 
                         <Border Grid.Row="17" Grid.ColumnSpan="2" />
 
@@ -361,26 +356,20 @@
                                 Grid.Row="2"
                                 Grid.Column="0"
                                 Text="Utworzył: " />
-                            <Label
+                            <CustomControls:NameOrIdUser
                                 Grid.Row="2"
                                 Grid.Column="1"
-                                Text="{Binding Day.UserCreatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8, x:DataType=vm:SingleDayPreviewSmallV}">
-                                <Label.GestureRecognizers>
-                                    <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
-                                </Label.GestureRecognizers>
-                            </Label>
+                                UserId="{Binding Day.UserCreatedId, x:DataType=vm:SingleDayPreviewSmallV}" />
+
                             <Label
                                 Grid.Row="3"
                                 Grid.Column="0"
                                 Text="Edytował: " />
-                            <Label
+                            <CustomControls:NameOrIdUser
                                 Grid.Row="3"
                                 Grid.Column="1"
-                                Text="{Binding Day.UserUpdatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8, x:DataType=vm:SingleDayPreviewSmallV}">
-                                <Label.GestureRecognizers>
-                                    <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
-                                </Label.GestureRecognizers>
-                            </Label>
+                                UserId="{Binding Day.UserUpdatedId, x:DataType=vm:SingleDayPreviewSmallV}" />
+
 
                             <Label
                                 Grid.Row="4"
@@ -678,26 +667,19 @@
                                             Grid.Row="2"
                                             Grid.Column="0"
                                             Text="Utworzył: " />
-                                        <Label
+                                        <CustomControls:NameOrIdUser
                                             Grid.Row="2"
                                             Grid.Column="1"
-                                            Text="{Binding UserCreatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8}">
-                                            <Label.GestureRecognizers>
-                                                <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
-                                            </Label.GestureRecognizers>
-                                        </Label>
+                                            UserId="{Binding UserCreatedId}" />
                                         <Label
                                             Grid.Row="3"
                                             Grid.Column="0"
                                             Text="Edytował: " />
-                                        <Label
+                                        <CustomControls:NameOrIdUser
                                             Grid.Row="3"
                                             Grid.Column="1"
-                                            Text="{Binding UserUpdatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8}">
-                                            <Label.GestureRecognizers>
-                                                <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
-                                            </Label.GestureRecognizers>
-                                        </Label>
+                                            UserId="{Binding UserUpdatedId}" />
+
 
                                         <Label
                                             Grid.Row="4"
@@ -883,26 +865,20 @@
                                                 Grid.Row="2"
                                                 Grid.Column="0"
                                                 Text="Utworzył: " />
-                                            <Label
+                                            <CustomControls:NameOrIdUser
                                                 Grid.Row="2"
                                                 Grid.Column="1"
-                                                Text="{Binding UserCreatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8, x:DataType=vm:CakeIsExpanded}">
-                                                <Label.GestureRecognizers>
-                                                    <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
-                                                </Label.GestureRecognizers>
-                                            </Label>
+                                                UserId="{Binding UserCreatedId}" />
+
                                             <Label
                                                 Grid.Row="3"
                                                 Grid.Column="0"
                                                 Text="Edytował: " />
-                                            <Label
+                                            <CustomControls:NameOrIdUser
                                                 Grid.Row="3"
                                                 Grid.Column="1"
-                                                Text="{Binding UserUpdatedId, Converter={StaticResource LastCharactersConverter}, ConverterParameter=8, x:DataType=vm:CakeIsExpanded}">
-                                                <Label.GestureRecognizers>
-                                                    <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="TapGestureRecognizer_Tapped_UserEdit_Popup" />
-                                                </Label.GestureRecognizers>
-                                            </Label>
+                                                UserId="{Binding UserUpdatedId}" />
+
 
                                         </Grid>
 

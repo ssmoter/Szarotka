@@ -1,5 +1,7 @@
 ﻿using DataBase.Data.SqlQuery;
+using DataBase.Model;
 using DataBase.Model.EntitiesRoutes;
+using DataBase.Service;
 
 using System.Text.Json;
 
@@ -19,7 +21,7 @@ namespace DataBase.Data.Save
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         Task SaveCustomerRoutes(CustomerRoutes customerRoutes, byte[] driverId, bool isServer = false);
-        Task SaveCustomerRoutesTransaction(IList<CustomerRoutes> customerRoutes, byte[] driverId, bool isServer = false);
+        Task SaveCustomerRoutesTransaction(IList<CustomerRoutes> customerRoutes, bool isServer = false);
 
         /// <summary>
         /// Zapisanie rekordu wykorzustując zapytanie sql.Tworzy nowy jeżeli nie istnieje
@@ -63,13 +65,14 @@ namespace DataBase.Data.Save
     public class SaveDriverRoutesAoT(IAccessDataBaseAoT db) : ISaveDriverRoutesAoT
     {
         private readonly IAccessDataBaseAoT _db = db;
+        private readonly IUpdateLogService _updateLog = new UpdateLogService(db, db.TimeService);
 
         public async Task SaveCustomerRoutes(CustomerRoutes customerRoutes, byte[] driverId, bool isServer = false)
         {
             SetCustomerRoutes(customerRoutes, driverId, isServer, out var lastUpdate, out var userUpdateId, out var sql);
             try
             {
-                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql, param:
                                                          new()
                                                          {
                                                              [nameof(CustomerRoutes.Id)] = customerRoutes.Id,
@@ -93,9 +96,10 @@ namespace DataBase.Data.Save
                 throw;
             }
         }
-        public async Task SaveCustomerRoutesTransaction(IList<CustomerRoutes> customerRoutes, byte[] driverId, bool isServer = false)
+        public async Task SaveCustomerRoutesTransaction(IList<CustomerRoutes> customerRoutes, bool isServer = false)
         {
             byte[] copy = JsonSerializer.SerializeToUtf8Bytes(customerRoutes, DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.IListCustomerRoutes);
+            UpdateLog? firstLog = null;
 
             await using var tx = await _db.DbAsyncAoT.BeginTransactionAsync();
 
@@ -103,6 +107,7 @@ namespace DataBase.Data.Save
             {
                 foreach (var item in customerRoutes)
                 {
+                    var driverId = item.UserUpdatedId.ToByteArray();
                     SetCustomerRoutes(item,
                                       driverId,
                                       isServer,
@@ -127,6 +132,9 @@ namespace DataBase.Data.Save
                                          });
                     await SaveResidentialAddressTransaction(item.ResidentialAddress, driverId, isServer);
                     await SaveSelectedDayOfWeekRoutesTransaction(item.DayOfWeek, driverId, isServer);
+
+                    var log = await _updateLog.Insert(tx, new UpdateLog() { IsServer = isServer }, item);
+                    firstLog ??= log;
                 }
                 await tx.CommitAsync();
             }
@@ -226,7 +234,7 @@ namespace DataBase.Data.Save
                                   out var sql);
             try
             {
-                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql, param:
                                                          new()
                                                          {
                                                              [nameof(ResidentialAddress.Id)] = residentialAddress.Id,
@@ -258,7 +266,7 @@ namespace DataBase.Data.Save
             SetRoutes(routes, driverId, isServer, out var lastUpdate, out var userUpdateId, out var sql);
             try
             {
-                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql, param:
                                                new()
                                                {
                                                    [nameof(Routes.Id)] = routes.Id,
@@ -287,7 +295,7 @@ namespace DataBase.Data.Save
                                        out var sql);
             try
             {
-                _ = await _db.DbAsyncAoT.ExecuteAsync(sql,
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql, param:
                                                          new()
                                                          {
                                                              [nameof(SelectedDayOfWeekRoutes.Id)] = selectedDayOfWeek.Id,

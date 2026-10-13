@@ -8,6 +8,7 @@ namespace Shared.Pages.UpdateDifference
         public DataTemplate Customer { get; set; }
         public DataTemplate Empty { get; set; }
         public DataTemplate PName { get; set; }
+        public DataTemplate DayTemplate { get; set; }
         protected override DataTemplate OnSelectTemplate(object item, BindableObject container)
         {
             if (item is DataBase.Model.EntitiesServer.UpdateDifference mixed)
@@ -16,6 +17,7 @@ namespace Shared.Pages.UpdateDifference
                 {
                     CustomerRoutes => Customer,
                     ProductName => PName,
+                    Day => DayTemplate,
                     _ => Empty
                 };
             }

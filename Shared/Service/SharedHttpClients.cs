@@ -19,6 +19,18 @@ namespace Shared.Service
                 urlSzarotka = configuration[$"HttpClients:{MyHttpClientsType.SzarotkaDebugWin}"];
 #endif
 #endif
+                if (!urlSzarotka.Contains("serwer-aot"))
+                {
+                    // LOKALNIE: używamy bezpiecznego HTTP/1.1 (brak błędów o braku TLS)
+                    client.DefaultRequestVersion = System.Net.HttpVersion.Version11;
+                    client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
+                }
+                else
+                {
+                    // W CHMURZE (Google Cloud Run): Włączamy pełne, szybkie HTTP/2 end-to-end
+                    client.DefaultRequestVersion = System.Net.HttpVersion.Version20;
+                    client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
+                }
 
                 client.BaseAddress = new Uri(urlSzarotka);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");

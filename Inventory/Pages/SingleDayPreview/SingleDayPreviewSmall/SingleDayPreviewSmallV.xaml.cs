@@ -164,7 +164,7 @@ public partial class SingleDayPreviewSmallV : ContentView, IDisposable
         if (sender is not Label item) { return; }
         await item.BounceOnPressAsync();
 
-        var userId = Day.DriverGuid;
+        var userId = Day.UserCreatedId;
         var popup = new Shared.Pages.UserDisplay.PopupUser.UserDisplayVPopup(userId);
         if (Application.Current?.Windows[0].Page != null)
         {

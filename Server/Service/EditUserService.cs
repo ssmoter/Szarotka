@@ -29,7 +29,7 @@ namespace Server.Service
             var sql = SqlQuery.UserQuery.UpdateName(user.Name, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             try
             {
-                await _db.DbAsyncAoT.ExecuteAsync(sql, new()
+                await _db.DbAsyncAoT.ExecuteAsync(sql,param: new()
                 {
                     [nameof(user.Name)] = user.Name,
                     [nameof(user.UpdatedTicks)] = user.UpdatedTicks,
@@ -52,7 +52,7 @@ namespace Server.Service
             var sql = SqlQuery.UserQuery.UpdateDescription(user.Description, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             try
             {
-                await _db.DbAsyncAoT.ExecuteAsync(sql, new()
+                await _db.DbAsyncAoT.ExecuteAsync(sql, param: new()
                 {
                     [nameof(user.Description)] = user.Description,
                     [nameof(user.UpdatedTicks)] = user.UpdatedTicks,
@@ -75,7 +75,7 @@ namespace Server.Service
             var sql = SqlQuery.UserQuery.UpdateEmail(user.Email, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             try
             {
-                await _db.DbAsyncAoT.ExecuteAsync(sql, new()
+                await _db.DbAsyncAoT.ExecuteAsync(sql, param: new()
                 {
                     [nameof(user.Email)] = user.Email,
                     [nameof(user.UpdatedTicks)] = user.UpdatedTicks,
@@ -98,7 +98,7 @@ namespace Server.Service
             var sql = SqlQuery.UserQuery.UpdatePhoneNumber(user.PhoneNumber, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             try
             {
-                await _db.DbAsyncAoT.ExecuteAsync(sql, new()
+                await _db.DbAsyncAoT.ExecuteAsync(sql, param: new()
                 {
                     [nameof(user.PhoneNumber)] = user.PhoneNumber,
                     [nameof(user.UpdatedTicks)] = user.UpdatedTicks,
@@ -121,7 +121,7 @@ namespace Server.Service
             var sql = SqlQuery.UserQuery.UpdateUserType(user.UserType, user.UpdatedTicks, user.UserUpdatedId, user.Id);
             try
             {
-                await _db.DbAsyncAoT.ExecuteAsync(sql, new()
+                await _db.DbAsyncAoT.ExecuteAsync(sql, param: new()
                 {
                     [nameof(user.UserType)] = user.UserType,
                     [nameof(user.UpdatedTicks)] = user.UpdatedTicks,

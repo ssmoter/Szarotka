@@ -96,7 +96,7 @@ namespace Server.Service
                                                   storedUser.user.IsDelete,
                                                   storedUser.user.IsEmailConfirm,
                                                   storedUser.user.Password);
-            await _db.DbAsyncAoT.ExecuteAsync(query,
+            await _db.DbAsyncAoT.ExecuteAsync(query, param:
                                                       new()
                                                       {
                                                           [nameof(storedUser.user.Id)] = storedUser.user.Id,

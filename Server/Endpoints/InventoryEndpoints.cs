@@ -35,6 +35,11 @@ namespace Server.Endpoints
                 var day = await iInventoryDayRequests.GetDay(id, token);
                 return day;
             }).RequireAuthorization();
+            map.MapPost("days_from_ids", async ([FromBody] string[] ids, IInventoryDayRequests iInventoryDayRequests, CancellationToken token = default) =>
+            {
+                var day = await iInventoryDayRequests.GetDaysFromIds(ids, token);
+                return day;
+            }).RequireAuthorization();
             map.MapGet("day", async (string selectedDateString, string? userId, IInventoryDayRequests iInventoryDayRequests, CancellationToken token = default) =>
             {
                 var day = await iInventoryDayRequests.GetDay(selectedDateString, userId, token);

@@ -99,7 +99,7 @@ namespace Server.Requests
                 token.ThrowIfCancellationRequested();
 
                 string userIdFromToken = $"SELECT * FROM {nameof(RefreshToken)} WHERE {nameof(RefreshToken.Value)} = @Value";
-                var userIds = await _db.DbAsyncAoT.QueryAsync<RefreshToken>(userIdFromToken, new() { ["Value"] = userToken });
+                var userIds = await _db.DbAsyncAoT.QueryAsync<RefreshToken>(userIdFromToken, param: new() { ["Value"] = userToken });
                 _logger.LogDebug("Query for refresh token returned {Count} items", userIds?.Count() ?? 0);
 
                 var userId = userIds!.FirstOrDefault();
@@ -120,7 +120,7 @@ namespace Server.Requests
                 await _loginService.LogOut(userToken);
 
                 var sql = SqlQuery.LoginQuery.InFromId(userId.UserId);
-                var users = await _db.DbAsyncAoT.QueryAsync<User>(sql, new()
+                var users = await _db.DbAsyncAoT.QueryAsync<User>(sql, param: new()
                 {
                     ["Id"] = userId.UserId
                 });

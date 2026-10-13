@@ -7,6 +7,7 @@
     xmlns:modelInventory="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
     xmlns:modelRoutes="clr-namespace:DataBase.Model.EntitiesRoutes;assembly=DataBase"
     xmlns:modelServer="clr-namespace:DataBase.Model.EntitiesServer;assembly=DataBase"
+    xmlns:template="clr-namespace:Shared.Pages.UpdateDifference.Templates"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:update="clr-namespace:Shared.Pages.UpdateDifference"
     Title="Różnice"
@@ -25,7 +26,7 @@
                         HorizontalOptions="Center"
                         Text="{Binding Index}" />
 
-                    <update:DriverRoutesUpdate
+                    <template:DriverRoutesUpdate
                         Grid.Row="1"
                         Margin="5"
                         CustomerRoutesServer="{Binding Server}"
@@ -71,7 +72,7 @@
                         HorizontalOptions="Center"
                         Text="{Binding Index}" />
 
-                    <update:ProductNameUpdate
+                    <template:ProductNameUpdate
                         Grid.Row="1"
                         Margin="5"
                         PNameServer="{Binding Server}"
@@ -87,10 +88,36 @@
 
             </DataTemplate>
 
+            <DataTemplate x:Key="DayTemplate" x:DataType="modelServer:UpdateDifference">
+
+                <Grid RowDefinitions="auto,*,auto">
+                    <Label
+                        Grid.Row="0"
+                        HorizontalOptions="Center"
+                        Text="{Binding Index}" />
+
+                    <template:DayUpdate
+                        Grid.Row="1"
+                        Margin="5"
+                        DayServer="{Binding Server}"
+                        DayUpdateValue="{Binding Update}"
+                        UpdateBool="{Binding UpdateSelect}" />
+                    <Border
+                        Grid.Row="2"
+                        Grid.ColumnSpan="2"
+                        Margin="0"
+                        Padding="0"
+                        StrokeThickness="2" />
+                </Grid>
+
+            </DataTemplate>
+
+
 
             <update:DifferenceDataTemplateSelector
                 x:Key="DifferenceDataTemplateSelector"
                 Customer="{StaticResource Customer}"
+                DayTemplate="{StaticResource DayTemplate}"
                 Empty="{StaticResource Empty}"
                 PName="{StaticResource ProductName}" />
 

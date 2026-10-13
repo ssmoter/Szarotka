@@ -6,7 +6,7 @@ using DataBase.Model;
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesServer;
 using DataBase.Service;
-using Microsoft.Extensions.Logging;
+
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Server.Requests
@@ -16,6 +16,7 @@ namespace Server.Requests
         Task<IResult> GetDay(string id, CancellationToken token = default);
         Task<IResult> GetDay(string selectedDateString, string? userId, CancellationToken token = default);
         Task<IResult> GetDays(string? from, string? to, IList<string>? userIds, CancellationToken token = default);
+        Task<IResult> GetDaysFromIds(string[] ids, CancellationToken token = default);
         Task<IResult> SaveDay(Day day, bool forceUpdate = false, CancellationToken token = default);
         Task<IResult> SaveDays(IList<Day> days, bool forceUpdate = false, CancellationToken token = default);
     }
@@ -164,7 +165,46 @@ namespace Server.Requests
                 throw;
             }
         }
-
+        public async Task<IResult> GetDaysFromIds(string[] ids, CancellationToken token = default)
+        {
+            try
+            {
+                _logger.LogInformation("GetDaysFromIds started for {Count} ids", ids?.Length ?? 0);
+                ArgumentNullException.ThrowIfNull(ids, nameof(ids));
+                token.ThrowIfCancellationRequested();
+                List<Guid> guidIds = [];
+                foreach (var id in ids)
+                {
+                    if (Guid.TryParse(id, out Guid guid))
+                    {
+                        guidIds.Add(guid);
+                    }
+                    else
+                    {
+                        _logger.LogWarning("GetDaysFromIds: skipping invalid id: {Id}", id);
+                    }
+                }
+                var days = await _getInventoryAoT.DaysFromIds(guidIds);
+                if (days is not null)
+                {
+                    _logger.LogInformation("GetDaysFromIds: returning {Count} days", days.Count);
+                    return Results.Ok(days);
+                }
+                _logger.LogInformation("GetDaysFromIds: no days found");
+                return Results.NotFound();
+            }
+            catch (OperationCanceledException ex)
+            {
+                _logger.LogWarning(ex, "Operation cancelled in GetDays");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error in GetDays");
+                _db.SaveLog(ex);
+                throw;
+            }
+        }
 
 
         public async Task<IResult> SaveDay(Day day, bool forceUpdate = false, CancellationToken token = default)
@@ -186,7 +226,7 @@ namespace Server.Requests
                 if (check.Item1)
                 {
                     await _saveInventoryAoT.SaveDay(day, day.UserUpdatedId.ToByteArray(), true);
-                    var firstLog = await _UpdateLog.Insert(new DataBase.Model.UpdateLog(), day);
+                    var firstLog = await _UpdateLog.Insert(new DataBase.Model.UpdateLog() { IsServer = true }, day);
                     _logger.LogInformation("SaveDay: saved dayId={DayId} and created logId={LogId}", day.Id, firstLog?.Id);
                     return Results.Created(firstLog?.Id.ToString(), firstLog);
                 }
@@ -215,18 +255,16 @@ namespace Server.Requests
 
                 List<UpdateDifference> differences = [];
                 UpdateLog? firstLog = null;
-
+                int n = 0;
+                IList<Day> toSaveDays = [];
                 foreach (Day day in days)
                 {
-                    _logger.LogDebug("SaveDays: processing dayId={DayId}", day?.Id);
+                    _logger.LogDebug("SaveDays{N}: processing dayId={DayId}", n, day.Id);
                     (bool, Day?) check = await ModelsDifferences.Check(_getInventoryAoT, day, forceUpdate);
 
                     if (check.Item1)
                     {
-                        await _saveInventoryAoT.SaveDay(day, day.UserUpdatedId.ToByteArray(), true);
-                        var update = await _UpdateLog.Insert(new DataBase.Model.UpdateLog(), day);
-                        firstLog ??= update;
-                        _logger.LogInformation("SaveDays: saved dayId={DayId} with logId={LogId}", day.Id, update?.Id);
+                        toSaveDays.Add(day);
                     }
                     else
                     {
@@ -235,9 +273,11 @@ namespace Server.Requests
                             Server = check.Item2,
                             Update = day,
                         });
-                        _logger.LogInformation("SaveDays: conflict for dayId={DayId}", day.Id);
+                        _logger.LogInformation("SaveDays{N}: conflict for dayId={DayId}", n, day.Id);
                     }
+                    n++;
                 }
+                firstLog = await _saveInventoryAoT.SaveDaysTransaction(toSaveDays, true);
 
                 if (differences.Count > 0)
                 {
@@ -259,6 +299,7 @@ namespace Server.Requests
                 throw;
             }
         }
+
 
     }
 }

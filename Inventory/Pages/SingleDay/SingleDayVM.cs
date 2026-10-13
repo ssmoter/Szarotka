@@ -105,6 +105,7 @@ namespace Inventory.Pages.SingleDay
                 {
                     var userId = UserAfterLogin.User.Id.ToByteArray();
                     await _saveInventoryAoT.SaveDay(day, userId);
+
                     var dayId = Day.Id;
                     foreach (var product in Day.Products)
                     {
@@ -153,7 +154,6 @@ namespace Inventory.Pages.SingleDay
         {
             try
             {
-
                 if (e.PropertyName == nameof(Product.IsExpanded))
                 {
                     return;
@@ -229,60 +229,10 @@ namespace Inventory.Pages.SingleDay
             try
             {
                 SingleDayM.IsModelSend = true;
-#if DEBUG
-                await Task.Delay(TimeSpan.FromSeconds(15), _sendHttpCancellationToken.Token);
-#else
-                 await Task.Delay(TimeSpan.FromMinutes(15), _sendHttpCancellationToken.Token);
-#endif
-                var products = Day.Products.Where(x => x.Id != Guid.Empty);
-                Day sendDay = new(Day)
+                bool flowControl = await SendDay();
+                if (!flowControl)
                 {
-                    Products = [.. products]
-                };
-                if (sendDay.Id == Guid.Empty)
-                {
-                    //guid jest dodawany tylko przy zapisie 
-                    //jeżeli go nie ma dane nie zotały zapisane więc nie można ich wysłać
                     return;
-                }
-
-                var message = await _sendHttp.SendDay(sendDay, token: _sendHttpCancellationToken.Token);
-
-                var json = await message.Content.ReadAsStringAsync();
-                if (message.IsSuccessStatusCode)
-                {
-                    var log = System.Text.Json.JsonSerializer.Deserialize(json, SzarotkaJsonSerializerContext.Default.UpdateLog);
-                    await _updateLogService.Insert(log);
-                    await Toast.Make("Wysłano").Show();
-                }
-                else if (message.StatusCode == System.Net.HttpStatusCode.Conflict)
-                {
-                    await Toast.Make("Wystąpił konflikt").Show();
-                    var existsDay = System.Text.Json.JsonSerializer.Deserialize(json, SzarotkaJsonSerializerContext.Default.Day);
-                    IList<UpdateDifference> exists = [new() { Server = existsDay, Update = sendDay }];
-                    var navigationParameter = new Dictionary<string, object>
-                     {
-                        { nameof(UpdateDifference), exists },
-                        {nameof(Action),(Action<IEnumerable>)(async (names)
-                        =>
-                            {
-                                foreach (Day item in names)
-                                    {
-                                         var updateMessage = await _sendHttp.SendDay(item,forceUpdate:true);
-                                         var logForced = System.Text.Json.JsonSerializer.Deserialize(await updateMessage.Content.ReadAsStringAsync(), SzarotkaJsonSerializerContext.Default.UpdateLog);
-                                         await _updateLogService.Insert(logForced);
-                                         RemovePropertyChangedEvent();
-                                         Day = item;
-                                         AddPropertyChangedEvent();
-                                    }
-                            })
-                        }
-                    };
-                    await Shell.Current.GoToAsync(nameof(UpdateDifferenceV), navigationParameter);
-                }
-                else
-                {
-                    message.EnsureSuccessStatusCode();
                 }
             }
             catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException || !ex.CancellationToken.IsCancellationRequested)
@@ -302,6 +252,70 @@ namespace Inventory.Pages.SingleDay
             {
                 SingleDayM.IsModelSend = false;
             }
+        }
+
+        private async Task<bool> SendDay(bool skipTimeSpan = false)
+        {
+            if (!skipTimeSpan)
+            {
+#if DEBUG
+                await Task.Delay(TimeSpan.FromSeconds(15), _sendHttpCancellationToken.Token);
+#else
+                 await Task.Delay(TimeSpan.FromMinutes(15), _sendHttpCancellationToken.Token);
+#endif
+            }
+            var products = Day.Products.Where(x => x.Id != Guid.Empty);
+            Day sendDay = new(Day)
+            {
+                Products = [.. products]
+            };
+            if (sendDay.Id == Guid.Empty)
+            {
+                //guid jest dodawany tylko przy zapisie 
+                //jeżeli go nie ma dane nie zotały zapisane więc nie można ich wysłać
+                return false;
+            }
+
+            var message = await _sendHttp.SendDay(sendDay, token: _sendHttpCancellationToken.Token);
+
+            var json = await message.Content.ReadAsStringAsync(_sendHttpCancellationToken.Token);
+            if (message.IsSuccessStatusCode)
+            {
+                var log = System.Text.Json.JsonSerializer.Deserialize(json, SzarotkaJsonSerializerContext.Default.UpdateLog);
+                await _updateLogService.Insert(log);
+                await Toast.Make("Wysłano").Show();
+            }
+            else if (message.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                await Toast.Make("Wystąpił konflikt").Show();
+                var serverDay = System.Text.Json.JsonSerializer.Deserialize(json, SzarotkaJsonSerializerContext.Default.Day);
+                IList<UpdateDifference> exists = [new() { Server = serverDay, Update = sendDay }];
+                var navigationParameter = new Dictionary<string, object>
+                     {
+                        { nameof(UpdateDifference), exists },
+                        {nameof(Action),(Action<IEnumerable>)(async (names)
+                        =>
+                            {
+                                foreach (Day item in names)
+                                    {
+                                         var updateMessage = await _sendHttp.SendDay(item,forceUpdate:true);
+                                         var logForced = System.Text.Json.JsonSerializer.Deserialize(await updateMessage.Content.ReadAsStringAsync(), SzarotkaJsonSerializerContext.Default.UpdateLog);
+                                         await _updateLogService.Insert(logForced);
+                                         RemovePropertyChangedEvent();
+                                         Day = item;
+                                         AddPropertyChangedEvent();
+                                    }
+                            })
+                        }
+                    };
+                await Shell.Current.GoToAsync(nameof(UpdateDifferenceV), navigationParameter);
+            }
+            else
+            {
+                message.EnsureSuccessStatusCode();
+            }
+
+            return true;
         }
 
         public async Task ShowCurrentDay()
@@ -792,6 +806,42 @@ namespace Inventory.Pages.SingleDay
             SingleDayM.IsModelSend = false;
         }
 
+
+        [RelayCommand]
+        async Task ForcedSendDay()
+        {
+            if (_sendHttpCancellationToken is null || _sendHttpCancellationToken.IsCancellationRequested)
+            {
+                _sendHttpCancellationToken?.Dispose();
+                _sendHttpCancellationToken = new CancellationTokenSource();
+            }
+            try
+            {
+                SingleDayM.IsModelSend = true;
+                bool flowControl = await SendDay(true);
+                if (!flowControl)
+                {
+                    return;
+                }
+            }
+            catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException || !ex.CancellationToken.IsCancellationRequested)
+            {
+                // OBSŁUGA TIMEOUTU: internet jest zbyt wolny lub serwer nie odpowiada
+                await Toast.Make("Błąd połączenia Serwer nie odpowiedział w oczekiwanym czasie.").Show();
+            }
+            catch (TaskCanceledException)
+            {
+                await Toast.Make("Operacja została anulowana przez użytkownika.").Show();
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLogExtension(ex);
+            }
+            finally
+            {
+                SingleDayM.IsModelSend = false;
+            }
+        }
     }
 }
 

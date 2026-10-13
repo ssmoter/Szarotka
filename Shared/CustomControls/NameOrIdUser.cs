@@ -54,7 +54,7 @@ public partial class NameOrIdUser : Label, IDisposable
                 if (newValue is string input)
                 {
                     var result = input.Length > 8
-                       ? string.Concat(input.AsSpan(input.Length - 8), "...")
+                       ? string.Concat("...", input.AsSpan(input.Length - 8))
                        : input;
                     view.Text = result;
                 }

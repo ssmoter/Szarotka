@@ -31,7 +31,7 @@ namespace Server.Service
 
             var sql = LoginQuery.In(user.Email, user.Password);
 
-            var dbUser = await _db.DbAsyncAoT.QueryAsync<User>(sql, new()
+            var dbUser = await _db.DbAsyncAoT.QueryAsync<User>(sql, param: new()
             {
                 [nameof(user.Email)] = user.Email,
                 [nameof(user.Password)] = user.Password
@@ -49,7 +49,7 @@ namespace Server.Service
                 firstUser.RememberMe = user.RememberMe;
                 firstUser.Updated = _timeService.UtcNow();
                 sql = LoginQuery.UpdateRememberMe(firstUser.RememberMe, firstUser.UpdatedTicks, firstUser.UserUpdatedId, firstUser.Id);
-                _ = await _db.DbAsyncAoT.ExecuteAsync(sql, new()
+                _ = await _db.DbAsyncAoT.ExecuteAsync(sql, param: new()
                 {
                     [nameof(firstUser.RememberMe)] = firstUser.RememberMe,
                     [nameof(firstUser.UpdatedTicks)] = firstUser.UpdatedTicks,
@@ -68,7 +68,7 @@ namespace Server.Service
             _logger.LogInformation("LogOut started for token={Token}", refreshToken);
 
             var deleteSql = $"DELETE FROM {nameof(RefreshToken)} WHERE {nameof(RefreshToken.Value)} = @Value";
-            await _db.DbAsyncAoT.ExecuteAsync(deleteSql, new() { ["Value"] = refreshToken });
+            await _db.DbAsyncAoT.ExecuteAsync(deleteSql, param: new() { ["Value"] = refreshToken });
 
             _logger.LogInformation("LogOut completed for token={Token}", refreshToken);
             return Results.Ok();
@@ -79,7 +79,7 @@ namespace Server.Service
         {
             _logger.LogInformation("GetPublicUser started for id={Id}", id);
             var sql = LoginQuery.PublicUser(id);
-            IEnumerable<User> users = await _db.DbAsyncAoT.QueryAsync<User>(sql, new()
+            IEnumerable<User> users = await _db.DbAsyncAoT.QueryAsync<User>(sql, param: new()
             {
                 [nameof(id)] = id
             });

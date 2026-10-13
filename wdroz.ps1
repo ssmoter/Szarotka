@@ -28,6 +28,7 @@ gcloud run deploy serwer-aot `
   --execution-environment="gen2" `
   --max-instances=1 `
   --allow-unauthenticated `
+  --use-http2 `
   --project="szarotka-505112"
 
 Write-Host ""

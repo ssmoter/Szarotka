@@ -21,6 +21,10 @@
 
             void StartRotation()
             {
+                if (_gif is null)
+                {
+                    return;
+                }
                 _gif.Rotation = 0;
                 _gif.Animate("RotateIcon", new Animation(
                     callback: d => _gif.Rotation = d,
@@ -28,7 +32,12 @@
                     end: 360
                 ), length: 1000, easing: Easing.Linear, finished: (v, c) =>
                 {
-                    if (!c) StartRotation();
+                    // Sprawdzamy czy animacja została anulowana (c) 
+                    // ORAZ czy element _gif nadal żyje i jest w strukturze aplikacji
+                    if (!c && _gif != null && _gif.Window != null)
+                    {
+                        StartRotation();
+                    }
                 });
             }
 
@@ -47,6 +56,8 @@
         public void Dispose()
         {
             Application.Current.RequestedThemeChanged += Current_RequestedThemeChanged;
+            _gif?.AbortAnimation("RotateIcon");
+            _gif?.CancelAnimations();
         }
     }
 }

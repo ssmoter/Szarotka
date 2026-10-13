@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 using DataBase.Model.EntitiesRoutes;
 
-namespace Shared.Pages.UpdateDifference;
+namespace Shared.Pages.UpdateDifference.Templates;
 
 public partial class DriverRoutesUpdate : ContentView, IDisposable
 {

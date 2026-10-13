@@ -27,18 +27,25 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
-            Command="{Binding DownloadCommand}"
-            IsEnabled="False"
+            Command="{Binding SyncCommand}"
             Order="Secondary"
             Text="Synchronizuj (zalecane)" />
         <ToolbarItem
             Command="{Binding DownloadCommand}"
             Order="Secondary"
-            Text="Pobierz (niezalecane)" />
+            Text="Pobierz z zakresu" />
+        <ToolbarItem
+            Command="{Binding SendSelectedCommand}"
+            Order="Secondary"
+            Text="Wyślij wczytane" />
+        <ToolbarItem
+            Command="{Binding DownloadCommand}"
+            Order="Secondary"
+            Text="Pobierz wszystko(niezalecane)" />
         <ToolbarItem
             Command="{Binding SendCommand}"
             Order="Secondary"
-            Text="Wyślij (niezalecane)" />
+            Text="Wyślij wszystko(niezalecane)" />
         <ToolbarItem
             Command="{Binding GenerateJsonFileCommand}"
             Order="Secondary"
@@ -75,7 +82,7 @@
             HorizontalOptions="Center">
             <Button
                 Grid.Column="0"
-                Command="{Binding SelectMoreDateCommand}"
+                Command="{Binding SelectMoreDataCommand}"
                 HorizontalOptions="Center"
                 Text="Zakres dat"
                 VerticalOptions="Center" />
@@ -571,7 +578,7 @@
                                 <rangeControls:ContentFromList DayExpanded="{Binding .}" />
                                 <Button
                                     Grid.Row="1"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:RangeDayV}}, Path=OpenDetailPageCommand, x:DataType=VM:RangeDayV}"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:RangeDayVM}}, Path=OpenDetailPageCommand, x:DataType=VM:RangeDayVM}"
                                     CommandParameter="{Binding Day, x:DataType=VM:DayExpanded}"
                                     IsVisible="{OnPlatform WinUI=True,
                                                            Default=False}"

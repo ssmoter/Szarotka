@@ -48,6 +48,11 @@
                     </VerticalStackLayout>
                 </Border>
 
+                <Button
+                    Command="{Binding testCommand}"
+                    IsVisible="True"
+                    Text="test" />
+
             </VerticalStackLayout>
         </ScrollView>
     </Grid>

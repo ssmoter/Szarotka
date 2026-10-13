@@ -21,7 +21,7 @@ public partial class SingleDayPreviewPopUpV : Popup, IQueryAttributable
     public Day Day
     {
         get => _day;
-        set
+        set 
         {
             if (value is not null)
             {

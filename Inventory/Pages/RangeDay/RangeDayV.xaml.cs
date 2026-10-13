@@ -1,6 +1,3 @@
-
-using static MudBlazor.Icons.Custom;
-
 namespace Inventory.Pages.RangeDay;
 
 public partial class RangeDayV : ContentPage
@@ -15,11 +12,6 @@ public partial class RangeDayV : ContentPage
     protected override async void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
-
-        if (BindingContext is RangeDayVM vm)
-        {
-            await vm.SetDefaultsHeaders();
-        }
     }
 
     protected override void OnNavigatedFrom(NavigatedFromEventArgs args)
@@ -34,5 +26,23 @@ public partial class RangeDayV : ContentPage
         if (item.BindingContext is not RangeDayM product) { return; }
 
         _vm.OpenDetailPageCommand.Execute(product);
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        Task.Run(async () =>
+        {
+            if (BindingContext is RangeDayVM vm)
+            {
+                if (string.IsNullOrWhiteSpace(vm.FilesPath))
+                {
+                    await vm.SetDefaultsHeaders();
+                    var month = PopupSelectRangeDate.PopupSelectRangeDateVM.SelectMonth(DateTime.Today.Month);
+                    await vm.SelectData(new(month.Item1, month.Item2, []));
+                }
+            }
+        });
     }
 }

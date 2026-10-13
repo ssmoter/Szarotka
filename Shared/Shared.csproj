@@ -90,10 +90,13 @@
     <MauiXaml Update="Pages\UpdateDataBase\UpdateDataBaseV.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
-    <MauiXaml Update="Pages\UpdateDifference\DriverRoutesUpdate.xaml">
+    <MauiXaml Update="Pages\UpdateDifference\Templates\DriverRoutesUpdate.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
-    <MauiXaml Update="Pages\UpdateDifference\ProductNameUpdate.xaml">
+    <MauiXaml Update="Pages\UpdateDifference\Templates\ProductNameUpdate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Pages\UpdateDifference\Templates\DayUpdate.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Pages\UpdateDifference\UpdateDifferenceV.xaml">

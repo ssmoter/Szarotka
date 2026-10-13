@@ -35,9 +35,8 @@ namespace DataBase.Data.MySqliteConnection
                 DataSource = path,
                 Mode = SqliteOpenMode.ReadWriteCreate,
                 Pooling = false,
-                DefaultTimeout = 10,
-                ForeignKeys = true,
-                
+                DefaultTimeout = 10,                
+                ForeignKeys = true,                               
             };
             return builder.ConnectionString;
         }
@@ -48,8 +47,6 @@ namespace DataBase.Data.MySqliteConnection
 
             // Wstrzykujemy brakujące parametry bazy, których builder nie obsługuje
             using var command = connection.CreateCommand();
-            command.CommandText = "PRAGMA journal_mode='wal'; PRAGMA busy_timeout = 10000;"; // Milisekundy dla SQLite
-            command.ExecuteNonQuery();
 
             // Zwracamy nową instancję połączenia ze skonfigurowanym connection stringiem
             return new SqliteConnection(_connectionString);

@@ -245,7 +245,7 @@ public class UserValidation : IUserValidation
     public async Task<ServerEnums.Result> EmailExist(string email)
     {
         var sql = ValidationUserQuery.SelectEmails(email);
-        var emails = await _db.DbAsyncAoT.QueryAsync<User>(sql, new()
+        var emails = await _db.DbAsyncAoT.QueryAsync<User>(sql, param: new()
         {
             [nameof(email)] = email
         });

@@ -1,6 +1,11 @@
-﻿using Shared.Helper;
+﻿using DataBase.Data;
+
+using Microsoft.Data.Sqlite;
+
+using Shared.Helper;
 
 using SzarotkaNET10.Service;
+
 namespace SzarotkaNET10
 {
     public partial class App : Application
@@ -22,7 +27,8 @@ namespace SzarotkaNET10
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new AppShell());
+            var window = new Window(new AppShell());
+            return window;
         }
     }
 }

@@ -14,6 +14,7 @@ namespace Inventory.Data.InventoryApi
         Task<Day> GetDay(Guid id, UpdateProgressBar progressContent = null, CancellationToken token = default);
         Task<Day> GetDay(string selectedDateString, Guid userId, UpdateProgressBar progressContent = null, CancellationToken token = default);
         Task<IList<Day>> GetDays(long from, long to, Guid[] userId, UpdateProgressBar progressContent = null, CancellationToken token = default);
+        Task<IList<Day>> GetDays(IList<Guid> Ids, UpdateProgressBar progressContent = null, CancellationToken token = default);
     }
 
     public partial class GetDayHttp(IHttpClientFactory httpClientFactory, IAccessDataBaseAoT db) : IGetDayHttp
@@ -86,6 +87,41 @@ namespace Inventory.Data.InventoryApi
             return result;
         }
 
+        public async Task<IList<Day>> GetDays(IList<Guid> Ids, UpdateProgressBar progressContent = null, CancellationToken token = default)
+        {
+            Shared.Service.AndroidPermissionService.InternetCheck();
+            string url = $"/inventory/days_from_ids";
+
+            var httpClient = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.Szarotka);
+            var jsonContent = JsonSerializer.Serialize(Ids, SzarotkaJsonSerializerContext.Default.IListGuid);
+
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent?.Grid);
+            var response = await httpClient.PostWithProgressAsync(url, jsonContent
+                , progress => UpdateProgressBar.UpdateProgress(progressContent, progress)
+                , token);
+
+
+            response.EnsureSuccessStatusCode();
+
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+            progressContent?.Title = "Pobieranie";
+            progressContent?.Description = "Anuluj";
+            progressContent?.ProgressBar.Progress = 0;
+            var contentLength = response.Content.Headers.ContentLength ?? 1;
+
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(progressContent?.Grid);
+            using var download = await response.Content.ReadAsStreamAsync(token);
+
+            var contentString = await HttpClientExtension.CheckProgress(progress => UpdateProgressBar.UpdateProgress(progressContent, progress),
+                   contentLength, download, token);
+
+
+            //var contentString = await response.Content.ReadAsStringAsync(token);
+
+            var result = JsonSerializer.Deserialize(contentString, SzarotkaJsonSerializerContext.Default.DayArray);
+            Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+            return result;
+        }
 
 
     }
