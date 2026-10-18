@@ -21,6 +21,18 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         }
     }
 
+    private Guid selectedRoute;
+    public Guid SelectedRoute
+    {
+        get => selectedRoute;
+        set
+        {
+            if (SetProperty(ref selectedRoute, value, nameof(SelectedRoute)))
+            {
+            }
+        }
+    }
+
     private Guid driverGuid;
     [JsonIgnore]
     public Guid DriverGuid
@@ -371,6 +383,7 @@ public partial class Day : BaseEntities<Guid>, IDisposable
         TotalPriceProducts = copy.TotalPriceProducts;
         TotalPriceProductsDecimal = copy.TotalPriceProductsDecimal;
         TotalPriceMoney = copy.TotalPriceMoney;
+        SelectedRoute = copy.SelectedRoute;
     }
     public void Dispose()
     {

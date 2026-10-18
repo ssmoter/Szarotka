@@ -1,4 +1,6 @@
-﻿using DataBase.Model.EntitiesServer;
+﻿using DataBase.Model.EntitiesInventory;
+using DataBase.Model.EntitiesServer;
+
 using Microsoft.Data.Sqlite;
 
 namespace DataBase.Mappers;

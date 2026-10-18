@@ -31,7 +31,7 @@
             Order="Secondary"
             Text="Synchronizuj (zalecane)" />
         <ToolbarItem
-            Command="{Binding DownloadCommand}"
+            Command="{Binding DownloadSelectedCommand}"
             Order="Secondary"
             Text="Pobierz z zakresu" />
         <ToolbarItem

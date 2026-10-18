@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Net.Http.Headers;
 
 namespace Shared.Data.ServerHttpClients
 {
@@ -113,7 +108,7 @@ namespace Shared.Data.ServerHttpClients
 
             // 3. Przekazujemy strumień pamięci bezpośrednio do Twojego mechanizmu postępu ProgressStream.
             // NIE owijamy go w instrukcję 'using', ponieważ HttpClient musi nim zarządzać w tle.
-            var progressStream = new ProgressStream(memoryStream, byteArray.Length, async progressDouble =>
+            var progressStream = new ProgressStream(memoryStream, byteArray.Length, progressDouble =>
             {
                 progress?.Invoke(progressDouble);
             });

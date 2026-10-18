@@ -21,7 +21,8 @@ namespace DataBase.Data.SqlQuery
             long UpdatedTicks,
             bool IsDelete,
             Guid UserCreatedId,
-            Guid UserUpdatedId)
+            Guid UserUpdatedId,
+            Guid SelectedRoute)
         {
             return $@"
                 INSERT INTO {nameof(Day)} (
@@ -40,7 +41,8 @@ namespace DataBase.Data.SqlQuery
                     {nameof(Day.UpdatedTicks)},
                     {nameof(Day.IsDelete)},
                     {nameof(Day.UserCreatedId)},
-                    {nameof(Day.UserUpdatedId)}
+                    {nameof(Day.UserUpdatedId)},
+                    {nameof(Day.SelectedRoute)}
                 )
                 VALUES (
                     @{nameof(Id)}, 
@@ -58,7 +60,8 @@ namespace DataBase.Data.SqlQuery
                     @{nameof(UpdatedTicks)},
                     @{nameof(IsDelete)},
                     @{nameof(UserCreatedId)},
-                    @{nameof(UserUpdatedId)}
+                    @{nameof(UserUpdatedId)},
+                    @{nameof(SelectedRoute)}
                 )
                 ON CONFLICT({nameof(Day.Id)}) DO UPDATE SET
                     {nameof(Day.Description)} = @{nameof(Description)},
@@ -73,7 +76,8 @@ namespace DataBase.Data.SqlQuery
                     {nameof(Day.TotalPriceDifference)} = @{nameof(TotalPriceDifference)},
                     {nameof(Day.UpdatedTicks)} = @{nameof(UpdatedTicks)},
                     {nameof(Day.IsDelete)} = @{nameof(IsDelete)},
-                    {nameof(Day.UserUpdatedId)} = @{nameof(UserUpdatedId)};
+                    {nameof(Day.UserUpdatedId)} = @{nameof(UserUpdatedId)},
+                    {nameof(Day.SelectedRoute)} = @{nameof(SelectedRoute)};
             ";
         }
 
@@ -92,7 +96,7 @@ SELECT
   {nameof(Day)}.{nameof(Day.TotalPriceMoney)},
   {nameof(Day)}.{nameof(Day.TotalPriceDifference)},
   {nameof(Day)}.{nameof(Day.Description)},
-  {nameof(Day)}.{nameof(Day.DriverGuid)},
+  {nameof(Day)}.{nameof(Day.SelectedRoute)},
   {nameof(Day)}.{nameof(Day.Id)},
   {nameof(Day)}.{nameof(Day.CreatedTicks)},
   {nameof(Day)}.{nameof(Day.UpdatedTicks)},

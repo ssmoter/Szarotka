@@ -1,10 +1,10 @@
 ﻿
 
 using DataBase.Data;
+using DataBase.Helper;
 using DataBase.Model.EntitiesInventory;
 
 using Shared.Helper.Img;
-using Shared.Model;
 using Shared.Service;
 
 namespace Shared.Data
@@ -44,6 +44,9 @@ namespace Shared.Data
             if (oldVersion < 3)
             {
                 await CopyDriverGuidToUserCreatedIdAndUserUpdateId();
+                await _db.DbAsyncAoT.ExecuteAsync($"ALTER TABLE {nameof(Day)} ADD COLUMN {nameof(Day.SelectedRoute)} TEXT;");
+
+
                 progressBar += updateProgressBar;
                 oldVersion = 3;
                 updateInventory?.Invoke(progressBar, oldVersion);

@@ -36,6 +36,7 @@
     <!-- PackageReference Microsoft.AspNetCore.Components.WebView.Maui usuni?ty: nie hostujemy BlazorWebView w tej bibliotece -->
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Model\" />
     <Folder Include="Platforms\Android\" />
     <Folder Include="Platforms\Windows\" />
   </ItemGroup>

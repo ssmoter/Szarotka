@@ -1,6 +1,6 @@
 ﻿using DataBase.Data;
 
-namespace Shared.Model
+namespace DataBase.Helper
 {
     public static class HelperTableExtension
     {
@@ -35,13 +35,13 @@ namespace Shared.Model
             });
         }
 
-        public static HelperTable GetHelperTable(this string name, IAccessDataBaseAoT accessDataBase)
+        public static HelperTable? GetHelperTable(this string name, IAccessDataBaseAoT accessDataBase)
         {
             var query = HelperTable.GetQuery(name);
             var result = accessDataBase.DbSyncAoT.Query<HelperTable>(query, new() { [nameof(name)] = name });
             return result?.FirstOrDefault();
         }
-        public static async Task<HelperTable> GetHelperTableAsync(this string name, IAccessDataBaseAoT accessDataBase)
+        public static async Task<HelperTable?> GetHelperTableAsync(this string name, IAccessDataBaseAoT accessDataBase)
         {
             var query = HelperTable.GetQuery(name);
             var result = await accessDataBase.DbAsyncAoT.QueryAsync<HelperTable>(query, param: new() { [nameof(name)] = name });

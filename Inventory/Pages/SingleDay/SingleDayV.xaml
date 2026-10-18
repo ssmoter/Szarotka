@@ -343,6 +343,14 @@
                                 FontSize="Micro"
                                 VerticalOptions="Center" />
                         </HorizontalStackLayout>
+
+
+                        <CustomControls:DisplayRouteName Padding="10,0,0,0" IdRoute="{Binding Day.SelectedRoute}">
+                            <CustomControls:DisplayRouteName.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ChangeSelectedRouteCommand}" />
+                            </CustomControls:DisplayRouteName.GestureRecognizers>
+                        </CustomControls:DisplayRouteName>
+
                     </VerticalStackLayout>
 
 

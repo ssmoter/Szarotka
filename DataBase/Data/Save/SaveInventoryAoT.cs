@@ -103,7 +103,8 @@ namespace DataBase.Data.Save
                                                             [nameof(Day.UpdatedTicks)] = day.UpdatedTicks,
                                                             [nameof(Day.IsDelete)] = day.IsDelete,
                                                             [nameof(Day.UserCreatedId)] = day.UserCreatedId,
-                                                            [nameof(Day.UserUpdatedId)] = day.UserUpdatedId
+                                                            [nameof(Day.UserUpdatedId)] = day.UserUpdatedId,
+                                                            [nameof(Day.SelectedRoute)] = day.SelectedRoute
                                                         });
             }
             catch (Exception)
@@ -130,14 +131,18 @@ namespace DataBase.Data.Save
             {
                 day.Id = Guid.CreateVersion7();
             }
-            ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SaveDay)} is null");
+            ArgumentNullException.ThrowIfNull(driverId, $"{nameof(driverId)} in {nameof(SetDay)} is null");
             if (new Guid(driverId) == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(driverId), $"{nameof(SaveDay)} is not valid as guid");
+                throw new ArgumentNullException(nameof(driverId), $"{nameof(SetDay)} is not valid as guid");
             }
             if (day.UserCreatedId == Guid.Empty)
             {
                 day.UserCreatedId = new Guid(driverId);
+            }
+            if (day.SelectedRoute == Guid.Empty)
+            {
+                throw new ArgumentException($"{nameof(day.SelectedRoute)} in {nameof(SetDay)} is not valid as guid");
             }
             userUpdateId = day.UserUpdatedId.ToByteArray();
             day.UserUpdatedId = new Guid(driverId);
@@ -157,7 +162,8 @@ namespace DataBase.Data.Save
                                             day.UpdatedTicks,
                                             day.IsDelete,
                                             day.UserCreatedId,
-                                            day.UserUpdatedId);
+                                            day.UserUpdatedId,
+                                            day.SelectedRoute);
         }
         public async Task<UpdateLog> SaveDaysTransaction(IList<Day> days, bool isServer = false)
         {
@@ -196,7 +202,8 @@ namespace DataBase.Data.Save
                                                  [nameof(Day.UpdatedTicks)] = day.UpdatedTicks,
                                                  [nameof(Day.IsDelete)] = day.IsDelete,
                                                  [nameof(Day.UserCreatedId)] = day.UserCreatedId,
-                                                 [nameof(Day.UserUpdatedId)] = day.UserUpdatedId
+                                                 [nameof(Day.UserUpdatedId)] = day.UserUpdatedId,
+                                                 [nameof(Day.SelectedRoute)] = day.SelectedRoute
                                              });
 
                     await SaveProductsTransaction(day.Products, userUpdatedId, isServer);

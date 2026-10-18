@@ -28,8 +28,7 @@ public partial class DbMappers
             if (ordinalsObj is not DayFromQueryOrdinals ords)
                 throw new ArgumentException("Invalid ordinals object for DayFromQuery mapper", nameof(ordinalsObj));
 
-            var day = new GetInventoryAoT.DayFromQuery();
-
+            var day = new GetInventoryAoT.DayFromQuery();            
             // Map fields from DayOrdinals
             if (ords.Description >= 0 && !reader.IsDBNull(ords.Description)) day.Description = reader.GetString(ords.Description); else day.Description = string.Empty;
             if (ords.SelectedDateString >= 0 && !reader.IsDBNull(ords.SelectedDateString)) day.SelectedDateString = reader.GetString(ords.SelectedDateString); else day.SelectedDateString = string.Empty;
@@ -41,6 +40,14 @@ public partial class DbMappers
             if (ords.TotalPriceAfterCorrect >= 0 && !reader.IsDBNull(ords.TotalPriceAfterCorrect)) day.TotalPriceAfterCorrect = reader.GetInt32(ords.TotalPriceAfterCorrect); else day.TotalPriceAfterCorrect = 0;
             if (ords.TotalPriceMoney >= 0 && !reader.IsDBNull(ords.TotalPriceMoney)) day.TotalPriceMoney = reader.GetInt32(ords.TotalPriceMoney); else day.TotalPriceMoney = 0;
             if (ords.TotalPriceDifference >= 0 && !reader.IsDBNull(ords.TotalPriceDifference)) day.TotalPriceDifference = reader.GetInt32(ords.TotalPriceDifference); else day.TotalPriceDifference = 0;
+            if (ords.SelectedRoute >= 0 && !reader.IsDBNull(ords.SelectedRoute))
+            {
+                var uu = reader.GetString(ords.SelectedRoute);
+                day.SelectedRoute = string.IsNullOrEmpty(uu) ? Guid.Empty : new Guid(uu);
+            }
+            else
+                day.SelectedRoute = Guid.Empty;
+
 
             // Map Json fields
             if (ords.JsonProducts >= 0 && !reader.IsDBNull(ords.JsonProducts)) day.JsonProducts = reader.GetString(ords.JsonProducts); else day.JsonProducts = string.Empty;

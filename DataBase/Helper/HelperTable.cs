@@ -1,6 +1,6 @@
-﻿namespace Shared.Model
+﻿namespace DataBase.Helper
 {
-    public partial class HelperTable : DataBase.Model.BaseEntities<Guid>
+    public partial class HelperTable : Model.BaseEntities<Guid>
     {
         [SQLite.Unique]
         public string Name { get; set; }

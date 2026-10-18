@@ -1,12 +1,12 @@
 ﻿using CommunityToolkit.Maui.Alerts;
 
 using DataBase.Data;
+using DataBase.Helper;
 using DataBase.Model;
 using DataBase.Service;
 
 using Microsoft.Data.Sqlite;
 
-using Shared.Model;
 using Shared.Service;
 
 namespace Shared.Data

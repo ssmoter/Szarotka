@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
 using DataBase.Data.Get;
+using DataBase.Helper;
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesRoutes;
 using DataBase.Model.EntitiesServer;
@@ -31,15 +32,18 @@ namespace Inventory.Pages.Main
         private readonly IAccessDataBaseAoT _db;
         private readonly DataBase.Data.Get.IGetInventoryAoT _get;
         private readonly DataBase.Service.ITimeService _time;
+        private readonly IGetDriverRoutesAoT _getRoutes;
 
         public MainVM(IAccessDataBaseAoT db,
                       DataBase.Data.Get.IGetInventoryAoT get,
-                      DataBase.Service.ITimeService time)
+                      DataBase.Service.ITimeService time,
+                      IGetDriverRoutesAoT getRoutes)
         {
             _db = db;
             _get = get;
             MainM = new MainM();
             _time = time;
+            _getRoutes = getRoutes;
         }
 
         [RelayCommand]
@@ -132,10 +136,45 @@ namespace Inventory.Pages.Main
                 var products = await _get.EmptyProducts();
                 var productsSorted = products.Where(x => x.Name.IsVisible && !x.Name.IsDelete).OrderBy(x => x.Name.Arrangement);
 
+                day.SelectedRoute = await GetSelectedRoute();
+
                 day.Products = new System.Collections.ObjectModel.ObservableCollection<DataBase.Model.EntitiesInventory.Product>(productsSorted);
             }
 
             return day;
+        }
+
+        private async Task<Guid> GetSelectedRoute()
+        {
+            var name = $"{nameof(Day)}.{nameof(Day.SelectedRoute)}";
+            var route = await name.GetHelperTableAsync(_db);
+            if (route is not null && !string.IsNullOrWhiteSpace(route.Value))
+            {
+                return new Guid(route.Value);
+            }
+
+            var all = await _getRoutes.Routes();
+            Guid selected = Guid.Empty;
+
+            var result = await Shell.Current.DisplayActionSheetAsync("Wybierz trasę", "Anuluj", null, [.. all.Select(x => x.Name)]);
+
+            selected = all.FirstOrDefault(x => x.Name == result)?.Id ?? Guid.Empty;
+
+            if (selected != Guid.Empty)
+            {
+                var helperTable = new HelperTable()
+                {
+                    Name = name,
+                    Value = selected.ToString(),
+                    Created = _db.TimeService.UtcNow(),
+                    Updated = _db.TimeService.UtcNow(),
+                    Id = Guid.CreateVersion7(),
+                    UserCreatedId = UserAfterLogin.User.Id,
+                    UserUpdatedId = UserAfterLogin.User.Id,
+                };
+                await helperTable.SetAsync(_db);
+            }
+            return selected;
         }
 
 
@@ -154,8 +193,8 @@ namespace Inventory.Pages.Main
 
             var customer = new CustomerRoutes()
             {
-                DayOfWeek=new(),
-                ResidentialAddress=new(),                
+                DayOfWeek = new(),
+                ResidentialAddress = new(),
             };
 
             IList<UpdateDifference> exists = [];

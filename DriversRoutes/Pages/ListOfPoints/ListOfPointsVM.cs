@@ -476,7 +476,6 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
 
     async Task<HttpResponseMessage> SendData(IList<CustomerRoutes> customers, bool forceUpdate, CancellationTokenSource sourceToken = default)
     {
-        await Toast.Make("Wysyłanie listy").Show();
 
         bool onConflict = sourceToken is not null;
 
@@ -515,7 +514,6 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
                 updateJson, SzarotkaJsonSerializerContext.Default.UpdateLog);
 
             await _updateLogService.Insert(update);
-            await Toast.Make("Wysyłanie Zakończone bez komplikacji").Show();
         }
 
         return resultMessage;
@@ -525,7 +523,6 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
     {
         if (resultMessage.StatusCode == HttpStatusCode.Conflict)
         {
-            await Toast.Make("Wysyłanie Zakończone. Pobierane są różnice do poprawy").Show();
 
             using var progressDifference = UpdateProgressBar.CreatedUpdateProgressBar(
                     title: "Pobieranie różnic"
@@ -587,7 +584,6 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
         await SaveCustomers(customersToSave, true);
         if (exists.Count > 0)
         {
-            await Toast.Make("Popraw różnice").Show();
             var navigationParameter = new Dictionary<string, object>
                      {
                         { nameof(UpdateDifference), exists },
@@ -663,7 +659,6 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
                     IList<CustomerRoutes> dowloandCustomers = await _getHttp.GetCustomerRoutes([.. logToDowloand.Select(x => new Guid(x.UpdateId))], progressDownload, cancellationTokenSource.Token);
                     await SaveCustomersFromDowloand(dowloandCustomers);
                 }
-                await Toast.Make("Synchronizacja zakończona").Show();
                 GetPointsFireAndForget(Route, lastSelectedDayOfWeekRoutes);
 
             }, cancellationTokenSource.Token);
@@ -736,10 +731,10 @@ public partial class ListOfPointsVM : ObservableObject, IQueryAttributable
         {
             return;
         }
-        await Toast.Make("Rozpoczęto Pobieranie").Show();
         using var sourceToken = new CancellationTokenSource();
         try
         {
+            await Toast.Make("Rozpoczęto Pobieranie").Show();
             await Task.Run(async () =>
             {
 

@@ -114,7 +114,7 @@
                         ColumnDefinitions="auto,auto"
                         ColumnSpacing="10"
                         HorizontalOptions="Center"
-                        RowDefinitions="*,auto,*,auto,*,auto,*,auto,*,auto,*,auto,*,auto,*,auto,*,auto,auto"
+                        RowDefinitions="*,auto,*,auto,*,auto,*,auto,*,auto,*,auto,*,auto,*,auto,*,auto,*,auto,auto"
                         RowSpacing="10">
 
 
@@ -328,8 +328,27 @@
 
                         <Border Grid.Row="17" Grid.ColumnSpan="2" />
 
-                        <Grid
+
+                        <Label
                             Grid.Row="18"
+                            Grid.Column="0"
+                            FontSize="Medium"
+                            Text="Trasa:"
+                            VerticalOptions="Center" />
+
+                        <CustomControls:DisplayRouteName
+                            Grid.Row="18"
+                            Grid.Column="1"
+                            FontSize="Medium"
+                            IdRoute="{Binding Day.SelectedRoute}"
+                            LineBreakMode="CharacterWrap"
+                            OnlyRoute="True" />
+
+
+                        <Border Grid.Row="19" Grid.ColumnSpan="2" />
+
+                        <Grid
+                            Grid.Row="20"
                             Grid.ColumnSpan="2"
                             ColumnDefinitions="auto,*"
                             ColumnSpacing="5"

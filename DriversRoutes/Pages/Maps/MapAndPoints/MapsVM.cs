@@ -17,6 +17,9 @@ using Shared.CustomControls;
 using Shared.Data;
 
 using System.Collections.ObjectModel;
+using System.Drawing;
+
+using static Microsoft.Maui.ApplicationModel.Permissions;
 
 namespace DriversRoutes.Pages.Maps.MapAndPoints;
 
@@ -590,6 +593,8 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
     {
         if (mapsM is null)
             return;
+        if (mapsM.CustomerRoutes.Id == Guid.Empty)
+            return;
 
         var mapSpan = new MapSpan(mapsM.Pin.Location, 0.005, 0.005);
         OnGoToLocation(mapSpan);
@@ -618,6 +623,8 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
             {
                 return;
             }
+            if (point.CustomerRoutes.Id == Guid.Empty)
+                return;
 
             await Shell.Current.GoToAsync($"{nameof(Pages.Customer.DisplayCustomer.DisplayCustomerV)}?",
                 new Dictionary<string, object>()
@@ -686,6 +693,10 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
     {
         try
         {
+            if (selectDayMs is null)
+            {
+                return;
+            }
             var result = await MoveTimeOnCustomersV.ShowPopUp(Routes, selectDayMs, _get, _save, _update, _popupService);
             if (result)
             {
@@ -717,6 +728,9 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
             {
                 return;
             }
+            if (customer.Id == Guid.Empty)
+                return;
+
             var points = new ObservableCollection<CustomerRoutes>(AllPoints.Select(x => x.CustomerRoutes));
             await Shell.Current.GoToAsync($"{nameof(Pages.Maps.Navigate.NavigateV)}?",
                 new Dictionary<string, object>()

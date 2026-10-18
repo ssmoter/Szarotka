@@ -175,7 +175,7 @@ public partial class LoginUser : ObservableObject
     }
 }
 
-public class ConfirmCode : BaseEntities<int>
+public partial class ConfirmCode : BaseEntities<int>
 {
     public Guid UserId { get; set; }
     public int Code { get; set; }
@@ -199,7 +199,7 @@ public enum UserType
     Confectioner = 1,
     Baker = 2,
 }
-public record struct UserTypeAndFriendlyName(string Name, UserType Type)
+public partial record struct UserTypeAndFriendlyName(string Name, UserType Type)
 {
     public static implicit operator (string name, UserType type)(UserTypeAndFriendlyName value)
     {
@@ -211,7 +211,7 @@ public record struct UserTypeAndFriendlyName(string Name, UserType Type)
         return new UserTypeAndFriendlyName(value.name, value.type);
     }
 }
-public class EditUser
+public partial class EditUser
 {
     public User Old { get; set; } = new();
     public User New { get; set; } = new();

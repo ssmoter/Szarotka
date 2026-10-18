@@ -18,6 +18,7 @@ public partial class DbMappers
         public int TotalPriceAfterCorrect { get; }
         public int TotalPriceMoney { get; }
         public int TotalPriceDifference { get; }
+        public int SelectedRoute { get; }
 
         public DayOrdinals(SqliteDataReader reader) : base(reader)
         {
@@ -32,6 +33,7 @@ public partial class DbMappers
             TotalPriceAfterCorrect = reader.GetOptionalOrdinal(nameof(Day.TotalPriceAfterCorrect));
             TotalPriceMoney = reader.GetOptionalOrdinal(nameof(Day.TotalPriceMoney));
             TotalPriceDifference = reader.GetOptionalOrdinal(nameof(Day.TotalPriceDifference));
+            SelectedRoute = reader.GetOptionalOrdinal(nameof(Day.SelectedRoute));
         }
     }
 
@@ -139,6 +141,17 @@ public partial class DbMappers
             {
                 day.TotalPriceDifference = 0;
             }
+
+
+
+            if (ords.SelectedRoute >= 0 && !reader.IsDBNull(ords.SelectedRoute))
+            {
+                var uu = reader.GetString(ords.SelectedRoute);
+                day.SelectedRoute = string.IsNullOrEmpty(uu) ? Guid.Empty : new Guid(uu);
+            }
+            else
+                day.SelectedRoute = Guid.Empty;
+
 
             MapBaseFields(reader, day, ords);
 

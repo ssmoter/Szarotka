@@ -38,6 +38,7 @@ public partial class DbMappers
         InitUpdateLogMappers();
         InitTableInfoMappers();
         InitRefreshTokenMappers();
+        InitHelperTableMappers();
     }
 
     public static Func<SqliteDataReader, object, T> Get<T>()

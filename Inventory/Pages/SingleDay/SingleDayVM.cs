@@ -67,12 +67,14 @@ namespace Inventory.Pages.SingleDay
         private readonly IGetInventoryAoT _get;
         private readonly Data.InventoryApi.ISendDayHttp _sendHttp;
         private readonly DataBase.Service.IUpdateLogService _updateLogService;
+        private readonly IGetDriverRoutesAoT _getDriverRoutesAoT;
 
         public SingleDayVM(IAccessDataBaseAoT db,
             ISaveInventoryAoT saveInventoryAoT,
             IGetInventoryAoT get,
             Data.InventoryApi.ISendDayHttp sendHttp,
-            DataBase.Service.IUpdateLogService updateLogService)
+            DataBase.Service.IUpdateLogService updateLogService,
+            IGetDriverRoutesAoT getDriverRoutesAoT)
         {
             _db = db;
             Day ??= new();
@@ -82,6 +84,7 @@ namespace Inventory.Pages.SingleDay
             _get = get;
             _sendHttp = sendHttp;
             _updateLogService = updateLogService;
+            _getDriverRoutesAoT = getDriverRoutesAoT;
         }
 
 
@@ -840,6 +843,33 @@ namespace Inventory.Pages.SingleDay
             finally
             {
                 SingleDayM.IsModelSend = false;
+            }
+        }
+
+
+
+        [RelayCommand]
+        async Task ChangeSelectedRoute()
+        {
+            var routes = await _getDriverRoutesAoT.Routes();
+
+            var result = await Shell.Current.DisplayActionSheetAsync("Wybierz trasę",
+                                                                "Anuluj",
+                                                                null,
+                                                                [.. routes.Select(x => x.Name)]);
+            if (result is null)
+            {
+                return;
+            }
+            if (result == "Anuluj")
+            {
+                return;
+            }
+            var selectedRoute = routes.FirstOrDefault(x => x.Name == result);
+
+            if (selectedRoute is not null)
+            {
+                Day.SelectedRoute = selectedRoute.Id;
             }
         }
     }

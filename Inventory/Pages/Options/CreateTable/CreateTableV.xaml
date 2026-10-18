@@ -4,12 +4,10 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:VM="clr-namespace:Inventory.Pages.Options.CreateTable"
+    xmlns:modelR="clr-namespace:DataBase.Model.EntitiesRoutes;assembly=DataBase"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:Name="View"
     x:DataType="VM:CreateTableVM">
-
-
-
-
 
     <Border>
         <Border.StrokeShape>
@@ -17,6 +15,20 @@
         </Border.StrokeShape>
 
         <VerticalStackLayout Padding="5">
+
+            <HorizontalStackLayout>
+                <Label Text="Ustawiona trasa:" VerticalOptions="Center" />
+                <Picker
+                    Title="Wybierz trasę"
+                    ItemsSource="{Binding Routes}"
+                    SelectedItem="{Binding SelectedRoutes}"
+                    VerticalOptions="Center">
+                    <Picker.ItemDisplayBinding>
+                        <Binding Path="Name" />
+                    </Picker.ItemDisplayBinding>
+                </Picker>
+            </HorizontalStackLayout>
+
 
             <Label HorizontalOptions="End" VerticalOptions="Start">
                 <Label.FormattedText>
