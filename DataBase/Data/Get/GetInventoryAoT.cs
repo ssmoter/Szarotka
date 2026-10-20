@@ -17,7 +17,7 @@ namespace DataBase.Data.Get
         Task<IList<ProductPrice>> GetProductPrices(Guid nameId);
     }
 
-    public class GetInventoryAoT(IAccessDataBaseAoT db) : IGetInventoryAoT
+    public partial class GetInventoryAoT(IAccessDataBaseAoT db) : IGetInventoryAoT
     {
         private readonly IAccessDataBaseAoT _db = db;
 
@@ -47,15 +47,15 @@ namespace DataBase.Data.Get
                         DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.ObservableCollectionCake);
                 if (products is not null)
                 {
-                    day.Products = products;
+                    day.Products = [.. products.Where(x => !x.IsDelete)];
                 }
                 if (cakes is not null)
                 {
-                    day.Cakes = cakes;
+                    day.Cakes = [.. cakes.Where(x => !x.IsDelete)];
                 }
             }
 
-            return [.. result.Select(x => new Day(x))];
+            return [.. result.Where(z => !z.IsDelete).Select(x => new Day(x))];
         }
 
 
@@ -93,7 +93,7 @@ namespace DataBase.Data.Get
 
         public async Task<ProductName?> GetProductName(Guid Id)
         {
-            var result = await _db.DbAsyncAoT.QueryAsync<ProductName>(_sqlGetProductName,param: new() { [nameof(ProductName.Id)] = Id });
+            var result = await _db.DbAsyncAoT.QueryAsync<ProductName>(_sqlGetProductName, param: new() { [nameof(ProductName.Id)] = Id });
             return result?.FirstOrDefault();
         }
 

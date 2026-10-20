@@ -51,7 +51,7 @@ namespace DataBase.Data.Get
                     item.ResidentialAddress = address;
                 }
             }
-            return [.. result.Select(x => new CustomerRoutes(x))];
+            return [.. result.Where(z => !z.IsDelete).Select(x => new CustomerRoutes(x))];
         }
         public async Task<IList<Routes>> Routes()
         {
