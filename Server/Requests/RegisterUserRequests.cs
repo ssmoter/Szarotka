@@ -25,7 +25,7 @@ namespace Server.Requests
                                     , IEmailConfirmService emailConfirmService
                                     , ITimeService time
                                     , ILogger<RegisterUserRequests>? logger = null,
-Service.IAuthenticationService authenticationService = null) : IRegisterUserRequests
+Service.IAuthenticationService? authenticationService = null) : IRegisterUserRequests
     {
         private readonly IAccessDataBaseAoT _db = db;
         private readonly IRegisterUserService _registerService = register;
@@ -33,7 +33,7 @@ Service.IAuthenticationService authenticationService = null) : IRegisterUserRequ
         private readonly IEmailService _emailService = emailService;
         private readonly IEmailConfirmService _emailConfirmService = emailConfirmService;
         private readonly ITimeService _time = time;
-        private readonly Service.IAuthenticationService _authenticationService = authenticationService;
+        private readonly Service.IAuthenticationService _authenticationService = authenticationService!;
         private readonly ILogger<RegisterUserRequests> _logger = logger ?? NullLogger<RegisterUserRequests>.Instance;
 
         public async Task<IResult> InsertUser(RegisterUser registerUser, CancellationToken token = default)

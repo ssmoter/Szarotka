@@ -719,31 +719,6 @@ public partial class MapsVM : ObservableObject, IDisposable, IQueryAttributable
         StepSelected = MovingViewInSteps.StepDown(StepSelected);
     }
 
-    [RelayCommand]
-    async Task NavigationToRoutes(CustomerRoutes customer)
-    {
-        try
-        {
-            if (customer is null)
-            {
-                return;
-            }
-            if (customer.Id == Guid.Empty)
-                return;
-
-            var points = new ObservableCollection<CustomerRoutes>(AllPoints.Select(x => x.CustomerRoutes));
-            await Shell.Current.GoToAsync($"{nameof(Pages.Maps.Navigate.NavigateV)}?",
-                new Dictionary<string, object>()
-                {
-                    [nameof(ObservableCollection<CustomerRoutes>)] = points,
-                    [nameof(CustomerRoutes)] = customer
-                });
-        }
-        catch (Exception ex)
-        {
-            _db.SaveLogExtension(ex);
-        }
-    }
 
     [RelayCommand]
     void RefreshView()

@@ -2,11 +2,10 @@
 {
     public partial class HelperTable : Model.BaseEntities<Guid>
     {
-        [SQLite.Unique]
-        public string Name { get; set; }
-        public string Value { get; set; }
+        public string Name { get; set; } = "";
+        public string Value { get; set; } = "";
 
-        public HelperTable()
+        public HelperTable() : base()
         { }
         public HelperTable(string name, string value)
         {

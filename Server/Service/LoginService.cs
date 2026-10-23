@@ -44,20 +44,6 @@ namespace Server.Service
             _userValidation.Validation.Throw();
 
             firstUser!.UserUpdatedId = firstUser.Id;
-            if (user.RememberMe != firstUser.RememberMe)
-            {
-                firstUser.RememberMe = user.RememberMe;
-                firstUser.Updated = _timeService.UtcNow();
-                sql = LoginQuery.UpdateRememberMe(firstUser.RememberMe, firstUser.UpdatedTicks, firstUser.UserUpdatedId, firstUser.Id);
-                _ = await _db.DbAsyncAoT.ExecuteAsync(sql, param: new()
-                {
-                    [nameof(firstUser.RememberMe)] = firstUser.RememberMe,
-                    [nameof(firstUser.UpdatedTicks)] = firstUser.UpdatedTicks,
-                    [nameof(firstUser.UserUpdatedId)] = firstUser.UserUpdatedId,
-                    [nameof(firstUser.Id)] = firstUser.Id
-                });
-                _logger.LogInformation("LogIn: updated RememberMe for userId={UserId} to {RememberMe}", firstUser.Id, firstUser.RememberMe);
-            }
 
             _logger.LogInformation("LogIn succeeded for userId={UserId}", firstUser.Id);
             return firstUser;

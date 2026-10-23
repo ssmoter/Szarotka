@@ -30,9 +30,4 @@ public partial class Driver : BaseEntities<Guid>
         }
     }
 }
-public partial class SelectedDriver : BaseEntities<int>
-{
-    [ObservableProperty]
-    private Guid selectedGuid;
-}
 

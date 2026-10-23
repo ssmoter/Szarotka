@@ -16,7 +16,6 @@ public partial class DbMappers
         public int PhoneNumber { get; }
         public int UserType { get; }
         public int IsEmailConfirm { get; }
-        public int RememberMe { get; }
 
         public UserOrdinals(SqliteDataReader reader) : base(reader)
         {
@@ -26,7 +25,6 @@ public partial class DbMappers
             PhoneNumber = reader.GetOptionalOrdinal(nameof(User.PhoneNumber));
             UserType = reader.GetOptionalOrdinal(nameof(User.UserType));
             IsEmailConfirm = reader.GetOptionalOrdinal(nameof(User.IsEmailConfirm));
-            RememberMe = reader.GetOptionalOrdinal(nameof(User.RememberMe));
         }
     }
 
@@ -48,7 +46,6 @@ public partial class DbMappers
             if (ords.PhoneNumber >= 0 && !reader.IsDBNull(ords.PhoneNumber)) u.PhoneNumber = reader.GetString(ords.PhoneNumber); else u.PhoneNumber = string.Empty;
             if (ords.UserType >= 0 && !reader.IsDBNull(ords.UserType)) u.UserType = (UserType)reader.GetInt32(ords.UserType); else u.UserType = default;
             if (ords.IsEmailConfirm >= 0 && !reader.IsDBNull(ords.IsEmailConfirm)) u.IsEmailConfirm = reader.GetInt32(ords.IsEmailConfirm) == 1; else u.IsEmailConfirm = false;
-            if (ords.RememberMe >= 0 && !reader.IsDBNull(ords.RememberMe)) u.RememberMe = reader.GetInt32(ords.RememberMe) == 1; else u.RememberMe = false;
 
             MapBaseFields(reader, u, ords);
 
@@ -85,7 +82,6 @@ public partial class DbMappers
             if (ords.PhoneNumber >= 0 && !reader.IsDBNull(ords.PhoneNumber)) ru.PhoneNumber = reader.GetString(ords.PhoneNumber); else ru.PhoneNumber = string.Empty;
             if (ords.UserType >= 0 && !reader.IsDBNull(ords.UserType)) ru.UserType = (UserType)reader.GetInt32(ords.UserType); else ru.UserType = default;
             if (ords.IsEmailConfirm >= 0 && !reader.IsDBNull(ords.IsEmailConfirm)) ru.IsEmailConfirm = reader.GetInt32(ords.IsEmailConfirm) == 1; else ru.IsEmailConfirm = false;
-            if (ords.RememberMe >= 0 && !reader.IsDBNull(ords.RememberMe)) ru.RememberMe = reader.GetInt32(ords.RememberMe) == 1; else ru.RememberMe = false;
 
             if (!reader.IsDBNull(ords.Password)) ru.Password = reader.GetString(ords.Password); else ru.Password = string.Empty;
 
@@ -100,12 +96,10 @@ public partial class DbMappers
     {
         public int Email { get; }
         public int Password { get; }
-        public int RememberMe { get; }
         public LoginUserOrdinals(SqliteDataReader reader)
         {
             Email = reader.GetOptionalOrdinal(nameof(LoginUser.Email));
             Password = reader.GetOptionalOrdinal(nameof(LoginUser.Password));
-            RememberMe = reader.GetOptionalOrdinal(nameof(LoginUser.RememberMe));
         }
     }
 
@@ -122,7 +116,6 @@ public partial class DbMappers
             var lu = new LoginUser();
             if (ords.Email >= 0 && !reader.IsDBNull(ords.Email)) lu.Email = reader.GetString(ords.Email); else lu.Email = string.Empty;
             if (ords.Password >= 0 && !reader.IsDBNull(ords.Password)) lu.Password = reader.GetString(ords.Password); else lu.Password = string.Empty;
-            if (ords.RememberMe >= 0 && !reader.IsDBNull(ords.RememberMe)) lu.RememberMe = reader.GetInt32(ords.RememberMe) == 1; else lu.RememberMe = false;
 
             return lu;
         }));

@@ -98,7 +98,7 @@ namespace Shared.Pages.FlyoutHeader
                 await FadeOutElement(view);
                 CustomContent = null;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

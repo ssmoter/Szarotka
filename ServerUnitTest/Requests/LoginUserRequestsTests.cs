@@ -72,16 +72,16 @@ namespace ServerUnitTest.Requests
         public async Task RefreshToken_ValidToken_ReturnsOkResult()
         {
             // Arrange
-            var newToken = new User { AccessToken = "newToken" };
-            var token = new User { AccessToken = "validToken" };
+            var newToken = new User { AccessToken = "newToken", RefreshToken = new() { ExpireDate = DateTime.Now.AddDays(1).Ticks, Value = Guid.CreateVersion7().ToString() } };
 
-            _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<RefreshToken>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync(new RefreshToken[] { new() });
+            _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<RefreshToken>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync([newToken.RefreshToken]);
+            _mockDb.Setup(db => db.DbAsyncAoT.QueryAsync<User>(It.IsAny<string>(), It.IsAny<Dictionary<string, object?>>())).ReturnsAsync([newToken]);
             _mockAuthenticationService.Setup(s => s.AuthenticateAsyncAccess(It.IsAny<User>())).ReturnsAsync(newToken);
-            //_mockAuthenticationService.Setup(s => s.AuthenticateAsyncRefresh(token)).ReturnsAsync(newToken);
+            _mockAuthenticationService.Setup(s => s.AuthenticateAsyncRefresh(newToken)).ReturnsAsync(newToken);
             _mockLoginService.Setup(x => x.GetPublicUser(It.IsAny<string>())).ReturnsAsync(new User());
 
             // Act
-            var result = await _loginUserRequests.NewRefreshToken(token.RefreshToken);
+            var result = await _loginUserRequests.NewRefreshToken(newToken.RefreshToken);
 
             // Assert
             Assert.IsType<Ok<User>>(result);

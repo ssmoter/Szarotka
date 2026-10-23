@@ -25,7 +25,7 @@ public partial class MainOptionsVM : ObservableObject, IQueryAttributable
     }
 
 
-    private string serverUrl;
+    private string serverUrl="";
     public string ServerUrl
     {
         get => serverUrl;

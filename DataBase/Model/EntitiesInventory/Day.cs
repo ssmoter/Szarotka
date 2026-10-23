@@ -32,8 +32,8 @@ public partial class Day : BaseEntities<Guid>, IDisposable
             }
         }
     }
-
     private Guid driverGuid;
+    [Ignore]
     [JsonIgnore]
     public Guid DriverGuid
     {

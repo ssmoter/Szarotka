@@ -188,7 +188,6 @@ namespace DataBase.Data.Save
                                              {
                                                  [nameof(Day.Id)] = day.Id,
                                                  [nameof(Day.Description)] = day.Description,
-                                                 [nameof(Day.DriverGuid)] = day.DriverGuid,
                                                  [nameof(Day.SelectedDateString)] = day.SelectedDateString,
                                                  [nameof(Day.SelectedDateTicks)] = day.SelectedDateTicks,
                                                  [nameof(Day.TotalPriceProducts)] = day.TotalPriceProducts,

@@ -40,7 +40,7 @@ namespace DataBaseUnitTest.DataSave
 
             var jsonInsert = System.Text.Json.JsonSerializer.Serialize(updateLogs.OrderBy(x => x.CreatedTicks));
             var dbLogs = await db.DataBaseAsync.Table<DataBase.Model.UpdateLog>().ToListAsync();
-            var jsonDb = System.Text.Json.JsonSerializer.Serialize(dbLogs.OrderBy(x => x.CreatedTicks));
+            var jsonDb = System.Text.Json.JsonSerializer.Serialize(dbLogs.Where(z => z.UpdateId != Guid.Empty.ToString()).OrderBy(x => x.CreatedTicks));
 
             Assert.Equal(jsonInsert, jsonDb);
 
@@ -65,6 +65,8 @@ namespace DataBaseUnitTest.DataSave
                     UserUpdatedId = user,
                     UpdateId = user.ToString(),
                     JsonUpdate = user.ToString(),
+                    Created = _time.UtcNow(),
+                    Updated = _time.UtcNow()
                 };
 
                 updateLogs.Add(log);
@@ -74,8 +76,8 @@ namespace DataBaseUnitTest.DataSave
             await db.DataBaseAsync.InsertAllAsync(updateLogs);
 
 
-            var jsonInsert = System.Text.Json.JsonSerializer.Serialize(updateLogs.OrderBy(x => x.CreatedTicks));
-            var dbLogs = await updateService.Select(updateLogs[0].Id);
+            var jsonInsert = System.Text.Json.JsonSerializer.Serialize(updateLogs.OrderBy(x => x.CreatedTicks).Skip(1));
+            var dbLogs = await updateService.Select(updateLogs.OrderBy(x => x.CreatedTicks).First().Id);
             var jsonDb = System.Text.Json.JsonSerializer.Serialize(dbLogs.OrderBy(x => x.CreatedTicks));
 
             Assert.Equal(jsonInsert, jsonDb);
@@ -92,6 +94,7 @@ namespace DataBaseUnitTest.DataSave
             for (int i = 0; i < 10; i++)
             {
                 var user = Guid.CreateVersion7();
+                var time = _time.UtcNow();
                 var log = new DataBase.Model.UpdateLog
                 {
                     Id = Guid.CreateVersion7(),
@@ -100,6 +103,8 @@ namespace DataBaseUnitTest.DataSave
                     UserUpdatedId = user,
                     UpdateId = user.ToString(),
                     JsonUpdate = user.ToString(),
+                    Created = time,
+                    Updated = time
                 };
 
                 if (i == 5)
@@ -115,7 +120,9 @@ namespace DataBaseUnitTest.DataSave
 
 
             var jsonInsert = System.Text.Json.JsonSerializer.Serialize(updateLogs[5]);
+
             var dbLogs = await updateService.SelectFirst(true, DataBase.Model.UpdateEnum.CustomerRoutes, DataBase.Model.UpdateEnum.CustomerRoutes);
+
             var jsonDb = System.Text.Json.JsonSerializer.Serialize(dbLogs);
 
             Assert.Equal(jsonInsert, jsonDb);

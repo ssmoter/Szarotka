@@ -37,18 +37,11 @@ namespace Shared.Data
             }
             if (oldVersion < 2)
             {
-                progressBar += updateProgressBar;
-                oldVersion = 2;
-                updateInventory?.Invoke(progressBar, oldVersion);
-            }
-            if (oldVersion < 3)
-            {
                 await CopyDriverGuidToUserCreatedIdAndUserUpdateId();
                 await _db.DbAsyncAoT.ExecuteAsync($"ALTER TABLE {nameof(Day)} ADD COLUMN {nameof(Day.SelectedRoute)} TEXT;");
 
-
                 progressBar += updateProgressBar;
-                oldVersion = 3;
+                oldVersion = 2;
                 updateInventory?.Invoke(progressBar, oldVersion);
             }
 

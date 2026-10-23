@@ -3,15 +3,9 @@ using DataBase.Model.SourceGenerator;
 
 using Shared.Helper;
 
-using System;
-using System.IO;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace Shared.Data.ServerHttpClients
 {
@@ -107,7 +101,7 @@ namespace Shared.Data.ServerHttpClients
         }
 
         // Pomocnicza metoda do głębokiego klonowania obiektów HttpRequestMessage i resetowania strumieni
-        private async Task<HttpRequestMessage> CloneHttpRequestMessageAsync(HttpRequestMessage req)
+        private static async Task<HttpRequestMessage> CloneHttpRequestMessageAsync(HttpRequestMessage req)
         {
             var clone = new HttpRequestMessage(req.Method, req.RequestUri)
             {

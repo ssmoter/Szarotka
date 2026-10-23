@@ -6,7 +6,7 @@ using DataBase.Model;
 using DataBase.Model.EntitiesRoutes;
 using DataBase.Model.EntitiesServer;
 using DataBase.Service;
-using Microsoft.Extensions.Logging;
+
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Server.Requests
@@ -107,6 +107,7 @@ namespace Server.Requests
             try
             {
                 _logger.LogInformation("GetCustomers(ids) started for {Count} ids", ids?.Length ?? 0);
+                ArgumentNullException.ThrowIfNull(ids, nameof(ids));
                 CustomerRoutes[] customers = new CustomerRoutes[ids.Length];
                 for (int i = 0; i < ids.Length; i++)
                 {
@@ -149,7 +150,7 @@ namespace Server.Requests
         {
             try
             {
-                _logger.LogInformation("UpdateCustomer started for customerId={CustomerId}", customer?.Id);
+                _logger.LogInformation("UpdateCustomer started for customerId={CustomerId}", customer.Id);
                 if (customer.Id == Guid.Empty || customer.Longitude < 0 || customer.Latitude < 0)
                 {
                     _logger.LogWarning("UpdateCustomer: invalid customer data for customerId={CustomerId}", customer?.Id);
@@ -195,13 +196,14 @@ namespace Server.Requests
             try
             {
                 _logger.LogInformation("UpdateCustomers started for {Count} customers", customers?.Count ?? 0);
+                ArgumentNullException.ThrowIfNull(customers, nameof(customers));
                 token.ThrowIfCancellationRequested();
                 IList<UpdateDifference> exists = [];
 
                 UpdateLog? firstLog = null;
                 foreach (CustomerRoutes customer in customers)
                 {
-                    _logger.LogDebug("UpdateCustomers: processing customerId={CustomerId}", customer?.Id);
+                    _logger.LogDebug("UpdateCustomers: processing customerId={CustomerId}", customer.Id);
                     (bool canUpdate, CustomerRoutes? isExist) = await ModelsDifferences.Check(_get, customer, forceUpdate);
 
                     if (canUpdate)

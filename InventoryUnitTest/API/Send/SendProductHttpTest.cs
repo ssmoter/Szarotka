@@ -28,8 +28,6 @@ namespace InventoryUnitTest.API.Send
         [Fact]
         public async Task SendProductHttp()
         {
-            var a = _factory.CreateClient();
-
             var testList = await _getInventoryAoT.EmptyProductsNameAndPrices();
             var emptyProdukt = new EmptyProducts(testList);
 

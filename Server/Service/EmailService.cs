@@ -19,7 +19,6 @@ namespace Server.Service
     public class EmailService(IConfiguration configuration, ILogger<EmailService>? logger = null) : IEmailService
     {
         private readonly EmailConfiguration? _emailConfig = configuration.GetSection(nameof(EmailConfiguration)).Get<EmailConfiguration>();
-        private readonly SecureSocketOptions _secureSocketOptions = SecureSocketOptions.StartTls;
         private readonly ILogger<EmailService> _logger = logger ?? NullLogger<EmailService>.Instance;
 
         public async Task SendMessage(string to, string subject, string body, CancellationToken token = default)

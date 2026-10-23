@@ -23,7 +23,7 @@ namespace DataBaseUnitTest.DataSave
 
             var day = new Day()
             {
-                DriverGuid = driverId,
+                SelectedRoute = driverId,
             };
             await saveInventory.SaveDay(day, driverId.ToByteArray());
 

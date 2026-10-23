@@ -56,9 +56,6 @@
     <MauiXaml Update="Pages\Maps\MapSmall\MapSmallV.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
-    <MauiXaml Update="Pages\Maps\Navigate\NavigateV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
     <MauiXaml Update="Pages\Options\CreateTable\CreateTableRoutesV.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>

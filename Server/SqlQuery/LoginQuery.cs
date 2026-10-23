@@ -18,7 +18,6 @@ SELECT
 {nameof(User.PhoneNumber)},
 {nameof(User.IsDelete)},
 {nameof(User.IsEmailConfirm)},
-{nameof(User.RememberMe)},
 {nameof(User.UserUpdatedId)},
 {nameof(User.UserCreatedId)}
 FROM {nameof(User)}
@@ -30,19 +29,7 @@ LIMIT 1
 ";
             return sql;
         }
-        public static string UpdateRememberMe(bool RememberMe, long UpdatedTicks, Guid UserUpdatedId, Guid Id)
-        {
-            string sql = @$"
-UPDATE {nameof(User)}
-SET
-{nameof(User.RememberMe)} = @{nameof(RememberMe)},
-{nameof(User.UpdatedTicks)} = @{nameof(UpdatedTicks)},
-{nameof(User.UserUpdatedId)} = @{nameof(UserUpdatedId)}
-WHERE
-{nameof(User.Id)} = @{nameof(Id)}
-";
-            return sql;
-        }
+
         public static string InFromId(string Id)
         {
             string sql = @$"
@@ -57,7 +44,6 @@ SELECT
 {nameof(User.PhoneNumber)},
 {nameof(User.IsDelete)},
 {nameof(User.IsEmailConfirm)},
-{nameof(User.RememberMe)},
 {nameof(User.UserUpdatedId)},
 {nameof(User.UserCreatedId)}
 FROM {nameof(User)}

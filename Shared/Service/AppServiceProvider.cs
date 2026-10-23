@@ -2,6 +2,9 @@
 {
     public static class AppServiceProvider
     {
+        // Właściwość pozwalająca testom na ręczne ustawienie dostawcy usług
+        public static IServiceProvider TestServiceProvider { get; set; }
+
         public static TService GetService<TService>()
             => Current.GetService<TService>();
         public static IServiceProvider Current
@@ -15,7 +18,7 @@
             IPlatformApplication.Current.Services;
             //MauiUIApplicationDelegate.Current.Services;
 #else
-         new Microsoft.Extensions.DependencyInjection.ServiceCollection().BuildServiceProvider();
+        TestServiceProvider ?? new Microsoft.Extensions.DependencyInjection.ServiceCollection().BuildServiceProvider();
 #endif
     }
 }

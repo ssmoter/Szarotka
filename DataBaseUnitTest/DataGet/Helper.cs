@@ -37,7 +37,7 @@ namespace DataBaseUnitTest.DataGet
                     Updated = time,
                     Created = time,
                     UserCreatedId = user,
-                    DriverGuid = user,
+                    SelectedRoute = user,
                     UserUpdatedId = user,
                     TotalPriceMoney = rnd.Next(0, 1000),
                     Products = [.. GetExampleProducts(names, prices, id,user)],

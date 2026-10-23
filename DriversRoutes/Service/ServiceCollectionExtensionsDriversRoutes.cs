@@ -2,7 +2,6 @@
 
 using DriversRoutes.Data.GoogleApi;
 using DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses;
-using DriversRoutes.Pages.Maps.Controls;
 using DriversRoutes.Pages.Popups.MoveTimeOnCustomers;
 using DriversRoutes.Pages.Popups.SelectDay;
 
@@ -37,14 +36,10 @@ namespace DriversRoutes.Service
             services.AddScoped<Pages.Maps.MapSmall.MapSmallV>();
             services.AddScoped<Pages.Maps.MapSmall.MapSmallVM>();
 
-            services.AddScoped<Pages.Maps.Navigate.NavigateV>();
-            services.AddScoped<Pages.Maps.Navigate.NavigateVM>();
-
 
             services.AddScoped<Data.RouteApi.IGetCustomersHttp, Data.RouteApi.GetCustomersHttp>();
             services.AddScoped<Data.RouteApi.ISendCustomersHttp, Data.RouteApi.SendCustomersHttp>();
 
-            services.AddSingleton<BlazorMap>();
 
             services.AddScopedPopup<SelectDayV, SelectDayVM>();
             services.AddScopedPopup<ProbableAddressesV, ProbableAddressesVM>();

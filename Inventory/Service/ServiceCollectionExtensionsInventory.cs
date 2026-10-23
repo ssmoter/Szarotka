@@ -26,8 +26,6 @@ namespace Inventory.Service
 
             services.AddTransient<Pages.RangeDay.PopupSelectRangeDate.PopupSelectRangeDateV>();
 
-            services.AddScoped<Pages.RangeDay.Graph.GraphV>();
-            //services.AddScoped<Pages.RangeDay.Graph.GraphVM>();
 
             services.AddSingleton<Pages.SingleDay.SingleDayV>();
 

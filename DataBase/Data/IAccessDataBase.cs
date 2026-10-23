@@ -3,6 +3,8 @@ using DataBase.Service;
 
 using SQLite;
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace DataBase.Data
 {
     public interface IAccessDataBase
@@ -20,7 +22,7 @@ namespace DataBase.Data
         public ISQLiteAsyncConnection DataBaseAsync { get; private set; }
         public ISQLiteConnection DataBase { get; private set; }
         private ITimeService _timeService;
-
+#pragma warning disable CS8618
         public AccessDataBase()
         {
             Init(Constants.DatabasePath, new CurrentUtc(), Constants.Flags, ensureFolder: true);
@@ -55,16 +57,17 @@ namespace DataBase.Data
             Init(path, time ?? new CurrentUtc(), Flags, ensureFolder: false);
         }
 
+
         private void Init(string path, ITimeService time, SQLiteOpenFlags flags, bool ensureFolder)
         {
             if (ensureFolder)
                 CreatedFolderPath();
-            DataBaseAsync ??= new SQLiteAsyncConnection(path, flags);
-            DataBase ??= new SQLiteConnection(path, flags);
+            DataBaseAsync = new SQLiteAsyncConnection(path, flags);
+            DataBase = new SQLiteConnection(path, flags);
             _timeService = time;
             ConfigureDatabase();
         }
-
+#pragma warning restore CS8618
 
 
         public void SaveLog(Exception ex)

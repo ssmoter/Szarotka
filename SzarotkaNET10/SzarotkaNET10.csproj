@@ -32,7 +32,7 @@
 		<!-- Display name -->
 		<ApplicationTitle>Szarotka</ApplicationTitle>
 		<ApplicationId>com.szarotka.szarotka</ApplicationId>
-		<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
+		<ApplicationDisplayVersion>1.3.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 		<WindowsPackageType>MSIX</WindowsPackageType>
 		

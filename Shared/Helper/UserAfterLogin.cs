@@ -72,37 +72,43 @@ namespace Shared.Helper
 
         public static event Action<User, bool> OnLogin;
 
-        private readonly static IAccessDataBaseAoT _db;
-        private readonly static IAuthService _auth;
-        private readonly static ILoginHttp _loginHttp;
+        private static IAccessDataBaseAoT _db;
+        private static IAuthService _auth;
+        private static ILoginHttp _loginHttp;
 
         static UserAfterLogin()
+        {
+            Init();
+
+            OnLogin?.Invoke(new(), true);
+        }
+
+        private static void Init()
         {
             var db = Shared.Service.AppServiceProvider.GetService<IAccessDataBaseAoT>();
             var auth = Shared.Service.AppServiceProvider.GetService<IAuthService>();
             var loginHttp = Shared.Service.AppServiceProvider.GetService<ILoginHttp>();
             if (db is not null)
             {
-                _db = db;
+                _db ??= db;
             }
             if (auth is not null)
             {
-                _auth = auth;
+                _auth ??= auth;
             }
             if (loginHttp is not null)
             {
-                _loginHttp = loginHttp;
+                _loginHttp ??= loginHttp;
             }
-
-            OnLogin?.Invoke(new(), true);
         }
 
-        static bool _tryToLogin = true;
+        private static bool _tryToLogin = true;
 
         public static async Task SetLoginUser(User token, bool validateLifetime = true)
         {
             try
             {
+                Init();
                 ArgumentNullException.ThrowIfNull(token);
                 await _auth.SaveTokensAsync(token.AccessToken, token.RefreshToken);
 
@@ -151,6 +157,7 @@ namespace Shared.Helper
         {
             try
             {
+                Init();
                 var refreshToken = await _auth.GetRefreshTokenAsync();
                 var accessToken = await _auth.GetAccessTokenAsync();
                 User user = new();
@@ -187,6 +194,7 @@ namespace Shared.Helper
 
         public static async Task RemoveLoginUser()
         {
+            Init();
             var token = await _auth.GetRefreshTokenAsync();
             var result = await _loginHttp.Out(token);
             if (result.IsSuccessStatusCode)

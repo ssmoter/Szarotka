@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 using Moq;
 
@@ -42,7 +43,18 @@ namespace DataBaseUnitTest
         public IList<CustomerRoutes> AllCustomers { get; private set; } = [];
         public IList<Day> AllDays { get; private set; } = [];
         public IList<EmptyProduct> AllProducts { get; private set; } = [];
+        public Mock<IAuthService> MockAuthService { get; private set; } = new Mock<IAuthService>();
 
+
+
+        protected override IHost CreateHost(IHostBuilder builder)
+        {
+            var host = base.CreateHost(builder);
+
+            //Shared.Service.AppServiceProvider.TestServiceProvider = host.Services;
+
+            return host;
+        }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -59,7 +71,6 @@ namespace DataBaseUnitTest
             {
                 services.RemoveAll<IAccessDataBaseAoT>();
                 services.RemoveAll<IHttpClientFactory>();
-
 
                 services.AddSingleton<ITimeService, CurrentUtc>();
 
@@ -86,26 +97,30 @@ namespace DataBaseUnitTest
 
                 // 3. Autoryzujemy i ustawiamy sesję (tutaj bezpiecznie robimy await)
 
-                var mockAuthService = new Mock<IAuthService>();
                 //_mockTimeService.Setup(ts => ts.UtcNow()).Returns(DateTime.UtcNow);
 
+                bool setOne = false;
                 services.AddSingleton<IAuthService>(opt =>
                 {
                     User = SetAutorizedUser();
                     var token = JwtToken.AuthenticateAsyncAccess(User).GetAwaiter().GetResult();
                     token = JwtToken.AuthenticateAsyncRefresh(User).GetAwaiter().GetResult();
-                    mockAuthService.Setup(x => x.GetAccessTokenAsync()).ReturnsAsync(token.AccessToken);
-                    mockAuthService.Setup(x => x.GetRefreshTokenAsync()).ReturnsAsync(token.RefreshToken);
-                    mockAuthService.Setup(x => x.SaveTokensAsync(It.IsAny<string>(), It.IsAny<RefreshToken>())).Returns(Task.CompletedTask);
-                    mockAuthService.Setup(x => x.SaveTokens(It.IsAny<string>(), It.IsAny<RefreshToken>()));
-                    UserAfterLogin.SetLoginUser(token).GetAwaiter().GetResult();
-
-                    return mockAuthService.Object;
+                    MockAuthService.Setup(x => x.GetAccessTokenAsync()).ReturnsAsync(token.AccessToken);
+                    MockAuthService.Setup(x => x.GetRefreshTokenAsync()).ReturnsAsync(token.RefreshToken);
+                    MockAuthService.Setup(x => x.SaveTokensAsync(It.IsAny<string>(), It.IsAny<RefreshToken>())).Returns(Task.CompletedTask);
+                    MockAuthService.Setup(x => x.SaveTokens(It.IsAny<string>(), It.IsAny<RefreshToken>()));
+                    if (setOne)
+                    {
+                        setOne = true;
+                        UserAfterLogin.SetLoginUser(token).GetAwaiter().GetResult();
+                    }
+                    return MockAuthService.Object;
                 });
-
                 services.AddTransient<AuthHeaderHandler>();
 
                 services.AddSingleton<IHttpClientFactory>(new LocalHttpClientFactory(this));
+
+                Shared.Service.AppServiceProvider.TestServiceProvider = services.BuildServiceProvider();
             });
 
         }
@@ -202,11 +217,11 @@ namespace DataBaseUnitTest
         extern static ref IAccessDataBaseAoT? SetDB(
         [UnsafeAccessorType("Shared.Helper.UserAfterLogin,Shared")] object? dummy
         );
+
         [UnsafeAccessor(UnsafeAccessorKind.StaticMethod, Name = "ServerUrl")]
         extern static void SetUrl(
            [UnsafeAccessorType("DataBase.Helper.Constants,DataBase")] object? dummy, string value
         );
-
 
     }
 

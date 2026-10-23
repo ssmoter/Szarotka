@@ -78,7 +78,7 @@ namespace Server.Requests
         {
             try
             {
-                _logger.LogInformation("UpdateDescription started for userId={UserId}", edit?.New?.Id);
+                _logger.LogInformation("UpdateDescription started for userId={UserId}", edit.New.Id);
                 token.ThrowIfCancellationRequested();
                 _userValidation.Validation.Throw();
                 await UpdateDescriptionTask(edit);
@@ -105,7 +105,7 @@ namespace Server.Requests
         {
             try
             {
-                _logger.LogInformation("UpdateName started for userId={UserId}", edit?.New?.Id);
+                _logger.LogInformation("UpdateName started for userId={UserId}", edit.New.Id);
                 token.ThrowIfCancellationRequested();
                 await UpdateNameTask(edit);
                 _userValidation.Validation.Throw();
@@ -132,7 +132,7 @@ namespace Server.Requests
         {
             try
             {
-                _logger.LogInformation("UpdateEmail started for userId={UserId}", edit?.New?.Id);
+                _logger.LogInformation("UpdateEmail started for userId={UserId}", edit.New.Id);
                 token.ThrowIfCancellationRequested();
                 await UpdateEmailTask(edit);
                 _userValidation.Validation.Throw();
@@ -159,7 +159,7 @@ namespace Server.Requests
         {
             try
             {
-                _logger.LogInformation("UpdatePhoneNumber started for userId={UserId}", edit?.New?.Id);
+                _logger.LogInformation("UpdatePhoneNumber started for userId={UserId}", edit.New.Id);
                 token.ThrowIfCancellationRequested();
                 await UpdatePhoneNumberTask(edit);
                 _userValidation.Validation.Throw();
@@ -186,7 +186,7 @@ namespace Server.Requests
         {
             try
             {
-                _logger.LogInformation("UpdateUserType started for userId={UserId}", edit?.New?.Id);
+                _logger.LogInformation("UpdateUserType started for userId={UserId}", edit.New.Id);
                 token.ThrowIfCancellationRequested();
                 await UpdateUserTypeTask(edit);
                 _userValidation.Validation.Throw();
