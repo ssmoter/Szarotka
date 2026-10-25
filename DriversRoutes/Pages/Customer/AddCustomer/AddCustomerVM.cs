@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
 using DataBase.Data.Get;
+using DataBase.Helper;
 using DataBase.Model.EntitiesRoutes;
 using DataBase.Model.EntitiesServer;
 using DataBase.Model.SourceGenerator;
@@ -314,7 +315,7 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
                     IsServer = false,
                 }, Customer);
 
-                await Send();
+                Send().Forget();
 
                 await Shell.Current.GoToAsync($"..?", new Dictionary<string, object>()
                 {

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
+using DataBase.Helper;
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesServer;
 using DataBase.Model.SourceGenerator;
@@ -190,7 +191,6 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
 
         private async Task SaveProduct()
         {
-            string json = "";
             try
             {
                 var userId = UserAfterLogin.User.Id.ToByteArray();
@@ -208,35 +208,50 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
 
                 await Toast.Make("Zapisano").Show();
 
-                var (httpMessage, content) = await _sendHttp.SendProduct(
-                    new EmptyProduct()
-                    {
-                        Name = Product.Name,
-                        Prices = product.Prices,
-                    });
+                Send().Forget();
 
-                var result = httpMessage;
+            }
+            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Conflict)
+            {
+                //HttpStatusCode.Conflict został obłużony wyżej jako zwrot danych do poprawy przy edycji
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLogExtension(ex);
+            }
+        }
 
-                json = content;
-
-                if (result.IsSuccessStatusCode)
+        private async Task Send()
+        {
+            var (httpMessage, content) = await _sendHttp.SendProduct(
+                new EmptyProduct()
                 {
-                    var update = System.Text.Json.JsonSerializer.Deserialize(json, SzarotkaJsonSerializerContext.Default.UpdateLog);
-                    await _updateLog.Insert(update);
-                }
-                else if (result.StatusCode == System.Net.HttpStatusCode.Conflict)
-                {
-                    var differenceName = System.Text.Json.JsonSerializer.Deserialize(json, SzarotkaJsonSerializerContext.Default.ProductName);
+                    Name = Product.Name,
+                    Prices = product.Prices,
+                });
 
-                    UpdateDifference[] updateDifference = [
-                        new UpdateDifference()
+            var result = httpMessage;
+
+            var json = content;
+
+            if (result.IsSuccessStatusCode)
+            {
+                var update = System.Text.Json.JsonSerializer.Deserialize(json, SzarotkaJsonSerializerContext.Default.UpdateLog);
+                await _updateLog.Insert(update);
+            }
+            else if (result.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                var differenceName = System.Text.Json.JsonSerializer.Deserialize(json, SzarotkaJsonSerializerContext.Default.ProductName);
+
+                UpdateDifference[] updateDifference = [
+                    new UpdateDifference()
                         {
                         Server = differenceName,
                         Update = Product.Name
                     }];
 
-                    await Toast.Make("Popraw różnice").Show();
-                    var navigationParameter = new Dictionary<string, object>
+                await Toast.Make("Popraw różnice").Show();
+                var navigationParameter = new Dictionary<string, object>
                      {
                         { nameof(UpdateDifference), updateDifference },
                         {nameof(Action),(Action<IEnumerable>)(async (returnAfterDifference)
@@ -259,22 +274,14 @@ namespace Inventory.Pages.Products.ListProduct.AddEdit
                             })
                         }
                  };
-                    await Shell.Current.GoToAsync(nameof(UpdateDifferenceV), navigationParameter);
+                await Shell.Current.GoToAsync(nameof(UpdateDifferenceV), navigationParameter);
 
-                }
-                else
-                {
-                    result.EnsureSuccessStatusCode();
-                }
             }
-            catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Conflict)
+            else
             {
-                //HttpStatusCode.Conflict został obłużony wyżej jako zwrot danych do poprawy przy edycji
+                result.EnsureSuccessStatusCode();
             }
-            catch (Exception ex)
-            {
-                _db.SaveLogExtension(ex);
-            }
+
         }
 
         [RelayCommand]

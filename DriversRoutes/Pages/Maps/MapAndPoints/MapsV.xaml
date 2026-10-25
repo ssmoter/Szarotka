@@ -435,7 +435,7 @@
             IsShowingUser="True"
             IsTrafficEnabled="{Binding IsTrafficEnabled}"
             ItemsSource="{Binding AllPoints}"
-            MapClicked="Map_MapClicked"
+            MapClicked="Map_MapClicked"            
             MapType="{Binding MapType}"
             ZIndex="1">
 

@@ -3,7 +3,6 @@
 		<TargetFrameworks>net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
 		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
 
-
 		<OutputType>Exe</OutputType>
 		<RootNamespace>Szarotka</RootNamespace>
 		<UseMaui>true</UseMaui>
@@ -14,16 +13,26 @@
 		<StaticWebAssetsEnabled>true</StaticWebAssetsEnabled>
 		<DisableStaticWebAssetsDevelopmentManifest>false</DisableStaticWebAssetsDevelopmentManifest>
 		-->
-		
+
 		<EnableDefaultCssItems>false</EnableDefaultCssItems>
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
-		<TrimMode>partial</TrimMode>
 
-		
-		<!-- REWOLUCJA DLA .NET 10: Prawidłowa konfiguracja architektur dla Androida android-arm64;
-		-->
+		<!-- Nowa kompilacja XAML z generatorów kodu w .NET 10 -->
+		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
+		<XamlCompilation>Compile</XamlCompilation>
+
+		<!-- Opcje wspólne dla kompilacji niezależnej (Self-Contained) -->
+		<SelfContained>true</SelfContained>
+
+		<!-- 2. Rozbicie Fat APK na mniejsze pliki per architektura CPU -->
+		<AndroidCreatePackagePerAbi>true</AndroidCreatePackagePerAbi>
+
+		<!-- 3. Optymalizacja kodu natywnego Androida -->
+		<AndroidLinkTool>r8</AndroidLinkTool>
+		<StripDebugSymbols>true</StripDebugSymbols>
+
+		<!-- REWOLUCJA DLA .NET 10: Prawidłowa konfiguracja architektur dla Androida android-arm64; -->
 		<RuntimeIdentifiers Condition="$(TargetFramework.Contains('-android'))">android-x64</RuntimeIdentifiers>
 
 		<!-- ROZWIĄZANIE BŁĘDU SQLITE: Wymuszenie spakowania bibliotek natywnych .so w trybie Debug -->
@@ -35,7 +44,7 @@
 		<ApplicationDisplayVersion>1.3.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 		<WindowsPackageType>MSIX</WindowsPackageType>
-		
+
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.3</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
@@ -44,6 +53,29 @@
 		<Title>Szarotka</Title>
 		<AssemblyName>Szarotka</AssemblyName>
 	</PropertyGroup>
+
+	<!-- ========================================================================= -->
+	<!-- NOWA KONFIGURACJA OPTYMALIZACJI I INTERPRETERA (.NET 10)                  -->
+	<!-- ========================================================================= -->
+
+	<!-- Konfiguracja WYDANIA (Release): Włączamy maksymalną optymalizację i AOT, wyłączamy interpreter -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<PublishTrimmed>true</PublishTrimmed>
+		<TrimMode>partial</TrimMode>
+		<RunAOTCompilation>true</RunAOTCompilation>
+		<!-- Kluczowa poprawka: Wyłączenie interpretera w Release zapobiega konfliktom z AOT -->
+		<UseInterpreter>false</UseInterpreter>
+	</PropertyGroup>
+
+	<!-- Konfiguracja DEBUGOWANIA (Debug): Wyłączamy okrajanie kodu, włączamy interpreter do Hot Reload -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<PublishTrimmed>false</PublishTrimmed>
+		<RunAOTCompilation>false</RunAOTCompilation>
+		<!-- Kluczowa poprawka: Włączenie interpretera pozwala na stabilne działanie Hot Reload podczas pisania kodu -->
+		<UseInterpreter>true</UseInterpreter>
+	</PropertyGroup>
+
+	<!-- ========================================================================= -->
 
 	<ItemGroup>
 		<!-- App Icon -->
@@ -70,17 +102,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Platforms\Android\Resources\xml\network_security_config.xml" />
+		<None Remove="Platforms\Android\Resources\xml\network_security_config.xml" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <AndroidResource Include="Platforms\Android\Resources\xml\network_security_config.xml" />
+		<AndroidResource Include="Platforms\Android\Resources\xml\network_security_config.xml" />
 	</ItemGroup>
+
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.9" />
-		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.80" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.80" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.9" />		
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.13" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.120" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.120" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.13" />
 		<!--
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.80" />
 		-->
@@ -137,6 +170,4 @@
 	<Target Name="StaticWebAssetsPrepareForRun" />
 	<Target Name="StaticWebAssetsPrepareForPublish" />
 	<Target Name="LoadStaticWebAssetsPublishManifest" />
-
-
 </Project>

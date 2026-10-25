@@ -48,7 +48,7 @@ namespace DriversRoutes.Data
             using var skImage = SKImage.FromEncodedData(stream0);
             stream0.Position = 0;
 
-            skCanvas.DrawImage(skImage, new SKPoint(0, 16));
+            skCanvas.DrawImage(skImage, new SKPoint(0, 16),new SKSamplingOptions(SKFilterMode.Linear));
 
             //Get a Microsoft.Maui.Graphics.ICanvas used by Maui to draw
 
@@ -77,7 +77,7 @@ namespace DriversRoutes.Data
 
             using var skImageApliques = SKImage.FromEncodedData(stream1);
 
-            skCanvas.DrawImage(skImageApliques, new SKPoint(0, 0));
+            skCanvas.DrawImage(skImageApliques, new SKPoint(0, 0), new SKSamplingOptions(SKFilterMode.Linear));
 
             //Upload to Azure Blob Storage or wherever you want
 
