@@ -379,3 +379,6 @@ FodyWeavers.xsd
 /Server/Development/updatelog.sql
 /Server/Development/szarotka_produkcyjna — kopia.db3
 /Apk
+/wdroz.ps1
+/wlacz-serwer.ps1
+/wylacz-serwer.ps1

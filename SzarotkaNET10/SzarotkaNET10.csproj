@@ -18,22 +18,19 @@
 		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
-		<!-- Nowa kompilacja XAML z generatorów kodu w .NET 10 -->
+		<!-- Nowa kompilacja XAML z generatorów kodu w .NET 10 (Rozwiązanie ostrzeżenia o trimmowaniu) -->
 		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
 		<XamlCompilation>Compile</XamlCompilation>
 
 		<!-- Opcje wspólne dla kompilacji niezależnej (Self-Contained) -->
 		<SelfContained>true</SelfContained>
 
-		<!-- 2. Rozbicie Fat APK na mniejsze pliki per architektura CPU -->
+		<!-- Rozbicie Fat APK na mniejsze pliki per architektura CPU -->
 		<AndroidCreatePackagePerAbi>true</AndroidCreatePackagePerAbi>
 
-		<!-- 3. Optymalizacja kodu natywnego Androida -->
+		<!-- Optymalizacja kodu natywnego Androida -->
 		<AndroidLinkTool>r8</AndroidLinkTool>
 		<StripDebugSymbols>true</StripDebugSymbols>
-
-		<!-- REWOLUCJA DLA .NET 10: Prawidłowa konfiguracja architektur dla Androida android-arm64; -->
-		<RuntimeIdentifiers Condition="$(TargetFramework.Contains('-android'))">android-x64</RuntimeIdentifiers>
 
 		<!-- ROZWIĄZANIE BŁĘDU SQLITE: Wymuszenie spakowania bibliotek natywnych .so w trybie Debug -->
 		<EmbedAssembliesIntoApk Condition="'$(Configuration)' == 'Debug' and $(TargetFramework.Contains('-android'))">true</EmbedAssembliesIntoApk>
@@ -55,7 +52,7 @@
 	</PropertyGroup>
 
 	<!-- ========================================================================= -->
-	<!-- NOWA KONFIGURACJA OPTYMALIZACJI I INTERPRETERA (.NET 10)                  -->
+	<!-- KONFIGURACJA OPTYMALIZACJI I INTERPRETERA (.NET 10)                       -->
 	<!-- ========================================================================= -->
 
 	<!-- Konfiguracja WYDANIA (Release): Włączamy maksymalną optymalizację i AOT, wyłączamy interpreter -->
@@ -63,7 +60,7 @@
 		<PublishTrimmed>true</PublishTrimmed>
 		<TrimMode>partial</TrimMode>
 		<RunAOTCompilation>true</RunAOTCompilation>
-		<!-- Kluczowa poprawka: Wyłączenie interpretera w Release zapobiega konfliktom z AOT -->
+		<!-- Naprawa konfliktu: Wyłączenie interpretera pozwala na pełną natywną kompilację AOT -->
 		<UseInterpreter>false</UseInterpreter>
 	</PropertyGroup>
 
@@ -71,8 +68,22 @@
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
 		<PublishTrimmed>false</PublishTrimmed>
 		<RunAOTCompilation>false</RunAOTCompilation>
-		<!-- Kluczowa poprawka: Włączenie interpretera pozwala na stabilne działanie Hot Reload podczas pisania kodu -->
+		<!-- Naprawa konfliktu: Włączenie interpretera pozwala na stabilne Hot Reload podczas pisania kodu -->
 		<UseInterpreter>true</UseInterpreter>
+	</PropertyGroup>
+
+	<!-- ========================================================================= -->
+	<!-- DYNAMICZNY WYBÓR ARCHITEKTURY PROCESORA DLA ANDROIDA                       -->
+	<!-- ========================================================================= -->
+
+	<!-- Tryb DEBUG: Kompilacja pod procesor x64 dla super szybkiej pracy na emulatorze PC -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug' and $(TargetFramework.Contains('-android'))">
+		<RuntimeIdentifiers>android-x64</RuntimeIdentifiers>
+	</PropertyGroup>
+
+	<!-- Tryb RELEASE: Budowanie pod procesory telefonów ARM (wsparcie dla Androida 7 i nowszych) -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Release' and $(TargetFramework.Contains('-android'))">
+		<RuntimeIdentifiers>android-arm;android-arm64</RuntimeIdentifiers>
 	</PropertyGroup>
 
 	<!-- ========================================================================= -->
