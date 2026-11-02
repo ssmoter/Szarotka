@@ -1,5 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
+using DataBase.Validation;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -9,7 +10,6 @@ using Moq;
 using Server.Endpoints;
 using Server.Requests;
 using Server.Service;
-using Server.Validation;
 
 namespace ServerUnitTest.Requests
 {

@@ -117,7 +117,6 @@ namespace SzarotkaNET10
         {
             UserAfterLogin.OnLogin += UserAfterLogin_OnLogin;
             IsInitialized = true;
-
         }
 
         private void UserAfterLogin_OnLogin(User user, bool isLogin)

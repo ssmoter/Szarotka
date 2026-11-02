@@ -3,6 +3,7 @@ using DataBase.Data.Get;
 using DataBase.Data.MySqliteConnection;
 using DataBase.Data.Save;
 using DataBase.Model.EntitiesServer;
+using DataBase.Validation;
 
 namespace DataBase.Service
 {
@@ -33,6 +34,7 @@ namespace DataBase.Service
 
 
             services.AddScoped<IUpdateLogService, UpdateLogService>();
+            services.AddScoped<IUserValidation, UserValidation>();
 
             return services;
         }

@@ -8,9 +8,12 @@ using System.Text.Json.Serialization;
 namespace DataBase.Model.SourceGenerator;
 
 
+[JsonSerializable(typeof(IList<UpdateEnum>))]
+[JsonSerializable(typeof(UpdateEnum[]))]
 
 [JsonSerializable(typeof(RefreshToken))]
 [JsonSerializable(typeof(IList<Guid>))]
+[JsonSerializable(typeof(Guid[]))]
 
 [JsonSerializable(typeof(UpdateLog))]
 [JsonSerializable(typeof(UpdateLog[]))]

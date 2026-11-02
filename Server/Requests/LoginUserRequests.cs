@@ -1,10 +1,10 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
+using DataBase.Validation;
 
 using Microsoft.Extensions.Logging.Abstractions;
 
 using Server.Service;
-using Server.Validation;
 
 namespace Server.Requests
 {
@@ -51,7 +51,7 @@ namespace Server.Requests
                 var dbUser = await _loginService.LogIn(user);
                 _userValidation.AccountWasDelete(dbUser);
 
-                if (_userValidation.AccountEmailIsNotConfirm(dbUser) == Model.ServerEnums.Result.Error)
+                if (_userValidation.AccountEmailIsNotConfirm(dbUser) == ServerEnums.Result.Error)
                 {
                     await _emailConfirmService.SendVerificationEmailCode(dbUser, token);
                 }

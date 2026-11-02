@@ -41,7 +41,8 @@
             <Entry
                 x:Name="EntryName"
                 Placeholder="Nazwa"
-                Text="{Binding RegisterUser.Name}" />
+                Text="{Binding RegisterUser.Name}"
+                TextChanged="EntryName_TextChanged" />
 
             <Label Text="Nazwa jest wymagana">
                 <Label.Style>
@@ -60,7 +61,10 @@
                 </Label.Style>
             </Label>
 
-            <Entry Placeholder="Email" Text="{Binding RegisterUser.Email}" />
+            <Entry
+                Placeholder="Email"
+                Text="{Binding RegisterUser.Email}"
+                TextChanged="EntryEmail_TextChanged" />
 
             <Label x:Name="LabelEmailError" Text="{Binding RegisterM.EmailError}">
                 <Label.Style>

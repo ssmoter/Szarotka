@@ -5,6 +5,7 @@ using DataBase.Data;
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesServer;
 using DataBase.Translated;
+using DataBase.Validation;
 
 using Shared.Data;
 using Shared.Data.ServerHttpClients;
@@ -57,17 +58,30 @@ namespace Shared.Pages.Register
 
         private readonly IAccessDataBaseAoT _db;
         private readonly IRegisterHttp _registerHttp;
-        public RegisterVM(IAccessDataBaseAoT db, IRegisterHttp registerHttp)
+        private readonly IUserValidation _userValidation;
+        public RegisterVM(IAccessDataBaseAoT db, IRegisterHttp registerHttp, IUserValidation userValidation)
         {
             RegisterUser = new();
             RegisterM = new();
             _db = db;
-            var dri = _db.DataBase.Table<Driver>().ToArray();
-            Drivers = new ObservableCollection<Driver>(dri);
+            GetOldDrivers();
             _registerHttp = registerHttp;
+            _userValidation = userValidation;
         }
 
-        #region Methods
+        private void GetOldDrivers()
+        {
+            try
+            {
+                var dri = _db.DataBase.Table<Driver>().ToArray();
+                Drivers = new ObservableCollection<Driver>(dri);
+            }
+            catch (Exception)
+            {
+                Drivers = [];
+            }
+        }
+
         public void IsPasswordEqual()
         {
             if (RegisterUser.Password != RegisterM.ConfirmPassword)
@@ -81,10 +95,6 @@ namespace Shared.Pages.Register
         }
 
 
-
-
-        #endregion
-        #region Command
 
         [RelayCommand]
         void SetSelectedDriver(Driver driver)
@@ -108,31 +118,8 @@ namespace Shared.Pages.Register
         [RelayCommand]
         async Task CreatedNewAccount()
         {
-            RegisterM.EmailError = "";
-            RegisterM.PasswordError = "";
-
-            bool emailOrPasswordIsNull = false;
-
-            if (string.IsNullOrWhiteSpace(RegisterUser.Email))
-            {
-                RegisterM.EmailError = EnumsList.Validation.EmailIsNull.EmailValidation(RegisterM.EmailError);
-                emailOrPasswordIsNull = true;
-            }
-            if (string.IsNullOrWhiteSpace(RegisterUser.Password))
-            {
-                RegisterM.PasswordError = EnumsList.Validation.PasswordIsNull.PasswordsValidation(RegisterM.PasswordError);
-                emailOrPasswordIsNull = true;
-            }
-            if (string.IsNullOrWhiteSpace(RegisterUser.Name))
-            {
-                emailOrPasswordIsNull = true;
-            }
-            if (RegisterM.PasswordEquels)
-            {
-                emailOrPasswordIsNull = true;
-            }
-
-            if (emailOrPasswordIsNull)
+            bool flowControl = Validation();
+            if (!flowControl)
             {
                 return;
             }
@@ -160,6 +147,78 @@ namespace Shared.Pages.Register
             }
         }
 
-        #endregion
+        internal bool Validation()
+        {
+            RegisterM.EmailError = "";
+            RegisterM.PasswordError = "";
+
+            bool emailOrPasswordIsNull = false;
+
+
+            if (_userValidation.EmailValidFormat(RegisterUser.Email) == ServerEnums.Result.Error)
+            {
+                RegisterM.EmailError = EnumsList.Validation.EmailValidFormat.EmailValidation(RegisterM.EmailError);
+                emailOrPasswordIsNull = true;
+            }
+            if (_userValidation.EmailIsNull(RegisterUser.Email) == ServerEnums.Result.Error)
+            {
+                RegisterM.EmailError = EnumsList.Validation.EmailIsNull.EmailValidation(RegisterM.EmailError);
+                emailOrPasswordIsNull = true;
+            }
+
+            if (_userValidation.PasswordContainEmail(RegisterUser.Password, RegisterUser.Email) == ServerEnums.Result.Error)
+            {
+                RegisterM.PasswordError = EnumsList.Validation.PasswordContainEmail.PasswordsValidation(RegisterM.PasswordError);
+                emailOrPasswordIsNull = true;
+            }
+            if (_userValidation.PasswordLength8(RegisterUser.Password) == ServerEnums.Result.Error)
+            {
+                RegisterM.PasswordError = EnumsList.Validation.PasswordLength8.PasswordsValidation(RegisterM.PasswordError);
+                emailOrPasswordIsNull = true;
+            }
+            if (_userValidation.PasswordNoDigit(RegisterUser.Password) == ServerEnums.Result.Error)
+            {
+                RegisterM.PasswordError = EnumsList.Validation.PasswordNoDigit.PasswordsValidation(RegisterM.PasswordError); 
+                emailOrPasswordIsNull = true;
+            }
+            if (_userValidation.PasswordNoLower(RegisterUser.Password) == ServerEnums.Result.Error)
+            {
+                RegisterM.PasswordError = EnumsList.Validation.PasswordNoLower.PasswordsValidation(RegisterM.PasswordError);
+                emailOrPasswordIsNull = true;
+            }
+            if (_userValidation.PasswordNoSpecial(RegisterUser.Password) == ServerEnums.Result.Error)
+            {
+                RegisterM.PasswordError = EnumsList.Validation.PasswordNoSpecial.PasswordsValidation(RegisterM.PasswordError);
+                emailOrPasswordIsNull = true;
+            }
+            if (_userValidation.PasswordNoUpper(RegisterUser.Password) == ServerEnums.Result.Error)
+            {
+                RegisterM.PasswordError = EnumsList.Validation.PasswordNoUpper.PasswordsValidation(RegisterM.PasswordError);
+                emailOrPasswordIsNull = true;
+            }
+            if (_userValidation.PasswordIsNull(RegisterUser.Password) == ServerEnums.Result.Error)
+            {
+                RegisterM.PasswordError = EnumsList.Validation.PasswordIsNull.PasswordsValidation(RegisterM.PasswordError);
+                emailOrPasswordIsNull = true;
+            }
+
+
+
+            if (string.IsNullOrWhiteSpace(RegisterUser.Name))
+            {
+                emailOrPasswordIsNull = true;
+            }
+            if (RegisterM.PasswordEquels)
+            {
+                emailOrPasswordIsNull = true;
+            }
+
+            if (emailOrPasswordIsNull)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

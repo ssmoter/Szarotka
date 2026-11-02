@@ -1,5 +1,6 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
+using DataBase.Validation;
 
 using Microsoft.AspNetCore.Http;
 
@@ -8,7 +9,6 @@ using Moq;
 using Server.Model;
 using Server.Requests;
 using Server.Service;
-using Server.Validation;
 
 namespace ServerUnitTest.Requests;
 public class ResetPasswordRequestsTests

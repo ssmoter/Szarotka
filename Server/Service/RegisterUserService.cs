@@ -1,13 +1,13 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
 using DataBase.Service;
+using DataBase.Validation;
 
 using Microsoft.Extensions.Logging.Abstractions;
 
 using Server.Helper;
 using Server.Model;
 using Server.SqlQuery;
-using Server.Validation;
 
 namespace Server.Service
 {

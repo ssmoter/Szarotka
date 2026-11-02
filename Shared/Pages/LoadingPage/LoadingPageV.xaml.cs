@@ -46,8 +46,6 @@ public partial class LoadingPageV : ContentPage
     {
         try
         {
-            //nie działa
-            //_db.DbSyncAoT.Execute("PRAGMA wal_checkpoint(PASSIVE);"); 
             await UserAfterLogin.SetLoginUser();
             if (!UserAfterLogin.IsLogin)
             {
@@ -87,7 +85,7 @@ public partial class LoadingPageV : ContentPage
         {
             try
             {
-                await Shell.Current.GoToAsync(page);
+                await Shell.Current.GoToAsync($"//{page}");
             }
             catch (Exception navEx)
             {

@@ -1,4 +1,4 @@
-﻿namespace Server.Model
+﻿namespace DataBase.Model.EntitiesServer
 {
     public static class ServerEnums
     {

@@ -1,12 +1,12 @@
 ﻿using DataBase.Data;
 using DataBase.Model.EntitiesServer;
 using DataBase.Service;
+using DataBase.Validation;
 
 using Moq;
 
 using Server.Helper;
 using Server.Service;
-using Server.Validation;
 
 namespace ServerUnitTest.Service
 {

@@ -1,122 +1,157 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>net10.0;net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
-    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
-    <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
-    <!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
-    <UseMaui>true</UseMaui>
-    <SingleProject>true</SingleProject>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
-    <PublishAot>True</PublishAot>
-    <PublishTrimmed>True</PublishTrimmed>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
-    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
-    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
-    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
-    <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
-    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
-    <Platforms>AnyCPU;x86;x64</Platforms>
-    <!-- Nie dostarczamy static web assets z tej biblioteki -->
-    <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="33.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.13" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.13" />
-    <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="10.0.120" />
-    <PackageReference Include="MudBlazor" Version="9.11.0" />
-    <PackageReference Include="sqlite-net-pcl" Version="1.11.285" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.120" />
-    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.120" />
-    <PackageReference Include="CommunityToolkit.Maui" Version="15.0.1" />
-    <!-- PackageReference Microsoft.AspNetCore.Components.WebView.Maui usuni?ty: nie hostujemy BlazorWebView w tej bibliotece -->
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-    <Folder Include="Platforms\Android\" />
-    <Folder Include="Platforms\Windows\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DataBase\DataBase.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Pages\ExistingFiles\ExistingFilesV.xaml.cs">
-      <DependentUpon>%(Filename)</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <MauiXaml Update="CustomControls\StringImage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\ConfirmEmail\ConfirmEmailV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\ExistingFiles\ExistingFilesV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\FlyoutFooter\FlyoutFooterV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\FlyoutHeader\FlyoutHeaderV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\LoadingPage\LoadingPageV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\LogIn\ForgetPassword\ForgetPasswordV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\LogIn\LogInV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\Log\LogData\LogDataV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\Log\LogV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\Log\LogVWindows.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\Popups\SubAddLastValue\SubAddLastValueV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\Register\RegisterV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\UpdateDataBase\UpdateDataBaseV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\UpdateDifference\Templates\DriverRoutesUpdate.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\UpdateDifference\Templates\ProductNameUpdate.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\UpdateDifference\Templates\DayUpdate.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\UpdateDifference\UpdateDifferenceV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\UserDisplay\PopupUser\UserDisplayVPopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\UserDisplay\Small\UserDisplaySmallV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\UserDisplay\UserDisplayV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Pages\UserDisplay\UserEdit\UserEditV.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="Styles\SharedStyles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-  </ItemGroup>
+	<!-- ========================================================================= -->
+	<!-- KONFIGURACJA PROJEKTU I PLATFORM DOCELOWYCH                               -->
+	<!-- ========================================================================= -->
+	<PropertyGroup>
+		<TargetFrameworks>net10.0;net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
+		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com -->
+		<!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
+		<PublishAot>True</PublishAot>
+		<PublishTrimmed>True</PublishTrimmed>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+		<Platforms>AnyCPU;x86;x64</Platforms>
+		<!-- Nie dostarczamy static web assets z tej biblioteki -->
+		<StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
+		<Configurations>Debug;Release;ReleaseTest</Configurations>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<!-- Analiza kompatybilności z Native AOT i mechanizmem przycinania (Trimming) -->
+		<IsAotCompatible>true</IsAotCompatible>
+		<EnableAotAnalyzer>true</EnableAotAnalyzer>
+		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+		<EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
+
+		<!-- Opcjonalne: Traktuj ostrzeżenia AOT jako błędy kompilacji (zablokuje build w przypadku problemów) -->
+		<!-- IL2026/IL2104: Ostrzeżenia trybu Trimming | IL3050/IL3056: Ostrzeżenia Native AOT -->
+		<WarningsAsErrors>$(WarningsAsErrors);IL2026;IL2104;IL3050;IL3056</WarningsAsErrors>
+
+	</PropertyGroup>
+
+	<!-- ========================================================================= -->
+	<!-- ZEWNĘTRZNE PAKIETY NUGET (ZALEŻNOŚCI REPOZYTORIUM)                        -->
+	<!-- ========================================================================= -->
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Maui" Version="15.0.1" />
+		<PackageReference Include="CsvHelper" Version="34.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.14" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="10.0.14" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.120" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.120" />
+		<PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="10.0.120" />
+		<PackageReference Include="MudBlazor" Version="9.11.0" />
+		<PackageReference Include="sqlite-net-pcl" Version="1.11.285" />
+		<!-- PackageReference Microsoft.AspNetCore.Components.WebView.Maui usunięty: nie hostujemy BlazorWebView w tej bibliotece -->
+	</ItemGroup>
+
+	<!-- ========================================================================= -->
+	<!-- REFERENCJE DO INNYCH PROJEKTÓW W ROZWIĄZANIU (SLN)                        -->
+	<!-- ========================================================================= -->
+	<ItemGroup>
+		<ProjectReference Include="..\DataBase\DataBase.csproj" />
+	</ItemGroup>
+
+	<!-- ========================================================================= -->
+	<!-- STRUKTURA KATALOGÓW PROJEKTU                                              -->
+	<!-- ========================================================================= -->
+	<ItemGroup>
+		<Folder Include="Model\" />
+		<Folder Include="Platforms\Android\" />
+		<Folder Include="Platforms\Windows\" />
+	</ItemGroup>
+
+	<!-- ========================================================================= -->
+	<!-- POWIĄZANIA PLIKÓW KODU (CODE-BEHIND) Z WIDOKAMI                           -->
+	<!-- ========================================================================= -->
+	<ItemGroup>
+		<Compile Update="Pages\ExistingFiles\ExistingFilesV.xaml.cs">
+			<DependentUpon>%(Filename)</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<!-- ========================================================================= -->
+	<!-- KOMPILACJA I AKTUALIZACJA PLIKÓW INTERFEJSU MAUI XAML                    -->
+	<!-- ========================================================================= -->
+	<ItemGroup>
+		<MauiXaml Update="CustomControls\StringImage.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\ConfirmEmail\ConfirmEmailV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\ExistingFiles\ExistingFilesV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\FlyoutFooter\FlyoutFooterV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\FlyoutHeader\FlyoutHeaderV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\LoadingPage\LoadingPageV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\Log\LogData\LogDataV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\Log\LogV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\Log\LogVWindows.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\LogIn\ForgetPassword\ForgetPasswordV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\LogIn\LogInV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\Popups\SubAddLastValue\SubAddLastValueV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\Register\RegisterV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\Styles\SharedStyles.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\UpdateDataBase\UpdateDataBaseV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\UpdateDifference\Templates\DayUpdate.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\UpdateDifference\Templates\DriverRoutesUpdate.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\UpdateDifference\Templates\ProductNameUpdate.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\UpdateDifference\UpdateDifferenceV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\UserDisplay\PopupUser\UserDisplayVPopup.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\UserDisplay\Small\UserDisplaySmallV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\UserDisplay\UserDisplayV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="Pages\UserDisplay\UserEdit\UserEditV.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+	</ItemGroup>
 </Project>

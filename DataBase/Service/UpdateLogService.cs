@@ -212,7 +212,7 @@ AND ABS({nameof(UpdateLog)}.{nameof(UpdateLog.UpdatedTicks)} - @{nameof(time.Tic
 
         public async Task<UpdateLog> SelectFirst(bool isServer, params UpdateEnum[] updateEnum)
         {
-            string enums = JsonSerializer.Serialize(updateEnum);
+            string enums = JsonSerializer.Serialize(updateEnum, Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.UpdateEnumArray);
 
             string select = $@"SELECT 
                 {nameof(UpdateLog.Id)}, 

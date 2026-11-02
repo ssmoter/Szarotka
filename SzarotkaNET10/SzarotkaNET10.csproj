@@ -25,17 +25,12 @@
 		<!-- Opcje wspólne dla kompilacji niezależnej (Self-Contained) -->
 		<SelfContained>true</SelfContained>
 
-		<!-- Rozbicie Fat APK na mniejsze pliki per architektura CPU -->
-		<AndroidCreatePackagePerAbi>true</AndroidCreatePackagePerAbi>
 
-		<!-- Optymalizacja kodu natywnego Androida -->
-		<AndroidLinkTool>r8</AndroidLinkTool>
-		<StripDebugSymbols>true</StripDebugSymbols>
 
 		<!-- ROZWIĄZANIE BŁĘDU SQLITE: Wymuszenie spakowania bibliotek natywnych .so w trybie Debug -->
 		<EmbedAssembliesIntoApk Condition="'$(Configuration)' == 'Debug' and $(TargetFramework.Contains('-android'))">true</EmbedAssembliesIntoApk>
 
-		<!-- Display name -->
+		<!-- Domyślne wartości dla Display Name i Package ID -->
 		<ApplicationTitle>Szarotka</ApplicationTitle>
 		<ApplicationId>com.szarotka.szarotka</ApplicationId>
 		<ApplicationDisplayVersion>1.3.0</ApplicationDisplayVersion>
@@ -49,28 +44,55 @@
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<Title>Szarotka</Title>
 		<AssemblyName>Szarotka</AssemblyName>
+		<Configurations>Debug;Release;ReleaseTest</Configurations>
+	</PropertyGroup>
+
+	<!-- ========================================================================= -->
+	<!-- WARUNKOWA ZMIANA IDENTYFIKATORA DLA WERSJI TESTOWEJ (ANDROID)             -->
+	<!-- ========================================================================= -->
+	<PropertyGroup Condition="'$(Configuration)' == 'ReleaseTest' and $(TargetFramework.Contains('-android'))">
+		<ApplicationId>com.szarotka.szarotka.test</ApplicationId>
+		<ApplicationTitle>Szarotka (TEST)</ApplicationTitle>
 	</PropertyGroup>
 
 	<!-- ========================================================================= -->
 	<!-- KONFIGURACJA OPTYMALIZACJI I INTERPRETERA (.NET 10)                       -->
 	<!-- ========================================================================= -->
 
-	<!-- Konfiguracja WYDANIA (Release): Włączamy maksymalną optymalizację i AOT, wyłączamy interpreter -->
-	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+	<!-- ========================================================================= -->
+	<!-- KONFIGURACJA OPTYMALIZACJI I INTERPRETERA (.NET 10)                       -->
+	<!-- ========================================================================= -->
+
+	<!-- Wspólne flagi optymalizacji dla trybów Release oraz ReleaseTest -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Release' or '$(Configuration)' == 'ReleaseTest'">
+		<Optimize>true</Optimize>
 		<PublishTrimmed>true</PublishTrimmed>
 		<TrimMode>partial</TrimMode>
-		<RunAOTCompilation>true</RunAOTCompilation>
-		<!-- Naprawa konfliktu: Wyłączenie interpretera pozwala na pełną natywną kompilację AOT -->
+		<RunAOTCompilation>false</RunAOTCompilation>
 		<UseInterpreter>false</UseInterpreter>
+
+		<!-- Rozbicie Fat APK na mniejsze pliki per architektura CPU -->
+		<AndroidCreatePackagePerAbi>true</AndroidCreatePackagePerAbi>
+
+		<!-- Optymalizacja kodu natywnego Androida -->
+		<AndroidLinkTool>r8</AndroidLinkTool>
+		<StripDebugSymbols>true</StripDebugSymbols>
+	</PropertyGroup>
+
+	<!-- Dodatkowe specyficzne ustawienia TYLKO dla wersji ReleaseTest -->
+	<PropertyGroup Condition="'$(Configuration)' == 'ReleaseTest'">
+		<!-- Opcjonalny dodatkowy symbol kompilacji do zmian adresów API w kodzie C# -->
+		<DefineConstants>$(DefineConstants);TEST_ENV</DefineConstants>
 	</PropertyGroup>
 
 	<!-- Konfiguracja DEBUGOWANIA (Debug): Wyłączamy okrajanie kodu, włączamy interpreter do Hot Reload -->
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<Optimize>false</Optimize>
 		<PublishTrimmed>false</PublishTrimmed>
 		<RunAOTCompilation>false</RunAOTCompilation>
-		<!-- Naprawa konfliktu: Włączenie interpretera pozwala na stabilne Hot Reload podczas pisania kodu -->
 		<UseInterpreter>true</UseInterpreter>
 	</PropertyGroup>
+
 
 	<!-- ========================================================================= -->
 	<!-- DYNAMICZNY WYBÓR ARCHITEKTURY PROCESORA DLA ANDROIDA                       -->
@@ -81,16 +103,20 @@
 		<RuntimeIdentifiers>android-x64</RuntimeIdentifiers>
 	</PropertyGroup>
 
-	<!-- Tryb RELEASE: Budowanie pod procesory telefonów ARM (wsparcie dla Androida 7 i nowszych) -->
-	<PropertyGroup Condition="'$(Configuration)' == 'Release' and $(TargetFramework.Contains('-android'))">
+	<!-- Tryby RELEASE / RELEASE-TEST: Budowanie pod procesory telefonów ARM (wsparcie dla Androida 7 i nowszych) -->
+	<PropertyGroup Condition="('$(Configuration)' == 'Release' or '$(Configuration)' == 'ReleaseTest') and $(TargetFramework.Contains('-android'))">
 		<RuntimeIdentifiers>android-arm;android-arm64</RuntimeIdentifiers>
 	</PropertyGroup>
 
 	<!-- ========================================================================= -->
 
 	<ItemGroup>
-		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+		<!-- Domyślna ikona aplikacji (dla konfiguracji Debug i Release) -->
+		<MauiIcon Condition="'$(Configuration)' != 'ReleaseTest'" Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+		
+		<!-- Wyróżniająca się kolorystycznie ikona dla wersji ReleaseTest (np. czerwone/pomarańczowe tło) -->
+		<MauiIcon Condition="'$(Configuration)' == 'ReleaseTest'" Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#D32F2F" />
+		
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
 		<!-- Images -->

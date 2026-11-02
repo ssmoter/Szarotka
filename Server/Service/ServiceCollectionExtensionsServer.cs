@@ -1,12 +1,12 @@
 ﻿using DataBase.Data;
 using DataBase.Data.MySqliteConnection;
 using DataBase.Service;
+using DataBase.Validation;
 
 using MailKit.Net.Smtp;
 
 using Server.Model;
 using Server.Requests;
-using Server.Validation;
 
 namespace Server.Service
 {

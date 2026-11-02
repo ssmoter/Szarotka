@@ -14,7 +14,7 @@ namespace DataBase.Data.Get
             {
                 return await get.CustomerRoutes("", null);
             }
-            string jsonIds = JsonSerializer.Serialize(ids);
+            string jsonIds = JsonSerializer.Serialize(ids, Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.GuidArray);
             StringBuilder sb = new();
             sb.Append(" WHERE ");
             sb.Append(nameof(Model.EntitiesRoutes.CustomerRoutes));

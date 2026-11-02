@@ -13,6 +13,23 @@ public partial class RegisterV : ContentPage
         if (BindingContext is RegisterVM vm)
         {
             vm.IsPasswordEqual();
+            vm.Validation();
+        }
+    }
+
+    private void EntryName_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (BindingContext is RegisterVM vm)
+        {
+            vm.Validation();
+        }
+    }
+
+    private void EntryEmail_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (BindingContext is RegisterVM vm)
+        {
+            vm.Validation();
         }
     }
 }

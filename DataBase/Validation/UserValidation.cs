@@ -2,15 +2,12 @@
 using DataBase.Model.EntitiesServer;
 using DataBase.Service;
 
-using Server.Model;
-using Server.SqlQuery;
-
 using System.Globalization;
 
 using System.Text.RegularExpressions;
 
 
-namespace Server.Validation;
+namespace DataBase.Validation;
 
 public interface IUserValidation
 {
@@ -244,7 +241,12 @@ public class UserValidation : IUserValidation
     /// <returns></returns>
     public async Task<ServerEnums.Result> EmailExist(string email)
     {
-        var sql = ValidationUserQuery.SelectEmails(email);
+        string sql = $@"
+                    SELECT {nameof(User.Email)}
+                    FROM {nameof(User)}
+                    WHERE 
+                    {nameof(User.Email)} = @{nameof(email)}
+                    ";
         var emails = await _db.DbAsyncAoT.QueryAsync<User>(sql, param: new()
         {
             [nameof(email)] = email
