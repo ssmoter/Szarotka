@@ -177,5 +177,22 @@ FROM {nameof(Day)}
 
             return sql;
         }
+
+
+
+
+
+
+
+
+
+        public static string GetUnicUserId()
+        {
+            string sql = $@"
+SELECT DISTINCT {nameof(Day.UserCreatedId)}
+FROM {nameof(Day)};
+";
+            return sql;
+        }
     }
 }

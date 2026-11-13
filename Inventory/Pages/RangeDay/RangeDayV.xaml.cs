@@ -1,3 +1,5 @@
+using Shared.Helper;
+
 namespace Inventory.Pages.RangeDay;
 
 public partial class RangeDayV : ContentPage
@@ -36,11 +38,14 @@ public partial class RangeDayV : ContentPage
         {
             if (BindingContext is RangeDayVM vm)
             {
+                vm.GetUnicStoredId();
+
                 if (string.IsNullOrWhiteSpace(vm.FilesPath))
                 {
                     await vm.SetDefaultsHeaders();
                     var month = PopupSelectRangeDate.PopupSelectRangeDateVM.SelectMonth(DateTime.Today.Month);
-                    await vm.SelectData(new(month.Item1, month.Item2, []));
+                    var id = UserAfterLogin.User.Id;
+                    await vm.SelectData(new(month.Item1, month.Item2, [id]));
                 }
             }
         });

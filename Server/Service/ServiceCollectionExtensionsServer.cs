@@ -73,7 +73,6 @@ namespace Server.Service
             services.AddScoped<IUpdateLogRequests, UpdateLogRequests>();
 
 
-
             return services;
         }
 

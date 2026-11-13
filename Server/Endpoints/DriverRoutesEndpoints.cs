@@ -20,7 +20,7 @@ namespace Server.Endpoints
                 .RequireAuthorization();
             map.MapGet("customer-routes/{routeId}/{isDelete?}", async (string routeId, [FromQuery] DayOfWeek[] selected_day, IDriverRoutesCustomerRoutesRequests getDriverRoutesAoT, bool isDelete = false, CancellationToken token = default) =>
             {
-                var customers = await getDriverRoutesAoT.GetCustomers(routeId, selected_day,isDelete, token);
+                var customers = await getDriverRoutesAoT.GetCustomers(routeId, selected_day, isDelete, token);
                 return customers;
             })
                 .RequireAuthorization();
@@ -44,7 +44,6 @@ namespace Server.Endpoints
                 return result;
             })
                 .RequireAuthorization();
-
 
 
         }

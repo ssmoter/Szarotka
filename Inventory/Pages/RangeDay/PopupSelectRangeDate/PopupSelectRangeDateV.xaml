@@ -3,102 +3,109 @@
     x:Class="Inventory.Pages.RangeDay.PopupSelectRangeDate.PopupSelectRangeDateV"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:custom="clr-namespace:Shared.CustomControls;assembly=Shared"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:vm="clr-namespace:Inventory.Pages.RangeDay.PopupSelectRangeDate"
+    Margin="0"
+    Padding="0"
     x:DataType="vm:PopupSelectRangeDateVM"
-    BackgroundColor="{AppThemeBinding Light={StaticResource White},
-                                      Dark={StaticResource Black}}">
+    BackgroundColor="Transparent"
+    HorizontalOptions="Center"
+    VerticalOptions="Center">
 
 
-    <Grid
-        Margin="10,10,10,5"
-        Padding="10,10,10,5"
-        HorizontalOptions="Center"
-        VerticalOptions="Center">
+    <Border
+        Padding="15"
+        BackgroundColor="{AppThemeBinding Light={StaticResource White},
+                                          Dark={StaticResource Black}}"
+        HorizontalOptions="Start"
+        StrokeShape="RoundRectangle 12"
+        VerticalOptions="Start">
 
-        <VerticalStackLayout>
+        <VerticalStackLayout
+            HorizontalOptions="Start"
+            Spacing="10"
+            VerticalOptions="Start">
 
-            <HorizontalStackLayout HorizontalOptions="Center">
-
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="10">
                 <HorizontalStackLayout>
-                    <Label Text="Od:" VerticalOptions="Center" />
+                    <Label Text="Od: " VerticalOptions="Center" />
                     <DatePicker Date="{Binding FromDate}" VerticalOptions="Center" />
                 </HorizontalStackLayout>
 
                 <HorizontalStackLayout>
-                    <Label Text="Do:" VerticalOptions="Center" />
+                    <Label Text="Do: " VerticalOptions="Center" />
                     <DatePicker Date="{Binding ToDate}" VerticalOptions="Center" />
                 </HorizontalStackLayout>
-
             </HorizontalStackLayout>
+
             <Picker
                 Title="Szybki wybór"
                 HorizontalOptions="Center"
                 ItemsSource="{Binding RangeFast}"
                 SelectedItem="{Binding IsSelectedDateFast}" />
+
             <Picker
                 Title="Wybór miesiąca"
                 HorizontalOptions="Center"
                 ItemsSource="{Binding RangeMonth}"
                 SelectedItem="{Binding IsSelectedDateMonth}" />
 
-            <Border Padding="5" HorizontalOptions="Center">
+            <Border
+                Padding="10"
+                HorizontalOptions="Center"
+                StrokeShape="RoundRectangle 8">
 
-                <VerticalStackLayout HorizontalOptions="Center">
+                <VerticalStackLayout HorizontalOptions="Start" Spacing="5">
                     <Label
                         HorizontalOptions="Center"
                         Text="Wybierz kierowców do wczytania"
                         VerticalOptions="Center" />
 
+                    <ScrollView HorizontalOptions="Center" MaximumHeightRequest="120">
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding SelectRangeDateMs}" HorizontalOptions="Start">
 
-                    <CollectionView ItemsSource="{Binding SelectRangeDateMs}" MaximumHeightRequest="100">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid
+                                        x:DataType="vm:PopupSelectRangeDateM"
+                                        ColumnDefinitions="Auto,Auto"
+                                        ColumnSpacing="15">
 
-                        <CollectionView.ItemTemplate>
+                                        <custom:NameOrIdUser
+                                            Grid.Column="0"
+                                            HorizontalOptions="Start"
+                                            UserId="{Binding Id}"
+                                            VerticalOptions="Center" />
 
-                            <DataTemplate>
+                                        <CheckBox
+                                            Grid.Column="1"
+                                            HorizontalOptions="End"
+                                            IsChecked="{Binding IsChecked}"
+                                            VerticalOptions="Center" />
 
-                                <Grid x:DataType="vm:PopupSelectRangeDateM" ColumnDefinitions="*,*">
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
 
-                                    <Label
-                                        Grid.Column="0"
-                                        HorizontalOptions="Center"
-                                        Text="{Binding Name}"
-                                        VerticalOptions="Center" />
-                                    <CheckBox
-                                        Grid.Column="1"
-                                        HorizontalOptions="Center"
-                                        IsChecked="{Binding IsChecked}"
-                                        VerticalOptions="Center" />
-
-                                </Grid>
-
-                            </DataTemplate>
-
-                        </CollectionView.ItemTemplate>
-
-
-
-                    </CollectionView>
-
+                        </VerticalStackLayout>
+                    </ScrollView>
                 </VerticalStackLayout>
             </Border>
 
-            <Grid ColumnDefinitions="*,*" VerticalOptions="End">
-
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="15">
                 <Button
-                    Grid.Column="0"
                     Command="{Binding CancelAndReturnCommand}"
-                    Text="Anuluj" />
+                    Text="Anuluj"
+                    WidthRequest="110" />
 
                 <Button
-                    Grid.Column="1"
                     Command="{Binding SaveAndReturnCommand}"
-                    Text="Wczytaj" />
-
-            </Grid>
+                    Text="Wczytaj"
+                    WidthRequest="110" />
+            </HorizontalStackLayout>
 
         </VerticalStackLayout>
-
-    </Grid>
+    </Border>
 
 </toolkit:Popup>

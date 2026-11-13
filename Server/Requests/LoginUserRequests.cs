@@ -53,10 +53,13 @@ namespace Server.Requests
                         dickUser = item.Value.user;
                     }
                 }
-                if (_userValidation.AccountEmailIsNotConfirm(dickUser) == ServerEnums.Result.Error)
+                if (dickUser is not null)
                 {
-                    var code = await _emailConfirmService.SendVerificationEmailCode(dickUser!, token);
-                    DictionaryList.RegisterUser.TryAdd(code.Code, (dickUser!, code));
+                    if (_userValidation.AccountEmailIsNotConfirm(dickUser) == ServerEnums.Result.Error)
+                    {
+                        var code = await _emailConfirmService.SendVerificationEmailCode(dickUser!, token);
+                        DictionaryList.RegisterUser.TryAdd(code.Code, (dickUser!, code));
+                    }
                 }
 
                 _userValidation.Validation.Throw();

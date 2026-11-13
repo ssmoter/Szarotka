@@ -7,33 +7,59 @@
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:vm="clr-namespace:Shared.Pages.UserDisplay.PopupUser"
     x:Name="this"
+    Margin="0"
+    Padding="0"
     x:DataType="vm:UserDisplayVPopup"
-    BackgroundColor="{AppThemeBinding Light={StaticResource White},
-                                      Dark={StaticResource Black}}"
-    BindingContext="{Reference this}">
+    BackgroundColor="Transparent"
+    BindingContext="{Reference this}"
+    HorizontalOptions="Center"
+    VerticalOptions="Center">
 
 
-    <Grid HorizontalOptions="Center" VerticalOptions="Center">
+    <Border
+        Padding="15"
+        BackgroundColor="{AppThemeBinding Light={StaticResource White},
+                                          Dark={StaticResource Black}}"
+        HorizontalOptions="Start"
+        StrokeShape="RoundRectangle 12"
+        VerticalOptions="Start">
 
-        <RefreshView IsRefreshing="{Binding IsRefreshing}">
+        <RefreshView
+            HorizontalOptions="Start"
+            IsRefreshing="{Binding IsRefreshing}"
+            VerticalOptions="Start">
 
-            <Border Padding="5">
+            <Border
+                Padding="10"
+                HorizontalOptions="Start"
+                StrokeShape="RoundRectangle 8"
+                VerticalOptions="Start">
 
-                <Grid RowDefinitions="*,auto">
+                <Grid
+                    HorizontalOptions="Start"
+                    RowDefinitions="Auto,Auto"
+                    RowSpacing="10"
+                    VerticalOptions="Start">
 
-                    <small:UserDisplaySmallV Grid.Row="0" User="{Binding User}" />
+                    <small:UserDisplaySmallV
+                        Grid.Row="0"
+                        HorizontalOptions="Start"
+                        User="{Binding User}" />
 
                     <Button
                         Grid.Row="1"
                         Clicked="Button_Clicked_Close"
-                        Text="Anuluj" />
+                        HorizontalOptions="Center"
+                        Text="Anuluj"
+                        WidthRequest="120" />
 
                 </Grid>
 
             </Border>
 
         </RefreshView>
+    </Border>
 
-    </Grid>
+
 
 </toolkit:Popup>

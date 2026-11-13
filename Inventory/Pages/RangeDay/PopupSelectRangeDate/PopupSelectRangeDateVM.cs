@@ -14,11 +14,15 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
         {
             if (query.TryGetValue(nameof(PopupDateModel), out object popupDateModel))
             {
-                if (popupDateModel is PopupDateModel _popupDateModel  && _popupDateModel is not null )
+                if (popupDateModel is PopupDateModel _popupDateModel && _popupDateModel is not null)
                 {
                     FromDate = new DateTime(_popupDateModel.From);
                     ToDate = new DateTime(_popupDateModel.To);
+                    SelectRangeDateMs = [.._popupDateModel.DriverId.Select(x => new PopupSelectRangeDateM(x))];
                 }
+
+
+
             }
         }
 
@@ -153,7 +157,7 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
 
             SelectRangeDateMs ??= [];
 
-            var users = Shared.Pages.UserDisplay.PopupUser.UserDisplayVPopup.Users.Select(x => x.Value);
+            var users = Shared.Pages.UserDisplay.PopupUser.UserDisplayVPopup.Users.Select(x => x.Value.Id);
 
             foreach (var item in users)
             {
@@ -234,7 +238,7 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             ToDate = new DateTime(to);
 
         }
-       public static (long, long) SelectLastWeek()
+        public static (long, long) SelectLastWeek()
         {
             DateTime now = DateTime.Today;
             DayOfWeek startDayOfWeek = DayOfWeek.Monday;
@@ -252,7 +256,7 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
 
             return (from.Ticks, to.Ticks);
         }
-       public static (long, long) SelectToday()
+        public static (long, long) SelectToday()
         {
             var now = DateTime.Today;
             var from = new DateTime(now.Ticks).AddHours(2).ToUniversalTime();
@@ -260,7 +264,7 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
 
             return (from.Ticks, to.Ticks);
         }
-       public static (long, long) SelectWeek()
+        public static (long, long) SelectWeek()
         {
             DateTime now = DateTime.Today;
             DayOfWeek startDayOfWeek = DayOfWeek.Monday;
@@ -278,18 +282,18 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
 
             return (from.Ticks, to.Ticks);
         }
-       public static (long, long) SelectYear()
+        public static (long, long) SelectYear()
         {
             var from = new DateTime(DateTime.Today.Year, 1, 1, 1, 0, 0).ToUniversalTime();
             var to = new DateTime(DateTime.Today.AddYears(1).Year, 1, 1, 0, 0, 0).ToUniversalTime();
 
             return (from.Ticks, to.Ticks);
         }
-       public static (long, long) FullRange()
+        public static (long, long) FullRange()
         {
             return (0, DateTime.Today.Ticks);
         }
-       public static (long, long) SelectMonth(int month = 0)
+        public static (long, long) SelectMonth(int month = 0)
         {
             DateTime to;
             var from = new DateTime(DateTime.Today.Year, month, 1, 0, 0, 0);
@@ -313,7 +317,7 @@ namespace Inventory.Pages.RangeDay.PopupSelectRangeDate
             {
                 if (SelectRangeDateMs[i].IsChecked)
                 {
-                    guids[n] = new Guid(SelectRangeDateMs[i].Driver.Id.ToByteArray());
+                    guids[n] = new Guid(SelectRangeDateMs[i].Id.ToByteArray());
                     n++;
                 }
             }

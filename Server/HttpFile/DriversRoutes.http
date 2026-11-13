@@ -17,7 +17,9 @@ Content-Type: application/json
 
 ###
 
-@token = {{login.response.body.$.token}}
+@token = {{login.response.body.$.accessToken}}
+###
+
 
 GET {{Server_HostAddress}}/driver-routes/customer-route/7834daec-27b6-4ad1-8eda-dcfa77d118f4
 Accept: application/json

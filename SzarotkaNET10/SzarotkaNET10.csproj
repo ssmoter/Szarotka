@@ -113,6 +113,13 @@
 	<PropertyGroup Condition="('$(Configuration)' == 'Release' or '$(Configuration)' == 'ReleaseTest') and $(TargetFramework.Contains('-android'))">
 		<RuntimeIdentifiers>android-arm;android-arm64</RuntimeIdentifiers>
 	</PropertyGroup>
+	
+	<!-- Wczytuje sekrety lokalne, jeśli plik istnieje -->
+	<Import Project="Secrets.props" Condition="Exists('Secrets.props')" />
+	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+		<!-- Pobranie klucza ze zmiennej środowiskowej systemu lub CI/CD -->
+		<AndroidManifestPlaceholders>MapsApiKey=$(GOOGLE_MAPS_API_KEY)</AndroidManifestPlaceholders>
+	</PropertyGroup>
 
 	<!-- ========================================================================= -->
 

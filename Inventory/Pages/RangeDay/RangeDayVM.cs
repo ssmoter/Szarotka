@@ -8,6 +8,7 @@ using DataBase.Data;
 using DataBase.Data.CheckUpdateDifferences;
 using DataBase.Data.Get;
 using DataBase.Data.Save;
+using DataBase.Data.SqlQuery;
 using DataBase.Model;
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesServer;
@@ -152,6 +153,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
         }
     }
 
+    private Guid[] _storedUserId;
 
     private PopupDateModel PopupDate = null;
     private readonly IAccessDataBaseAoT _db;
@@ -222,7 +224,19 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
     {
         FilterTyp.PropertyChanged -= FilterTyp_PropertyChanged;
     }
-
+    public void GetUnicStoredId()
+    {
+        try
+        {
+            var query = DayQuery.GetUnicUserId();
+            var users = _db.DbSyncAoT.Query<Day>(query);
+            _storedUserId = [.. users.Select(x => x.UserCreatedId)];
+        }
+        catch (Exception ex)
+        {
+            _db.SaveLog(ex);
+        }
+    }
 
     async static Task<string> SelectImportExport(string type)
     {
@@ -371,6 +385,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
     {
         try
         {
+            PopupDate = PopupDate with { DriverId = _storedUserId };
             var parameters = new Dictionary<string, object>
                 {
                     { nameof(PopupDateModel), PopupDate }
@@ -1015,7 +1030,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
                                 Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
                             });
 
-                var result = await _getDayHttp.GetDays(from: PopupDate.From, to: PopupDate.To, []
+                var result = await _getDayHttp.GetDays(from: PopupDate.From, to: PopupDate.To, userId: PopupDate.DriverId
                       , progress, cancellationTokenSource.Token);
 
                 cancellationTokenSource.Token.ThrowIfCancellationRequested();
