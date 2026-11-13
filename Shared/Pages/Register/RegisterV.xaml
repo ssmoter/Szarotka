@@ -13,7 +13,7 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <toolkit:IsNotEqualConverter x:Key="NotEqualConverter" />
-            <x:Guid x:Key="EmptyGuid">00000000-0000-0000-0000-000000000000</x:Guid>
+            <x:String x:Key="EmptyGuid">00000000-0000-0000-0000-000000000000</x:String>
             <toolkit:IsListNotNullOrEmptyConverter x:Key="IsListNotNullOrEmptyConverter" />
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
         </ResourceDictionary>

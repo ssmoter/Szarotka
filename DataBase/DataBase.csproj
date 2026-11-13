@@ -33,9 +33,6 @@
 		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 		<EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
 
-		<!-- Opcjonalne: Traktuj ostrzeżenia AOT jako błędy kompilacji (zablokuje build w przypadku problemów) -->
-		<!-- IL2026/IL2104: Ostrzeżenia trybu Trimming | IL3050/IL3056: Ostrzeżenia Native AOT -->
-		<WarningsAsErrors>$(WarningsAsErrors);IL2026;IL2104;IL3050;IL3056</WarningsAsErrors>
 
 	</PropertyGroup>
 
@@ -53,7 +50,6 @@
     <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.android" Version="2.1.14" />
     <PackageReference Include="SQLitePCLRaw.provider.e_sqlite3" Version="3.0.5" />
 	<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.23.0" />
-	<PackageReference Include="CommunityToolkit.Maui" Version="15.0.1" />
   </ItemGroup>
 
   <!-- Foldery projektu -->

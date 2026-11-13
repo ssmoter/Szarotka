@@ -4,6 +4,7 @@ using DataBase.Validation;
 
 using Microsoft.Extensions.Logging.Abstractions;
 
+using Server.Helper;
 using Server.Service;
 
 namespace Server.Requests
@@ -43,18 +44,28 @@ namespace Server.Requests
                 _userValidation.PasswordIsNull(user.Password);
 
 
+                RegisterUser? dickUser = null;
+                var passwordHash = Hash.PasswordSHA256(user.Password);
+                foreach (var item in DictionaryList.RegisterUser)
+                {
+                    if (item.Value.user.Email == user.Email && item.Value.user.Password == passwordHash)
+                    {
+                        dickUser = item.Value.user;
+                    }
+                }
+                if (_userValidation.AccountEmailIsNotConfirm(dickUser) == ServerEnums.Result.Error)
+                {
+                    var code = await _emailConfirmService.SendVerificationEmailCode(dickUser!, token);
+                    DictionaryList.RegisterUser.TryAdd(code.Code, (dickUser!, code));
+                }
 
                 _userValidation.Validation.Throw();
 
                 token.ThrowIfCancellationRequested();
 
                 var dbUser = await _loginService.LogIn(user);
-                _userValidation.AccountWasDelete(dbUser);
 
-                if (_userValidation.AccountEmailIsNotConfirm(dbUser) == ServerEnums.Result.Error)
-                {
-                    await _emailConfirmService.SendVerificationEmailCode(dbUser, token);
-                }
+                _userValidation.AccountWasDelete(dbUser);
 
                 _userValidation.Validation.Throw();
 
@@ -99,7 +110,7 @@ namespace Server.Requests
                 token.ThrowIfCancellationRequested();
 
                 string userIdFromToken = $"SELECT * FROM {nameof(RefreshToken)} WHERE {nameof(RefreshToken.Value)} = @Value";
-                var userIds = await _db.DbAsyncAoT.QueryAsync<RefreshToken>(userIdFromToken, param: new() { ["Value"] = userToken },token);
+                var userIds = await _db.DbAsyncAoT.QueryAsync<RefreshToken>(userIdFromToken, param: new() { ["Value"] = userToken }, token);
                 _logger.LogDebug("Query for refresh token returned {Count} items", userIds?.Count() ?? 0);
 
                 var userId = userIds!.FirstOrDefault();

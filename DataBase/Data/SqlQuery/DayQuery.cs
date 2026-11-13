@@ -122,7 +122,7 @@ SELECT
         '{nameof(Product.UserCreatedId)}', {nameof(Product)}.{nameof(Product.UserCreatedId)},
         '{nameof(Product.IsDelete)}', {nameof(Product)}.{nameof(Product.IsDelete)},
         '{nameof(Product.UserUpdatedId)}', {nameof(Product)}.{nameof(Product.UserUpdatedId)},
-        '{nameof(Product.Name)}', json_object(
+        '{nameof(Product.Name)}', CASE WHEN {nameof(ProductName)}.{nameof(ProductName.Id)} IS NOT NULL THEN json_object(
           '{nameof(ProductName.Id)}', {nameof(ProductName)}.{nameof(ProductName.Id)},
           '{nameof(ProductName.Name)}', {nameof(ProductName)}.{nameof(ProductName.Name)},
           '{nameof(ProductName.Description)}', {nameof(ProductName)}.{nameof(ProductName.Description)},
@@ -133,8 +133,8 @@ SELECT
           '{nameof(ProductName.UserCreatedId)}', {nameof(ProductName)}.{nameof(ProductName.UserCreatedId)},
           '{nameof(ProductName.IsDelete)}', {nameof(ProductName)}.{nameof(ProductName.IsDelete)},
           '{nameof(ProductName.UserUpdatedId)}', {nameof(ProductName)}.{nameof(ProductName.UserUpdatedId)}
-        ),
-        'Price', json_object(
+        ) ELSE NULL END,
+        'Price', CASE WHEN {nameof(ProductPrice)}.{nameof(ProductPrice.Id)} IS NOT NULL THEN json_object(
           '{nameof(ProductPrice.Id)}', {nameof(ProductPrice)}.{nameof(ProductPrice.Id)},
           '{nameof(ProductPrice.ProductNameId)}', {nameof(ProductPrice)}.{nameof(ProductPrice.ProductNameId)},
           '{nameof(ProductPrice.Price)}', {nameof(ProductPrice)}.{nameof(ProductPrice.Price)},
@@ -143,13 +143,16 @@ SELECT
           '{nameof(ProductPrice.UserCreatedId)}', {nameof(ProductPrice)}.{nameof(ProductPrice.UserCreatedId)},
           '{nameof(ProductPrice.IsDelete)}', {nameof(ProductPrice)}.{nameof(ProductPrice.IsDelete)},
           '{nameof(ProductPrice.UserUpdatedId)}', {nameof(ProductPrice)}.{nameof(ProductPrice.UserUpdatedId)}
-        )
+        ) ELSE NULL END
       )
     )
     FROM {nameof(Product)}
-    LEFT JOIN {nameof(ProductName)} ON {nameof(ProductName)}.{nameof(ProductName.Id)} = {nameof(Product)}.{nameof(Product.ProductNameId)}
-    LEFT JOIN {nameof(ProductPrice)} ON {nameof(ProductPrice)}.{nameof(ProductPrice.Id)} = {nameof(Product)}.{nameof(Product.ProductPriceId)}
+    LEFT JOIN {nameof(ProductName)} 
+      ON TRIM({nameof(ProductName)}.{nameof(ProductName.Id)}) = TRIM({nameof(Product)}.{nameof(Product.ProductNameId)}) COLLATE NOCASE
+    LEFT JOIN {nameof(ProductPrice)} 
+      ON TRIM({nameof(ProductPrice)}.{nameof(ProductPrice.Id)}) = TRIM({nameof(Product)}.{nameof(Product.ProductPriceId)}) COLLATE NOCASE
     WHERE {nameof(Product)}.{nameof(Product.DayId)} = {nameof(Day)}.{nameof(Day.Id)}
+      AND {nameof(Product)}.{nameof(Product.IsDelete)} = 0
   ) AS JsonProducts,
   (
     SELECT json_group_array(
@@ -167,6 +170,7 @@ SELECT
     )
     FROM {nameof(Cake)}
     WHERE {nameof(Cake)}.{nameof(Cake.DayId)} = {nameof(Day)}.{nameof(Day.Id)}
+      AND {nameof(Cake)}.{nameof(Cake.IsDelete)} = 0
   ) AS JsonCakes
 FROM {nameof(Day)}
 ";

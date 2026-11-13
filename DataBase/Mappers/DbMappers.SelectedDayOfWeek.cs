@@ -6,7 +6,7 @@ namespace DataBase.Mappers;
 public partial class DbMappers
 {
     // Struktura indeksów kolumn dla SelectedDayOfWeekRoutes
-    public class SelectedDayOfWeekOrdinals : BaseOrdinals
+    public class SelectedDayOfWeekRoutesOrdinals : BaseOrdinals
     {
         public int CustomerId { get; }
 
@@ -31,7 +31,7 @@ public partial class DbMappers
         public int Saturday { get; }
         public int SaturdayTicks { get; }
 
-        public SelectedDayOfWeekOrdinals(SqliteDataReader reader) : base(reader)
+        public SelectedDayOfWeekRoutesOrdinals(SqliteDataReader reader) : base(reader)
         {
             CustomerId = reader.GetOptionalOrdinal(nameof(SelectedDayOfWeekRoutes.CustomerId));
 
@@ -58,14 +58,14 @@ public partial class DbMappers
         }
     }
 
-    private static void InitSelectedDayOfWeekMappers()
+    private static void InitSelectedDayOfWeekRoutesMappers()
     {
         _registry.Add(typeof(SelectedDayOfWeekRoutes), (Func<SqliteDataReader, object, SelectedDayOfWeekRoutes>)((reader, ordinalsObj) =>
         {
             ArgumentNullException.ThrowIfNull(reader);
             ArgumentNullException.ThrowIfNull(ordinalsObj);
 
-            if (ordinalsObj is not SelectedDayOfWeekOrdinals ords)
+            if (ordinalsObj is not SelectedDayOfWeekRoutesOrdinals ords)
                 throw new ArgumentException("Invalid ordinals object for SelectedDayOfWeekRoutes mapper", nameof(ordinalsObj));
 
             var sd = new SelectedDayOfWeekRoutes();

@@ -135,8 +135,8 @@ namespace Shared.Data.ServerHttpClients
             }
 
             // Bezpieczne kopiowanie słownika właściwości żądania pod Native AOT (.NET 10)
-            var cloneOptionsDict = (IDictionary<string, object?>)clone.Options;
-            foreach (var kvp in (IDictionary<string, object?>)req.Options)
+            var cloneOptionsDict = (IDictionary<string, object>)clone.Options;
+            foreach (var kvp in (IDictionary<string, object>)req.Options)
             {
                 cloneOptionsDict[kvp.Key] = kvp.Value;
             }

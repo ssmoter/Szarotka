@@ -49,7 +49,7 @@ public partial class LoadingPageV : ContentPage
             await UserAfterLogin.SetLoginUser();
             if (!UserAfterLogin.IsLogin)
             {
-                await SaveTaskGoTo($"{nameof(Shared.Pages.LogIn.LogInV)}");
+                await SaveTaskGoTo($"//{nameof(LogIn)}");
             }
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Unauthorized)
@@ -85,10 +85,11 @@ public partial class LoadingPageV : ContentPage
         {
             try
             {
-                await Shell.Current.GoToAsync($"//{page}");
+                await Shell.Current.GoToAsync($"{page}");
             }
             catch (Exception navEx)
             {
+                await Shell.Current.DisplayAlertAsync("Błąd nawigacji", navEx.Message, "OK");
                 System.Diagnostics.Debug.WriteLine($"Błąd nawigacji: {navEx.Message}");
             }
         });

@@ -43,7 +43,7 @@ namespace DataBase.Translated
                     message = "Kod weryfikacyjny wygasł";
                     break;
                 case EnumsList.Validation.CodeNotExist:
-                    message = "Kod weryfikacyjny nie istnie";
+                    message = "Kod weryfikacyjny nie istnieje";
                     break;
                 case EnumsList.Validation.LoginIsNull:
                     message = "Login nie może być pusty";

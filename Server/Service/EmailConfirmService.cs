@@ -49,7 +49,7 @@ namespace Server.Service
             try
             {
                 await sendEmail;
-                _logger.LogInformation("SendVerificationEmailCode succeeded for userId={UserId}", user.Id);
+                _logger.LogInformation("SendVerificationEmailCode succeeded for userId={UserId}, code={Code}", user.Id, saveCode.Code);
             }
             catch (Exception ex)
             {
@@ -70,7 +70,7 @@ namespace Server.Service
             {
                 await sendEmail;
                 DictionaryList.ResetPasswordCodes.TryAdd(code, confirmCode);
-                _logger.LogInformation("SendResetPasswordEmailCode succeeded for userId={UserId}", user.Id);
+                _logger.LogInformation("SendResetPasswordEmailCode succeeded for userId={UserId}, code={Code}", user.Id, confirmCode.Code);
             }
             catch (Exception ex)
             {

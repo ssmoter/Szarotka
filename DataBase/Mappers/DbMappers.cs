@@ -27,7 +27,7 @@ public partial class DbMappers
         InitCustomerRoutesFromQueryMappers();
         InitResidentialAddressMappers();
         InitRoutesMappers();
-        InitSelectedDayOfWeekMappers();
+        InitSelectedDayOfWeekRoutesMappers();
         InitDayFromQueryMappers();
         InitDataBaseVersionMappers();
         InitLogsModelMappers();

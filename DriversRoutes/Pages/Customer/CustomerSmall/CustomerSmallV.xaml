@@ -162,7 +162,7 @@
                         HorizontalOptions="Center"
                         IsVisible="{Binding MoveTimeIsVisible}"
                         LineBreakMode="WordWrap"
-                        Text="Przesuń czas na pozostałych dniach"
+                        Text="Przesuń czas na następnych przystankach"
                         VerticalOptions="Center" />
                 </FlexLayout>
             </VerticalStackLayout>

@@ -16,7 +16,7 @@ namespace Shared.Pages.Register
 {
     public partial class RegisterVM : ObservableObject
     {
-        private RegisterUser registerUser;
+        private RegisterUser registerUser = new();
         public RegisterUser RegisterUser
         {
             get => registerUser;
@@ -29,7 +29,7 @@ namespace Shared.Pages.Register
             }
         }
 
-        private RegisterM registerM;
+        private RegisterM registerM = new();
         public RegisterM RegisterM
         {
             get => registerM;
@@ -42,7 +42,7 @@ namespace Shared.Pages.Register
             }
         }
 
-        private ObservableCollection<Driver> drivers;
+        private ObservableCollection<Driver> drivers = [];
         public ObservableCollection<Driver> Drivers
         {
             get => drivers;
@@ -61,15 +61,12 @@ namespace Shared.Pages.Register
         private readonly IUserValidation _userValidation;
         public RegisterVM(IAccessDataBaseAoT db, IRegisterHttp registerHttp, IUserValidation userValidation)
         {
-            RegisterUser = new();
-            RegisterM = new();
             _db = db;
-            GetOldDrivers();
             _registerHttp = registerHttp;
             _userValidation = userValidation;
         }
 
-        private void GetOldDrivers()
+        public void GetOldDrivers()
         {
             try
             {
@@ -178,7 +175,7 @@ namespace Shared.Pages.Register
             }
             if (_userValidation.PasswordNoDigit(RegisterUser.Password) == ServerEnums.Result.Error)
             {
-                RegisterM.PasswordError = EnumsList.Validation.PasswordNoDigit.PasswordsValidation(RegisterM.PasswordError); 
+                RegisterM.PasswordError = EnumsList.Validation.PasswordNoDigit.PasswordsValidation(RegisterM.PasswordError);
                 emailOrPasswordIsNull = true;
             }
             if (_userValidation.PasswordNoLower(RegisterUser.Password) == ServerEnums.Result.Error)

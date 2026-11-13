@@ -1,4 +1,5 @@
 ﻿namespace Shared.Behavior;
+
 public partial class NumericEntryBehavior : Behavior<Entry>
 {
     protected override void OnAttachedTo(Entry bindable)
@@ -13,20 +14,41 @@ public partial class NumericEntryBehavior : Behavior<Entry>
         bindable.TextChanged -= OnEntryTextChanged;
     }
 
-    void OnEntryTextChanged(object sender, TextChangedEventArgs e)
+    private void OnEntryTextChanged(object sender, TextChangedEventArgs e)
     {
-        if (!string.IsNullOrWhiteSpace(e.NewTextValue))
+        if (sender is null)
         {
-            bool isValid = e.NewTextValue.ToCharArray().All(char.IsDigit);
+            return;
+        }
+        var entry = (Entry)sender;
 
-            var defoutColor = Application.Current.RequestedTheme == AppTheme.Dark ? Colors.White : Colors.White;
+        // Jeśli pole zostało wyczyszczone, pozwalamy na to i resetujemy kolor
+        if (string.IsNullOrEmpty(e.NewTextValue))
+        {
+            var defaultColor = Application.Current?.RequestedTheme == AppTheme.Dark ? Colors.White : Colors.Black;
+            entry.TextColor = defaultColor;
+            return;
+        }
 
-            ((Entry)sender).TextColor = isValid ? defoutColor : Colors.Red;
+        // Sprawdzamy czy tekst składa się tylko z cyfr
+        bool isValid = e.NewTextValue.All(char.IsDigit);
 
-            if (!isValid)
-            {
-                ((Entry)sender).Text = e.OldTextValue;
-            }
+        if (!isValid)
+        {
+            // Odpinamy zdarzenie, aby uniknąć nieskończonej pętli
+            entry.TextChanged -= OnEntryTextChanged;
+
+            // Przywracamy poprzednią poprawną wartość
+            entry.Text = e.OldTextValue;
+
+            // Zapinamy zdarzenie z powrotem
+            entry.TextChanged += OnEntryTextChanged;
+        }
+        else
+        {
+            // Jeśli tekst jest poprawny, upewniamy się, że ma domyślny kolor
+            var defaultColor = Application.Current?.RequestedTheme == AppTheme.Dark ? Colors.White : Colors.Black;
+            entry.TextColor = defaultColor;
         }
     }
 }

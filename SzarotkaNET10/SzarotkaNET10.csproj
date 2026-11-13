@@ -25,8 +25,11 @@
 		<!-- Opcje wspólne dla kompilacji niezależnej (Self-Contained) -->
 		<SelfContained>true</SelfContained>
 
+		<!-- Opcjonalne: Traktuj ostrzeżenia AOT jako błędy kompilacji (zablokuje build w przypadku problemów) -->
+		<!-- IL2026/IL2104: Ostrzeżenia trybu Trimming | IL3050/IL3056: Ostrzeżenia Native AOT -->
+		<WarningsAsErrors>$(WarningsAsErrors);IL2026;IL2104;IL3050;IL3056</WarningsAsErrors>
 
-
+		
 		<!-- ROZWIĄZANIE BŁĘDU SQLITE: Wymuszenie spakowania bibliotek natywnych .so w trybie Debug -->
 		<EmbedAssembliesIntoApk Condition="'$(Configuration)' == 'Debug' and $(TargetFramework.Contains('-android'))">true</EmbedAssembliesIntoApk>
 
@@ -37,8 +40,8 @@
 		<ApplicationVersion>1</ApplicationVersion>
 		<WindowsPackageType>MSIX</WindowsPackageType>
 
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.3</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">24.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
@@ -72,11 +75,14 @@
 		<UseInterpreter>false</UseInterpreter>
 
 		<!-- Rozbicie Fat APK na mniejsze pliki per architektura CPU -->
-		<AndroidCreatePackagePerAbi>true</AndroidCreatePackagePerAbi>
+		<AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
 
 		<!-- Optymalizacja kodu natywnego Androida -->
 		<AndroidLinkTool>r8</AndroidLinkTool>
 		<StripDebugSymbols>true</StripDebugSymbols>
+
+		<!-- WYMUSZENIE GENEROWANIA APK ZAMIAST AAB PODCZAS PUBLIKACJI -->
+		<AndroidPackageFormat>apk</AndroidPackageFormat>
 	</PropertyGroup>
 
 	<!-- Dodatkowe specyficzne ustawienia TYLKO dla wersji ReleaseTest -->
@@ -147,10 +153,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.13" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.14" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.120" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.120" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.13" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.14" />
 		<!--
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="10.0.80" />
 		-->

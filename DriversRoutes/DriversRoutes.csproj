@@ -32,9 +32,6 @@
 		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
 		<EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
 
-		<!-- Opcjonalne: Traktuj ostrzeżenia AOT jako błędy kompilacji (zablokuje build w przypadku problemów) -->
-		<!-- IL2026/IL2104: Ostrzeżenia trybu Trimming | IL3050/IL3056: Ostrzeżenia Native AOT -->
-		<WarningsAsErrors>$(WarningsAsErrors);IL2026;IL2104;IL3050;IL3056</WarningsAsErrors>
 
 	</PropertyGroup>
 

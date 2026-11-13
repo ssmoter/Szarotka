@@ -8,6 +8,16 @@ public partial class RegisterV : ContentPage
         BindingContext = vm;
     }
 
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (BindingContext is RegisterVM vm)
+        {
+            vm.GetOldDrivers();
+        }
+    }
+
     private void Entry_TextChanged_Password(object sender, TextChangedEventArgs e)
     {
         if (BindingContext is RegisterVM vm)

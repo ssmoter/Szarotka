@@ -78,9 +78,9 @@ namespace Shared.Pages.LogIn
             _db = db;
             _loginHttp = loginHttp;
 
+#if !RELEASE
             User.Email = "user@example.com";
             User.Password = "Password1!";
-#if DEBUG
 #endif
         }
 
@@ -110,7 +110,7 @@ namespace Shared.Pages.LogIn
         [RelayCommand]
         async Task GotoToRegister()
         {
-            await Shell.Current.GoToAsync(nameof(Register.RegisterV));
+            await Shell.Current.GoToAsync($"//{nameof(Register)}");
         }
 
 

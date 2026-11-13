@@ -1,0 +1,43 @@
+<Project>
+	<!-- 1. Najpierw w bezpieczny sposób obliczamy, czy projekt powinien być objęty restrykcjami -->
+	<PropertyGroup>
+		<IsExcludedProject>false</IsExcludedProject>
+
+		<!-- Jeśli projekt nazywa się tak jak Twój pojedynczy projekt, też oznacz jako wykluczony -->
+		<!-- ZAMIEŃ 'NAZWA_PROJEKTU_DO_WYKLUCZENIA' NA SWOJĄ NAZWĘ -->
+		<IsExcludedProject Condition="'$(MSBuildProjectName)' == 'Benchmark'">true</IsExcludedProject>
+		<IsExcludedProject Condition="'$(MSBuildProjectName)' == 'DataBaseUnitTest'">true</IsExcludedProject>
+		<IsExcludedProject Condition="'$(MSBuildProjectName)' == 'DriversRoutesUnitTest'">true</IsExcludedProject>
+		<IsExcludedProject Condition="'$(MSBuildProjectName)' == 'InventoryUnitTest'">true</IsExcludedProject>
+		<IsExcludedProject Condition="'$(MSBuildProjectName)' == 'ServerUnitTest'">true</IsExcludedProject>
+	</PropertyGroup>
+
+	<!-- 2. Główna konfiguracja Release - wykona się tylko dla NIEWYKLUCZONYCH projektów -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Release' AND '$(IsExcludedProject)' != 'true'">
+		<!-- Traktuje standardowe ostrzeżenia C# jako błędy -->
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+		<!-- XAML compiled bindings warning for bindings intentionally scoped to parent controls. -->
+		<NoWarn>$(NoWarn);XFC0009</NoWarn>
+
+		<!-- Dla Androida/ILLink: Traktuje ostrzeżenia Trimmingu jako błędy -->
+		<ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors>
+
+		<!-- Dla Windows/iOS/NativeAOT: Traktuje ostrzeżenia kompilatora AOT jako błędy -->
+		<IlcTreatWarningsAsErrors>true</IlcTreatWarningsAsErrors>
+
+		<!-- Oznacza Twoje biblioteki jako zgodne z AOT, co wymusza pełną analizę -->
+		<IsAotCompatible>true</IsAotCompatible>
+		<EnableAotAnalyzer>true</EnableAotAnalyzer>
+		<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+		<!-- Całkowicie wyłącza audyt NuGet, omijając uszkodzony instalator MSI -->
+		<NuGetAudit>false</NuGetAudit>
+	</PropertyGroup>
+
+	<!-- 3. Dodatkowe reguły XAML - również tylko dla NIEWYKLUCZONYCH projektów -->
+	<PropertyGroup Condition="'$(IsExcludedProject)' != 'true'">
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);XFC0009</WarningsNotAsErrors>
+		<!-- Włącza pełną kompilację bindowań zawierających właściwość Source -->
+		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
+	</PropertyGroup>
+</Project>

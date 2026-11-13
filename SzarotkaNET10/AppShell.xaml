@@ -40,7 +40,7 @@
     </Shell.FlyoutFooter>
 
     <FlyoutItem FlyoutItemIsVisible="False" IsVisible="{Binding IsInitialized}">
-        <ShellContent ContentTemplate="{DataTemplate loadingPage:LoadingPageV}" Route="LoadingPageV" />
+        <ShellContent ContentTemplate="{DataTemplate loadingPage:LoadingPageV}" Route="LoadingPage" />
     </FlyoutItem>
 
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems" IsVisible="{Binding IsLogin}">
@@ -50,7 +50,7 @@
             ContentTemplate="{DataTemplate inventory:MainV}"
             Icon="{AppThemeBinding Light={Static img:TabBarImg.InventoryBlack},
                                    Dark={Static img:TabBarImg.InventoryWhite}}"
-            Route="MainV" />
+            Route="Main" />
 
         <ShellContent
             Title="Mapy"
@@ -59,7 +59,7 @@
                                    Dark={Static img:TabBarImg.MapWhite}}"
             IsVisible="{OnPlatform Android=true,
                                    Default=false}"
-            Route="MainVDriversRoutesV" />
+            Route="MainVDriversRoutes" />
 
 
     </FlyoutItem>
@@ -70,7 +70,7 @@
             ContentTemplate="{DataTemplate options:MainOptionsV}"
             Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
                                    Dark={Static img:TabBarImg.OptionWhite}}"
-            Route="MainOptionsV" />
+            Route="MainOptions" />
 
     </FlyoutItem>
 
@@ -82,21 +82,21 @@
             ContentTemplate="{DataTemplate login:LogInV}"
             Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
                                    Dark={Static img:TabBarImg.OptionWhite}}"
-            Route="LogInV" />
+            Route="LogIn" />
 
         <ShellContent
             Title="Rejestracja"
-            Route="RegisterV"
             ContentTemplate="{DataTemplate register:RegisterV}"
             Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
-                                   Dark={Static img:TabBarImg.OptionWhite}}" />
+                                   Dark={Static img:TabBarImg.OptionWhite}}"
+            Route="Register" />
 
         <ShellContent
             Title="Potwierdź email"
-            Route="ConfirmEmailV"
             ContentTemplate="{DataTemplate emailConfirm:ConfirmEmailV}"
             Icon="{AppThemeBinding Light={Static img:TabBarImg.OptionBlack},
-                                   Dark={Static img:TabBarImg.OptionWhite}}" />
+                                   Dark={Static img:TabBarImg.OptionWhite}}"
+            Route="ConfirmEmail" />
     </FlyoutItem>
 
 </Shell>

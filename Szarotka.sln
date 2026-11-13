@@ -30,6 +30,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementy rozwiązania", "Elementy rozwiązania", "{5AC65FB2-B9BE-4D2D-B953-A3873CFFC600}"
 	ProjectSection(SolutionItems) = preProject
 		.dockerignore = .dockerignore
+		Directory.Build.props = Directory.Build.props
 		Dockerfile = Dockerfile
 		Server\GoogleClouRun.txt = Server\GoogleClouRun.txt
 		wdroz.ps1 = wdroz.ps1

@@ -323,7 +323,7 @@
                             Grid.Column="1"
                             FontSize="Medium"
                             LineBreakMode="CharacterWrap"
-                            UserId="{Binding Day.UserCreatedId}" />
+                            UserId="{Binding Day.UserCreatedId, x:DataType=vm:SingleDayPreviewSmallV}" />
 
 
                         <Border Grid.Row="17" Grid.ColumnSpan="2" />
@@ -340,7 +340,7 @@
                             Grid.Row="18"
                             Grid.Column="1"
                             FontSize="Medium"
-                            IdRoute="{Binding Day.SelectedRoute}"
+                            IdRoute="{Binding Day.SelectedRoute, x:DataType=vm:SingleDayPreviewSmallV}"
                             LineBreakMode="CharacterWrap"
                             OnlyRoute="True" />
 

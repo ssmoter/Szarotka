@@ -20,11 +20,12 @@
                 <Label Text="Ustawiona trasa:" VerticalOptions="Center" />
                 <Picker
                     Title="Wybierz trasę"
+                    x:DataType="VM:CreateTableVM"
                     ItemsSource="{Binding Routes}"
                     SelectedItem="{Binding SelectedRoutes}"
                     VerticalOptions="Center">
                     <Picker.ItemDisplayBinding>
-                        <Binding Path="Name" />
+                        <Binding x:DataType="modelR:Routes" Path="Name" />
                     </Picker.ItemDisplayBinding>
                 </Picker>
             </HorizontalStackLayout>

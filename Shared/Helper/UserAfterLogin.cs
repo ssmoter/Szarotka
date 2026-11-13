@@ -43,7 +43,7 @@ namespace Shared.Helper
         }
 
         public async Task<string> GetAccessTokenAsync()
-             => await SecureStorage.Default.GetAsync("access_token");
+             => (await SecureStorage.Default.GetAsync("access_token")) ?? string.Empty;
 
         public async Task<RefreshToken> GetRefreshTokenAsync()
         {
@@ -122,7 +122,7 @@ namespace Shared.Helper
             }
             catch (Microsoft.IdentityModel.Tokens.SecurityTokenException)
             {
-                if (IsLogin)
+                if (_tryToLogin)
                 {
                     _tryToLogin = false;
                     var newToken = await _loginHttp.RefreshToken(User.RefreshToken);

@@ -13,7 +13,7 @@ public interface IUserValidation
 {
     IValidationException Validation { get; }
 
-    ServerEnums.Result AccountEmailIsNotConfirm(User user);
+    ServerEnums.Result AccountEmailIsNotConfirm(RegisterUser? user);
     ServerEnums.Result AccountNotFound(User? user);
     ServerEnums.Result AccountWasDelete(User user);
     ServerEnums.Result CodeIsExpire(ConfirmCode code);
@@ -166,7 +166,7 @@ public class UserValidation : IUserValidation
     /// <summary>
     /// kod od microsoft
     /// </summary>
-    /// <param name="emailTest"></param>
+    /// <param name="email"></param>
     /// <returns></returns>
     public ServerEnums.Result EmailValidFormat(string email)
     {
@@ -332,10 +332,10 @@ public class UserValidation : IUserValidation
         }
         return result;
     }
-    public ServerEnums.Result AccountEmailIsNotConfirm(User user)
+    public ServerEnums.Result AccountEmailIsNotConfirm(RegisterUser? user)
     {
         var result = ServerEnums.Result.Success;
-        if (!user.IsEmailConfirm)
+        if (!user?.IsEmailConfirm ?? true)
         {
             result = ServerEnums.Result.Error;
             var message = $"Confirm your email, new code was sent";

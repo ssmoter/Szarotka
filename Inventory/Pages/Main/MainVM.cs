@@ -1,13 +1,17 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using DataBase.Data;
 using DataBase.Data.Get;
+using DataBase.Data.Save;
 using DataBase.Helper;
 using DataBase.Model.EntitiesInventory;
 using DataBase.Model.EntitiesRoutes;
 using DataBase.Model.EntitiesServer;
+using DataBase.Service;
 
+using Shared.CustomControls.FromCode;
 using Shared.Data;
 using Shared.Helper;
 using Shared.Pages.UpdateDifference;
@@ -33,17 +37,26 @@ namespace Inventory.Pages.Main
         private readonly DataBase.Data.Get.IGetInventoryAoT _get;
         private readonly DataBase.Service.ITimeService _time;
         private readonly IGetDriverRoutesAoT _getRoutes;
+        private readonly Data.InventoryApi.IGetProductHttp _getHttp;
+        private readonly ISaveInventoryAoT _save;
+        private readonly IUpdateLogService _updateLogService;
 
         public MainVM(IAccessDataBaseAoT db,
                       DataBase.Data.Get.IGetInventoryAoT get,
                       DataBase.Service.ITimeService time,
-                      IGetDriverRoutesAoT getRoutes)
+                      IGetDriverRoutesAoT getRoutes,
+                      Data.InventoryApi.IGetProductHttp getHttp,
+                      ISaveInventoryAoT save,
+                      IUpdateLogService updateLogService)
         {
             _db = db;
             _get = get;
             MainM = new MainM();
             _time = time;
             _getRoutes = getRoutes;
+            _getHttp = getHttp;
+            _save = save;
+            _updateLogService = updateLogService;
         }
 
         [RelayCommand]
@@ -134,9 +147,21 @@ namespace Inventory.Pages.Main
             {
                 day = new();
                 var products = await _get.EmptyProducts();
+
+                if (products.Count == 0)
+                {
+                    await GetProductIfEmpty();
+                    products = await _get.EmptyProducts();
+                }
+
                 var productsSorted = products.Where(x => x.Name.IsVisible && !x.Name.IsDelete).OrderBy(x => x.Name.Arrangement);
 
-                day.SelectedRoute = await GetSelectedRoute();
+                var route = await GetSelectedRoute();
+                if (route == Guid.Empty)
+                {
+                    throw new Exception("Nie wybrano trasy");
+                }
+                day.SelectedRoute = route;
 
                 day.Products = new System.Collections.ObjectModel.ObservableCollection<DataBase.Model.EntitiesInventory.Product>(productsSorted);
             }
@@ -177,7 +202,56 @@ namespace Inventory.Pages.Main
             return selected;
         }
 
+        private async Task GetProductIfEmpty()
+        {
+            await Toast.Make("Rozpoczęto Pobieranie").Show();
+            using var sourceToken = new CancellationTokenSource();
+            try
+            {
+                using var progress = UpdateProgressBar.CreatedUpdateProgressBar(
+                                title: "Anuluj"
+                                , description: "Pobieranie listy produktów"
+                                , icon: UpdateProgressBar.GetSyncImage()
+                                , rotateIcon: true
+                                , action: async () =>
+                                {
+                                    sourceToken.Cancel();
+                                    await Toast.Make("Anulowano pobieranie listy produktów").Show();
+                                    Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+                                });
+                await Toast.Make("Pobieranie zakończone").Show();
+                var result = await _getHttp.GetProducts(progress, sourceToken.Token);
+                await Toast.Make("Rozpoczęto zapisywanie").Show();
 
+
+                foreach (EmptyProduct item in result.Products)
+                {
+
+                    await _save.SaveProductName(item.Name, item.Name.UserUpdatedId.ToByteArray(), true);
+                    var log = await _updateLogService.Insert(new DataBase.Model.UpdateLog()
+                    {
+                        IsServer = false,
+                    }, item.Name);
+
+
+                    foreach (var price in item.Prices)
+                    {
+                        await _save.SaveProductPrice(price, price.UserUpdatedId.ToByteArray(), true);
+                    }
+                }
+                await Toast.Make("Zapisywanie zakończone").Show();
+            }
+            catch (Exception ex)
+            {
+                _db.SaveLogExtension(ex);
+            }
+            finally
+            {
+                Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
+                sourceToken.Dispose();
+                Shell.Current.FlyoutIsPresented = false;
+            }
+        }
 
 
         [RelayCommand]

@@ -273,6 +273,8 @@ namespace Inventory.Pages.Products.ListProduct
             {
                 if (value is null)
                     return;
+                if (DragAndDropProduct is null)
+                    return;
 
                 var index = ProductMs.IndexOf(value);
 
@@ -551,7 +553,7 @@ namespace Inventory.Pages.Products.ListProduct
                     {
                         canUpdate = false;
                         var product = ProductMs.FirstOrDefault(x => x.Name.Id == item.Name.Id);
-                        canUpdate = product is not null && product.Prices.Any(z => z.Id == price.Id);
+                        canUpdate = product is not null && !product.Prices.Any(z => z.Id == price.Id);
                         if (!canUpdate)
                         {
                             await _save.SaveProductPrice(price, price.UserUpdatedId.ToByteArray(), true);
