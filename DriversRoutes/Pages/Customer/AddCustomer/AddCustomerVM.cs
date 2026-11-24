@@ -380,20 +380,15 @@ namespace DriversRoutes.Pages.Customer.AddCustomer
 
                 if (this.Address.Length < 1)
                 {
-                    var response = await _IAddressFromCoordinates.FindGoogleApiAddress(Customer.Latitude, Customer.Longitude);
-                    this.Address = new ResidentialAddress[response.Results.Count];
-
-                    for (int i = 0; i < response.Results.Count; i++)
-                    {
-                        this.Address[i] = response.Results[i].FromGoogleToAddress();
-                    }
+                    var response = await _IAddressFromCoordinates.FindResidentialAddress(Customer.Latitude, Customer.Longitude);
+                    this.Address = response;
                 }
 
                 var queryAttributes = new Dictionary<string, object>
                 {
                     [nameof(ResidentialAddress)] = this.Address
                 };
-                var result = await _popupService.ShowPopupAsync<ProbableAddresses.ProbableAddressesVM, ResidentialAddress>(Shell.Current);
+                var result = await _popupService.ShowPopupAsync<ProbableAddresses.ProbableAddressesVM, ResidentialAddress>(Shell.Current, shellParameters: queryAttributes);
 
                 if (result.Result is ResidentialAddress address)
                 {

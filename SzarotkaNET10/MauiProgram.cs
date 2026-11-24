@@ -11,6 +11,10 @@ using Microsoft.Extensions.Logging;
 
 using SzarotkaNET10.Service;
 
+using Shared.Key;
+
+using Szarotka.Service;
+
 namespace SzarotkaNET10
 {
     public static class MauiProgram
@@ -36,6 +40,7 @@ namespace SzarotkaNET10
 
 
             using var stream = Task.Run(() => FileSystem.OpenAppPackageFileAsync("appsettings.json")).GetAwaiter().GetResult();
+            GoogleApi.Initialize(AppSecrets.GoogleMapsApiKey);
 
             var config = new ConfigurationBuilder()
                 .AddJsonStream(stream)

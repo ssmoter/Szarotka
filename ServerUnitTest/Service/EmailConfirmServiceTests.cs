@@ -53,10 +53,16 @@ namespace ServerUnitTest.Service
                 Id = Guid.NewGuid(),
                 Email = "test@example.com"
             };
+            var code = new ConfirmCode
+            {
+                UserId = user.Id,
+                Code = 123456,
+                Created = DateTime.UtcNow.AddMinutes(15)
+            };
 
             _mockRegisterUserService
                 .Setup(s => s.CreatedConfirmCode(It.IsAny<ConfirmCode>()))
-                .Returns(It.IsAny<ConfirmCode>());
+                .Returns(code);
 
             _mockEmailService
                 .Setup(s => s.SendMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), default))

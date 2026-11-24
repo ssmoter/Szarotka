@@ -17,7 +17,7 @@ namespace DataBaseUnitTest.Translated
         [InlineData(EnumsList.Validation.EmailValidFormat, "Niepoprawny format adresu email")]
         [InlineData(EnumsList.Validation.EmailExist, "Adres email jest już zajęty")]
         [InlineData(EnumsList.Validation.CodeIsExpire, "Kod weryfikacyjny wygasł")]
-        [InlineData(EnumsList.Validation.CodeNotExist, "Kod weryfikacyjny nie istnie")]
+        [InlineData(EnumsList.Validation.CodeNotExist, "Kod weryfikacyjny nie istnieje")]
         [InlineData(EnumsList.Validation.LoginIsNull, "Login nie może być pusty")]
         [InlineData(EnumsList.Validation.EmailIsNull, "Email nie może być pusty")]
         [InlineData(EnumsList.Validation.AccountNotFound, "Konto nie istnieje")]

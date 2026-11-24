@@ -3,6 +3,7 @@
 using DriversRoutes.Helper;
 using DriversRoutes.Model.Address;
 
+using System.Globalization;
 using System.Net.Http.Json;
 
 namespace DriversRoutes.Data.GoogleApi
@@ -23,12 +24,12 @@ namespace DriversRoutes.Data.GoogleApi
         {
             try
             {
-                var lat = latitude.ToString().Replace(',', '.');
-                var lon = longitude.ToString().Replace(',', '.');
+                var lat = latitude.ToString(CultureInfo.InvariantCulture);
+                var lon = longitude.ToString(CultureInfo.InvariantCulture);
 
                 var client = _httpClientFactory.CreateClient(Shared.Service.MyHttpClientsType.GoogleApis);
 
-                var uri = new Uri($"maps/api/geocode/json?latlng={lat},{lon}&key={key}");
+                var uri = new Uri($"{client.BaseAddress}maps/api/geocode/json?latlng={lat},{lon}&key={key}");
 
                 var result = await client.GetFromJsonAsync<GoogleApiAddress>(uri, GoogleApiAddressJsonSerializerContext.Default.GoogleApiAddress, token) ?? throw new Exception("Wystąpił nieznany błąd przy odwróconej geolokalizacji");
 

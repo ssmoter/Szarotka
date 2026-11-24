@@ -383,3 +383,6 @@ FodyWeavers.xsd
 /wlacz-serwer.ps1
 /wylacz-serwer.ps1
 /SzarotkaNET10/Secrets.props
+/DriversRoutesUnitTest/Development/szarotka_produkcyjna_RAM.db3
+/DriversRoutesUnitTest/Development/szarotka_produkcyjna.db3
+/Server/appsettings.json

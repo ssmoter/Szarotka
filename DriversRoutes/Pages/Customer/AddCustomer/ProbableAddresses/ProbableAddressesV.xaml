@@ -6,130 +6,134 @@
     xmlns:Model="clr-namespace:DataBase.Model.EntitiesRoutes;assembly=DataBase"
     xmlns:VM="clr-namespace:DriversRoutes.Pages.Customer.AddCustomer.ProbableAddresses"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    Margin="0"
+    Padding="0"
     x:DataType="VM:ProbableAddressesVM"
-    BackgroundColor="{AppThemeBinding Light={StaticResource White},
-                                      Dark={StaticResource Black}}">
+    BackgroundColor="Transparent"
+    CanBeDismissedByTappingOutsideOfPopup="False">
 
-
-    <Grid
-        Margin="20,0,20,0"
-        HorizontalOptions="Center"
-        RowDefinitions="*,*"
+    <!--  Główny kontener z marginesem i zaokrągleniami  -->
+    <Border
+        Margin="1"
+        Padding="1"
+        BackgroundColor="{AppThemeBinding Light={StaticResource White},
+                                          Dark={StaticResource Black}}"
+        HorizontalOptions="Fill"
+        MaximumHeightRequest="650"
+        StrokeShape="RoundRectangle 12"
         VerticalOptions="Center">
 
-        <Border
-            Grid.Row="1"
-            Padding="10,10,10,5"
-            HorizontalOptions="Center"
-            VerticalOptions="Center">
+        <Grid RowDefinitions="Auto, *" RowSpacing="12">
 
-            <Grid RowDefinitions="auto,*">
+            <!--  Górny pasek z tytułem i przyciskiem Anuluj  -->
+            <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="18"
+                    Text="Wybierz adres"
+                    VerticalOptions="Center" />
 
                 <Button
-                    Grid.Row="0"
+                    Grid.Column="1"
                     Command="{Binding CancelAndReturnCommand}"
                     Text="Anuluj" />
-
-                <ScrollView Grid.Row="1">
-
-
-                    <VerticalStackLayout>
-
-                        <CollectionView ItemsSource="{Binding ProbableAddressesM.ResidentialAddresses}">
-
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Border
-                                        Margin="5"
-                                        Padding="5"
-                                        HorizontalOptions="Fill"
-                                        VerticalOptions="Center">
-
-                                        <Grid
-                                            x:DataType="Model:ResidentialAddress"
-                                            ColumnDefinitions="*,*"
-                                            HorizontalOptions="Center"
-                                            RowDefinitions="auto,auto,auto,auto,auto,auto,auto"
-                                            VerticalOptions="Center">
-
-                                            <Button
-                                                Grid.Row="7"
-                                                Grid.ColumnSpan="2"
-                                                x:DataType="VM:ProbableAddressesVM"
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ProbableAddressesVM}}, Path=SaveAndReturnCommand}"
-                                                CommandParameter="{Binding .}"
-                                                HorizontalOptions="Fill"
-                                                Text="Wybierz" />
-
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="0"
-                                                Text="Ulica: " />
-                                            <Label
-                                                Grid.Row="1"
-                                                Grid.Column="0"
-                                                Text="Numer mieszkania: " />
-                                            <Label
-                                                Grid.Row="2"
-                                                Grid.Column="0"
-                                                Text="Numer domu: " />
-                                            <Label
-                                                Grid.Row="3"
-                                                Grid.Column="0"
-                                                Text="Kraj: " />
-                                            <Label
-                                                Grid.Row="4"
-                                                Grid.Column="0"
-                                                Text="Miasto: " />
-                                            <Label
-                                                Grid.Row="5"
-                                                Grid.Column="0"
-                                                Text="Kod pocztowy: " />
-
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="1"
-                                                Text="{Binding Street}" />
-                                            <Label
-                                                Grid.Row="1"
-                                                Grid.Column="1"
-                                                Text="{Binding ApartmentNumber}" />
-                                            <Label
-                                                Grid.Row="2"
-                                                Grid.Column="1"
-                                                Text="{Binding HouseNumber}" />
-                                            <Label
-                                                Grid.Row="3"
-                                                Grid.Column="1"
-                                                Text="{Binding Country}" />
-                                            <Label
-                                                Grid.Row="4"
-                                                Grid.Column="1"
-                                                Text="{Binding City}" />
-                                            <Label
-                                                Grid.Row="5"
-                                                Grid.Column="1"
-                                                Text="{Binding PostalCode}" />
-
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-
-                        </CollectionView>
-
-
-
-
-                    </VerticalStackLayout>
-
-
-
-
-                </ScrollView>
-
             </Grid>
-        </Border>
-    </Grid>
 
+            <!--  Lista adresów  -->
+            <CollectionView
+                Grid.Row="1"
+                ItemsSource="{Binding ProbableAddressesM.ResidentialAddresses}"
+                SelectionMode="None">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="Model:ResidentialAddress">
+                        <Border
+                            Margin="0,6"
+                            Padding="12"
+                            StrokeShape="RoundRectangle 8">
+
+                            <!--  7 wierszy (indeksy od 0 do 6)  -->
+                            <Grid
+                                ColumnDefinitions="Auto, *"
+                                ColumnSpacing="10"
+                                RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto"
+                                RowSpacing="4">
+
+                                <!--  Etykiety (lewa kolumna)  -->
+                                <Label
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    FontAttributes="Bold"
+                                    Text="Ulica:" />
+                                <Label
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    FontAttributes="Bold"
+                                    Text="Numer domu:" />
+                                <Label
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    FontAttributes="Bold"
+                                    Text="Numer mieszkania:" />
+                                <Label
+                                    Grid.Row="3"
+                                    Grid.Column="0"
+                                    FontAttributes="Bold"
+                                    Text="Kod pocztowy:" />
+                                <Label
+                                    Grid.Row="4"
+                                    Grid.Column="0"
+                                    FontAttributes="Bold"
+                                    Text="Miasto:" />
+                                <Label
+                                    Grid.Row="5"
+                                    Grid.Column="0"
+                                    FontAttributes="Bold"
+                                    Text="Kraj:" />
+
+                                <!--  Wartości z modelu (prawa kolumna)  -->
+                                <Label
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Text="{Binding Street}" />
+                                <Label
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Text="{Binding HouseNumber}" />
+                                <Label
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Text="{Binding ApartmentNumber}" />
+                                <Label
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    Text="{Binding PostalCode}" />
+                                <Label
+                                    Grid.Row="4"
+                                    Grid.Column="1"
+                                    Text="{Binding City}" />
+                                <Label
+                                    Grid.Row="5"
+                                    Grid.Column="1"
+                                    Text="{Binding Country}" />
+
+                                <!--  Przycisk wyboru w 7. wierszu (indeks 6)  -->
+                                <Button
+                                    Grid.Row="6"
+                                    Grid.ColumnSpan="2"
+                                    Margin="0,8,0,0"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type VM:ProbableAddressesVM}}, Path=SaveAndReturnCommand}"
+                                    CommandParameter="{Binding .}"
+                                    HorizontalOptions="Fill"
+                                    Text="Wybierz" />
+
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+
+        </Grid>
+    </Border>
 </toolkit:Popup>

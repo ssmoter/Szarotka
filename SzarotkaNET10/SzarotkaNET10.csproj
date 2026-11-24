@@ -29,7 +29,6 @@
 		<!-- IL2026/IL2104: Ostrzeżenia trybu Trimming | IL3050/IL3056: Ostrzeżenia Native AOT -->
 		<WarningsAsErrors>$(WarningsAsErrors);IL2026;IL2104;IL3050;IL3056</WarningsAsErrors>
 
-		
 		<!-- ROZWIĄZANIE BŁĘDU SQLITE: Wymuszenie spakowania bibliotek natywnych .so w trybie Debug -->
 		<EmbedAssembliesIntoApk Condition="'$(Configuration)' == 'Debug' and $(TargetFramework.Contains('-android'))">true</EmbedAssembliesIntoApk>
 
@@ -57,10 +56,6 @@
 		<ApplicationId>com.szarotka.szarotka.test</ApplicationId>
 		<ApplicationTitle>Szarotka (TEST)</ApplicationTitle>
 	</PropertyGroup>
-
-	<!-- ========================================================================= -->
-	<!-- KONFIGURACJA OPTYMALIZACJI I INTERPRETERA (.NET 10)                       -->
-	<!-- ========================================================================= -->
 
 	<!-- ========================================================================= -->
 	<!-- KONFIGURACJA OPTYMALIZACJI I INTERPRETERA (.NET 10)                       -->
@@ -99,7 +94,6 @@
 		<UseInterpreter>true</UseInterpreter>
 	</PropertyGroup>
 
-
 	<!-- ========================================================================= -->
 	<!-- DYNAMICZNY WYBÓR ARCHITEKTURY PROCESORA DLA ANDROIDA                       -->
 	<!-- ========================================================================= -->
@@ -113,12 +107,22 @@
 	<PropertyGroup Condition="('$(Configuration)' == 'Release' or '$(Configuration)' == 'ReleaseTest') and $(TargetFramework.Contains('-android'))">
 		<RuntimeIdentifiers>android-arm;android-arm64</RuntimeIdentifiers>
 	</PropertyGroup>
-	
-	<!-- Wczytuje sekrety lokalne, jeśli plik istnieje -->
+
+	<!-- ========================================================================= -->
+	<!-- SEKRETY I KLUCZE API (Secrets.props / CI-CD)                              -->
+	<!-- ========================================================================= -->
 	<Import Project="Secrets.props" Condition="Exists('Secrets.props')" />
+
+	<PropertyGroup Condition="'$(GoogleMapsApiKey)' == '' and '$(GOOGLE_MAPS_API_KEY)' != ''">
+		<GoogleMapsApiKey>$(GOOGLE_MAPS_API_KEY)</GoogleMapsApiKey>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AssemblyMetadata Include="GoogleMapsApiKey" Value="$(GoogleMapsApiKey)" />
+	</ItemGroup>
+
 	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
-		<!-- Pobranie klucza ze zmiennej środowiskowej systemu lub CI/CD -->
-		<AndroidManifestPlaceholders>MapsApiKey=$(GOOGLE_MAPS_API_KEY)</AndroidManifestPlaceholders>
+		<AndroidManifestPlaceholders>MapsApiKey=$(GoogleMapsApiKey)</AndroidManifestPlaceholders>
 	</PropertyGroup>
 
 	<!-- ========================================================================= -->
@@ -126,10 +130,10 @@
 	<ItemGroup>
 		<!-- Domyślna ikona aplikacji (dla konfiguracji Debug i Release) -->
 		<MauiIcon Condition="'$(Configuration)' != 'ReleaseTest'" Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
-		
+
 		<!-- Wyróżniająca się kolorystycznie ikona dla wersji ReleaseTest (np. czerwone/pomarańczowe tło) -->
 		<MauiIcon Condition="'$(Configuration)' == 'ReleaseTest'" Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#D32F2F" />
-		
+
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
 		<!-- Images -->
@@ -216,7 +220,6 @@
 		</VisualStudio>
 	</ProjectExtensions>
 
-	<!-- Blokada błędów webowych dla czystego projektu .NET MAUI -->
 	<Target Name="StaticWebAssetsPrepareForRun" />
 	<Target Name="StaticWebAssetsPrepareForPublish" />
 	<Target Name="LoadStaticWebAssetsPublishManifest" />
