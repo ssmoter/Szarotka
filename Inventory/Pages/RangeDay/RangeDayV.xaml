@@ -7,11 +7,9 @@
     xmlns:Convert="clr-namespace:Shared.Helper;assembly=Shared"
     xmlns:VM="clr-namespace:Inventory.Pages.RangeDay"
     xmlns:VMD="clr-namespace:DataBase.Model.EntitiesInventory;assembly=DataBase"
-    xmlns:graph="clr-namespace:Inventory.Pages.RangeDay.Graph"
     xmlns:img="clr-namespace:Shared.Helper.Img;assembly=Shared"
     xmlns:rangeControls="clr-namespace:Inventory.Pages.RangeDay.Controls"
     xmlns:system="clr-namespace:System;assembly=netstandard"
-    xmlns:table="clr-namespace:Inventory.Pages.RangeDay.Table"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:Name="RangeDayPage"
     x:DataType="VM:RangeDayVM">
@@ -267,100 +265,100 @@
 
                                     <RadioButton
                                         Grid.Row="0"
-                                        x:DataType="VM:CalculationTyp"
-                                        Content="{Binding Source={x:Static VM:CalculationTyp.None}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        x:DataType="VM:DayCalculationType"
+                                        Content="{Binding Source={x:Static VM:DayCalculationType.None}, Converter={StaticResource CalculationsTranslateConverter}}"
                                         GroupName="CalculationBy"
-                                        Value="{x:Static VM:CalculationTyp.None}" />
+                                        Value="{x:Static VM:DayCalculationType.None}" />
                                     <RadioButton
                                         Grid.Row="1"
-                                        x:DataType="VM:CalculationTyp"
-                                        Content="{Binding Source={x:Static VM:CalculationTyp.SumWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        x:DataType="VM:DayCalculationType"
+                                        Content="{Binding Source={x:Static VM:DayCalculationType.SumWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
                                         GroupName="CalculationBy"
-                                        Value="{x:Static VM:CalculationTyp.SumWeek}" />
+                                        Value="{x:Static VM:DayCalculationType.SumWeek}" />
                                     <RadioButton
                                         Grid.Row="2"
-                                        x:DataType="VM:CalculationTyp"
-                                        Content="{Binding Source={x:Static VM:CalculationTyp.SumMonth}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        x:DataType="VM:DayCalculationType"
+                                        Content="{Binding Source={x:Static VM:DayCalculationType.SumMonth}, Converter={StaticResource CalculationsTranslateConverter}}"
                                         GroupName="CalculationBy"
-                                        Value="{x:Static VM:CalculationTyp.SumMonth}" />
+                                        Value="{x:Static VM:DayCalculationType.SumMonth}" />
                                     <RadioButton
                                         Grid.Row="3"
-                                        x:DataType="VM:CalculationTyp"
-                                        Content="{Binding Source={x:Static VM:CalculationTyp.SumYear}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        x:DataType="VM:DayCalculationType"
+                                        Content="{Binding Source={x:Static VM:DayCalculationType.SumYear}, Converter={StaticResource CalculationsTranslateConverter}}"
                                         GroupName="CalculationBy"
-                                        Value="{x:Static VM:CalculationTyp.SumYear}" />
+                                        Value="{x:Static VM:DayCalculationType.SumYear}" />
                                     <RadioButton
                                         Grid.Row="4"
-                                        x:DataType="VM:CalculationTyp"
-                                        Content="{Binding Source={x:Static VM:CalculationTyp.SumDayOfWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        x:DataType="VM:DayCalculationType"
+                                        Content="{Binding Source={x:Static VM:DayCalculationType.SumDayOfWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
                                         GroupName="CalculationBy"
-                                        Value="{x:Static VM:CalculationTyp.SumDayOfWeek}" />
+                                        Value="{x:Static VM:DayCalculationType.SumDayOfWeek}" />
                                     <RadioButton
                                         Grid.Row="5"
-                                        x:DataType="VM:CalculationTyp"
-                                        Content="{Binding Source={x:Static VM:CalculationTyp.SumAll}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        x:DataType="VM:DayCalculationType"
+                                        Content="{Binding Source={x:Static VM:DayCalculationType.SumAll}, Converter={StaticResource CalculationsTranslateConverter}}"
                                         GroupName="CalculationBy"
-                                        Value="{x:Static VM:CalculationTyp.SumAll}" />
+                                        Value="{x:Static VM:DayCalculationType.SumAll}" />
                                     <RadioButton
                                         Grid.Row="6"
-                                        x:DataType="VM:CalculationTyp"
-                                        Content="{Binding Source={x:Static VM:CalculationTyp.AverageWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        x:DataType="VM:DayCalculationType"
+                                        Content="{Binding Source={x:Static VM:DayCalculationType.AverageWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
                                         GroupName="CalculationBy"
-                                        Value="{x:Static VM:CalculationTyp.AverageWeek}" />
+                                        Value="{x:Static VM:DayCalculationType.AverageWeek}" />
                                     <RadioButton
                                         Grid.Row="7"
-                                        x:DataType="VM:CalculationTyp"
-                                        Content="{Binding Source={x:Static VM:CalculationTyp.AverageMonth}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        x:DataType="VM:DayCalculationType"
+                                        Content="{Binding Source={x:Static VM:DayCalculationType.AverageMonth}, Converter={StaticResource CalculationsTranslateConverter}}"
                                         GroupName="CalculationBy"
-                                        Value="{x:Static VM:CalculationTyp.AverageMonth}" />
+                                        Value="{x:Static VM:DayCalculationType.AverageMonth}" />
                                     <RadioButton
                                         Grid.Row="8"
-                                        x:DataType="VM:CalculationTyp"
-                                        Content="{Binding Source={x:Static VM:CalculationTyp.AverageYear}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        x:DataType="VM:DayCalculationType"
+                                        Content="{Binding Source={x:Static VM:DayCalculationType.AverageYear}, Converter={StaticResource CalculationsTranslateConverter}}"
                                         GroupName="CalculationBy"
-                                        Value="{x:Static VM:CalculationTyp.AverageYear}" />
+                                        Value="{x:Static VM:DayCalculationType.AverageYear}" />
                                     <RadioButton
                                         Grid.Row="9"
-                                        x:DataType="VM:CalculationTyp"
-                                        Content="{Binding Source={x:Static VM:CalculationTyp.AverageDayOfWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        x:DataType="VM:DayCalculationType"
+                                        Content="{Binding Source={x:Static VM:DayCalculationType.AverageDayOfWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
                                         GroupName="CalculationBy"
-                                        Value="{x:Static VM:CalculationTyp.AverageDayOfWeek}" />
+                                        Value="{x:Static VM:DayCalculationType.AverageDayOfWeek}" />
                                     <RadioButton
                                         Grid.Row="10"
-                                        x:DataType="VM:CalculationTyp"
-                                        Content="{Binding Source={x:Static VM:CalculationTyp.AverageAll}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        x:DataType="VM:DayCalculationType"
+                                        Content="{Binding Source={x:Static VM:DayCalculationType.AverageAll}, Converter={StaticResource CalculationsTranslateConverter}}"
                                         GroupName="CalculationBy"
-                                        Value="{x:Static VM:CalculationTyp.AverageAll}" />
+                                        Value="{x:Static VM:DayCalculationType.AverageAll}" />
                                     <RadioButton
                                         Grid.Row="11"
-                                        x:DataType="VM:CalculationTyp"
-                                        Content="{Binding Source={x:Static VM:CalculationTyp.MedianWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        x:DataType="VM:DayCalculationType"
+                                        Content="{Binding Source={x:Static VM:DayCalculationType.MedianWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
                                         GroupName="CalculationBy"
-                                        Value="{x:Static VM:CalculationTyp.MedianWeek}" />
+                                        Value="{x:Static VM:DayCalculationType.MedianWeek}" />
                                     <RadioButton
                                         Grid.Row="12"
-                                        x:DataType="VM:CalculationTyp"
-                                        Content="{Binding Source={x:Static VM:CalculationTyp.MedianMonth}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        x:DataType="VM:DayCalculationType"
+                                        Content="{Binding Source={x:Static VM:DayCalculationType.MedianMonth}, Converter={StaticResource CalculationsTranslateConverter}}"
                                         GroupName="CalculationBy"
-                                        Value="{x:Static VM:CalculationTyp.MedianMonth}" />
+                                        Value="{x:Static VM:DayCalculationType.MedianMonth}" />
                                     <RadioButton
                                         Grid.Row="13"
-                                        x:DataType="VM:CalculationTyp"
-                                        Content="{Binding Source={x:Static VM:CalculationTyp.MedianYear}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        x:DataType="VM:DayCalculationType"
+                                        Content="{Binding Source={x:Static VM:DayCalculationType.MedianYear}, Converter={StaticResource CalculationsTranslateConverter}}"
                                         GroupName="CalculationBy"
-                                        Value="{x:Static VM:CalculationTyp.MedianYear}" />
+                                        Value="{x:Static VM:DayCalculationType.MedianYear}" />
                                     <RadioButton
                                         Grid.Row="14"
-                                        x:DataType="VM:CalculationTyp"
-                                        Content="{Binding Source={x:Static VM:CalculationTyp.MedianDayOfWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        x:DataType="VM:DayCalculationType"
+                                        Content="{Binding Source={x:Static VM:DayCalculationType.MedianDayOfWeek}, Converter={StaticResource CalculationsTranslateConverter}}"
                                         GroupName="CalculationBy"
-                                        Value="{x:Static VM:CalculationTyp.MedianDayOfWeek}" />
+                                        Value="{x:Static VM:DayCalculationType.MedianDayOfWeek}" />
                                     <RadioButton
                                         Grid.Row="15"
-                                        x:DataType="VM:CalculationTyp"
-                                        Content="{Binding Source={x:Static VM:CalculationTyp.MedianAll}, Converter={StaticResource CalculationsTranslateConverter}}"
+                                        x:DataType="VM:DayCalculationType"
+                                        Content="{Binding Source={x:Static VM:DayCalculationType.MedianAll}, Converter={StaticResource CalculationsTranslateConverter}}"
                                         GroupName="CalculationBy"
-                                        Value="{x:Static VM:CalculationTyp.MedianAll}" />
+                                        Value="{x:Static VM:DayCalculationType.MedianAll}" />
 
                                 </Grid>
                             </ScrollView>

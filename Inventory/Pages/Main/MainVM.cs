@@ -257,37 +257,40 @@ namespace Inventory.Pages.Main
         [RelayCommand]
         async Task test()
         {
-            Day day = null;
-            if (DeviceInfo.Current.Platform == DevicePlatform.Android)
-                day = await _get.DaySelectedDateString("12.10.2026", UserAfterLogin.User.Id);
-            else if (DeviceInfo.Current.Platform == DevicePlatform.WinUI)
-                day = await _get.Day(new Guid("01a111a4-c0cb-7989-b587-cd35e163e5de"));
 
-            var product = await _get.EmptyProducts();
 
-            var customer = new CustomerRoutes()
-            {
-                DayOfWeek = new(),
-                ResidentialAddress = new(),
-            };
+            //Day day = null;
+            //if (DeviceInfo.Current.Platform == DevicePlatform.Android)
+            //    day = await _get.DaySelectedDateString("12.10.2026", UserAfterLogin.User.Id);
+            //else if (DeviceInfo.Current.Platform == DevicePlatform.WinUI)
+            //    day = await _get.Day(new Guid("01a111a4-c0cb-7989-b587-cd35e163e5de"));
 
-            IList<UpdateDifference> exists = [];
-            exists.Add(new UpdateDifference() { Index = 1, Server = day, Update = day });
-            exists.Add(new UpdateDifference() { Index = 2, Server = day, Update = day });
-            exists.Add(new UpdateDifference() { Index = 3, Server = product[0].Name, Update = product[0].Name });
-            exists.Add(new UpdateDifference() { Index = 4, Server = product[1].Name, Update = product[1].Name });
-            exists.Add(new UpdateDifference() { Index = 5, Server = customer, Update = customer });
-            var navigationParameter = new Dictionary<string, object>
-                     {
-                        { nameof(UpdateDifference), exists },
-                        {nameof(Action),(Action<IEnumerable>)(async (days)
-                        =>
-                            {
-                            })
-                        }
-                    };
+            //var product = await _get.EmptyProducts();
 
-            await Shell.Current.GoToAsync(nameof(UpdateDifferenceV), navigationParameter);
+            //var customer = new CustomerRoutes()
+            //{
+            //    DayOfWeek = new(),
+            //    ResidentialAddress = new(),
+            //};
+
+            //IList<UpdateDifference> exists = [];
+            //exists.Add(new UpdateDifference() { Index = 1, Server = day, Update = day });
+            //exists.Add(new UpdateDifference() { Index = 2, Server = day, Update = day });
+            //exists.Add(new UpdateDifference() { Index = 3, Server = product[0].Name, Update = product[0].Name });
+            //exists.Add(new UpdateDifference() { Index = 4, Server = product[1].Name, Update = product[1].Name });
+            //exists.Add(new UpdateDifference() { Index = 5, Server = customer, Update = customer });
+            //var navigationParameter = new Dictionary<string, object>
+            //         {
+            //            { nameof(UpdateDifference), exists },
+            //            {nameof(Action),(Action<IEnumerable>)(async (days)
+            //            =>
+            //                {
+            //                })
+            //            }
+            //        };
+
+            //await Shell.Current.GoToAsync(nameof(UpdateDifferenceV), navigationParameter);
+            var a = await _get.DayCalculationType(0, DateTime.MaxValue.Ticks, [], DayCalculationType.MedianWeek);
         }
     }
 }

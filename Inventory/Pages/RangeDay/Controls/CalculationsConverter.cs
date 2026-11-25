@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using DataBase.Model.EntitiesInventory;
+
+using System.Globalization;
 
 namespace Inventory.Pages.RangeDay.Controls
 {
@@ -6,7 +8,7 @@ namespace Inventory.Pages.RangeDay.Controls
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is CalculationTyp type)
+            if (value is DayCalculationType type)
             {
                 return FilterTyp.CalculationTranslate(type);
             }

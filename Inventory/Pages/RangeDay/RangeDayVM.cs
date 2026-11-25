@@ -408,7 +408,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
         var model = popupResult;
         PopupDate = model;
         var list = await _get.Days(model.From, model.To, model.DriverId);
-
+        SortedDays = [];
         AllDays = [.. list.OrderByDescending(x => x.SelectedDateTicks)];
         OptionsM.EnableSave = false;
 
@@ -425,7 +425,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
         var key = filterTyp.SelectedKey;
         var name = filterTyp.SelectedName;
 
-        if (filterTyp.CalculationBy != CalculationTyp.None)
+        if (filterTyp.CalculationBy != DayCalculationType.None)
         {
             if (!SortedHeadersHide.Contains("Zakres"))
             {
@@ -437,21 +437,29 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
             SortedHeadersHide.Remove("Zakres");
         }
 
+        var selectedHeaders = MergeArrays(_defaultsHeaders, SortedHeaders).ToArray();
+
         var selected =
                 AllDays.Where(z => filterTyp.GetSelectedDays().Contains(z.SelectedDate.DayOfWeek))
                 .Select((x, index) =>
                 {
                     decimal? selectedProduct = GetValueFromName(x, key, name);
+                    string value = "-";
+                    if (selectedProduct is null && !string.IsNullOrEmpty(key))
+                    {
+                        value = selectedProduct.ToString();
+                    }
 
                     return new DayExpanded(
                         day: x,
                         index: index + 1,
-                        selectedValue: selectedProduct.ToString(),
-                        selectedHeaders: MergeArrays(_defaultsHeaders, SortedHeaders)
+                        selectedValue: value,
+                        selectedHeaders: selectedHeaders
                     );
                 });
 
-        var calculation = GetCalculationTyp(selected, filterTyp.CalculationBy);
+        var calculation = GetDayCalculationType(selected, filterTyp.CalculationBy);
+
         MainThread.BeginInvokeOnMainThread(() =>
         {
             SortedDays = [.. calculation];
@@ -610,26 +618,26 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
         };
         return sortedProduct;
     }
-    private static IEnumerable<DayExpanded> GetCalculationTyp(IEnumerable<DayExpanded> source, CalculationTyp calculation)
+    private static IEnumerable<DayExpanded> GetDayCalculationType(IEnumerable<DayExpanded> source, DayCalculationType calculation)
     {
         return calculation switch
         {
-            CalculationTyp.None => source,
-            CalculationTyp.SumWeek => DayRangeCalculationSum.Week(source),
-            CalculationTyp.SumMonth => DayRangeCalculationSum.Month(source),
-            CalculationTyp.SumYear => DayRangeCalculationSum.Year(source),
-            CalculationTyp.SumDayOfWeek => DayRangeCalculationSum.DayOfWeek(source),
-            CalculationTyp.SumAll => DayRangeCalculationSum.All(source),
-            CalculationTyp.AverageWeek => DayRangeCalculationAverage.Week(source),
-            CalculationTyp.AverageMonth => DayRangeCalculationAverage.Month(source),
-            CalculationTyp.AverageYear => DayRangeCalculationAverage.Year(source),
-            CalculationTyp.AverageDayOfWeek => DayRangeCalculationAverage.DayOfWeek(source),
-            CalculationTyp.AverageAll => DayRangeCalculationAverage.All(source),
-            CalculationTyp.MedianWeek => DayRangeCalculationMedian.Week(source),
-            CalculationTyp.MedianMonth => DayRangeCalculationMedian.Month(source),
-            CalculationTyp.MedianYear => DayRangeCalculationMedian.Year(source),
-            CalculationTyp.MedianDayOfWeek => DayRangeCalculationMedian.DayOfWeek(source),
-            CalculationTyp.MedianAll => DayRangeCalculationMedian.All(source),
+            DayCalculationType.None => source,
+            DayCalculationType.SumWeek => DayRangeCalculationSum.Week(source),
+            DayCalculationType.SumMonth => DayRangeCalculationSum.Month(source),
+            DayCalculationType.SumYear => DayRangeCalculationSum.Year(source),
+            DayCalculationType.SumDayOfWeek => DayRangeCalculationSum.DayOfWeek(source),
+            DayCalculationType.SumAll => DayRangeCalculationSum.All(source),
+            DayCalculationType.AverageWeek => DayRangeCalculationAverage.Week(source),
+            DayCalculationType.AverageMonth => DayRangeCalculationAverage.Month(source),
+            DayCalculationType.AverageYear => DayRangeCalculationAverage.Year(source),
+            DayCalculationType.AverageDayOfWeek => DayRangeCalculationAverage.DayOfWeek(source),
+            DayCalculationType.AverageAll => DayRangeCalculationAverage.All(source),
+            DayCalculationType.MedianWeek => DayRangeCalculationMedian.Week(source),
+            DayCalculationType.MedianMonth => DayRangeCalculationMedian.Month(source),
+            DayCalculationType.MedianYear => DayRangeCalculationMedian.Year(source),
+            DayCalculationType.MedianDayOfWeek => DayRangeCalculationMedian.DayOfWeek(source),
+            DayCalculationType.MedianAll => DayRangeCalculationMedian.All(source),
             _ => source,
         };
     }
@@ -656,13 +664,13 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
 
         result = key switch
         {
-            nameof(Product.Number) => x.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).Number,
-            nameof(Product.NumberEdit) => x.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).NumberEdit,
-            nameof(Product.NumberReturn) => x.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).NumberReturn,
-            nameof(Product.PriceTotalAfterCorrectDecimal) => x.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).PriceTotalAfterCorrectDecimal,
-            nameof(Product.PriceTotalCorrectDecimal) => x.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).PriceTotalCorrectDecimal,
-            nameof(Product.PriceTotalDecimal) => x.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase)).PriceTotalDecimal,
-            "Sell" => SellReturn(x.Products.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))),
+            nameof(Product.Number) => x.Products?.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))?.Number,
+            nameof(Product.NumberEdit) => x.Products?.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))?.NumberEdit,
+            nameof(Product.NumberReturn) => x.Products?.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))?.NumberReturn,
+            nameof(Product.PriceTotalAfterCorrectDecimal) => x.Products?.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))?.PriceTotalAfterCorrectDecimal,
+            nameof(Product.PriceTotalCorrectDecimal) => x.Products?.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))?.PriceTotalCorrectDecimal,
+            nameof(Product.PriceTotalDecimal) => x.Products?.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))?.PriceTotalDecimal,
+            "Sell" => SellReturn(x.Products?.FirstOrDefault(p => p.Name.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))),
             _ => null,
         };
 
@@ -672,7 +680,7 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
     }
     private static decimal SellReturn(Product product)
     {
-        return product.Number + product.NumberEdit - product.NumberReturn;
+        return product?.Number + product?.NumberEdit - product?.NumberReturn ?? 0;
     }
     [RelayCommand]
     static async Task Back()

@@ -249,8 +249,8 @@ public partial class FilterTyp : ObservableObject
         }
     }
 
-    private CalculationTyp calculationBy = CalculationTyp.None;
-    public CalculationTyp CalculationBy
+    private DayCalculationType calculationBy = DayCalculationType.None;
+    public DayCalculationType CalculationBy
     {
         get => calculationBy;
         set
@@ -275,50 +275,50 @@ public partial class FilterTyp : ObservableObject
         Asc,
     }
 
-    public static CalculationTyp[] GetArray()
+    public static DayCalculationType[] GetArray()
     {
-        var array = new CalculationTyp[16];
-        array[0] = CalculationTyp.None;
-        array[1] = CalculationTyp.SumWeek;
-        array[2] = CalculationTyp.SumMonth;
-        array[3] = CalculationTyp.SumYear;
-        array[4] = CalculationTyp.SumDayOfWeek;
-        array[5] = CalculationTyp.SumAll;
+        var array = new DayCalculationType[16];
+        array[0] = DayCalculationType.None;
+        array[1] = DayCalculationType.SumWeek;
+        array[2] = DayCalculationType.SumMonth;
+        array[3] = DayCalculationType.SumYear;
+        array[4] = DayCalculationType.SumDayOfWeek;
+        array[5] = DayCalculationType.SumAll;
 
-        array[6] = CalculationTyp.AverageWeek;
-        array[7] = CalculationTyp.AverageMonth;
-        array[8] = CalculationTyp.AverageYear;
-        array[9] = CalculationTyp.AverageDayOfWeek;
-        array[10] = CalculationTyp.AverageAll;
+        array[6] = DayCalculationType.AverageWeek;
+        array[7] = DayCalculationType.AverageMonth;
+        array[8] = DayCalculationType.AverageYear;
+        array[9] = DayCalculationType.AverageDayOfWeek;
+        array[10] = DayCalculationType.AverageAll;
 
-        array[11] = CalculationTyp.MedianWeek;
-        array[12] = CalculationTyp.MedianMonth;
-        array[13] = CalculationTyp.MedianYear;
-        array[14] = CalculationTyp.MedianDayOfWeek;
-        array[15] = CalculationTyp.MedianAll;
+        array[11] = DayCalculationType.MedianWeek;
+        array[12] = DayCalculationType.MedianMonth;
+        array[13] = DayCalculationType.MedianYear;
+        array[14] = DayCalculationType.MedianDayOfWeek;
+        array[15] = DayCalculationType.MedianAll;
         return array;
     }
 
-    public static string CalculationTranslate(CalculationTyp typ)
+    public static string CalculationTranslate(DayCalculationType typ)
     {
         return typ switch
         {
-            CalculationTyp.None => "Brak",
-            CalculationTyp.SumWeek => "Suma tygodnia",
-            CalculationTyp.SumMonth => "Suma miesiąca",
-            CalculationTyp.SumYear => "Suma roku",
-            CalculationTyp.SumDayOfWeek => "Suma dni tygodnia",
-            CalculationTyp.SumAll => "Suma",
-            CalculationTyp.AverageWeek => "Średnia tygodnia",
-            CalculationTyp.AverageMonth => "Średnia miesiąca",
-            CalculationTyp.AverageYear => "Średnia roku",
-            CalculationTyp.AverageDayOfWeek => "Średnia dni tygodnia",
-            CalculationTyp.AverageAll => "Średnia",
-            CalculationTyp.MedianWeek => "Mediana tygodnia",
-            CalculationTyp.MedianMonth => "Mediana miesiąca",
-            CalculationTyp.MedianYear => "Mediana roku",
-            CalculationTyp.MedianDayOfWeek => "Mediana dni tygodnia",
-            CalculationTyp.MedianAll => "Mediana",
+            DayCalculationType.None => "Brak",
+            DayCalculationType.SumWeek => "Suma tygodnia",
+            DayCalculationType.SumMonth => "Suma miesiąca",
+            DayCalculationType.SumYear => "Suma roku",
+            DayCalculationType.SumDayOfWeek => "Suma dni tygodnia",
+            DayCalculationType.SumAll => "Suma",
+            DayCalculationType.AverageWeek => "Średnia tygodnia",
+            DayCalculationType.AverageMonth => "Średnia miesiąca",
+            DayCalculationType.AverageYear => "Średnia roku",
+            DayCalculationType.AverageDayOfWeek => "Średnia dni tygodnia",
+            DayCalculationType.AverageAll => "Średnia",
+            DayCalculationType.MedianWeek => "Mediana tygodnia",
+            DayCalculationType.MedianMonth => "Mediana miesiąca",
+            DayCalculationType.MedianYear => "Mediana roku",
+            DayCalculationType.MedianDayOfWeek => "Mediana dni tygodnia",
+            DayCalculationType.MedianAll => "Mediana",
             _ => "Brak"
         };
     }
@@ -326,25 +326,5 @@ public partial class FilterTyp : ObservableObject
 }
 
 
-public enum CalculationTyp
-{
-    None,
-    SumWeek,
-    SumMonth,
-    SumYear,
-    SumDayOfWeek,
-    SumAll,
 
-    AverageWeek,
-    AverageMonth,
-    AverageYear,
-    AverageDayOfWeek,
-    AverageAll,
-
-    MedianWeek,
-    MedianMonth,
-    MedianYear,
-    MedianDayOfWeek,
-    MedianAll,
-}
 

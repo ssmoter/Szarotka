@@ -9,6 +9,7 @@ namespace DataBase.Data.Get
 {
     public interface IGetInventoryAoT
     {
+        Task<IList<Day>> DayCalculationType(long from, long to, IList<Guid> userIds, DayCalculationType calculationType);
         Task<IList<Day>> Days(string where, Dictionary<string, object?>? param = null);
         Task<IList<(ProductName, IList<ProductPrice>)>> EmptyProductsNameAndPrices(bool isDelete = false);
 
@@ -35,6 +36,11 @@ namespace DataBase.Data.Get
                 result = await _db.DbAsyncAoT.QueryAsync<DayFromQuery>(sql, param!);
             }
 
+            return FromDayQueryToDay(result);
+        }
+
+        private static IList<Day> FromDayQueryToDay(IEnumerable<DayFromQuery> result)
+        {
             foreach (DayFromQuery day in result)
             {
                 var products =
@@ -57,6 +63,26 @@ namespace DataBase.Data.Get
 
             return [.. result.Where(z => !z.IsDelete).Select(x => new Day(x))];
         }
+
+        public async Task<IList<Day>> DayCalculationType(
+                long from,
+                long to,
+                IList<Guid> userIds,
+                DayCalculationType calculationType)
+        {
+
+            var sql = DayQueryExtensions.GetDayWithProductsAndAggregatesQuery(
+                calculationType,
+                from,
+                to);
+
+            var result = await _db.DbAsyncAoT.QueryAsync<DayFromQuery>(sql);
+
+            return FromDayQueryToDay(result);
+        }
+
+
+
 
 
         public async Task<IList<(ProductName, IList<ProductPrice>)>> EmptyProductsNameAndPrices(bool isDelete = false)

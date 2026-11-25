@@ -2,30 +2,24 @@
 
 using Shared.Helper;
 
-
 namespace Inventory.Pages.RangeDay.Controls
 {
     public partial class ContentFromList : Grid
     {
-        public static readonly BindableProperty DayExpandedProperty
-        = BindableProperty.Create(nameof(DayExpanded), typeof(DayExpanded), typeof(ContentFromList), propertyChanged: (bindable, oldValue, newValue) =>
-        {
-            if (bindable is ContentFromList view)
+        public static readonly BindableProperty DayExpandedProperty =
+            BindableProperty.Create(nameof(DayExpanded), typeof(DayExpanded), typeof(ContentFromList), propertyChanged: (bindable, oldValue, newValue) =>
             {
-                if (newValue is DayExpanded result)
+                if (bindable is ContentFromList view && newValue is DayExpanded result)
                 {
                     CreatedContent(view, result);
                 }
-            }
-        });
+            });
+
         public DayExpanded DayExpanded
         {
             get => (DayExpanded)GetValue(DayExpandedProperty);
             set => SetValue(DayExpandedProperty, value);
         }
-
-
-
 
         static private void CreatedContent(Grid grid, DayExpanded inputs)
         {
@@ -34,17 +28,21 @@ namespace Inventory.Pages.RangeDay.Controls
             grid.ClearLogicalChildren();
             grid.RowDefinitions.Clear();
             grid.VerticalOptions = new LayoutOptions(LayoutAlignment.Fill, false);
+
             foreach (var item in inputs.SelectedHeaders)
             {
                 var itemLower = item.ToLower();
                 row++;
+
                 if (itemLower == "*")
                 {
                     grid.AddRowDefinition(new RowDefinition() { Height = new GridLength(30, GridUnitType.Absolute) });
                     grid.Add(GetLabel(inputs.Index.ToString()), 0, row);
                     grid.Add(GetBorder(), 0, row);
+                    continue;
                 }
-                else if (itemLower == "data")
+
+                if (itemLower == "data")
                 {
                     grid.AddRowDefinition(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
                     var label = new Label
@@ -59,8 +57,10 @@ namespace Inventory.Pages.RangeDay.Controls
                     label.FormattedText.Spans.Add(new Span() { Text = TranslateDayOfWeekStatic.TranslateSelectedDay(inputs.Day.SelectedDate.DayOfWeek) });
                     grid.Add(label, 0, row);
                     grid.Add(GetBorder(), 0, row);
+                    continue;
                 }
-                else if (itemLower == "kierowca")
+
+                if (itemLower == "kierowca")
                 {
                     grid.AddRowDefinition(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
                     var user = new Shared.CustomControls.NameOrIdUser
@@ -72,42 +72,46 @@ namespace Inventory.Pages.RangeDay.Controls
                     };
                     grid.Add(user, 0, row);
                     grid.Add(GetBorder(), 0, row);
+                    continue;
                 }
-                else
+
+                if (itemLower == "zakres")
                 {
-                    RangeDayVM.GetKeyAndNameFromHeader(itemLower, out string key, out string name);
-                    decimal? selectedProduct = RangeDayVM.GetValueFromName(inputs.Day, TranslateHeader(key), name);
-                    if (selectedProduct is null)
-                    {
-                        row--;
-                        continue;
-                    }
                     grid.AddRowDefinition(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
-                    grid.Add(GetLabel(selectedProduct.ToString()), 0, row);
+                    var value = string.IsNullOrWhiteSpace(inputs.SelectedValue) ? "-" : inputs.SelectedValue;
+                    grid.Add(GetLabel(value), 0, row);
                     grid.Add(GetBorder(), 0, row);
+                    continue;
                 }
+
+                RangeDayVM.GetKeyAndNameFromHeader(itemLower, out string key, out string name);
+                var translatedKey = TranslateHeader(key);
+                var selectedProduct = RangeDayVM.GetValueFromName(inputs.Day, translatedKey, name);
+                var valueText = selectedProduct is null ? "-" : selectedProduct.Value.ToString();
+
+                grid.AddRowDefinition(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+                grid.Add(GetLabel(valueText), 0, row);
+                grid.Add(GetBorder(), 0, row);
             }
+
             if (row == -1)
             {
                 return;
             }
-            if (!string.IsNullOrWhiteSpace(inputs.SelectedValue))
-            {
-                row++;
-                grid.AddRowDefinition(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
-                grid.Add(GetLabel(inputs.SelectedValue.ToString()), 0, row);
-            }
 
-            grid.AddWithSpan(
-                new Border()
-                {
-                    HorizontalOptions = new LayoutOptions(LayoutAlignment.End, false)
-                }
-                , 0, 0, row + 1, 1);
+            grid.AddWithSpan(new Border
+            {
+                HorizontalOptions = new LayoutOptions(LayoutAlignment.End, false)
+            }, 0, 0, row + 1, 1);
         }
 
         public static string TranslateHeader(string pl)
         {
+            if (string.IsNullOrWhiteSpace(pl))
+            {
+                return string.Empty;
+            }
+
             return pl.ToLower() switch
             {
                 "ilość" => nameof(Product.Number),
@@ -117,7 +121,6 @@ namespace Inventory.Pages.RangeDay.Controls
                 "po korekcie" => nameof(Product.PriceTotalAfterCorrectDecimal),
                 "korekta" => nameof(Product.PriceTotalCorrectDecimal),
                 "utarg" => nameof(Product.PriceTotalDecimal),
-
                 "zapłacono" => nameof(Day.TotalPriceMoneyDecimal),
                 "utarg produkty" => nameof(Day.TotalPriceProductsDecimal),
                 "utarg ciasto" => nameof(Day.TotalPriceCakeDecimal),
@@ -126,9 +129,11 @@ namespace Inventory.Pages.RangeDay.Controls
                 "*" => "*",
                 "data" => nameof(Day.SelectedDate),
                 "kierowca" => nameof(Day.UserCreatedId),
-                _ => "",
+                "zakres" => "Zakres",
+                _ => string.Empty,
             };
         }
+
         private static Label GetLabel(string header)
         {
             var label = new Label
@@ -141,14 +146,13 @@ namespace Inventory.Pages.RangeDay.Controls
 
             return label;
         }
+
         private static Border GetBorder()
         {
-            var border = new Border()
+            return new Border
             {
                 VerticalOptions = new LayoutOptions(LayoutAlignment.End, false),
             };
-
-            return border;
         }
     }
 }
