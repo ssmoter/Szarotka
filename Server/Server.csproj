@@ -51,6 +51,7 @@
 
 	<!-- Foldery projektu i usługi systemowe -->
 	<ItemGroup>
+		<Folder Include="Development\" />
 		<Folder Include="Validation\" />
 	</ItemGroup>
 

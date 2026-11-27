@@ -48,21 +48,12 @@ namespace Inventory.Pages.RangeDay.Controls
             grid.ClearLogicalChildren();
             grid.RowDefinitions.Clear();
             grid.VerticalOptions = new LayoutOptions(LayoutAlignment.Fill, false);
-            bool zakres = false;
             foreach (var item in inputs)
             {
-                var itemLower = item.ToLower();
-
                 row++;
-                if (itemLower == "*")
+                if (item == "*")
                 {
                     grid.AddRowDefinition(new RowDefinition() { Height = new GridLength(30, GridUnitType.Absolute) });
-                }
-                else if (itemLower == "zakres")
-                {
-                    zakres = true;
-                    row--;
-                    continue;
                 }
                 else
                 {
@@ -70,12 +61,6 @@ namespace Inventory.Pages.RangeDay.Controls
                 }
                 grid.Add(MainBorder(GetLabel(item), command), 0, row);
                 grid.Add(GetBorder(), 0, row);
-            }
-            if (zakres)
-            {
-                grid.AddRowDefinition(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
-                grid.Add(MainBorder(GetLabel("Zakres"), command), 0, row + 1);
-                grid.Add(GetBorder(), 0, row + 1);
             }
 
             if (row == -1)
@@ -87,7 +72,7 @@ namespace Inventory.Pages.RangeDay.Controls
                 {
                     HorizontalOptions = new LayoutOptions(LayoutAlignment.End, false)
                 }
-                , 0, 0, row + 2, 1);
+                , 0, 0, row + 1, 1);
         }
         private static Image lastImage;
         private static string lastLabel = "";

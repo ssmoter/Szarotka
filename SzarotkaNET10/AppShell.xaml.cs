@@ -31,45 +31,26 @@ namespace SzarotkaNET10
                 });
         }
 
-        private void SetToolbarItem(ToolbarItem? toolbarItem)
+        private void SetToolbarItem(ToolbarItem toolbarItem)
         {
-            // 1. Zabezpieczenie przed wartością null
-            if (toolbarItem == null)
-            {
-                return; // lub throw new ArgumentNullException(nameof(toolbarItem));
-            }
-
-            // 2. Zabezpieczenie przed wywołaniem z wątku w tle (wymagane dla elementów UI)
-            if (!MainThread.IsMainThread)
-            {
-                MainThread.BeginInvokeOnMainThread(() => SetToolbarItem(toolbarItem));
-                return;
-            }
-
-            // 3. Zabezpieczenie przed duplikatami (sprawdzenie po referencji oraz po nazwie/tekście)
-            bool alreadyExists = ToolbarItems.Any(x =>
-                ReferenceEquals(x, toolbarItem) ||
-                (!string.IsNullOrEmpty(x.Text) && x.Text == toolbarItem.Text));
-
-            if (!alreadyExists)
-            {
+            if (!ToolbarItems.Contains(toolbarItem))
                 ToolbarItems.Add(toolbarItem);
-            }
 
-            // 4. Ustawienie kolejności elementów (zabezpieczenie przed potencjalnym nullem w kolekcji)
-            var targetOrder = ToolbarItems.Count > 2
-                ? ToolbarItemOrder.Secondary
-                : ToolbarItemOrder.Primary;
-
-            foreach (var item in ToolbarItems)
+            if (ToolbarItems.Count > 2)
             {
-                if (item != null && item.Order != targetOrder)
+                foreach (var item in ToolbarItems)
                 {
-                    item.Order = targetOrder;
+                    item.Order = ToolbarItemOrder.Secondary;
+                }
+            }
+            else
+            {
+                foreach (var item in ToolbarItems)
+                {
+                    item.Order = ToolbarItemOrder.Primary;
                 }
             }
         }
-
         private void RemoveToolbarItem(ToolbarItem toolbarItem)
         {
             ToolbarItems.Remove(toolbarItem);

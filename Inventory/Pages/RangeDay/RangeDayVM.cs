@@ -866,16 +866,12 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
                         }
                     };
 
-            await GoTo(nameof(UpdateDifferenceV), navigationParameter);
+            await Shell.Current.GoToAsync(nameof(UpdateDifferenceV), navigationParameter);
         }
     }
 
     private async Task SaveAll(IEnumerable days, bool isServer = false)
     {
-        if (days is ICollection { Count: < 0 })
-        {
-            return;
-        }
         await _save.SaveDaysTransaction([.. days.Cast<Day>()], isServer);
     }
 
@@ -1136,20 +1132,6 @@ public partial class RangeDayVM : ObservableObject, IQueryAttributable, IDisposa
             Shared.Pages.FlyoutHeader.FlyoutHeaderVM.OnCustomContent(null);
             cancellationTokenSource?.Dispose();
         }
-    }
-
-
-
-
-    private static async Task GoTo(string route, Dictionary<string, object> navigationParameter = null)
-    {
-        await MainThread.InvokeOnMainThreadAsync(async () =>
-        {
-            if (Shell.Current is not null)
-            {
-                await Shell.Current.GoToAsync(route, navigationParameter);
-            }
-        });
     }
 }
 

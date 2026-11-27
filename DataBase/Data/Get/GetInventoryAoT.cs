@@ -2,7 +2,6 @@
 using DataBase.Data.SqlQuery;
 using DataBase.Model.EntitiesInventory;
 
-using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
@@ -44,20 +43,14 @@ namespace DataBase.Data.Get
         {
             foreach (DayFromQuery day in result)
             {
-                ObservableCollection<Product>? products = null;
-                if (!string.IsNullOrWhiteSpace(day.JsonProducts))
-                {
-                    products = System.Text.Json.JsonSerializer.Deserialize(
+                var products =
+                    System.Text.Json.JsonSerializer.Deserialize(
                         day.JsonProducts,
                         DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.ObservableCollectionProduct);
-                }
-                ObservableCollection<Cake>? cakes = null;
-                if (!string.IsNullOrWhiteSpace(day.JsonCakes))
-                {
-                    cakes = System.Text.Json.JsonSerializer.Deserialize(
-                            day.JsonCakes,
-                            DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.ObservableCollectionCake);
-                }
+                var cakes =
+                    System.Text.Json.JsonSerializer.Deserialize(
+                        day.JsonCakes,
+                        DataBase.Model.SourceGenerator.SzarotkaJsonSerializerContext.Default.ObservableCollectionCake);
                 if (products is not null)
                 {
                     day.Products = [.. products.Where(x => !x.IsDelete)];
