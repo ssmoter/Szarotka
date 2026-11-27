@@ -71,7 +71,7 @@ namespace Server.Requests
                 _userValidation.AccountWasDelete(dbUser);
 
                 _userValidation.Validation.Throw();
-
+                dbUser.RememberMe = user.RememberMe;
                 dbUser = await _authenticationService.AuthenticateAsyncAccess(dbUser);
                 dbUser = await _authenticationService.AuthenticateAsyncRefresh(dbUser);
 

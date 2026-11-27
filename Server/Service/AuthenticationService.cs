@@ -45,12 +45,15 @@ namespace Server.Service
             using var rng = RandomNumberGenerator.Create();
             rng.GetBytes(randomNumber);
 
+            var expired = request.RememberMe ? _jwtSettings.DurationInRefreshTokenLong : _jwtSettings.DurationInRefreshTokenShort;
             request.RefreshToken = new RefreshToken
             {
                 UserId = request.Id.ToString(),
                 Value = Convert.ToBase64String(randomNumber),
-                ExpireDate = request.RememberMe ? _db.TimeService.UtcNow().AddDays(_jwtSettings.DurationInRefreshTokenLong).Ticks : _db.TimeService.UtcNow().AddDays(_jwtSettings.DurationInRefreshTokenShort).Ticks
+                ExpireDate = request.RememberMe ? _db.TimeService.UtcNow().AddDays(expired).Ticks : _db.TimeService.UtcNow().AddDays(expired).Ticks
             };
+
+            _logger.LogInformation("AuthenticateAsyncRefresh(User) Expire date for token={expired}", expired);
 
             var deleteTime = _db.TimeService.UtcNow().AddHours(-1).Ticks;
             var deleteSql = $"DELETE FROM {nameof(RefreshToken)} WHERE {nameof(RefreshToken.ExpireDate)} < @Now";
