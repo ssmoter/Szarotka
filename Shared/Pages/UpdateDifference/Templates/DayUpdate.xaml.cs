@@ -158,6 +158,8 @@ BindableProperty.Create(
             TotalPriceDifference = updateBool.BoolRest ? update.TotalPriceDifference : server.TotalPriceDifference,
             Products = updateBool.BoolRest ? update.Products : server.Products,
             Cakes = updateBool.BoolRest ? update.Cakes : server.Cakes,
+
+            SelectedRoute = updateBool.BoolRest ? update.SelectedRoute : server.SelectedRoute,
         };
         return target;
     }

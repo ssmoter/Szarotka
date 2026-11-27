@@ -152,7 +152,7 @@ SELECT
     LEFT JOIN {nameof(ProductPrice)} 
       ON TRIM({nameof(ProductPrice)}.{nameof(ProductPrice.Id)}) = TRIM({nameof(Product)}.{nameof(Product.ProductPriceId)}) COLLATE NOCASE
     WHERE {nameof(Product)}.{nameof(Product.DayId)} = {nameof(Day)}.{nameof(Day.Id)}
-      AND {nameof(Product)}.{nameof(Product.IsDelete)} = 0
+      AND  ({nameof(Product)}.{nameof(Product.IsDelete)} = 0 OR {nameof(Product)}.{nameof(Product.IsDelete)} IS NULL)
   ) AS JsonProducts,
   (
     SELECT json_group_array(
@@ -170,7 +170,7 @@ SELECT
     )
     FROM {nameof(Cake)}
     WHERE {nameof(Cake)}.{nameof(Cake.DayId)} = {nameof(Day)}.{nameof(Day.Id)}
-      AND {nameof(Cake)}.{nameof(Cake.IsDelete)} = 0
+      AND  ({nameof(Cake)}.{nameof(Cake.IsDelete)} = 0 OR {nameof(Cake)}.{nameof(Cake.IsDelete)} IS NULL)
   ) AS JsonCakes
 FROM {nameof(Day)}
 ";

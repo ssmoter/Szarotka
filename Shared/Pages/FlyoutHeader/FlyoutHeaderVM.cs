@@ -57,24 +57,17 @@ namespace Shared.Pages.FlyoutHeader
         }
         private void _RemoveSetToolbarItem(ToolbarItem item)
         {
-            ToolbarItems.Remove(item);
+            if (!MainThread.IsMainThread)
+            {
+                MainThread.BeginInvokeOnMainThread(() => ToolbarItems.Remove(item));
+                return;
+            }
         }
         public static void RemoveToolbarItem(ToolbarItem item)
         {
             ActionToolbarItemRemove?.Invoke(item);
         }
-        private void _onCustomContent(IView view)
-        {
-            if (view is null)
-            {
-                FadeOutElementThrowAndForget(CustomContent);
-            }
-            if (view is not null)
-            {
-                Shell.Current.FlyoutIsPresented = true;
-                CustomContent = view;
-            }
-        }
+
         private static Func<bool> funcCustomContentExist;
         private static Action<IView> actionCustomContent;
         public static void OnCustomContent(IView view = null)
@@ -90,29 +83,7 @@ namespace Shared.Pages.FlyoutHeader
         {
             return (bool)funcCustomContentExist?.Invoke();
         }
-        private async void FadeOutElementThrowAndForget(IView view)
-        {
-            try
-            {
-                await Task.Delay(TimeSpan.FromSeconds(2));
-                await FadeOutElement(view);
-                CustomContent = null;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        private async Task FadeOutElement(IView view)
-        {
-            if (view is VisualElement element)
-            {
-                await Task.WhenAll(
-                    element.FadeToAsync(0, 500),
-                    element.TranslateToAsync(0, -20, 500)
-                );
-            }
-        }
+
         private bool isCustomContentExist()
         {
             if (CustomContent is null)
@@ -121,6 +92,92 @@ namespace Shared.Pages.FlyoutHeader
             }
             return true;
         }
+
+
+        private CancellationTokenSource? _fadeOutCts;
+
+        private void _onCustomContent(IView? view)
+        {
+            // 1. Zawsze wymuszaj wykonanie na głównym wątku UI
+            if (!MainThread.IsMainThread)
+            {
+                MainThread.BeginInvokeOnMainThread(() => _onCustomContent(view));
+                return;
+            }
+
+            // 2. Anuluj poprzednią animację ukrywania, jeśli trwa (zapobiega wyścigom)
+            _fadeOutCts?.Cancel();
+            _fadeOutCts?.Dispose();
+            _fadeOutCts = null;
+
+            if (view is null)
+            {
+                if (CustomContent is not null)
+                {
+                    _fadeOutCts = new CancellationTokenSource();
+                    _ = FadeOutElementSafeAsync(CustomContent, _fadeOutCts.Token);
+                }
+            }
+            else
+            {
+                // Zabezpieczenie przed brakiem aktywnego Shell lub zamkniętym oknem
+                if (Shell.Current?.Handler is not null)
+                {
+                    try
+                    {
+                        Shell.Current.FlyoutIsPresented = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Błąd otwierania Flyout: {ex.Message}");
+                    }
+                }
+
+                CustomContent = view;
+            }
+        }
+
+        private async Task FadeOutElementSafeAsync(IView view, CancellationToken token)
+        {
+            try
+            {
+                // Czekaj 2 sekundy, ale przerwij natychmiast, jeśli pojawi się nowy widok
+                await Task.Delay(TimeSpan.FromSeconds(2), token);
+
+                if (token.IsCancellationRequested)
+                    return;
+
+                await FadeOutElement(view);
+
+                if (!token.IsCancellationRequested && ReferenceEquals(CustomContent, view))
+                {
+                    CustomContent = null;
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                // Ignorujemy – animacja została celowo anulowana przez nowy komunikat
+            }
+            catch (Exception ex)
+            {
+                // Nigdy nie rzucamy wyjątku w metodzie "fire-and-forget" (unikamy crashu aplikacji)
+                System.Diagnostics.Debug.WriteLine($"Błąd animacji ukrywania: {ex.Message}");
+            }
+        }
+
+        private async Task FadeOutElement(IView view)
+        {
+            // Sprawdzamy, czy element nadal jest podpięty do drzewa wizualnego (Handler != null)
+            if (view is VisualElement element && element.Handler is not null)
+            {
+                await Task.WhenAll(
+                    element.FadeToAsync(0, 500),
+                    element.TranslateToAsync(0, -20, 500)
+                );
+            }
+        }
+
+
         public FlyoutHeaderVM()
         {
             UserAfterLogin.OnLogin += UserAfterLogin_OnLogin;

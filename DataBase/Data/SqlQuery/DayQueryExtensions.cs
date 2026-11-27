@@ -1,335 +1,475 @@
 using DataBase.Model.EntitiesInventory;
+using DataBase.Model.SourceGenerator;
+
+using System.Text.Json;
 
 namespace DataBase.Data.SqlQuery;
 
 public static class DayQueryExtensions
 {
     private const long DotNetTicksToUnixEpoch = 621355968000000000L;
+    private const long TicksPerDay = 864000000000L;
+    private const long MondayEpochOffsetTicks = 621353376000000000L;
+
+    /// <summary>
+    /// Zwraca skrypt SQL tworzący indeksy pokrywające (Covering Indexes) dopasowane do rzeczywistego schematu tabel Day, Product, ProductName i Cake.
+    /// Uruchom jednorazowo przy inicjalizacji lub migracji bazy danych.
+    /// </summary>
+    public static string GetRecommendedIndexesSql() => $@"
+        CREATE INDEX IF NOT EXISTS idx_{nameof(Day)}_{nameof(Day.SelectedDateTicks)}_{nameof(Day.SelectedRoute)}
+            ON {nameof(Day)}(
+                {nameof(Day.SelectedDateTicks)},
+                {nameof(Day.SelectedRoute)},
+                {nameof(Day.UserCreatedId)},
+                {nameof(Day.TotalPrice)},
+                {nameof(Day.TotalPriceProducts)},
+                {nameof(Day.TotalPriceCake)},
+                {nameof(Day.TotalPriceCorrect)},
+                {nameof(Day.TotalPriceAfterCorrect)},
+                {nameof(Day.TotalPriceMoney)},
+                {nameof(Day.TotalPriceDifference)}
+            );
+
+        CREATE INDEX IF NOT EXISTS idx_{nameof(Product)}_{nameof(Product.DayId)}_Covering
+            ON {nameof(Product)}(
+                {nameof(Product.DayId)} COLLATE NOCASE,
+                {nameof(Product.IsDelete)},
+                {nameof(Product.ProductNameId)},
+                {nameof(Product.Number)},
+                {nameof(Product.NumberEdit)},
+                {nameof(Product.NumberReturn)},
+                {nameof(Product.PriceTotal)},
+                {nameof(Product.PriceTotalCorrect)},
+                {nameof(Product.PriceTotalAfterCorrect)}
+            );
+
+        CREATE INDEX IF NOT EXISTS idx_{nameof(ProductName)}_{nameof(ProductName.Id)}_NoCase
+            ON {nameof(ProductName)}(
+                {nameof(ProductName.Id)} COLLATE NOCASE,
+                {nameof(ProductName.Arrangement)},
+                {nameof(ProductName.Name)},
+                {nameof(ProductName.Description)},
+                {nameof(ProductName.Img)},
+                {nameof(ProductName.IsVisible)},
+                {nameof(ProductName.IsDelete)}
+            );
+
+        CREATE INDEX IF NOT EXISTS idx_{nameof(Cake)}_{nameof(Cake.DayId)}_NoCase
+            ON {nameof(Cake)}({nameof(Cake.DayId)} COLLATE NOCASE, {nameof(Cake.IsDelete)});
+
+        ANALYZE;";
+
+    /// <summary>
+    /// Rzutuje wynik agregacji na liczbę całkowitą (INTEGER) zaokrąglając do najbliższej wartości,
+    /// aby zapobiec zwracaniu typu zmiennoprzecinkowego (REAL) przez funkcję AVG() w SQLite.
+    /// </summary>
+    private static string AsInt(string sqlExpression)
+        => $"CAST(ROUND(COALESCE({sqlExpression}, 0), 0) AS INTEGER)";
 
     private static string DateFromTicks(string ticksColumn)
         => $"datetime(({ticksColumn} - {DotNetTicksToUnixEpoch}) / 10000000, 'unixepoch')";
 
-    private static string DayOfWeekKey(string ticksColumn)
-        => $"CAST(((strftime('%w', {DateFromTicks(ticksColumn)}) + 6) % 7) + 1 AS INTEGER)";
-
-    private static string WeekStartKey(string ticksColumn)
-        => $"date({DateFromTicks(ticksColumn)}, '-6 days', 'weekday 1')";
-
-    private static string MonthKey(string ticksColumn)
-        => $"strftime('%Y-%m', {DateFromTicks(ticksColumn)})";
-
-    private static string YearKey(string ticksColumn)
-        => $"strftime('%Y', {DateFromTicks(ticksColumn)})";
-
-
-    public static string GetDayWithProductsAndAggregatesQuery(DayCalculationType calculation, long fromTicks, long toTicks)
-    {
-        string where = $"WHERE d.{nameof(Day.SelectedDateTicks)} BETWEEN {fromTicks} AND {toTicks}";
-
-        string groupKeyExpression(string tableAlias)
-            => calculation switch
-            {
-                DayCalculationType.SumWeek or DayCalculationType.AverageWeek or DayCalculationType.MedianWeek => WeekStartKey(tableAlias + nameof(Day.SelectedDateTicks)),
-                DayCalculationType.SumMonth or DayCalculationType.AverageMonth or DayCalculationType.MedianMonth => MonthKey(tableAlias + nameof(Day.SelectedDateTicks)),
-                DayCalculationType.SumYear or DayCalculationType.AverageYear or DayCalculationType.MedianYear => YearKey(tableAlias + nameof(Day.SelectedDateTicks)),
-                DayCalculationType.SumDayOfWeek or DayCalculationType.AverageDayOfWeek or DayCalculationType.MedianDayOfWeek => DayOfWeekKey(tableAlias + nameof(Day.SelectedDateTicks)),
-                _ => "'ALL'",
-            };
-
-        string groupKey = groupKeyExpression("d.");
-
-        string productJsonForGroup(string groupExpression, string outerGroupExpression, string aggregateKind)
+    private static string FastPeriodKey(string ticksColumn, DayCalculationType calculation)
+        => calculation switch
         {
-            if (aggregateKind == "SUM")
-            {
-                return $@"
-                    (
-                        SELECT json_group_array(
-                            json_object(
-                                '{nameof(Product.ProductNameId)}', pg.{nameof(Product.ProductNameId)},
-                                '{nameof(Product.Number)}', pg.{nameof(Product.Number)},
-                                '{nameof(Product.NumberEdit)}', pg.{nameof(Product.NumberEdit)},
-                                '{nameof(Product.NumberReturn)}', pg.{nameof(Product.NumberReturn)},
-                                '{nameof(Product.PriceTotal)}', pg.{nameof(Product.PriceTotal)},
-                                '{nameof(Product.PriceTotalCorrect)}', pg.{nameof(Product.PriceTotalCorrect)},
-                                '{nameof(Product.PriceTotalAfterCorrect)}', pg.{nameof(Product.PriceTotalAfterCorrect)}
-                            )
-                        )
-                        FROM (
-                            SELECT
-                                p.{nameof(Product.ProductNameId)} AS {nameof(Product.ProductNameId)},
-                                COALESCE(SUM(p.{nameof(Product.Number)}), 0) AS {nameof(Product.Number)},
-                                COALESCE(SUM(p.{nameof(Product.NumberEdit)}), 0) AS {nameof(Product.NumberEdit)},
-                                COALESCE(SUM(p.{nameof(Product.NumberReturn)}), 0) AS {nameof(Product.NumberReturn)},
-                                COALESCE(SUM(p.{nameof(Product.PriceTotal)}), 0) AS {nameof(Product.PriceTotal)},
-                                COALESCE(SUM(p.{nameof(Product.PriceTotalCorrect)}), 0) AS {nameof(Product.PriceTotalCorrect)},
-                                COALESCE(SUM(p.{nameof(Product.PriceTotalAfterCorrect)}), 0) AS {nameof(Product.PriceTotalAfterCorrect)}
-                            FROM {nameof(Product)} p
-                            INNER JOIN {nameof(Day)} d2 ON d2.{nameof(Day.Id)} = p.{nameof(Product.DayId)}
-                            GROUP BY p.{nameof(Product.ProductNameId)}
-                        ) pg
-                    ) AS JsonProducts";
-            }
+            DayCalculationType.SumWeek or DayCalculationType.AverageWeek or DayCalculationType.MedianWeek
+                => $"(({ticksColumn} - {MondayEpochOffsetTicks}) / {TicksPerDay * 7})",
 
-            if (aggregateKind == "AVG")
-            {
-                return $@"
-                    (
-                        SELECT json_group_array(
-                            json_object(
-                                '{nameof(Product.ProductNameId)}', pg.{nameof(Product.ProductNameId)},
-                                '{nameof(Product.Number)}', pg.{nameof(Product.Number)},
-                                '{nameof(Product.NumberEdit)}', pg.{nameof(Product.NumberEdit)},
-                                '{nameof(Product.NumberReturn)}', pg.{nameof(Product.NumberReturn)},
-                                '{nameof(Product.PriceTotal)}', pg.{nameof(Product.PriceTotal)},
-                                '{nameof(Product.PriceTotalCorrect)}', pg.{nameof(Product.PriceTotalCorrect)},
-                                '{nameof(Product.PriceTotalAfterCorrect)}', pg.{nameof(Product.PriceTotalAfterCorrect)}
-                            )
-                        )
-                        FROM (
-                            SELECT
-                                p.{nameof(Product.ProductNameId)} AS {nameof(Product.ProductNameId)},
-                                COALESCE(AVG(p.{nameof(Product.Number)}), 0) AS {nameof(Product.Number)},
-                                COALESCE(AVG(p.{nameof(Product.NumberEdit)}), 0) AS {nameof(Product.NumberEdit)},
-                                COALESCE(AVG(p.{nameof(Product.NumberReturn)}), 0) AS {nameof(Product.NumberReturn)},
-                                COALESCE(AVG(p.{nameof(Product.PriceTotal)}), 0) AS {nameof(Product.PriceTotal)},
-                                COALESCE(AVG(p.{nameof(Product.PriceTotalCorrect)}), 0) AS {nameof(Product.PriceTotalCorrect)},
-                                COALESCE(AVG(p.{nameof(Product.PriceTotalAfterCorrect)}), 0) AS {nameof(Product.PriceTotalAfterCorrect)}
-                            FROM {nameof(Product)} p
-                            INNER JOIN {nameof(Day)} d2 ON d2.{nameof(Day.Id)} = p.{nameof(Product.DayId)}
-                            GROUP BY p.{nameof(Product.ProductNameId)}
-                        ) pg
-                    ) AS JsonProducts";
-            }
+            DayCalculationType.SumMonth or DayCalculationType.AverageMonth or DayCalculationType.MedianMonth
+                => $"(CAST(strftime('%Y', {DateFromTicks(ticksColumn)}) AS INTEGER) * 12 + CAST(strftime('%m', {DateFromTicks(ticksColumn)}) AS INTEGER))",
 
-            return $@"
-                (
-                    SELECT json_group_array(
-                        json_object(
-                            '{nameof(Product.ProductNameId)}', pg.{nameof(Product.ProductNameId)},
-                            '{nameof(Product.Number)}', pg.{nameof(Product.Number)},
-                            '{nameof(Product.NumberEdit)}', pg.{nameof(Product.NumberEdit)},
-                            '{nameof(Product.NumberReturn)}', pg.{nameof(Product.NumberReturn)},
-                            '{nameof(Product.PriceTotal)}', pg.{nameof(Product.PriceTotal)},
-                            '{nameof(Product.PriceTotalCorrect)}', pg.{nameof(Product.PriceTotalCorrect)},
-                            '{nameof(Product.PriceTotalAfterCorrect)}', pg.{nameof(Product.PriceTotalAfterCorrect)}
-                        )
-                    )
-                    FROM (
-                        WITH ranked AS (
-                            SELECT
-                                p.{nameof(Product.ProductNameId)} AS {nameof(Product.ProductNameId)},
-                                p.{nameof(Product.Number)} AS NumberValue,
-                                p.{nameof(Product.NumberEdit)} AS NumberEditValue,
-                                p.{nameof(Product.NumberReturn)} AS NumberReturnValue,
-                                p.{nameof(Product.PriceTotal)} AS PriceTotalValue,
-                                p.{nameof(Product.PriceTotalCorrect)} AS PriceTotalCorrectValue,
-                                p.{nameof(Product.PriceTotalAfterCorrect)} AS PriceTotalAfterCorrectValue,
-                                ROW_NUMBER() OVER (PARTITION BY p.{nameof(Product.ProductNameId)} ORDER BY p.{nameof(Product.Number)}) AS rnNumber,
-                                COUNT(*) OVER (PARTITION BY p.{nameof(Product.ProductNameId)}) AS cntNumber,
-                                ROW_NUMBER() OVER (PARTITION BY p.{nameof(Product.ProductNameId)} ORDER BY p.{nameof(Product.NumberEdit)}) AS rnNumberEdit,
-                                COUNT(*) OVER (PARTITION BY p.{nameof(Product.ProductNameId)}) AS cntNumberEdit,
-                                ROW_NUMBER() OVER (PARTITION BY p.{nameof(Product.ProductNameId)} ORDER BY p.{nameof(Product.NumberReturn)}) AS rnNumberReturn,
-                                COUNT(*) OVER (PARTITION BY p.{nameof(Product.ProductNameId)}) AS cntNumberReturn,
-                                ROW_NUMBER() OVER (PARTITION BY p.{nameof(Product.ProductNameId)} ORDER BY p.{nameof(Product.PriceTotal)}) AS rnPriceTotal,
-                                COUNT(*) OVER (PARTITION BY p.{nameof(Product.ProductNameId)}) AS cntPriceTotal,
-                                ROW_NUMBER() OVER (PARTITION BY p.{nameof(Product.ProductNameId)} ORDER BY p.{nameof(Product.PriceTotalCorrect)}) AS rnPriceTotalCorrect,
-                                COUNT(*) OVER (PARTITION BY p.{nameof(Product.ProductNameId)}) AS cntPriceTotalCorrect,
-                                ROW_NUMBER() OVER (PARTITION BY p.{nameof(Product.ProductNameId)} ORDER BY p.{nameof(Product.PriceTotalAfterCorrect)}) AS rnPriceTotalAfterCorrect,
-                                COUNT(*) OVER (PARTITION BY p.{nameof(Product.ProductNameId)}) AS cntPriceTotalAfterCorrect
-                            FROM {nameof(Product)} p
-                            INNER JOIN {nameof(Day)} d2 ON d2.{nameof(Day.Id)} = p.{nameof(Product.DayId)}
-                        )
-                        SELECT
-                            {nameof(Product.ProductNameId)},
-                            COALESCE(AVG(CASE WHEN rnNumber IN ((cntNumber + 1) / 2, (cntNumber + 2) / 2) THEN NumberValue END), 0) AS {nameof(Product.Number)},
-                            COALESCE(AVG(CASE WHEN rnNumberEdit IN ((cntNumberEdit + 1) / 2, (cntNumberEdit + 2) / 2) THEN NumberEditValue END), 0) AS {nameof(Product.NumberEdit)},
-                            COALESCE(AVG(CASE WHEN rnNumberReturn IN ((cntNumberReturn + 1) / 2, (cntNumberReturn + 2) / 2) THEN NumberReturnValue END), 0) AS {nameof(Product.NumberReturn)},
-                            COALESCE(AVG(CASE WHEN rnPriceTotal IN ((cntPriceTotal + 1) / 2, (cntPriceTotal + 2) / 2) THEN PriceTotalValue END), 0) AS {nameof(Product.PriceTotal)},
-                            COALESCE(AVG(CASE WHEN rnPriceTotalCorrect IN ((cntPriceTotalCorrect + 1) / 2, (cntPriceTotalCorrect + 2) / 2) THEN PriceTotalCorrectValue END), 0) AS {nameof(Product.PriceTotalCorrect)},
-                            COALESCE(AVG(CASE WHEN rnPriceTotalAfterCorrect IN ((cntPriceTotalAfterCorrect + 1) / 2, (cntPriceTotalAfterCorrect + 2) / 2) THEN PriceTotalAfterCorrectValue END), 0) AS {nameof(Product.PriceTotalAfterCorrect)}
-                        FROM ranked
-                        GROUP BY {nameof(Product.ProductNameId)}
-                    ) pg
-                ) AS JsonProducts";
-        }
+            DayCalculationType.SumYear or DayCalculationType.AverageYear or DayCalculationType.MedianYear
+                => $"CAST(strftime('%Y', {DateFromTicks(ticksColumn)}) AS INTEGER)",
+
+            DayCalculationType.SumDayOfWeek or DayCalculationType.AverageDayOfWeek or DayCalculationType.MedianDayOfWeek
+                => $"(((({ticksColumn} - {MondayEpochOffsetTicks}) / {TicksPerDay}) % 7) + 1)",
+
+            _ => "0"
+        };
+
+    private static string FormatSelectedDateString(string minTicksCol, string maxTicksCol, DayCalculationType calculation)
+    {
+        string minDt = DateFromTicks(minTicksCol);
+        string maxDt = DateFromTicks(maxTicksCol);
+        string weekStart = $"date({minDt}, '-6 days', 'weekday 1')";
+        string weekEnd = $"date({weekStart}, '+6 days')";
 
         return calculation switch
         {
-            DayCalculationType.None => $@"
-                SELECT
-                    d.*,
-                    (
-                        SELECT json_group_array(
-                            json_object(
-                                '{nameof(Product.Id)}', p.{nameof(Product.Id)},
-                                '{nameof(Product.DayId)}', p.{nameof(Product.DayId)},
-                                '{nameof(Product.ProductNameId)}', p.{nameof(Product.ProductNameId)},
-                                '{nameof(Product.ProductPriceId)}', p.{nameof(Product.ProductPriceId)},
-                                '{nameof(Product.Description)}', p.{nameof(Product.Description)},
-                                '{nameof(Product.PriceTotal)}', p.{nameof(Product.PriceTotal)},
-                                '{nameof(Product.PriceTotalCorrect)}', p.{nameof(Product.PriceTotalCorrect)},
-                                '{nameof(Product.PriceTotalAfterCorrect)}', p.{nameof(Product.PriceTotalAfterCorrect)},
-                                '{nameof(Product.Number)}', p.{nameof(Product.Number)},
-                                '{nameof(Product.NumberEdit)}', p.{nameof(Product.NumberEdit)},
-                                '{nameof(Product.NumberReturn)}', p.{nameof(Product.NumberReturn)},
-                                '{nameof(Product.CreatedTicks)}', p.{nameof(Product.CreatedTicks)},
-                                '{nameof(Product.UpdatedTicks)}', p.{nameof(Product.UpdatedTicks)},
-                                '{nameof(Product.UserCreatedId)}', p.{nameof(Product.UserCreatedId)},
-                                '{nameof(Product.IsDelete)}', p.{nameof(Product.IsDelete)},
-                                '{nameof(Product.UserUpdatedId)}', p.{nameof(Product.UserUpdatedId)}
-                            )
-                        )
-                        FROM {nameof(Product)} p
-                        WHERE p.{nameof(Product.DayId)} = d.{nameof(Day.Id)}
-                          AND p.{nameof(Product.IsDelete)} = 0
-                    ) AS JsonProducts,
-                    (
-                        SELECT json_group_array(
-                            json_object(
-                                '{nameof(Cake.Id)}', c.{nameof(Cake.Id)},
-                                '{nameof(Cake.DayId)}', c.{nameof(Cake.DayId)},
-                                '{nameof(Cake.IsSell)}', c.{nameof(Cake.IsSell)},
-                                '{nameof(Cake.Price)}', c.{nameof(Cake.Price)},
-                                '{nameof(Cake.CreatedTicks)}', c.{nameof(Cake.CreatedTicks)},
-                                '{nameof(Cake.UpdatedTicks)}', c.{nameof(Cake.UpdatedTicks)},
-                                '{nameof(Cake.UserCreatedId)}', c.{nameof(Cake.UserCreatedId)},
-                                '{nameof(Cake.IsDelete)}', c.{nameof(Cake.IsDelete)},
-                                '{nameof(Cake.UserUpdatedId)}', c.{nameof(Cake.UserUpdatedId)}
-                            )
-                        )
-                        FROM {nameof(Cake)} c
-                        WHERE c.{nameof(Cake.DayId)} = d.{nameof(Day.Id)}
-                          AND c.{nameof(Cake.IsDelete)} = 0
-                    ) AS JsonCakes
-                FROM {nameof(Day)} d
-                {where}
-                ORDER BY d.{nameof(Day.SelectedDateTicks)};",
+            DayCalculationType.SumWeek or DayCalculationType.AverageWeek or DayCalculationType.MedianWeek
+                => $"(CAST(CAST(strftime('%d', {weekStart}) AS INTEGER) AS TEXT) || '.' || CAST(CAST(strftime('%m', {weekStart}) AS INTEGER) AS TEXT) || '-' || CAST(CAST(strftime('%d', {weekEnd}) AS INTEGER) AS TEXT) || '.' || CAST(CAST(strftime('%m', {weekEnd}) AS INTEGER) AS TEXT) || '.' || strftime('%Y', {weekEnd}))",
 
-            DayCalculationType.SumWeek or DayCalculationType.SumMonth or DayCalculationType.SumYear or DayCalculationType.SumDayOfWeek or DayCalculationType.SumAll => $@"
-                SELECT
-                    {groupKey} AS GroupKey,
-                    COALESCE(SUM(d.{nameof(Day.TotalPrice)}), 0) AS {nameof(Day.TotalPrice)},
-                    COALESCE(SUM(d.{nameof(Day.TotalPriceProducts)}), 0) AS {nameof(Day.TotalPriceProducts)},
-                    COALESCE(SUM(d.{nameof(Day.TotalPriceCake)}), 0) AS {nameof(Day.TotalPriceCake)},
-                    COALESCE(SUM(d.{nameof(Day.TotalPriceCorrect)}), 0) AS {nameof(Day.TotalPriceCorrect)},
-                    COALESCE(SUM(d.{nameof(Day.TotalPriceAfterCorrect)}), 0) AS {nameof(Day.TotalPriceAfterCorrect)},
-                    COALESCE(SUM(d.{nameof(Day.TotalPriceMoney)}), 0) AS {nameof(Day.TotalPriceMoney)},
-                    COALESCE(SUM(d.{nameof(Day.TotalPriceDifference)}), 0) AS {nameof(Day.TotalPriceDifference)},
-                    {productJsonForGroup(groupKey, groupKey, "SUM")}
-                FROM {nameof(Day)} d
-                {where}
-                GROUP BY {groupKey}
-                ORDER BY GroupKey;",
+            DayCalculationType.SumMonth or DayCalculationType.AverageMonth or DayCalculationType.MedianMonth
+                => $"(CAST(CAST(strftime('%m', {minDt}) AS INTEGER) AS TEXT) || '.' || strftime('%Y', {minDt}))",
 
-            DayCalculationType.AverageWeek or DayCalculationType.AverageMonth or DayCalculationType.AverageYear or DayCalculationType.AverageDayOfWeek or DayCalculationType.AverageAll => $@"
-                SELECT
-                    {groupKey} AS GroupKey,
-                    COALESCE(AVG(d.{nameof(Day.TotalPrice)}), 0) AS {nameof(Day.TotalPrice)},
-                    COALESCE(AVG(d.{nameof(Day.TotalPriceProducts)}), 0) AS {nameof(Day.TotalPriceProducts)},
-                    COALESCE(AVG(d.{nameof(Day.TotalPriceCake)}), 0) AS {nameof(Day.TotalPriceCake)},
-                    COALESCE(AVG(d.{nameof(Day.TotalPriceCorrect)}), 0) AS {nameof(Day.TotalPriceCorrect)},
-                    COALESCE(AVG(d.{nameof(Day.TotalPriceAfterCorrect)}), 0) AS {nameof(Day.TotalPriceAfterCorrect)},
-                    COALESCE(AVG(d.{nameof(Day.TotalPriceMoney)}), 0) AS {nameof(Day.TotalPriceMoney)},
-                    COALESCE(AVG(d.{nameof(Day.TotalPriceDifference)}), 0) AS {nameof(Day.TotalPriceDifference)},
-                    {productJsonForGroup(groupKey, groupKey, "AVG")}
-                FROM {nameof(Day)} d
-                {where}
-                GROUP BY {groupKey}
-                ORDER BY GroupKey;",
+            DayCalculationType.SumYear or DayCalculationType.AverageYear or DayCalculationType.MedianYear
+                => $"strftime('%Y', {minDt})",
 
-            DayCalculationType.MedianWeek or DayCalculationType.MedianMonth or DayCalculationType.MedianYear or DayCalculationType.MedianDayOfWeek or DayCalculationType.MedianAll => $@"
-                WITH ranked AS (
-                    SELECT
-                        {groupKey} AS GroupKey,
-                        d.{nameof(Day.TotalPrice)} AS TotalPrice,
-                        d.{nameof(Day.TotalPriceProducts)} AS TotalPriceProducts,
-                        d.{nameof(Day.TotalPriceCake)} AS TotalPriceCake,
-                        d.{nameof(Day.TotalPriceCorrect)} AS TotalPriceCorrect,
-                        d.{nameof(Day.TotalPriceAfterCorrect)} AS TotalPriceAfterCorrect,
-                        d.{nameof(Day.TotalPriceMoney)} AS TotalPriceMoney,
-                        d.{nameof(Day.TotalPriceDifference)} AS TotalPriceDifference,
-                        ROW_NUMBER() OVER (PARTITION BY {groupKey} ORDER BY d.{nameof(Day.TotalPrice)}) AS rnTotalPrice,
-                        COUNT(*) OVER (PARTITION BY {groupKey}) AS cntTotalPrice,
-                        ROW_NUMBER() OVER (PARTITION BY {groupKey} ORDER BY d.{nameof(Day.TotalPriceProducts)}) AS rnTotalPriceProducts,
-                        COUNT(*) OVER (PARTITION BY {groupKey}) AS cntTotalPriceProducts,
-                        ROW_NUMBER() OVER (PARTITION BY {groupKey} ORDER BY d.{nameof(Day.TotalPriceCake)}) AS rnTotalPriceCake,
-                        COUNT(*) OVER (PARTITION BY {groupKey}) AS cntTotalPriceCake,
-                        ROW_NUMBER() OVER (PARTITION BY {groupKey} ORDER BY d.{nameof(Day.TotalPriceCorrect)}) AS rnTotalPriceCorrect,
-                        COUNT(*) OVER (PARTITION BY {groupKey}) AS cntTotalPriceCorrect,
-                        ROW_NUMBER() OVER (PARTITION BY {groupKey} ORDER BY d.{nameof(Day.TotalPriceAfterCorrect)}) AS rnTotalPriceAfterCorrect,
-                        COUNT(*) OVER (PARTITION BY {groupKey}) AS cntTotalPriceAfterCorrect,
-                        ROW_NUMBER() OVER (PARTITION BY {groupKey} ORDER BY d.{nameof(Day.TotalPriceMoney)}) AS rnTotalPriceMoney,
-                        COUNT(*) OVER (PARTITION BY {groupKey}) AS cntTotalPriceMoney,
-                        ROW_NUMBER() OVER (PARTITION BY {groupKey} ORDER BY d.{nameof(Day.TotalPriceDifference)}) AS rnTotalPriceDifference,
-                        COUNT(*) OVER (PARTITION BY {groupKey}) AS cntTotalPriceDifference
-                    FROM {nameof(Day)} d
-                    {where}
-                )
-                SELECT
-                    GroupKey,
-                    COALESCE(AVG(CASE WHEN rnTotalPrice IN ((cntTotalPrice + 1) / 2, (cntTotalPrice + 2) / 2) THEN TotalPrice END), 0) AS {nameof(Day.TotalPrice)},
-                    COALESCE(AVG(CASE WHEN rnTotalPriceProducts IN ((cntTotalPriceProducts + 1) / 2, (cntTotalPriceProducts + 2) / 2) THEN TotalPriceProducts END), 0) AS {nameof(Day.TotalPriceProducts)},
-                    COALESCE(AVG(CASE WHEN rnTotalPriceCake IN ((cntTotalPriceCake + 1) / 2, (cntTotalPriceCake + 2) / 2) THEN TotalPriceCake END), 0) AS {nameof(Day.TotalPriceCake)},
-                    COALESCE(AVG(CASE WHEN rnTotalPriceCorrect IN ((cntTotalPriceCorrect + 1) / 2, (cntTotalPriceCorrect + 2) / 2) THEN TotalPriceCorrect END), 0) AS {nameof(Day.TotalPriceCorrect)},
-                    COALESCE(AVG(CASE WHEN rnTotalPriceAfterCorrect IN ((cntTotalPriceAfterCorrect + 1) / 2, (cntTotalPriceAfterCorrect + 2) / 2) THEN TotalPriceAfterCorrect END), 0) AS {nameof(Day.TotalPriceAfterCorrect)},
-                    COALESCE(AVG(CASE WHEN rnTotalPriceMoney IN ((cntTotalPriceMoney + 1) / 2, (cntTotalPriceMoney + 2) / 2) THEN TotalPriceMoney END), 0) AS {nameof(Day.TotalPriceMoney)},
-                    COALESCE(AVG(CASE WHEN rnTotalPriceDifference IN ((cntTotalPriceDifference + 1) / 2, (cntTotalPriceDifference + 2) / 2) THEN TotalPriceDifference END), 0) AS {nameof(Day.TotalPriceDifference)},
-                    {productJsonForGroup(groupKey, groupKey, "MEDIAN")}
-                FROM ranked
-                GROUP BY GroupKey
-                ORDER BY GroupKey;",
+            DayCalculationType.SumDayOfWeek or DayCalculationType.AverageDayOfWeek or DayCalculationType.MedianDayOfWeek
+                => $@"CASE (((({minTicksCol} - {MondayEpochOffsetTicks}) / {TicksPerDay}) % 7) + 1)
+                        WHEN 1 THEN 'Poniedziałek'
+                        WHEN 2 THEN 'Wtorek'
+                        WHEN 3 THEN 'Środa'
+                        WHEN 4 THEN 'Czwartek'
+                        WHEN 5 THEN 'Piątek'
+                        WHEN 6 THEN 'Sobota'
+                        WHEN 7 THEN 'Niedziela'
+                        ELSE ''
+                      END",
 
-            _ => $@"
-                SELECT
-                    d.*,
-                    (
-                        SELECT json_group_array(
-                            json_object(
-                                '{nameof(Product.Id)}', p.{nameof(Product.Id)},
-                                '{nameof(Product.DayId)}', p.{nameof(Product.DayId)},
-                                '{nameof(Product.ProductNameId)}', p.{nameof(Product.ProductNameId)},
-                                '{nameof(Product.ProductPriceId)}', p.{nameof(Product.ProductPriceId)},
-                                '{nameof(Product.Description)}', p.{nameof(Product.Description)},
-                                '{nameof(Product.PriceTotal)}', p.{nameof(Product.PriceTotal)},
-                                '{nameof(Product.PriceTotalCorrect)}', p.{nameof(Product.PriceTotalCorrect)},
-                                '{nameof(Product.PriceTotalAfterCorrect)}', p.{nameof(Product.PriceTotalAfterCorrect)},
-                                '{nameof(Product.Number)}', p.{nameof(Product.Number)},
-                                '{nameof(Product.NumberEdit)}', p.{nameof(Product.NumberEdit)},
-                                '{nameof(Product.NumberReturn)}', p.{nameof(Product.NumberReturn)},
-                                '{nameof(Product.CreatedTicks)}', p.{nameof(Product.CreatedTicks)},
-                                '{nameof(Product.UpdatedTicks)}', p.{nameof(Product.UpdatedTicks)},
-                                '{nameof(Product.UserCreatedId)}', p.{nameof(Product.UserCreatedId)},
-                                '{nameof(Product.IsDelete)}', p.{nameof(Product.IsDelete)},
-                                '{nameof(Product.UserUpdatedId)}', p.{nameof(Product.UserUpdatedId)}
-                            )
-                        )
-                        FROM {nameof(Product)} p
-                        WHERE p.{nameof(Product.DayId)} = d.{nameof(Day.Id)}
-                          AND p.{nameof(Product.IsDelete)} = 0
-                    ) AS JsonProducts,
-                    (
-                        SELECT json_group_array(
-                            json_object(
-                                '{nameof(Cake.Id)}', c.{nameof(Cake.Id)},
-                                '{nameof(Cake.DayId)}', c.{nameof(Cake.DayId)},
-                                '{nameof(Cake.IsSell)}', c.{nameof(Cake.IsSell)},
-                                '{nameof(Cake.Price)}', c.{nameof(Cake.Price)},
-                                '{nameof(Cake.CreatedTicks)}', c.{nameof(Cake.CreatedTicks)},
-                                '{nameof(Cake.UpdatedTicks)}', c.{nameof(Cake.UpdatedTicks)},
-                                '{nameof(Cake.UserCreatedId)}', c.{nameof(Cake.UserCreatedId)},
-                                '{nameof(Cake.IsDelete)}', c.{nameof(Cake.IsDelete)},
-                                '{nameof(Cake.UserUpdatedId)}', c.{nameof(Cake.UserUpdatedId)}
-                            )
-                        )
-                        FROM {nameof(Cake)} c
-                        WHERE c.{nameof(Cake.DayId)} = d.{nameof(Day.Id)}
-                          AND c.{nameof(Cake.IsDelete)} = 0
-                    ) AS JsonCakes
-                FROM {nameof(Day)} d
-                {where}
-                ORDER BY d.{nameof(Day.SelectedDateTicks)};"
+            _ => $"(CAST(CAST(strftime('%d', {minDt}) AS INTEGER) AS TEXT) || '.' || CAST(CAST(strftime('%m', {minDt}) AS INTEGER) AS TEXT) || '-' || CAST(CAST(strftime('%d', {maxDt}) AS INTEGER) AS TEXT) || '.' || CAST(CAST(strftime('%m', {maxDt}) AS INTEGER) AS TEXT) || '.' || strftime('%Y', {maxDt}))"
         };
     }
 
+    private static string ProductNameJsonObject(string alias) => $@"
+        CASE WHEN {alias}.{nameof(ProductName.Id)} IS NULL THEN NULL
+        ELSE json_object(
+            '{nameof(ProductName.Id)}', {alias}.{nameof(ProductName.Id)},
+            '{nameof(ProductName.Arrangement)}', {alias}.{nameof(ProductName.Arrangement)},
+            '{nameof(ProductName.Name)}', {alias}.{nameof(ProductName.Name)},
+            '{nameof(ProductName.Description)}', {alias}.{nameof(ProductName.Description)},
+            '{nameof(ProductName.Img)}', {alias}.{nameof(ProductName.Img)},
+            '{nameof(ProductName.IsVisible)}', {alias}.{nameof(ProductName.IsVisible)},
+            '{nameof(ProductName.CreatedTicks)}', {alias}.{nameof(ProductName.CreatedTicks)},
+            '{nameof(ProductName.UpdatedTicks)}', {alias}.{nameof(ProductName.UpdatedTicks)},
+            '{nameof(ProductName.IsDelete)}', {alias}.{nameof(ProductName.IsDelete)},
+            '{nameof(ProductName.UserCreatedId)}', {alias}.{nameof(ProductName.UserCreatedId)},
+            '{nameof(ProductName.UserUpdatedId)}', {alias}.{nameof(ProductName.UserUpdatedId)}
+        ) END";
+
+    public static string GetDayWithProductsAndAggregatesQuery(DayCalculationType calculation, long fromTicks, long toTicks, params Guid[] routeIds)
+    {
+        string where = $"WHERE d.{nameof(Day.SelectedDateTicks)} BETWEEN {fromTicks} AND {toTicks}";
+
+        string jsonRouteIds = JsonSerializer.Serialize(routeIds, SzarotkaJsonSerializerContext.Default.IListGuid);
+        if (routeIds.Length > 0)
+        {
+            where += $" AND d.{nameof(Day.SelectedRoute)} IN (SELECT value FROM json_each(@{nameof(jsonRouteIds)}))";
+        }
+
+        string periodKey = FastPeriodKey($"d.{nameof(Day.SelectedDateTicks)}", calculation);
+        string selectedDateStringExpr = FormatSelectedDateString("d.MinTicks", "d.MaxTicks", calculation);
+
+        string baseDayCte = $@"
+            base_day AS MATERIALIZED (
+                SELECT
+                    d.{nameof(Day.Id)} AS {nameof(Day.Id)},
+                    d.{nameof(Day.SelectedRoute)} AS {nameof(Day.SelectedRoute)},
+                    d.{nameof(Day.UserCreatedId)} AS {nameof(Day.UserCreatedId)},
+                    {periodKey} AS PeriodKey,
+                    d.{nameof(Day.SelectedDateTicks)} AS {nameof(Day.SelectedDateTicks)},
+                    COALESCE(d.{nameof(Day.TotalPrice)}, 0) AS {nameof(Day.TotalPrice)},
+                    COALESCE(d.{nameof(Day.TotalPriceProducts)}, 0) AS {nameof(Day.TotalPriceProducts)},
+                    COALESCE(d.{nameof(Day.TotalPriceCake)}, 0) AS {nameof(Day.TotalPriceCake)},
+                    COALESCE(d.{nameof(Day.TotalPriceCorrect)}, 0) AS {nameof(Day.TotalPriceCorrect)},
+                    COALESCE(d.{nameof(Day.TotalPriceAfterCorrect)}, 0) AS {nameof(Day.TotalPriceAfterCorrect)},
+                    COALESCE(d.{nameof(Day.TotalPriceMoney)}, 0) AS {nameof(Day.TotalPriceMoney)},
+                    COALESCE(d.{nameof(Day.TotalPriceDifference)}, 0) AS {nameof(Day.TotalPriceDifference)}
+                FROM {nameof(Day)} d
+                {where}
+            )";
+
+        string buildStandardAggregateQuery(string sqlFunc) => $@"
+            WITH {baseDayCte},
+            agg_day AS (
+                SELECT
+                    {nameof(Day.SelectedRoute)},
+                    PeriodKey,
+                    MIN({nameof(Day.SelectedDateTicks)}) AS MinTicks,
+                    MAX({nameof(Day.SelectedDateTicks)}) AS MaxTicks,
+                    MIN({nameof(Day.UserCreatedId)}) AS {nameof(Day.UserCreatedId)},
+                    {AsInt($"{sqlFunc}({nameof(Day.TotalPrice)})")} AS {nameof(Day.TotalPrice)},
+                    {AsInt($"{sqlFunc}({nameof(Day.TotalPriceProducts)})")} AS {nameof(Day.TotalPriceProducts)},
+                    {AsInt($"{sqlFunc}({nameof(Day.TotalPriceCake)})")} AS {nameof(Day.TotalPriceCake)},
+                    {AsInt($"{sqlFunc}({nameof(Day.TotalPriceCorrect)})")} AS {nameof(Day.TotalPriceCorrect)},
+                    {AsInt($"{sqlFunc}({nameof(Day.TotalPriceAfterCorrect)})")} AS {nameof(Day.TotalPriceAfterCorrect)},
+                    {AsInt($"{sqlFunc}({nameof(Day.TotalPriceMoney)})")} AS {nameof(Day.TotalPriceMoney)},
+                    {AsInt($"{sqlFunc}({nameof(Day.TotalPriceDifference)})")} AS {nameof(Day.TotalPriceDifference)}
+                FROM base_day
+                GROUP BY {nameof(Day.SelectedRoute)}, PeriodKey
+            ),
+            agg_products_raw AS (
+                SELECT
+                    bd.{nameof(Day.SelectedRoute)},
+                    bd.PeriodKey,
+                    p.{nameof(Product.ProductNameId)} AS {nameof(Product.ProductNameId)},
+                    {AsInt($"{sqlFunc}(COALESCE(p.{nameof(Product.Number)}, 0))")} AS {nameof(Product.Number)},
+                    {AsInt($"{sqlFunc}(COALESCE(p.{nameof(Product.NumberEdit)}, 0))")} AS {nameof(Product.NumberEdit)},
+                    {AsInt($"{sqlFunc}(COALESCE(p.{nameof(Product.NumberReturn)}, 0))")} AS {nameof(Product.NumberReturn)},
+                    {AsInt($"{sqlFunc}(COALESCE(p.{nameof(Product.PriceTotal)}, 0))")} AS {nameof(Product.PriceTotal)},
+                    {AsInt($"{sqlFunc}(COALESCE(p.{nameof(Product.PriceTotalCorrect)}, 0))")} AS {nameof(Product.PriceTotalCorrect)},
+                    {AsInt($"{sqlFunc}(COALESCE(p.{nameof(Product.PriceTotalAfterCorrect)}, 0))")} AS {nameof(Product.PriceTotalAfterCorrect)}
+                FROM {nameof(Product)} p
+                INNER JOIN base_day bd ON bd.{nameof(Day.Id)} = p.{nameof(Product.DayId)} COLLATE NOCASE
+                WHERE (p.{nameof(Product.IsDelete)} = 0 OR p.{nameof(Product.IsDelete)} IS NULL)
+                GROUP BY bd.{nameof(Day.SelectedRoute)}, bd.PeriodKey, p.{nameof(Product.ProductNameId)}
+            ),
+            agg_products_sorted AS (
+                SELECT
+                    apr.{nameof(Day.SelectedRoute)},
+                    apr.PeriodKey,
+                    json_object(
+                        '{nameof(Product.ProductNameId)}', apr.{nameof(Product.ProductNameId)},
+                        '{nameof(Product.Number)}', apr.{nameof(Product.Number)},
+                        '{nameof(Product.NumberEdit)}', apr.{nameof(Product.NumberEdit)},
+                        '{nameof(Product.NumberReturn)}', apr.{nameof(Product.NumberReturn)},
+                        '{nameof(Product.PriceTotal)}', apr.{nameof(Product.PriceTotal)},
+                        '{nameof(Product.PriceTotalCorrect)}', apr.{nameof(Product.PriceTotalCorrect)},
+                        '{nameof(Product.PriceTotalAfterCorrect)}', apr.{nameof(Product.PriceTotalAfterCorrect)},
+                        '{nameof(ProductName)}', {ProductNameJsonObject("pn")}
+                    ) AS ProductJson
+                FROM agg_products_raw apr
+                LEFT JOIN {nameof(ProductName)} pn ON pn.{nameof(ProductName.Id)} = apr.{nameof(Product.ProductNameId)} COLLATE NOCASE
+                ORDER BY apr.{nameof(Day.SelectedRoute)}, apr.PeriodKey, COALESCE(pn.{nameof(ProductName.Arrangement)}, 2147483647), pn.{nameof(ProductName.Name)}
+            ),
+            agg_products AS (
+                SELECT
+                    {nameof(Day.SelectedRoute)},
+                    PeriodKey,
+                    json_group_array(json(ProductJson)) AS JsonProducts
+                FROM agg_products_sorted
+                GROUP BY {nameof(Day.SelectedRoute)}, PeriodKey
+            )
+            SELECT
+                {selectedDateStringExpr} AS {nameof(Day.SelectedDateString)},
+                d.MinTicks AS {nameof(Day.SelectedDateTicks)},
+                d.{nameof(Day.SelectedRoute)},
+                d.{nameof(Day.UserCreatedId)},
+                d.{nameof(Day.TotalPrice)},
+                d.{nameof(Day.TotalPriceProducts)},
+                d.{nameof(Day.TotalPriceCake)},
+                d.{nameof(Day.TotalPriceCorrect)},
+                d.{nameof(Day.TotalPriceAfterCorrect)},
+                d.{nameof(Day.TotalPriceMoney)},
+                d.{nameof(Day.TotalPriceDifference)},
+                COALESCE(p.JsonProducts, '[]') AS JsonProducts
+            FROM agg_day d
+            LEFT JOIN agg_products p
+                ON p.{nameof(Day.SelectedRoute)} IS d.{nameof(Day.SelectedRoute)}
+               AND p.PeriodKey = d.PeriodKey
+            ORDER BY d.MinTicks, d.{nameof(Day.SelectedRoute)};";
+
+        string buildMedianAggregateQuery() => $@"
+            WITH {baseDayCte},
+            day_prepared AS MATERIALIZED (
+                SELECT
+                    {nameof(Day.Id)},
+                    {nameof(Day.SelectedRoute)},
+                    {nameof(Day.UserCreatedId)},
+                    PeriodKey,
+                    {nameof(Day.SelectedDateTicks)},
+                    DENSE_RANK() OVER (ORDER BY {nameof(Day.SelectedRoute)}, PeriodKey) AS GrpId,
+                    COUNT(*) OVER (PARTITION BY {nameof(Day.SelectedRoute)}, PeriodKey) AS Cnt,
+                    {nameof(Day.TotalPrice)},
+                    {nameof(Day.TotalPriceProducts)},
+                    {nameof(Day.TotalPriceCake)},
+                    {nameof(Day.TotalPriceCorrect)},
+                    {nameof(Day.TotalPriceAfterCorrect)},
+                    {nameof(Day.TotalPriceMoney)},
+                    {nameof(Day.TotalPriceDifference)}
+                FROM base_day
+            ),
+            day_groups AS (
+                SELECT
+                    GrpId,
+                    MIN({nameof(Day.SelectedRoute)}) AS {nameof(Day.SelectedRoute)},
+                    MIN({nameof(Day.UserCreatedId)}) AS {nameof(Day.UserCreatedId)},
+                    MIN({nameof(Day.SelectedDateTicks)}) AS MinTicks,
+                    MAX({nameof(Day.SelectedDateTicks)}) AS MaxTicks
+                FROM day_prepared
+                GROUP BY GrpId
+            ),
+            day_ranked AS (
+                SELECT
+                    GrpId,
+                    Cnt,
+                    {nameof(Day.TotalPrice)},
+                    {nameof(Day.TotalPriceProducts)},
+                    {nameof(Day.TotalPriceCake)},
+                    {nameof(Day.TotalPriceCorrect)},
+                    {nameof(Day.TotalPriceAfterCorrect)},
+                    {nameof(Day.TotalPriceMoney)},
+                    {nameof(Day.TotalPriceDifference)},
+                    ROW_NUMBER() OVER (PARTITION BY GrpId ORDER BY {nameof(Day.TotalPrice)}) AS rn1,
+                    ROW_NUMBER() OVER (PARTITION BY GrpId ORDER BY {nameof(Day.TotalPriceProducts)}) AS rn2,
+                    ROW_NUMBER() OVER (PARTITION BY GrpId ORDER BY {nameof(Day.TotalPriceCake)}) AS rn3,
+                    ROW_NUMBER() OVER (PARTITION BY GrpId ORDER BY {nameof(Day.TotalPriceCorrect)}) AS rn4,
+                    ROW_NUMBER() OVER (PARTITION BY GrpId ORDER BY {nameof(Day.TotalPriceAfterCorrect)}) AS rn5,
+                    ROW_NUMBER() OVER (PARTITION BY GrpId ORDER BY {nameof(Day.TotalPriceMoney)}) AS rn6,
+                    ROW_NUMBER() OVER (PARTITION BY GrpId ORDER BY {nameof(Day.TotalPriceDifference)}) AS rn7
+                FROM day_prepared
+            ),
+            agg_day AS (
+                SELECT
+                    GrpId,
+                    {AsInt($"AVG(CASE WHEN rn1 IN ((Cnt + 1) / 2, (Cnt + 2) / 2) THEN {nameof(Day.TotalPrice)} END)")} AS {nameof(Day.TotalPrice)},
+                    {AsInt($"AVG(CASE WHEN rn2 IN ((Cnt + 1) / 2, (Cnt + 2) / 2) THEN {nameof(Day.TotalPriceProducts)} END)")} AS {nameof(Day.TotalPriceProducts)},
+                    {AsInt($"AVG(CASE WHEN rn3 IN ((Cnt + 1) / 2, (Cnt + 2) / 2) THEN {nameof(Day.TotalPriceCake)} END)")} AS {nameof(Day.TotalPriceCake)},
+                    {AsInt($"AVG(CASE WHEN rn4 IN ((Cnt + 1) / 2, (Cnt + 2) / 2) THEN {nameof(Day.TotalPriceCorrect)} END)")} AS {nameof(Day.TotalPriceCorrect)},
+                    {AsInt($"AVG(CASE WHEN rn5 IN ((Cnt + 1) / 2, (Cnt + 2) / 2) THEN {nameof(Day.TotalPriceAfterCorrect)} END)")} AS {nameof(Day.TotalPriceAfterCorrect)},
+                    {AsInt($"AVG(CASE WHEN rn6 IN ((Cnt + 1) / 2, (Cnt + 2) / 2) THEN {nameof(Day.TotalPriceMoney)} END)")} AS {nameof(Day.TotalPriceMoney)},
+                    {AsInt($"AVG(CASE WHEN rn7 IN ((Cnt + 1) / 2, (Cnt + 2) / 2) THEN {nameof(Day.TotalPriceDifference)} END)")} AS {nameof(Day.TotalPriceDifference)}
+                FROM day_ranked
+                GROUP BY GrpId
+            ),
+            products_prepared AS MATERIALIZED (
+                SELECT
+                    dp.GrpId,
+                    p.{nameof(Product.ProductNameId)} AS {nameof(Product.ProductNameId)},
+                    COUNT(*) OVER (PARTITION BY dp.GrpId, p.{nameof(Product.ProductNameId)}) AS Cnt,
+                    COALESCE(p.{nameof(Product.Number)}, 0) AS {nameof(Product.Number)},
+                    COALESCE(p.{nameof(Product.NumberEdit)}, 0) AS {nameof(Product.NumberEdit)},
+                    COALESCE(p.{nameof(Product.NumberReturn)}, 0) AS {nameof(Product.NumberReturn)},
+                    COALESCE(p.{nameof(Product.PriceTotal)}, 0) AS {nameof(Product.PriceTotal)},
+                    COALESCE(p.{nameof(Product.PriceTotalCorrect)}, 0) AS {nameof(Product.PriceTotalCorrect)},
+                    COALESCE(p.{nameof(Product.PriceTotalAfterCorrect)}, 0) AS {nameof(Product.PriceTotalAfterCorrect)}
+                FROM {nameof(Product)} p
+                INNER JOIN day_prepared dp ON dp.{nameof(Day.Id)} = p.{nameof(Product.DayId)} COLLATE NOCASE
+                WHERE (p.{nameof(Product.IsDelete)} = 0 OR p.{nameof(Product.IsDelete)} IS NULL)
+            ),
+            products_ranked AS (
+                SELECT
+                    GrpId,
+                    {nameof(Product.ProductNameId)},
+                    Cnt,
+                    {nameof(Product.Number)},
+                    {nameof(Product.NumberEdit)},
+                    {nameof(Product.NumberReturn)},
+                    {nameof(Product.PriceTotal)},
+                    {nameof(Product.PriceTotalCorrect)},
+                    {nameof(Product.PriceTotalAfterCorrect)},
+                    ROW_NUMBER() OVER (PARTITION BY GrpId, {nameof(Product.ProductNameId)} ORDER BY {nameof(Product.Number)}) AS rn1,
+                    ROW_NUMBER() OVER (PARTITION BY GrpId, {nameof(Product.ProductNameId)} ORDER BY {nameof(Product.NumberEdit)}) AS rn2,
+                    ROW_NUMBER() OVER (PARTITION BY GrpId, {nameof(Product.ProductNameId)} ORDER BY {nameof(Product.NumberReturn)}) AS rn3,
+                    ROW_NUMBER() OVER (PARTITION BY GrpId, {nameof(Product.ProductNameId)} ORDER BY {nameof(Product.PriceTotal)}) AS rn4,
+                    ROW_NUMBER() OVER (PARTITION BY GrpId, {nameof(Product.ProductNameId)} ORDER BY {nameof(Product.PriceTotalCorrect)}) AS rn5,
+                    ROW_NUMBER() OVER (PARTITION BY GrpId, {nameof(Product.ProductNameId)} ORDER BY {nameof(Product.PriceTotalAfterCorrect)}) AS rn6
+                FROM products_prepared
+            ),
+            agg_products_raw AS (
+                SELECT
+                    GrpId,
+                    {nameof(Product.ProductNameId)},
+                    {AsInt($"AVG(CASE WHEN rn1 IN ((Cnt + 1) / 2, (Cnt + 2) / 2) THEN {nameof(Product.Number)} END)")} AS {nameof(Product.Number)},
+                    {AsInt($"AVG(CASE WHEN rn2 IN ((Cnt + 1) / 2, (Cnt + 2) / 2) THEN {nameof(Product.NumberEdit)} END)")} AS {nameof(Product.NumberEdit)},
+                    {AsInt($"AVG(CASE WHEN rn3 IN ((Cnt + 1) / 2, (Cnt + 2) / 2) THEN {nameof(Product.NumberReturn)} END)")} AS {nameof(Product.NumberReturn)},
+                    {AsInt($"AVG(CASE WHEN rn4 IN ((Cnt + 1) / 2, (Cnt + 2) / 2) THEN {nameof(Product.PriceTotal)} END)")} AS {nameof(Product.PriceTotal)},
+                    {AsInt($"AVG(CASE WHEN rn5 IN ((Cnt + 1) / 2, (Cnt + 2) / 2) THEN {nameof(Product.PriceTotalCorrect)} END)")} AS {nameof(Product.PriceTotalCorrect)},
+                    {AsInt($"AVG(CASE WHEN rn6 IN ((Cnt + 1) / 2, (Cnt + 2) / 2) THEN {nameof(Product.PriceTotalAfterCorrect)} END)")} AS {nameof(Product.PriceTotalAfterCorrect)}
+                FROM products_ranked
+                GROUP BY GrpId, {nameof(Product.ProductNameId)}
+            ),
+            agg_products_sorted AS (
+                SELECT
+                    apr.GrpId,
+                    json_object(
+                        '{nameof(Product.ProductNameId)}', apr.{nameof(Product.ProductNameId)},
+                        '{nameof(Product.Number)}', apr.{nameof(Product.Number)},
+                        '{nameof(Product.NumberEdit)}', apr.{nameof(Product.NumberEdit)},
+                        '{nameof(Product.NumberReturn)}', apr.{nameof(Product.NumberReturn)},
+                        '{nameof(Product.PriceTotal)}', apr.{nameof(Product.PriceTotal)},
+                        '{nameof(Product.PriceTotalCorrect)}', apr.{nameof(Product.PriceTotalCorrect)},
+                        '{nameof(Product.PriceTotalAfterCorrect)}', apr.{nameof(Product.PriceTotalAfterCorrect)},
+                        '{nameof(ProductName)}', {ProductNameJsonObject("pn")}
+                    ) AS ProductJson
+                FROM agg_products_raw apr
+                LEFT JOIN {nameof(ProductName)} pn ON pn.{nameof(ProductName.Id)} = apr.{nameof(Product.ProductNameId)} COLLATE NOCASE
+                ORDER BY apr.GrpId, COALESCE(pn.{nameof(ProductName.Arrangement)}, 2147483647), pn.{nameof(ProductName.Name)}
+            ),
+            agg_products AS (
+                SELECT
+                    GrpId,
+                    json_group_array(json(ProductJson)) AS JsonProducts
+                FROM agg_products_sorted
+                GROUP BY GrpId
+            )
+            SELECT
+                {selectedDateStringExpr} AS {nameof(Day.SelectedDateString)},
+                d.MinTicks AS {nameof(Day.SelectedDateTicks)},
+                d.{nameof(Day.SelectedRoute)},
+                d.{nameof(Day.UserCreatedId)},
+                ad.{nameof(Day.TotalPrice)},
+                ad.{nameof(Day.TotalPriceProducts)},
+                ad.{nameof(Day.TotalPriceCake)},
+                ad.{nameof(Day.TotalPriceCorrect)},
+                ad.{nameof(Day.TotalPriceAfterCorrect)},
+                ad.{nameof(Day.TotalPriceMoney)},
+                ad.{nameof(Day.TotalPriceDifference)},
+                COALESCE(p.JsonProducts, '[]') AS JsonProducts
+            FROM agg_day ad
+            INNER JOIN day_groups d ON d.GrpId = ad.GrpId
+            LEFT JOIN agg_products p ON p.GrpId = ad.GrpId
+            ORDER BY d.MinTicks, d.{nameof(Day.SelectedRoute)};";
+
+        string buildRawQuery() => $@"
+            SELECT
+                d.*,
+                COALESCE((
+                    SELECT json_group_array(json(ProductJson))
+                    FROM (
+                        SELECT
+                            json_object(
+                                '{nameof(Product.Id)}', p.{nameof(Product.Id)},
+                                '{nameof(Product.DayId)}', p.{nameof(Product.DayId)},
+                                '{nameof(Product.ProductNameId)}', p.{nameof(Product.ProductNameId)},
+                                '{nameof(Product.ProductPriceId)}', p.{nameof(Product.ProductPriceId)},
+                                '{nameof(Product.Description)}', p.{nameof(Product.Description)},
+                                '{nameof(Product.PriceTotal)}', p.{nameof(Product.PriceTotal)},
+                                '{nameof(Product.PriceTotalCorrect)}', p.{nameof(Product.PriceTotalCorrect)},
+                                '{nameof(Product.PriceTotalAfterCorrect)}', p.{nameof(Product.PriceTotalAfterCorrect)},
+                                '{nameof(Product.Number)}', p.{nameof(Product.Number)},
+                                '{nameof(Product.NumberEdit)}', p.{nameof(Product.NumberEdit)},
+                                '{nameof(Product.NumberReturn)}', p.{nameof(Product.NumberReturn)},
+                                '{nameof(Product.CreatedTicks)}', p.{nameof(Product.CreatedTicks)},
+                                '{nameof(Product.UpdatedTicks)}', p.{nameof(Product.UpdatedTicks)},
+                                '{nameof(Product.UserCreatedId)}', p.{nameof(Product.UserCreatedId)},
+                                '{nameof(Product.IsDelete)}', p.{nameof(Product.IsDelete)},
+                                '{nameof(Product.UserUpdatedId)}', p.{nameof(Product.UserUpdatedId)},
+                                '{nameof(ProductName)}', {ProductNameJsonObject("pn")}
+                            ) AS ProductJson
+                        FROM {nameof(Product)} p
+                        LEFT JOIN {nameof(ProductName)} pn ON pn.{nameof(ProductName.Id)} = p.{nameof(Product.ProductNameId)} COLLATE NOCASE
+                        WHERE p.{nameof(Product.DayId)} = d.{nameof(Day.Id)} COLLATE NOCASE
+                          AND (p.{nameof(Product.IsDelete)} = 0 OR p.{nameof(Product.IsDelete)} IS NULL)
+                        ORDER BY COALESCE(pn.{nameof(ProductName.Arrangement)}, 2147483647), pn.{nameof(ProductName.Name)}
+                    )
+                ), '[]') AS JsonProducts,
+                COALESCE((
+                    SELECT json_group_array(
+                        json_object(
+                            '{nameof(Cake.Id)}', c.{nameof(Cake.Id)},
+                            '{nameof(Cake.DayId)}', c.{nameof(Cake.DayId)},
+                            '{nameof(Cake.IsSell)}', c.{nameof(Cake.IsSell)},
+                            '{nameof(Cake.Price)}', c.{nameof(Cake.Price)},
+                            '{nameof(Cake.CreatedTicks)}', c.{nameof(Cake.CreatedTicks)},
+                            '{nameof(Cake.UpdatedTicks)}', c.{nameof(Cake.UpdatedTicks)},
+                            '{nameof(Cake.UserCreatedId)}', c.{nameof(Cake.UserCreatedId)},
+                            '{nameof(Cake.IsDelete)}', c.{nameof(Cake.IsDelete)},
+                            '{nameof(Cake.UserUpdatedId)}', c.{nameof(Cake.UserUpdatedId)}
+                        )
+                    )
+                    FROM {nameof(Cake)} c
+                    WHERE c.{nameof(Cake.DayId)} = d.{nameof(Day.Id)} COLLATE NOCASE
+                      AND (c.{nameof(Cake.IsDelete)} = 0 OR c.{nameof(Cake.IsDelete)} IS NULL)
+                ), '[]') AS JsonCakes
+            FROM {nameof(Day)} d
+            {where}
+            ORDER BY d.{nameof(Day.SelectedDateTicks)};";
+
+        return calculation switch
+        {
+            DayCalculationType.None => buildRawQuery(),
+
+            DayCalculationType.SumWeek or DayCalculationType.SumMonth or DayCalculationType.SumYear or DayCalculationType.SumDayOfWeek or DayCalculationType.SumAll
+                => buildStandardAggregateQuery("SUM"),
+
+            DayCalculationType.AverageWeek or DayCalculationType.AverageMonth or DayCalculationType.AverageYear or DayCalculationType.AverageDayOfWeek or DayCalculationType.AverageAll
+                => buildStandardAggregateQuery("AVG"),
+
+            DayCalculationType.MedianWeek or DayCalculationType.MedianMonth or DayCalculationType.MedianYear or DayCalculationType.MedianDayOfWeek or DayCalculationType.MedianAll
+                => buildMedianAggregateQuery(),
+
+            _ => buildRawQuery()
+        };
     }
+}
